@@ -1,0 +1,576 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Track Parcels | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Google Maps -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+
+    <style>
+        body{
+            font-family:'DM Sans',sans-serif;
+            background:#071120;
+            overflow-x:hidden;
+        }
+
+        .playfair{
+            font-family:'Playfair Display',serif;
+        }
+
+        .glass{
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.08);
+            backdrop-filter:blur(14px);
+        }
+
+        .gradient-bg{
+            background:
+            radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 25%),
+            radial-gradient(circle at bottom left, rgba(212,175,55,0.08), transparent 30%),
+            #071120;
+        }
+
+        .gold{
+            color:#d4af37;
+        }
+
+        .gold-bg{
+            background:#d4af37;
+        }
+
+        .parcel-card:hover{
+            transform:translateY(-4px);
+            transition:0.3s ease;
+        }
+
+        #map{
+            width:100%;
+            height:100%;
+            min-height:500px;
+            border-radius:24px;
+        }
+
+        .status-dot{
+            width:10px;
+            height:10px;
+            border-radius:50%;
+        }
+
+        .pulse{
+            animation:pulse 2s infinite;
+        }
+
+        @keyframes pulse{
+            0%{
+                transform:scale(1);
+                opacity:1;
+            }
+            50%{
+                transform:scale(1.4);
+                opacity:0.5;
+            }
+            100%{
+                transform:scale(1);
+                opacity:1;
+            }
+        }
+
+        .scrollbar-hide::-webkit-scrollbar{
+            display:none;
+        }
+    </style>
+</head>
+
+<body class="gradient-bg text-white min-h-screen">
+
+<div class="flex">
+
+    <!-- Sidebar -->
+    {% include 'passenger/sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="flex-1 lg:ml-64 p-6 md:p-10">
+
+        <!-- Header -->
+        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 mb-10">
+
+            <div>
+                <h1 class="playfair text-4xl font-bold mb-3">
+                    Parcel Tracking
+                </h1>
+
+                <p class="text-gray-400 max-w-2xl leading-relaxed">
+                    Track your parcels in real-time using GPS updates from drivers and transport companies across Kenya.
+                </p>
+            </div>
+
+            <!-- Live Tracking Badge -->
+            <div class="glass rounded-2xl px-6 py-5 max-w-sm">
+                <div class="flex items-center gap-4">
+
+                    <div class="relative">
+                        <div class="w-5 h-5 rounded-full bg-green-500 pulse"></div>
+                    </div>
+
+                    <div>
+                        <p class="font-semibold text-lg">
+                            Live GPS Tracking
+                        </p>
+
+                        <p class="text-sm text-gray-400">
+                            Driver locations updating in real-time
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+
+            <div class="glass rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-400 text-sm">
+                        Total Parcels
+                    </h3>
+
+                    <div class="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center text-xl">
+                        📦
+                    </div>
+                </div>
+
+                <h2 class="text-3xl font-bold">
+                    {{ total_parcels }}
+                </h2>
+            </div>
+
+            <div class="glass rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-400 text-sm">
+                        In Transit
+                    </h3>
+
+                    <div class="w-12 h-12 rounded-2xl bg-yellow-500/20 flex items-center justify-center text-xl">
+                        🚚
+                    </div>
+                </div>
+
+                <h2 class="text-3xl font-bold text-yellow-400">
+                    {{ in_transit }}
+                </h2>
+            </div>
+
+            <div class="glass rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-400 text-sm">
+                        Delivered
+                    </h3>
+
+                    <div class="w-12 h-12 rounded-2xl bg-green-500/20 flex items-center justify-center text-xl">
+                        ✅
+                    </div>
+                </div>
+
+                <h2 class="text-3xl font-bold text-green-400">
+                    {{ delivered }}
+                </h2>
+            </div>
+
+            <div class="glass rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-400 text-sm">
+                        Pending Pickup
+                    </h3>
+
+                    <div class="w-12 h-12 rounded-2xl bg-red-500/20 flex items-center justify-center text-xl">
+                        ⏳
+                    </div>
+                </div>
+
+                <h2 class="text-3xl font-bold text-red-400">
+                    {{ pending }}
+                </h2>
+            </div>
+
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+            <!-- Left: Parcels List -->
+            <div class="xl:col-span-1">
+
+                <div class="glass rounded-3xl p-6 h-full">
+
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold">
+                                My Parcels
+                            </h2>
+
+                            <p class="text-gray-400 text-sm mt-1">
+                                Manage and track all sent parcels
+                            </p>
+                        </div>
+
+                        <button class="gold-bg text-black px-4 py-2 rounded-xl font-semibold hover:opacity-90 transition">
+                            + Send Parcel
+                        </button>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="mb-6">
+                        <input type="text"
+                               placeholder="Search parcel..."
+                               class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 outline-none focus:border-yellow-500">
+                    </div>
+
+                    <!-- Parcel Cards -->
+                    <div class="space-y-5 overflow-y-auto max-h-[800px] pr-2 scrollbar-hide">
+
+                        {% for parcel in parcels %}
+                        <div class="glass rounded-3xl p-5 parcel-card cursor-pointer hover:border-yellow-500/30 transition">
+
+                            <div class="flex items-start justify-between mb-4">
+
+                                <div>
+                                    <h3 class="font-semibold text-lg">
+                                        {{ parcel.parcel_code }}
+                                    </h3>
+
+                                    <p class="text-gray-400 text-sm mt-1">
+                                        {{ parcel.company.name }}
+                                    </p>
+                                </div>
+
+                                {% if parcel.status == 'Delivered' %}
+                                <span class="bg-green-500/20 text-green-400 text-xs px-3 py-1 rounded-full">
+                                    Delivered
+                                </span>
+                                {% elif parcel.status == 'In Transit' %}
+                                <span class="bg-yellow-500/20 text-yellow-300 text-xs px-3 py-1 rounded-full">
+                                    In Transit
+                                </span>
+                                {% else %}
+                                <span class="bg-red-500/20 text-red-400 text-xs px-3 py-1 rounded-full">
+                                    Pending
+                                </span>
+                                {% endif %}
+
+                            </div>
+
+                            <div class="space-y-3 text-sm">
+
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">
+                                        From
+                                    </span>
+
+                                    <span>
+                                        {{ parcel.origin }}
+                                    </span>
+                                </div>
+
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">
+                                        To
+                                    </span>
+
+                                    <span>
+                                        {{ parcel.destination }}
+                                    </span>
+                                </div>
+
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">
+                                        Driver
+                                    </span>
+
+                                    <span>
+                                        {{ parcel.driver_name }}
+                                    </span>
+                                </div>
+
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">
+                                        ETA
+                                    </span>
+
+                                    <span class="text-yellow-300">
+                                        {{ parcel.estimated_arrival }}
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <!-- Progress -->
+                            <div class="mt-5">
+
+                                <div class="flex justify-between text-xs text-gray-400 mb-2">
+                                    <span>Tracking Progress</span>
+                                    <span>{{ parcel.progress }}%</span>
+                                </div>
+
+                                <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                                    <div class="h-full bg-yellow-500 rounded-full"
+                                         style="width: {{ parcel.progress }}%">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="grid grid-cols-2 gap-3 mt-5">
+
+                                <button class="bg-yellow-500 text-black font-semibold py-3 rounded-xl hover:opacity-90 transition">
+                                    View Route
+                                </button>
+
+                                <button class="bg-white/10 border border-white/10 py-3 rounded-xl hover:bg-white/20 transition">
+                                    Contact Driver
+                                </button>
+
+                            </div>
+
+                        </div>
+                        {% empty %}
+
+                        <div class="glass rounded-3xl p-10 text-center">
+                            <div class="text-6xl mb-4">
+                                📦
+                            </div>
+
+                            <h3 class="text-xl font-semibold mb-2">
+                                No Parcels Yet
+                            </h3>
+
+                            <p class="text-gray-400 text-sm">
+                                You have not sent any parcels yet.
+                            </p>
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Right: Map & Tracking -->
+            <div class="xl:col-span-2 space-y-8">
+
+                <!-- Google Map -->
+                <div class="glass rounded-3xl p-5">
+
+                    <div class="flex items-center justify-between mb-5">
+
+                        <div>
+                            <h2 class="text-2xl font-bold">
+                                Live Parcel Location
+                            </h2>
+
+                            <p class="text-gray-400 text-sm mt-1">
+                                GPS updates from drivers in real-time
+                            </p>
+                        </div>
+
+                        <div class="flex items-center gap-3 text-sm">
+
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                Driver
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                Destination
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div id="map"></div>
+
+                </div>
+
+                <!-- Tracking Timeline -->
+                <div class="glass rounded-3xl p-8">
+
+                    <div class="flex items-center justify-between mb-8">
+
+                        <div>
+                            <h2 class="text-2xl font-bold">
+                                Parcel Timeline
+                            </h2>
+
+                            <p class="text-gray-400 text-sm mt-1">
+                                Latest movement updates
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="space-y-8">
+
+                        <div class="flex gap-5">
+
+                            <div class="flex flex-col items-center">
+                                <div class="w-5 h-5 rounded-full bg-green-500"></div>
+                                <div class="w-1 h-full bg-green-500/20 mt-2"></div>
+                            </div>
+
+                            <div>
+                                <h3 class="font-semibold">
+                                    Parcel Picked Up
+                                </h3>
+
+                                <p class="text-gray-400 text-sm mt-1">
+                                    Driver collected parcel from Nairobi CBD office.
+                                </p>
+
+                                <p class="text-xs text-yellow-300 mt-2">
+                                    Today • 9:24 AM
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="flex gap-5">
+
+                            <div class="flex flex-col items-center">
+                                <div class="w-5 h-5 rounded-full bg-yellow-500"></div>
+                                <div class="w-1 h-full bg-yellow-500/20 mt-2"></div>
+                            </div>
+
+                            <div>
+                                <h3 class="font-semibold">
+                                    In Transit
+                                </h3>
+
+                                <p class="text-gray-400 text-sm mt-1">
+                                    Parcel is currently travelling to Kisumu.
+                                </p>
+
+                                <p class="text-xs text-yellow-300 mt-2">
+                                    Today • 12:40 PM
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="flex gap-5">
+
+                            <div class="flex flex-col items-center">
+                                <div class="w-5 h-5 rounded-full bg-white/20"></div>
+                            </div>
+
+                            <div>
+                                <h3 class="font-semibold text-gray-400">
+                                    Awaiting Delivery
+                                </h3>
+
+                                <p class="text-gray-500 text-sm mt-1">
+                                    Parcel will be delivered once driver reaches destination.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+    // Initialize Google Map
+    function initMap() {
+
+        // Example Driver GPS Coordinates
+        const driverLocation = {
+            lat: -1.286389,
+            lng: 36.817223
+        };
+
+        const destination = {
+            lat: -0.091702,
+            lng: 34.767956
+        };
+
+        // Create Map
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 7,
+            center: driverLocation,
+            styles: [
+                {
+                    "elementType": "geometry",
+                    "stylers": [{"color": "#0f172a"}]
+                },
+                {
+                    "elementType": "labels.text.stroke",
+                    "stylers": [{"color": "#0f172a"}]
+                },
+                {
+                    "elementType": "labels.text.fill",
+                    "stylers": [{"color": "#94a3b8"}]
+                }
+            ]
+        });
+
+        // Driver Marker
+        new google.maps.Marker({
+            position: driverLocation,
+            map,
+            title: "Driver Location",
+            icon: {
+                url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+            }
+        });
+
+        // Destination Marker
+        new google.maps.Marker({
+            position: destination,
+            map,
+            title: "Destination",
+            icon: {
+                url: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
+            }
+        });
+
+        // Route Line
+        const routePath = new google.maps.Polyline({
+            path: [driverLocation, destination],
+            geodesic: true,
+            strokeColor: "#d4af37",
+            strokeOpacity: 1.0,
+            strokeWeight: 4,
+        });
+
+        routePath.setMap(map);
+    }
+
+    window.onload = initMap;
+</script>
+
+</body>
+</html>

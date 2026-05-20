@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>System Settings | SmartTravels Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>body{font-family:'Plus Jakarta Sans',sans-serif}</style>
+</head>
+
+<body class="bg-gradient-to-br from-gray-100 via-slate-100 to-blue-50 min-h-screen">
+
+<div class="flex">
+
+    {% include 'system_admin/dashboard.html' %}
+
+    <div class="ml-64 w-full p-8">
+
+        <!-- HEADER -->
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">⚙️ System Settings</h1>
+                <p class="text-gray-500">Manage platform configuration, security, and system behavior</p>
+            </div>
+        </div>
+
+        <!-- ALERTS -->
+        {% if messages %}
+            <div class="mb-6 space-y-2">
+                {% for message in messages %}
+                    <div class="px-4 py-3 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- QUICK SYSTEM STATUS -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+
+            <div class="bg-white p-6 rounded-2xl shadow">
+                <p class="text-gray-500 text-sm">System Mode</p>
+                <p class="text-xl font-bold text-green-600">Operational</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow">
+                <p class="text-gray-500 text-sm">Database</p>
+                <p class="text-xl font-bold text-blue-600">Connected</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow">
+                <p class="text-gray-500 text-sm">API Status</p>
+                <p class="text-xl font-bold text-green-600">Active</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow">
+                <p class="text-gray-500 text-sm">Last Update</p>
+                <p class="text-xl font-bold text-gray-700">Today</p>
+            </div>
+
+        </div>
+
+        <!-- SETTINGS FORM (MODERN CONTROL PANEL) -->
+        <div class="bg-white rounded-2xl shadow p-6 mb-8">
+
+            <h2 class="text-xl font-bold mb-4">➕ Add / Update System Setting</h2>
+
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+
+                <div class="grid md:grid-cols-2 gap-6">
+
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700">Setting Key</label>
+                        <input type="text" name="key" placeholder="e.g. site_name"
+                            class="w-full mt-1 p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700">Value</label>
+                        <input type="text" name="value" placeholder="e.g. SmartTravels"
+                            class="w-full mt-1 p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    </div>
+
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700">Description</label>
+                        <textarea name="description" rows="3"
+                            class="w-full mt-1 p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                            placeholder="Explain what this setting controls"></textarea>
+                    </div>
+
+                    <div class="flex flex-col justify-center space-y-3">
+
+                        <label class="flex items-center gap-3 text-sm font-semibold text-gray-700">
+                            <input type="checkbox" name="is_public" class="accent-blue-600 w-4 h-4">
+                            Public Setting (visible to users)
+                        </label>
+
+                        <button type="submit"
+                            class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 font-bold w-fit">
+                            Save Setting
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+
+        <!-- SETTINGS TABLE -->
+        <div class="bg-white shadow rounded-2xl overflow-hidden">
+
+            <div class="p-6 border-b">
+                <h2 class="text-xl font-bold">📦 Current System Configuration</h2>
+            </div>
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full text-left">
+
+                    <thead class="bg-gray-100 text-sm text-gray-600">
+                        <tr>
+                            <th class="p-4">Key</th>
+                            <th class="p-4">Value</th>
+                            <th class="p-4">Description</th>
+                            <th class="p-4">Visibility</th>
+                            <th class="p-4">Updated</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% if settings %}
+                            {% for setting in settings %}
+                            <tr class="border-t hover:bg-gray-50 transition">
+
+                                <td class="p-4 font-mono text-sm text-gray-900">
+                                    {{ setting.key }}
+                                </td>
+
+                                <td class="p-4 font-semibold text-gray-800">
+                                    {{ setting.value }}
+                                </td>
+
+                                <td class="p-4 text-gray-600">
+                                    {{ setting.description|default:'-'|truncatechars:80 }}
+                                </td>
+
+                                <td class="p-4">
+                                    {% if setting.is_public %}
+                                        <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-700">Public</span>
+                                    {% else %}
+                                        <span class="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-600">Private</span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="p-4 text-gray-500 text-sm">
+                                    {{ setting.updated_at|date:"M d, Y H:i" }}
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="p-6 text-center text-gray-400">
+                                    No system settings configured yet.
+                                </td>
+                            </tr>
+                        {% endif %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

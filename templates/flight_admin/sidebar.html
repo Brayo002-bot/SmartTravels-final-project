@@ -1,0 +1,324 @@
+<aside class="fixed top-0 left-0 h-screen w-72 bg-gradient-to-b from-slate-900 via-blue-900 to-cyan-900 text-white shadow-2xl z-50 flex flex-col overflow-hidden border-r border-white/10">
+
+    <!-- HEADER -->
+    <div class="px-6 py-6 border-b border-white/10">
+
+        <div class="flex items-center gap-4">
+
+            <div class="h-16 w-16 rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-4xl shadow-2xl">
+                ✈️
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-extrabold tracking-tight">
+                    SmartTravels
+                </h2>
+
+                <p class="text-sm text-slate-300 mt-1">
+                    Flight Admin Panel
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- USER CARD -->
+    <div class="px-5 py-5 border-b border-white/10">
+
+        <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-5 border border-white/10 shadow-lg">
+
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-300 mb-2 font-semibold">
+                Logged In As
+            </p>
+
+            <h3 class="text-lg font-bold text-white">
+                {{ user.get_full_name|default:user.username }}
+            </h3>
+
+            {% if user.company %}
+            <div class="mt-4 inline-flex items-center gap-2 bg-sky-500/20 text-sky-200 px-4 py-2 rounded-2xl text-xs font-bold border border-sky-400/20">
+                🏢 {{ user.company.name }}
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="flex-1 overflow-y-auto px-4 py-5">
+
+        {% if user.is_authenticated and user.role == 'flight_admin' %}
+
+        <div class="mb-4 px-3">
+            <p class="text-xs uppercase tracking-[0.25em] text-slate-400 font-bold">
+                Navigation
+            </p>
+        </div>
+
+        <ul class="space-y-2">
+
+            <!-- Dashboard -->
+            <li>
+                <a href="{% url 'flight_dashboard' %}"
+                   class="group flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/10 transition duration-300 border border-transparent hover:border-white/10">
+
+                    <div class="h-12 w-12 rounded-2xl bg-sky-500/20 text-sky-300 flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition">
+                        📊
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-white">
+                            Dashboard
+                        </h4>
+
+                        <p class="text-xs text-slate-300">
+                            Overview & analytics
+                        </p>
+                    </div>
+
+                </a>
+            </li>
+
+            <!-- Flights -->
+            <li>
+                <a href="{% url 'add_flights' %}"
+                   class="group flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/10 transition duration-300 border border-transparent hover:border-white/10">
+
+                    <div class="h-12 w-12 rounded-2xl bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition">
+                        🛫
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-white">
+                            Add Flight
+                        </h4>
+
+                        <p class="text-xs text-slate-300">
+                            Manage flight fleet
+                        </p>
+                    </div>
+
+                </a>
+            </li>
+
+            <!-- Routes -->
+            <li>
+                <a href="{% url 'flight_add_route' %}"
+                   class="group flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/10 transition duration-300 border border-transparent hover:border-white/10">
+
+                    <div class="h-12 w-12 rounded-2xl bg-blue-500/20 text-blue-300 flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition">
+                        🌍
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-white">
+                            Flight Routes
+                        </h4>
+
+                        <p class="text-xs text-slate-300">
+                            Create destinations
+                        </p>
+                    </div>
+
+                </a>
+            </li>
+
+            <!-- Pilots -->
+            <li>
+                <a href="{% url 'add_pilot' %}"
+                   class="group flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/10 transition duration-300 border border-transparent hover:border-white/10">
+
+                    <div class="h-12 w-12 rounded-2xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition">
+                        👨‍✈️
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-white">
+                            Pilots
+                        </h4>
+
+                        <p class="text-xs text-slate-300">
+                            Add & manage pilots
+                        </p>
+                    </div>
+
+                </a>
+            </li>
+
+            <!-- Cargo -->
+            <li>
+                <a href="{% url 'flight_cargo' %}"
+                   class="group flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/10 transition duration-300 border border-transparent hover:border-white/10">
+
+                    <div class="h-12 w-12 rounded-2xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition">
+                        📦
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-white">
+                            Cargo Shipments
+                        </h4>
+
+                        <p class="text-xs text-slate-300">
+                            Create parcel consignments
+                        </p>
+                    </div>
+
+                </a>
+            </li>
+
+            <!-- Traffic -->
+            <li>
+                <a href="{% url 'flight_traffic' %}"
+                   class="group flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/10 transition duration-300 border border-transparent hover:border-white/10">
+
+                    <div class="h-12 w-12 rounded-2xl bg-rose-500/20 text-rose-300 flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition">
+                        🚦
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-white">
+                            Traffic Centre
+                        </h4>
+
+                        <p class="text-xs text-slate-300">
+                            Monitor flight movement
+                        </p>
+                    </div>
+
+                </a>
+            </li>
+
+            <!-- Bookings -->
+            <li>
+                <a href="{% url 'flight_booking' %}"
+                   class="group flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/10 transition duration-300 border border-transparent hover:border-white/10">
+
+                    <div class="h-12 w-12 rounded-2xl bg-purple-500/20 text-purple-300 flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition">
+                        🎫
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-white">
+                            Bookings
+                        </h4>
+
+                        <p class="text-xs text-slate-300">
+                            Passenger reservations
+                        </p>
+                    </div>
+
+                </a>
+            </li>
+
+            <!-- Schedule -->
+            <li>
+                <a href="{% url 'flight_schedule' %}"
+                   class="group flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/10 transition duration-300 border border-transparent hover:border-white/10">
+
+                    <div class="h-12 w-12 rounded-2xl bg-yellow-500/20 text-yellow-300 flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition">
+                        📅
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-white">
+                            Schedule
+                        </h4>
+
+                        <p class="text-xs text-slate-300">
+                            Flight timings
+                        </p>
+                    </div>
+
+                </a>
+            </li>
+
+            <!-- Company -->
+            <li>
+                <a href="{% url 'flight_company_profile' %}"
+                   class="group flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/10 transition duration-300 border border-transparent hover:border-white/10">
+
+                    <div class="h-12 w-12 rounded-2xl bg-pink-500/20 text-pink-300 flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition">
+                        🏢
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-white">
+                            Company Profile
+                        </h4>
+
+                        <p class="text-xs text-slate-300">
+                            Edit company details
+                        </p>
+                    </div>
+
+                </a>
+            </li>
+
+            <!-- Technical Staff -->
+            <li>
+                <a href="{% url 'manage_technical_staff' %}"
+                   class="group flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/10 transition duration-300 border border-transparent hover:border-white/10">
+
+                    <div class="h-12 w-12 rounded-2xl bg-red-500/20 text-red-300 flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition">
+                        🛠️
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-white">
+                            Technical Staff
+                        </h4>
+
+                        <p class="text-xs text-slate-300">
+                            Add and manage staff
+                        </p>
+                    </div>
+
+                </a>
+            </li>
+
+            <!-- Reports -->
+            <li>
+                <a href="{% url 'flight_reports' %}"
+                   class="group flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/10 transition duration-300 border border-transparent hover:border-white/10">
+
+                    <div class="h-12 w-12 rounded-2xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-2xl shadow-lg group-hover:scale-105 transition">
+                        📈
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-white">
+                            Reports
+                        </h4>
+
+                        <p class="text-xs text-slate-300">
+                            Analytics & insights
+                        </p>
+                    </div>
+
+                </a>
+            </li>
+
+        </ul>
+
+        {% endif %}
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="p-5 border-t border-white/10 bg-black/10 backdrop-blur-xl">
+
+        <a href="{% url 'logout' %}"
+           class="flex items-center justify-center gap-3 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white px-5 py-4 rounded-2xl font-bold shadow-xl transition duration-300">
+
+            <span class="text-xl">🚪</span>
+
+            Logout
+
+        </a>
+
+    </div>
+
+</aside>

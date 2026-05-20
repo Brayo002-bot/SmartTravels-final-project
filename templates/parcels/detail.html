@@ -1,0 +1,40 @@
+{% extends 'base/base.html' %}
+{% load humanize %}
+{% block title %}Parcel {{ parcel.parcel_id }}{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <a href="/parcels/my/" class="text-white/40 text-sm hover:text-white mb-4 inline-block">← My Parcels</a>
+  <div class="st-card mb-4">
+    <p class="font-mono text-2xl font-bold text-[#00B4D8] mb-1">{{ parcel.parcel_id }}</p>
+    <p class="text-lg font-semibold">{{ parcel.origin }} → {{ parcel.destination }}</p>
+    <div class="grid grid-cols-2 gap-4 mt-4 text-sm">
+      <div><p class="text-white/40">Sender</p><p class="font-medium">{{ parcel.sender_name }}</p></div>
+      <div><p class="text-white/40">Recipient</p><p class="font-medium">{{ parcel.recipient_name }}</p></div>
+      <div><p class="text-white/40">Weight</p><p class="font-medium">{{ parcel.weight_kg }} kg</p></div>
+      <div><p class="text-white/40">Cost</p><p class="font-medium text-[#00C48C]">KES {{ parcel.shipping_cost|intcomma }}</p></div>
+      <div><p class="text-white/40">Category</p><p class="font-medium">{{ parcel.get_category_display }}</p></div>
+      <div><p class="text-white/40">Status</p>
+        <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold
+          {% if parcel.status == 'collected' %}bg-green-500/20 text-green-300{% else %}bg-amber-500/20 text-amber-300{% endif %}">
+          {{ parcel.get_status_display }}
+        </span>
+      </div>
+    </div>
+  </div>
+  {% if logs %}
+  <div class="st-card">
+    <h3 class="font-semibold mb-4">Tracking History</h3>
+    {% for log in logs %}
+    <div class="flex gap-3 mb-4 {% if not forloop.last %}pb-4 border-b border-white/10{% endif %}">
+      <div class="w-2.5 h-2.5 rounded-full bg-[#2979D9] mt-1.5 flex-shrink-0"></div>
+      <div>
+        <p class="font-medium text-sm">{{ log.status|title }}</p>
+        {% if log.note %}<p class="text-white/50 text-xs">{{ log.note }}</p>{% endif %}
+        <p class="text-white/30 text-xs mt-0.5">{{ log.timestamp|date:"d M Y, H:i" }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

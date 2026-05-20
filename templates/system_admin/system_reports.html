@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>System Reports</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-gray-100 via-slate-100 to-blue-50 min-h-screen">
+
+<div class="flex">
+
+    <!-- SIDEBAR (clean reused style, NO backend changes) -->
+    <aside class="w-64 bg-gray-900 text-white min-h-screen fixed shadow-2xl">
+
+        <div class="p-6 text-xl font-bold border-b border-gray-700">
+            ⚙️ System Admin
+        </div>
+
+        <nav class="mt-6 space-y-1">
+
+            <a href="{% url 'system_admin_dashboard' %}" class="block px-6 py-3 hover:bg-gray-800">Dashboard</a>
+            <a href="{% url 'manage_users' %}" class="block px-6 py-3 hover:bg-gray-800">Manage Users</a>
+            <a href="{% url 'manage_admins' %}" class="block px-6 py-3 hover:bg-gray-800">Manage Admins</a>
+            <a href="{% url 'system_reports' %}" class="block px-6 py-3 bg-gray-800">Reports</a>
+            <a href="{% url 'system_settings' %}" class="block px-6 py-3 hover:bg-gray-800">Settings</a>
+            <a href="{% url 'audit_logs' %}" class="block px-6 py-3 hover:bg-gray-800">Audit Logs</a>
+
+        </nav>
+
+    </aside>
+
+    <!-- MAIN -->
+    <div class="ml-64 p-8 w-full">
+
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">
+            📊 System Analytics
+        </h1>
+
+        <!-- TOP KPI CARDS -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+
+            <div class="bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow hover:shadow-xl transition transform hover:-translate-y-1">
+                <p class="text-gray-500">Total Buses</p>
+                <p class="text-3xl font-bold text-gray-900">{{ total_buses }}</p>
+            </div>
+
+            <div class="bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow hover:shadow-xl transition transform hover:-translate-y-1">
+                <p class="text-gray-500">Total Flights</p>
+                <p class="text-3xl font-bold text-gray-900">{{ total_flights }}</p>
+            </div>
+
+            <div class="bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow hover:shadow-xl transition transform hover:-translate-y-1">
+                <p class="text-gray-500">Total Trains</p>
+                <p class="text-3xl font-bold text-gray-900">{{ total_trains }}</p>
+            </div>
+
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow hover:scale-105 transition">
+                <p class="opacity-80">Total Revenue</p>
+                <p class="text-3xl font-bold">KES {{ total_revenue }}</p>
+            </div>
+
+        </div>
+
+        <!-- BOOKINGS OVERVIEW -->
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Bookings Overview</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition">
+                <p class="text-gray-500">🚌 Bus Bookings</p>
+                <p class="text-3xl font-bold text-gray-900">{{ bus_bookings }}</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition">
+                <p class="text-gray-500">✈️ Flight Bookings</p>
+                <p class="text-3xl font-bold text-gray-900">{{ flight_bookings }}</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition">
+                <p class="text-gray-500">🚆 Train Bookings</p>
+                <p class="text-3xl font-bold text-gray-900">{{ train_bookings }}</p>
+            </div>
+
+        </div>
+
+        <!-- INSIGHTS SECTION -->
+        <div class="mt-10 bg-white rounded-2xl shadow p-6">
+
+            <h3 class="text-lg font-bold mb-4 text-gray-800">
+                🔍 System Insights
+            </h3>
+
+            <ul class="space-y-3 text-gray-600">
+
+                <li class="flex items-center gap-2">
+                    <span class="text-green-500">●</span>
+                    System performance is stable
+                </li>
+
+                <li class="flex items-center gap-2">
+                    <span class="text-blue-500">●</span>
+                    Booking activity increasing steadily
+                </li>
+
+                <li class="flex items-center gap-2">
+                    <span class="text-yellow-500">●</span>
+                    Monitor peak travel hours for optimization
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

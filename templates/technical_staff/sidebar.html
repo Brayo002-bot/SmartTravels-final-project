@@ -1,0 +1,282 @@
+<!-- templates/technical_staff/sidebar.html -->
+
+<aside class="w-72 min-h-screen fixed overflow-y-auto bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white shadow-2xl border-r border-white/10">
+
+    <!-- TOP BRAND -->
+    <div class="relative p-7 border-b border-white/10 overflow-hidden">
+
+        <!-- Glow -->
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/20 blur-3xl rounded-full"></div>
+
+        <div class="relative z-10">
+
+            <div class="flex items-center gap-4">
+
+                <div class="h-16 w-16 rounded-3xl bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center text-3xl shadow-xl">
+                    🛠️
+                </div>
+
+                <div>
+
+                    <h1 class="text-2xl font-extrabold tracking-wide">
+                        Technical Staff
+                    </h1>
+
+                    <p class="text-sm text-slate-400 mt-1">
+                        SmartTravels Operations
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- USER PROFILE -->
+    <div class="px-6 py-5 border-b border-white/10">
+
+        <div class="flex items-center gap-4 bg-white/5 backdrop-blur-lg rounded-2xl p-4 border border-white/10">
+
+            <div class="h-14 w-14 rounded-2xl bg-gradient-to-r from-emerald-400 to-cyan-500 flex items-center justify-center text-xl font-bold shadow-lg">
+                {{ user.first_name|default:user.username|slice:":1"|upper }}
+            </div>
+
+            <div>
+
+                <h2 class="font-bold text-lg">
+                    {{ user.first_name|default:user.username }}
+                </h2>
+
+                <p class="text-xs text-slate-400">
+                    Technical Operations Staff
+                </p>
+
+                <div class="flex items-center gap-2 mt-2 text-emerald-400 text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Active Session
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MENU TITLE -->
+    <div class="px-6 pt-6 pb-3">
+        <p class="text-xs uppercase tracking-[0.2em] text-slate-500 font-bold">
+            Operations Menu
+        </p>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="px-4 pb-28">
+
+        <ul class="space-y-2">
+
+            <!-- Dashboard -->
+            <li>
+                <a href="{% url 'tech_dashboard' %}"
+                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-blue-500/20 transition-all duration-300 border border-transparent hover:border-cyan-400/20">
+
+                    <div class="flex items-center gap-4">
+
+                        <div class="h-11 w-11 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            📊
+                        </div>
+
+                        <div>
+                            <p class="font-semibold">
+                                Dashboard
+                            </p>
+                            <p class="text-xs text-slate-400">
+                                Analytics & overview
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <span class="text-slate-500 group-hover:text-cyan-400 transition">
+                        →
+                    </span>
+
+                </a>
+            </li>
+
+            <!-- Booking -->
+            <li>
+                <a href="{% url 'tech_booking_assist' %}"
+                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-cyan-500/20 transition-all duration-300 border border-transparent hover:border-blue-400/20">
+
+                    <div class="flex items-center gap-4">
+
+                        <div class="h-11 w-11 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            🎫
+                        </div>
+
+                        <div>
+                            <p class="font-semibold">
+                                Booking Assistance
+                            </p>
+                            <p class="text-xs text-slate-400">
+                                Tickets & payments
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <span class="text-slate-500 group-hover:text-blue-400 transition">
+                        →
+                    </span>
+
+                </a>
+            </li>
+
+            <!-- Parcels -->
+            <li>
+                <a href="{% url 'tech_parcels' %}"
+                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-amber-500/20 hover:to-orange-500/20 transition-all duration-300 border border-transparent hover:border-amber-400/20">
+
+                    <div class="flex items-center gap-4">
+
+                        <div class="h-11 w-11 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            📦
+                        </div>
+
+                        <div>
+                            <p class="font-semibold">
+                                Parcel Management
+                            </p>
+                            <p class="text-xs text-slate-400">
+                                QR & dispatch handling
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <span class="text-slate-500 group-hover:text-amber-400 transition">
+                        →
+                    </span>
+
+                </a>
+            </li>
+
+            <!-- Ticket Scanner -->
+            <li>
+                <a href="{% url 'tech_ticket_scanner' %}"
+                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-pink-500/20 transition-all duration-300 border border-transparent hover:border-purple-400/20">
+
+                    <div class="flex items-center gap-4">
+
+                        <div class="h-11 w-11 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            📷
+                        </div>
+
+                        <div>
+                            <p class="font-semibold">
+                                Ticket Scanner
+                            </p>
+                            <p class="text-xs text-slate-400">
+                                Scan & verify tickets
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <span class="text-slate-500 group-hover:text-purple-400 transition">
+                        →
+                    </span>
+
+                </a>
+            </li>
+
+            <!-- Boarding -->
+            <li>
+                <a href="{% url 'tech_boarding' %}"
+                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-emerald-500/20 hover:to-green-500/20 transition-all duration-300 border border-transparent hover:border-emerald-400/20">
+
+                    <div class="flex items-center gap-4">
+
+                        <div class="h-11 w-11 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            🚌
+                        </div>
+
+                        <div>
+                            <p class="font-semibold">
+                                Boarding Control
+                            </p>
+                            <p class="text-xs text-slate-400">
+                                Passenger check-in
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <span class="text-slate-500 group-hover:text-emerald-400 transition">
+                        →
+                    </span>
+
+                </a>
+            </li>
+
+            <!-- Tracking -->
+            <li>
+                <a href="{% url 'tech_tracking' %}"
+                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-rose-500/20 hover:to-red-500/20 transition-all duration-300 border border-transparent hover:border-rose-400/20">
+
+                    <div class="flex items-center gap-4">
+
+                        <div class="h-11 w-11 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                            📍
+                        </div>
+
+                        <div>
+                            <p class="font-semibold">
+                                Traffic Centre
+                            </p>
+                            <p class="text-xs text-slate-400">
+                                Live GPS & parcel movement
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <span class="text-slate-500 group-hover:text-rose-400 transition">
+                        →
+                    </span>
+
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+    <!-- FOOTER -->
+    <div class="absolute bottom-0 left-0 w-full p-6 border-t border-white/10 bg-slate-950/90 backdrop-blur-lg">
+
+        <div class="flex items-center justify-between">
+
+            <div>
+
+                <p class="text-sm font-semibold text-white">
+                    SmartTravels
+                </p>
+
+                <p class="text-xs text-slate-400 mt-1">
+                    Technical Operations Suite
+                </p>
+
+            </div>
+
+            <div class="h-10 w-10 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
+                ⚡
+            </div>
+
+        </div>
+
+    </div>
+
+</aside>

@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Tickets | SmartTravels</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy: #080d1a;
+  --gold: #c9a84c;
+  --gold-l: #e8c97a;
+  --border: rgba(255,255,255,0.08);
+  --border-h: rgba(255,255,255,0.16);
+  --glass: rgba(255,255,255,0.04);
+  --glass-h: rgba(255,255,255,0.07);
+  --muted: rgba(255,255,255,0.45);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy); color: #fff;
+  min-height: 100vh; overflow-x: hidden;
+}
+
+.orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+.orb-1 { width: 500px; height: 500px; top: -150px; right: -150px; background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 65%); }
+.orb-2 { width: 400px; height: 400px; bottom: -120px; left: -100px; background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 65%); }
+
+.page { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; z-index: 1; }
+
+/* HEADER */
+.page-header {
+  background: var(--glass); border: 0.5px solid var(--border);
+  border-radius: 16px; padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;
+}
+.page-header-left { display: flex; align-items: center; gap: 14px; }
+.page-icon {
+  width: 52px; height: 52px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  background: rgba(201,168,76,0.1); border: 0.5px solid rgba(201,168,76,0.2);
+  color: var(--gold); animation: floatY 4s ease-in-out infinite;
+}
+@keyframes floatY { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem; font-weight: 500; color: #fff;
+}
+.page-sub { font-size: 0.8rem; font-weight: 300; color: var(--muted); margin-top: 2px; }
+
+.hdr-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn-outline {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: 9px;
+  background: var(--glass); border: 0.5px solid var(--border);
+  color: rgba(255,255,255,0.75); font-family: 'DM Sans', sans-serif;
+  font-size: 0.83rem; font-weight: 400; text-decoration: none;
+  transition: background 0.18s;
+}
+.btn-outline:hover { background: var(--glass-h); }
+.btn-gold {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: 9px;
+  background: var(--gold); border: none; color: #0a0f1e;
+  font-family: 'DM Sans', sans-serif; font-size: 0.83rem; font-weight: 500;
+  text-decoration: none; transition: background 0.18s;
+}
+.btn-gold:hover { background: var(--gold-l); }
+
+/* STATS */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: 1rem; margin-bottom: 1.5rem;
+}
+.stat-card {
+  background: var(--glass); border: 0.5px solid var(--border);
+  border-radius: 14px; padding: 1.1rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: border-color 0.2s, transform 0.2s; position: relative; overflow: hidden;
+}
+.stat-card:hover { border-color: var(--border-h); transform: translateY(-3px); }
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: 14px 14px 0 0; }
+.stat-card.c-teal::before { background: #2dd4bf; }
+.stat-card.c-green::before { background: #4ade80; }
+.stat-card.c-amber::before { background: #fbbf24; }
+.stat-label { font-size: 0.73rem; font-weight: 400; color: var(--muted); }
+.stat-value { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 500; color: #fff; margin-top: 4px; }
+.stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+.stat-icon.teal { background: rgba(45,212,191,0.1); color: #2dd4bf; }
+.stat-icon.green { background: rgba(74,222,128,0.1); color: #4ade80; }
+.stat-icon.amber { background: rgba(251,191,36,0.1); color: #fbbf24; }
+
+/* EMPTY STATE */
+.empty-card {
+  background: var(--glass); border: 0.5px solid var(--border);
+  border-radius: 16px; padding: 4rem 2rem; text-align: center;
+  position: relative; overflow: hidden;
+}
+.deco-icons {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
+}
+.deco-icon {
+  position: absolute; font-size: 5rem;
+}
+
+.empty-icon-lg {
+  width: 80px; height: 80px; border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem; font-size: 2rem;
+  background: rgba(201,168,76,0.08); border: 0.5px solid rgba(201,168,76,0.2);
+  color: var(--gold); animation: floatY 4s ease-in-out infinite;
+}
+.empty-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem; font-weight: 500; color: #fff; margin-bottom: 0.75rem;
+}
+.empty-sub {
+  font-size: 0.88rem; font-weight: 300; color: var(--muted);
+  max-width: 460px; margin: 0 auto 2.5rem; line-height: 1.7;
+}
+
+/* FEATURE CARDS */
+.features-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; margin-bottom: 2.5rem;
+}
+.feature-card {
+  background: rgba(255,255,255,0.03); border: 0.5px solid var(--border);
+  border-radius: 13px; padding: 1.25rem; text-align: center;
+  transition: border-color 0.2s;
+}
+.feature-card:hover { border-color: var(--border-h); }
+.feature-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 0.85rem; font-size: 1.1rem;
+}
+.feature-icon.teal { background: rgba(45,212,191,0.1); color: #2dd4bf; }
+.feature-icon.purple { background: rgba(167,139,250,0.1); color: #a78bfa; }
+.feature-icon.green { background: rgba(74,222,128,0.1); color: #4ade80; }
+.feature-title { font-size: 0.92rem; font-weight: 500; color: #fff; margin-bottom: 0.35rem; }
+.feature-desc { font-size: 0.78rem; font-weight: 300; color: var(--muted); line-height: 1.5; }
+
+.cta-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-icon"><i class="fa-solid fa-qrcode"></i></div>
+      <div>
+        <div class="page-title">My Tickets</div>
+        <div class="page-sub">View, download and manage your QR-coded travel tickets</div>
+      </div>
+    </div>
+    <div class="hdr-actions">
+      <a href="{% url 'dashboard' %}" class="btn-outline">
+        <i class="fa-solid fa-house" style="font-size:0.8rem;"></i> Dashboard
+      </a>
+      <a href="{% url 'my_bookings' %}" class="btn-gold">
+        <i class="fa-solid fa-ticket" style="font-size:0.8rem;"></i> My Bookings
+      </a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+
+    <div class="stat-card c-teal">
+      <div>
+        <div class="stat-label">Total Tickets</div>
+        <div class="stat-value">{{ total_tickets|default:'0' }}</div>
+      </div>
+      <div class="stat-icon teal"><i class="fa-solid fa-ticket"></i></div>
+    </div>
+
+    <div class="stat-card c-green">
+      <div>
+        <div class="stat-label">Confirmed</div>
+        <div class="stat-value">{{ confirmed_tickets|default:'0' }}</div>
+      </div>
+      <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+    </div>
+
+    <div class="stat-card c-amber">
+      <div>
+        <div class="stat-label">Loyalty Points</div>
+        <div class="stat-value">{{ loyalty_points|default:'0' }}</div>
+      </div>
+      <div class="stat-icon amber"><i class="fa-solid fa-gift"></i></div>
+    </div>
+
+  </div>
+
+  <!-- EMPTY / TICKET CONTENT -->
+  <div class="empty-card">
+
+    <!-- Decorative background text -->
+    <div class="deco-icons">
+      <div class="deco-icon" style="top:8%;left:5%;">✈</div>
+      <div class="deco-icon" style="bottom:8%;right:5%;">🚂</div>
+      <div class="deco-icon" style="top:50%;left:42%;">🚌</div>
+    </div>
+
+    <div style="position:relative;z-index:1;">
+
+      <div class="empty-icon-lg">
+        <i class="fa-solid fa-qrcode"></i>
+      </div>
+
+      <div class="empty-title">No tickets yet</div>
+      <div class="empty-sub">
+        Once you book and pay for your journey, your QR-coded tickets will
+        appear here for download, tracking and boarding verification.
+      </div>
+
+      <!-- FEATURE TILES -->
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon teal"><i class="fa-solid fa-qrcode"></i></div>
+          <div class="feature-title">QR Verification</div>
+          <div class="feature-desc">Tickets are scanned instantly before you board — no printing needed.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon purple"><i class="fa-solid fa-download"></i></div>
+          <div class="feature-title">Download Tickets</div>
+          <div class="feature-desc">Save PDF tickets directly to your device for offline access.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon green"><i class="fa-solid fa-location-dot"></i></div>
+          <div class="feature-title">Smart Tracking</div>
+          <div class="feature-desc">Track your journey and parcel movement in real time.</div>
+        </div>
+      </div>
+
+      <!-- CTA BUTTONS -->
+      <div class="cta-row">
+        <a href="{% url 'dashboard' %}" class="btn-gold">
+          <i class="fa-solid fa-route" style="font-size:0.8rem;"></i> Book a Trip
+        </a>
+        <a href="{% url 'my_bookings' %}" class="btn-outline">
+          <i class="fa-solid fa-clock-rotate-left" style="font-size:0.8rem;"></i> View Bookings
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</div><!-- /page -->
+
+</body>
+</html>

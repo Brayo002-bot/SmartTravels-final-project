@@ -1,0 +1,367 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Route | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+            font-family:'Plus Jakarta Sans',sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-blue-50">
+
+<div class="flex">
+
+    <!-- Sidebar -->
+    {% include 'bus_admin/sidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="ml-64 w-full min-h-screen p-8">
+
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+
+            <div>
+                <h1 class="text-3xl font-extrabold text-gray-800">
+                    Route Management
+                </h1>
+
+                <p class="text-gray-500 mt-2">
+                    Create, manage and monitor bus travel routes.
+                </p>
+            </div>
+
+            <div class="flex gap-3">
+
+                <button class="bg-white border border-gray-200 px-5 py-3 rounded-2xl shadow-sm hover:shadow-md transition text-sm font-semibold text-gray-700">
+                    📍 Route Analytics
+                </button>
+
+                <button class="bg-blue-600 text-white px-5 py-3 rounded-2xl shadow-lg hover:bg-blue-700 transition text-sm font-semibold">
+                    ➕ New Route
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Top Statistics -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+
+            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-lg border border-white/40 hover:-translate-y-1 transition">
+
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total Routes</p>
+                        <h2 class="text-3xl font-extrabold text-gray-800 mt-2">
+                            {{ routes|length }}
+                        </h2>
+                    </div>
+
+                    <div class="h-14 w-14 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
+                        🛣️
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-lg border border-white/40 hover:-translate-y-1 transition">
+
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Active Destinations</p>
+                        <h2 class="text-3xl font-extrabold text-gray-800 mt-2">
+                            {{ routes|length }}
+                        </h2>
+                    </div>
+
+                    <div class="h-14 w-14 rounded-2xl bg-green-100 flex items-center justify-center text-2xl">
+                        🌍
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-lg border border-white/40 hover:-translate-y-1 transition">
+
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Average Fare</p>
+                        <h2 class="text-3xl font-extrabold text-gray-800 mt-2">
+                            KES --
+                        </h2>
+                    </div>
+
+                    <div class="h-14 w-14 rounded-2xl bg-yellow-100 flex items-center justify-center text-2xl">
+                        💰
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-lg border border-white/40 hover:-translate-y-1 transition">
+
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">System Status</p>
+                        <h2 class="text-xl font-bold text-green-600 mt-2">
+                            Operational
+                        </h2>
+                    </div>
+
+                    <div class="h-14 w-14 rounded-2xl bg-purple-100 flex items-center justify-center text-2xl">
+                        🚍
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Add Route Form -->
+        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/40 p-8 mb-10">
+
+            <div class="flex items-center justify-between mb-6">
+
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Add New Route
+                    </h2>
+
+                    <p class="text-gray-500 mt-1">
+                        Create a new travel route for your buses.
+                    </p>
+                </div>
+
+                <div class="hidden md:flex h-16 w-16 rounded-2xl bg-blue-100 items-center justify-center text-3xl">
+                    🚌
+                </div>
+
+            </div>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <!-- FROM -->
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            Departure Location
+                        </label>
+
+                        <input type="text"
+                               name="from_location"
+                               placeholder="e.g Nairobi"
+                               class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                               required>
+                    </div>
+
+                    <!-- TO -->
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            Destination
+                        </label>
+
+                        <input type="text"
+                               name="to_location"
+                               placeholder="e.g Mombasa"
+                               class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                               required>
+                    </div>
+
+                    <!-- PRICE -->
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            Ticket Price (KES)
+                        </label>
+
+                        <input type="number"
+                               name="price"
+                               step="0.01"
+                               min="0"
+                               placeholder="0.00"
+                               class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                    </div>
+
+                </div>
+
+                <div class="mt-8 flex flex-wrap gap-4">
+
+                    <button class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:scale-105 transition">
+                        ➕ Add Route
+                    </button>
+
+                    <button type="reset"
+                            class="bg-gray-200 text-gray-700 px-8 py-4 rounded-2xl font-semibold hover:bg-gray-300 transition">
+                        Reset Form
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- Routes Table -->
+        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/40 overflow-hidden">
+
+            <!-- Table Header -->
+            <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Available Routes
+                    </h2>
+
+                    <p class="text-gray-500 mt-1">
+                        All registered travel destinations and fares.
+                    </p>
+                </div>
+
+                <div class="flex gap-3">
+
+                    <input type="text"
+                           placeholder="Search routes..."
+                           class="px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    <button class="bg-gray-900 text-white px-5 py-3 rounded-2xl hover:bg-black transition">
+                        Export
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+
+                <table class="w-full">
+
+                    <thead class="bg-gray-100 text-gray-600 text-sm uppercase">
+
+                        <tr>
+                            <th class="p-5 text-left">Route</th>
+                            <th class="p-5 text-left">Destination</th>
+                            <th class="p-5 text-left">Ticket Price</th>
+                            <th class="p-5 text-left">Status</th>
+                            <th class="p-5 text-left">Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-100">
+
+                        {% for route in routes %}
+
+                        <tr class="hover:bg-blue-50/40 transition">
+
+                            <td class="p-5">
+                                <div class="flex items-center gap-3">
+
+                                    <div class="h-11 w-11 rounded-2xl bg-blue-100 flex items-center justify-center">
+                                        🛣️
+                                    </div>
+
+                                    <div>
+                                        <p class="font-semibold text-gray-800">
+                                            {{ route.from_location }}
+                                        </p>
+
+                                        <p class="text-sm text-gray-500">
+                                            Departure Point
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </td>
+
+                            <td class="p-5">
+                                <div>
+                                    <p class="font-semibold text-gray-800">
+                                        {{ route.to_location }}
+                                    </p>
+
+                                    <p class="text-sm text-gray-500">
+                                        Destination
+                                    </p>
+                                </div>
+                            </td>
+
+                            <td class="p-5">
+                                <span class="font-bold text-green-600 text-lg">
+                                    KES {{ route.price|floatformat:2 }}
+                                </span>
+                            </td>
+
+                            <td class="p-5">
+                                <span class="px-4 py-2 rounded-full bg-green-100 text-green-700 text-sm font-semibold">
+                                    Active
+                                </span>
+                            </td>
+
+                            <td class="p-5">
+                                <div class="flex gap-2">
+                                    <a href="{% url 'bus_edit_route' route.id %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
+                                        ✏️ Edit
+                                    </a>
+                                    <a href="{% url 'bus_delete_route' route.id %}" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition" onclick="return confirm('Delete this route? This will affect all associated buses and schedules.')">
+                                        🗑️ Delete
+                                    </a>
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="4" class="p-10 text-center">
+
+                                <div class="flex flex-col items-center">
+
+                                    <div class="text-5xl mb-4">
+                                        🚌
+                                    </div>
+
+                                    <h3 class="text-xl font-bold text-gray-700">
+                                        No Routes Added Yet
+                                    </h3>
+
+                                    <p class="text-gray-500 mt-2">
+                                        Start by creating your first route.
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

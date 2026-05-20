@@ -1,0 +1,36 @@
+python manage.py runserver{% load static %}<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>System Settings | SmartTravels Admin</title><script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>body{font-family:'Plus Jakarta Sans',sans-serif}</style></head>
+<body class="bg-gray-100 min-h-screen">
+<div class="flex">{% include 'system_admin/sidebar.html' %}
+<div class="ml-64 w-full p-8">
+  <h1 class="text-2xl font-bold mb-6">⚙️ System Settings</h1>
+  {% if messages %}{% for msg in messages %}<div class="mb-4 px-4 py-3 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm">✅ {{ msg }}</div>{% endfor %}{% endif %}
+  <form method="POST" class="space-y-6">{% csrf_token %}
+    <div class="bg-white rounded-2xl p-6 shadow">
+      <h2 class="font-bold text-lg mb-4">🌐 General Settings</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="block text-sm font-semibold text-gray-700 mb-1">Platform Name</label><input type="text" value="SmartTravels" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"></div>
+        <div><label class="block text-sm font-semibold text-gray-700 mb-1">Support Email</label><input type="email" value="support@smarttravels.co.ke" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"></div>
+        <div><label class="block text-sm font-semibold text-gray-700 mb-1">Support Phone</label><input type="text" value="+254 700 000 000" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"></div>
+        <div><label class="block text-sm font-semibold text-gray-700 mb-1">Default Currency</label><select class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"><option selected>KES — Kenyan Shilling</option></select></div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl p-6 shadow">
+      <h2 class="font-bold text-lg mb-4">💳 M-Pesa Configuration</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="block text-sm font-semibold text-gray-700 mb-1">Shortcode</label><input type="text" placeholder="174379" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"></div>
+        <div><label class="block text-sm font-semibold text-gray-700 mb-1">Environment</label><select class="w-full p-3 border border-gray-300 rounded-xl outline-none"><option selected>Sandbox</option><option>Production</option></select></div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl p-6 shadow">
+      <h2 class="font-bold text-lg mb-4">🌍 Language & Localisation</h2>
+      <div class="flex gap-4">
+        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="accent-blue-600 w-4 h-4"> <span class="text-sm font-medium">English</span></label>
+        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="accent-blue-600 w-4 h-4"> <span class="text-sm font-medium">Swahili (Kiswahili)</span></label>
+      </div>
+    </div>
+    <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-700 transition font-bold">💾 Save Settings</button>
+  </form>
+</div></div></body></html>

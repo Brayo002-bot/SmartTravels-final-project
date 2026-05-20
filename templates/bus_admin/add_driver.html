@@ -1,0 +1,358 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Management | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+            font-family:'Plus Jakarta Sans',sans-serif;
+        }
+
+        .glass-card{
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-blue-50 min-h-screen">
+
+<div class="flex">
+
+    <!-- SIDEBAR -->
+    {% include 'bus_admin/sidebar.html' %}
+
+    <!-- MAIN CONTENT -->
+    <div class="ml-64 w-full p-8">
+
+        <!-- PAGE HEADER -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+
+            <div>
+                <h1 class="text-4xl font-extrabold text-gray-800">
+                    Driver Management
+                </h1>
+
+                <p class="text-gray-500 mt-2">
+                    Add, manage and assign login credentials to drivers.
+                </p>
+            </div>
+
+            <div class="flex gap-3">
+
+                <button class="bg-white border border-gray-200 px-5 py-3 rounded-2xl shadow hover:shadow-lg transition">
+                    👨‍✈️ Total Drivers: {{ drivers|length }}
+                </button>
+
+                <button class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-2xl shadow-lg transition">
+                    + New Driver
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- SUCCESS MESSAGES -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-5 py-4 rounded-2xl shadow-sm flex items-center gap-3">
+                    <span class="text-xl">✅</span>
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- TOP STATS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+            <div class="glass-card rounded-3xl p-6 shadow-lg border border-white/50">
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Registered Drivers</p>
+
+                        <h2 class="text-4xl font-extrabold text-gray-900 mt-2">
+                            {{ drivers|length }}
+                        </h2>
+                    </div>
+
+                    <div class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
+                        👨‍✈️
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 shadow-lg border border-white/50">
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Active Drivers</p>
+
+                        <h2 class="text-4xl font-extrabold text-green-600 mt-2">
+                            {{ drivers|length }}
+                        </h2>
+                    </div>
+
+                    <div class="w-16 h-16 rounded-2xl bg-green-100 flex items-center justify-center text-3xl">
+                        🟢
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 shadow-lg border border-white/50">
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Trips Today</p>
+
+                        <h2 class="text-4xl font-extrabold text-purple-600 mt-2">
+                            24
+                        </h2>
+                    </div>
+
+                    <div class="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center text-3xl">
+                        🚌
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ADD DRIVER FORM -->
+        <div class="glass-card rounded-3xl shadow-xl border border-white/50 p-8 mb-10">
+
+            <div class="flex items-center justify-between mb-8">
+
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Add New Driver
+                    </h2>
+
+                    <p class="text-gray-500 mt-1">
+                        Register a new driver into the SmartTravels system.
+                    </p>
+                </div>
+
+                <div class="hidden md:flex w-16 h-16 rounded-2xl bg-blue-100 items-center justify-center text-3xl">
+                    ➕
+                </div>
+
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- DRIVER NAME -->
+                    <div>
+
+                        <label class="block mb-2 font-semibold text-gray-700">
+                            Driver Name
+                        </label>
+
+                        <input type="text"
+                               name="name"
+                               placeholder="Enter driver's full name"
+                               class="w-full p-4 border border-gray-200 rounded-2xl bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition"
+                               required>
+
+                    </div>
+
+                    <!-- PHONE -->
+                    <div>
+
+                        <label class="block mb-2 font-semibold text-gray-700">
+                            Phone Number
+                        </label>
+
+                        <input type="text"
+                               name="phone"
+                               placeholder="+2547XXXXXXXX"
+                               class="w-full p-4 border border-gray-200 rounded-2xl bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition"
+                               required>
+
+                    </div>
+
+                </div>
+
+                <button class="mt-8 bg-gradient-to-r from-green-600 to-emerald-500 hover:scale-105 transition transform text-white px-8 py-4 rounded-2xl shadow-xl font-bold">
+                    Add Driver
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- DRIVER TABLE -->
+        <div class="glass-card rounded-3xl shadow-xl border border-white/50 overflow-hidden">
+
+            <!-- TABLE HEADER -->
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-6 border-b border-gray-100">
+
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Driver Records
+                    </h2>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        Manage driver accounts and login access.
+                    </p>
+                </div>
+
+                <div class="flex gap-3">
+
+                    <input type="text"
+                           placeholder="Search drivers..."
+                           class="px-4 py-3 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-blue-100 outline-none">
+
+                    <button class="bg-gray-900 hover:bg-black text-white px-5 py-3 rounded-2xl shadow-lg transition">
+                        Export
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- TABLE -->
+            <div class="overflow-x-auto">
+
+                <table class="w-full">
+
+                    <thead class="bg-gray-100 text-gray-600 uppercase text-sm">
+
+                        <tr>
+                            <th class="p-5 text-left">Driver</th>
+                            <th class="p-5 text-left">Phone</th>
+                            <th class="p-5 text-left">Status</th>
+                            <th class="p-5 text-left">Assign Login</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for driver in drivers %}
+                        <tr class="border-t hover:bg-gray-50 transition">
+
+                            <!-- DRIVER -->
+                            <td class="p-5">
+
+                                <div class="flex items-center gap-4">
+
+                                    <div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center font-bold text-blue-700">
+                                        {{ driver.name|slice:":1" }}
+                                    </div>
+
+                                    <div>
+                                        <p class="font-bold text-gray-800">
+                                            {{ driver.name }}
+                                        </p>
+
+                                        <p class="text-sm text-gray-500">
+                                            SmartTravels Driver
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <!-- PHONE -->
+                            <td class="p-5 text-gray-700 font-medium">
+                                {{ driver.phone }}
+                            </td>
+
+                            <!-- STATUS -->
+                            <td class="p-5">
+
+                                <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs font-bold">
+                                    Active
+                                </span>
+
+                            </td>
+
+                            <!-- LOGIN FORM -->
+                            <td class="p-5">
+
+                                <form method="POST" class="flex flex-wrap gap-3 items-center">
+
+                                    {% csrf_token %}
+
+                                    <input type="hidden"
+                                           name="driver_id"
+                                           value="{{ driver.id }}">
+
+                                    <input type="email"
+                                           name="email"
+                                           placeholder="Driver Email"
+                                           class="p-3 border border-gray-200 rounded-xl w-52 focus:ring-4 focus:ring-blue-100 outline-none"
+                                           required>
+
+                                    <input type="password"
+                                           name="password"
+                                           placeholder="Password"
+                                           class="p-3 border border-gray-200 rounded-xl w-40 focus:ring-4 focus:ring-blue-100 outline-none"
+                                           required>
+
+                                    <button name="assign_login"
+                                            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl shadow transition font-semibold">
+                                        Assign Login
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="4" class="p-10 text-center text-gray-500">
+
+                                <div class="flex flex-col items-center">
+
+                                    <div class="text-5xl mb-3">
+                                        👨‍✈️
+                                    </div>
+
+                                    <p class="font-semibold text-lg">
+                                        No drivers added yet
+                                    </p>
+
+                                    <p class="text-sm mt-1">
+                                        Start by adding your first driver above.
+                                    </p>
+
+                                </div>
+
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

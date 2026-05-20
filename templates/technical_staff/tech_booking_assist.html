@@ -1,0 +1,422 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passenger Booking Assistance | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50 min-h-screen">
+
+<div class="flex">
+
+{% include 'technical_staff/sidebar.html' %}
+
+<!-- MAIN -->
+<div class="ml-72 w-full min-h-screen p-8">
+
+    <!-- HEADER -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
+
+        <div class="flex items-center gap-5">
+
+            <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-4xl shadow-2xl">
+                🎫
+            </div>
+
+            <div>
+
+                <h1 class="text-4xl font-extrabold text-gray-800">
+                    Passenger Booking Assistance
+                </h1>
+
+                <p class="text-gray-500 mt-2 text-lg">
+                    Search available trips, assist passengers with bookings and confirm payments.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- STATUS -->
+        <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-3xl shadow-xl px-6 py-5">
+
+            <p class="text-sm text-gray-500">
+                Booking System
+            </p>
+
+            <h2 class="text-xl font-bold text-gray-800 mt-1">
+                Search & Reservation Active
+            </h2>
+
+            <div class="mt-4 flex items-center gap-2 text-sm text-emerald-600 font-semibold">
+                <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                Live Booking Assistance
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- GRID -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+
+        <!-- SEARCH & BOOKING -->
+        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-8">
+
+            <div class="mb-8">
+
+                <h2 class="text-2xl font-bold text-gray-800">
+                    Passenger Search & Booking
+                </h2>
+
+                <p class="text-gray-500 mt-1">
+                    Enter passenger details and search available destinations and vehicles.
+                </p>
+
+            </div>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- Passenger Name -->
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-600">
+                            Passenger Name
+                        </label>
+
+                        <input type="text"
+                               name="passenger_name"
+                               placeholder="Full passenger name"
+                               class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
+                               required>
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-600">
+                            Phone Number
+                        </label>
+
+                        <input type="text"
+                               name="phone"
+                               placeholder="+254..."
+                               class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
+                               required>
+                    </div>
+
+                    <!-- Travel Date -->
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-600">
+                            Travel Date
+                        </label>
+
+                        <input type="date"
+                               name="travel_date"
+                               class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
+                               required>
+                    </div>
+
+                    <!-- From -->
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-600">
+                            Departure Location
+                        </label>
+
+                        <select name="from_location"
+                                class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
+                                required>
+
+                            <option value="">
+                                Select departure
+                            </option>
+
+                            {% for route in routes %}
+                            <option value="{{ route.from_location }}">
+                                {{ route.from_location }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <!-- Destination -->
+                    <div class="md:col-span-2">
+
+                        <label class="block mb-2 text-sm font-semibold text-gray-600">
+                            Destination
+                        </label>
+
+                        <select name="destination"
+                                class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
+                                required>
+
+                            <option value="">
+                                Select destination
+                            </option>
+
+                            {% for route in routes %}
+                            <option value="{{ route.to_location }}">
+                                {{ route.to_location }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- SEARCH BUTTON -->
+                <button type="submit"
+                        name="search_trip"
+                        class="mt-8 w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-4 rounded-2xl font-bold hover:scale-[1.02] transition-all duration-300 shadow-xl">
+
+                    🔍 Search Available Trips
+
+                </button>
+
+            </form>
+
+            <!-- SEARCH RESULTS -->
+            {% if available_trips %}
+
+            <div class="mt-10">
+
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    Available Trips
+                </h2>
+
+                <div class="space-y-5">
+
+                    {% for trip in available_trips %}
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
+
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+                            <div>
+
+                                <div class="flex items-center gap-3 mb-3">
+
+                                    <span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-bold">
+                                        {{ trip.transport_type }}
+                                    </span>
+
+                                    <span class="bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-sm font-bold">
+                                        {{ trip.available_seats }} Seats Left
+                                    </span>
+
+                                </div>
+
+                                <h3 class="text-2xl font-bold text-gray-800">
+                                    {{ trip.from_location }} → {{ trip.to_location }}
+                                </h3>
+
+                                <p class="text-gray-500 mt-2">
+                                    {{ trip.vehicle_name }}
+                                </p>
+
+                                <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
+
+                                    <div>
+                                        <p class="text-gray-400 uppercase font-bold">
+                                            Departure Time
+                                        </p>
+
+                                        <p class="font-semibold text-gray-700">
+                                            {{ trip.departure_time }}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-gray-400 uppercase font-bold">
+                                            Price
+                                        </p>
+
+                                        <p class="font-semibold text-emerald-600">
+                                            KES {{ trip.price }}
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- BOOK BUTTON -->
+                            <div class="flex flex-col gap-3">
+
+                                <button class="bg-gradient-to-r from-emerald-600 to-cyan-500 text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition">
+
+                                    Book Passenger
+
+                                </button>
+
+                                <button class="bg-yellow-100 text-yellow-700 px-8 py-4 rounded-2xl font-bold hover:bg-yellow-200 transition">
+
+                                    Prompt Payment
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        <!-- RECENT BOOKINGS -->
+        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-8">
+
+            <div class="flex items-center justify-between mb-8">
+
+                <div>
+
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Recent Assisted Bookings
+                    </h2>
+
+                    <p class="text-gray-500 mt-1">
+                        Recently processed passenger reservations.
+                    </p>
+
+                </div>
+
+                <div class="text-4xl">
+                    📋
+                </div>
+
+            </div>
+
+            <div class="space-y-5">
+
+                {% for b in bookings %}
+
+                <div class="bg-slate-50 border border-slate-200 rounded-3xl p-5 hover:shadow-lg transition">
+
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+
+                        <div>
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="h-14 w-14 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                                    {{ b.passenger_name|slice:":1" }}
+                                </div>
+
+                                <div>
+
+                                    <h3 class="font-bold text-lg text-gray-800">
+                                        {{ b.passenger_name }}
+                                    </h3>
+
+                                    <p class="text-gray-500 text-sm">
+                                        {{ b.phone }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <div class="mt-5 grid grid-cols-2 gap-5 text-sm">
+
+                                <div>
+                                    <p class="text-gray-400 uppercase font-bold">
+                                        Route
+                                    </p>
+
+                                    <p class="font-semibold text-gray-700">
+                                        {{ b.route }}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p class="text-gray-400 uppercase font-bold">
+                                        Travel Date
+                                    </p>
+
+                                    <p class="font-semibold text-gray-700">
+                                        {{ b.travel_date }}
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- STATUS -->
+                        <div>
+
+                            {% if b.status == "Confirmed" %}
+
+                            <span class="bg-emerald-100 text-emerald-700 px-5 py-3 rounded-2xl text-sm font-bold">
+                                ✅ Confirmed
+                            </span>
+
+                            {% elif b.status == "Pending" %}
+
+                            <span class="bg-yellow-100 text-yellow-700 px-5 py-3 rounded-2xl text-sm font-bold">
+                                ⏳ Pending Payment
+                            </span>
+
+                            {% else %}
+
+                            <span class="bg-red-100 text-red-700 px-5 py-3 rounded-2xl text-sm font-bold">
+                                ❌ Cancelled
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="text-center py-20">
+
+                    <div class="h-28 w-28 rounded-full bg-blue-100 flex items-center justify-center text-6xl mx-auto mb-6">
+                        🎫
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-gray-700">
+                        No Bookings Yet
+                    </h2>
+
+                    <p class="text-gray-500 mt-3">
+                        Passenger bookings assisted by technical staff will appear here.
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</body>
+</html>

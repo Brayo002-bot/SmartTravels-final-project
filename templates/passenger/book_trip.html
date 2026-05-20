@@ -1,0 +1,468 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Trip | SmartTravels</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy: #080d1a;
+  --gold: #c9a84c;
+  --gold-l: #e8c97a;
+  --border: rgba(255,255,255,0.08);
+  --border-h: rgba(255,255,255,0.16);
+  --glass: rgba(255,255,255,0.04);
+  --glass-h: rgba(255,255,255,0.07);
+  --muted: rgba(255,255,255,0.45);
+  --green: #4ade80;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy); color: #fff;
+  min-height: 100vh; overflow-x: hidden;
+}
+
+.orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+.orb-1 { width: 500px; height: 500px; top: -150px; right: -150px; background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 65%); }
+.orb-2 { width: 400px; height: 400px; bottom: -120px; left: -100px; background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 65%); }
+
+.page { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; z-index: 1; }
+
+/* TOP NAV */
+.top-nav {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem; margin-bottom: 1.75rem;
+}
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem; font-weight: 500; color: #fff;
+}
+.page-sub { font-size: 0.85rem; font-weight: 300; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+.btn-outline {
+  display: flex; align-items: center; gap: 7px;
+  padding: 9px 18px; border-radius: 9px;
+  background: var(--glass); border: 0.5px solid var(--border);
+  color: rgba(255,255,255,0.75); font-family: 'DM Sans', sans-serif;
+  font-size: 0.83rem; font-weight: 400; text-decoration: none;
+  transition: background 0.18s, border-color 0.18s; white-space: nowrap;
+}
+.btn-outline:hover { background: var(--glass-h); border-color: var(--border-h); }
+
+/* ERROR */
+.error-banner {
+  background: rgba(239,68,68,0.08); border: 0.5px solid rgba(239,68,68,0.3);
+  border-radius: 12px; padding: 12px 16px;
+  color: #fca5a5; font-size: 0.85rem; margin-bottom: 1.5rem;
+}
+
+/* GRID */
+.layout { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; align-items: start; }
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+/* CARD */
+.card {
+  background: var(--glass); border: 0.5px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+}
+.card-body { padding: 1.5rem; }
+.card-section { padding-bottom: 1.25rem; margin-bottom: 1.25rem; border-bottom: 0.5px solid var(--border); }
+
+/* TRIP HEADER */
+.mode-badge {
+  display: inline-block; padding: 4px 12px; border-radius: 100px;
+  font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em;
+  background: rgba(45,212,191,0.1); border: 0.5px solid rgba(45,212,191,0.25); color: #2dd4bf;
+  margin-bottom: 0.75rem;
+}
+.trip-route {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem; font-weight: 500; color: #fff; line-height: 1.2; margin-bottom: 0.35rem;
+}
+.trip-route .arr { color: var(--gold); margin: 0 6px; }
+.trip-depart { font-size: 0.82rem; font-weight: 300; color: var(--muted); }
+.price-box {
+  text-align: right;
+  background: rgba(255,255,255,0.03); border: 0.5px solid var(--border);
+  border-radius: 12px; padding: 1rem 1.25rem;
+}
+.price-label { font-size: 0.72rem; font-weight: 400; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.price-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem; font-weight: 500; color: #fff; margin-top: 4px;
+}
+
+/* PASSENGER COUNTER */
+.pax-row {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;
+}
+.pax-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 500; }
+.pax-sub { font-size: 0.78rem; font-weight: 300; color: var(--muted); margin-top: 2px; }
+.pax-counter {
+  display: flex; align-items: center; gap: 0;
+  background: var(--glass); border: 0.5px solid var(--border); border-radius: 10px; overflow: hidden;
+}
+.pax-btn {
+  width: 38px; height: 38px; background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,0.6); font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.pax-btn:hover { background: var(--glass-h); }
+.pax-input {
+  width: 44px; background: transparent; border: none; outline: none;
+  text-align: center; font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem; font-weight: 500; color: #fff;
+}
+
+/* LEGEND */
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 1.25rem; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; color: var(--muted); }
+.legend-dot { width: 14px; height: 14px; border-radius: 4px; }
+
+/* SEAT MAP */
+#seat-map { min-height: 240px; }
+
+/* SELECTED DISPLAY */
+.selected-box {
+  margin-top: 1.25rem;
+  background: rgba(255,255,255,0.03); border: 0.5px solid var(--border);
+  border-radius: 12px; padding: 1rem 1.25rem;
+}
+.selected-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.selected-label { font-size: 0.85rem; font-weight: 500; }
+.selected-count { font-size: 0.82rem; color: var(--gold); }
+.selected-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.seat-chip {
+  display: inline-block; padding: 5px 13px;
+  background: rgba(45,212,191,0.12); border: 0.5px solid rgba(45,212,191,0.3);
+  border-radius: 8px; font-size: 0.82rem; font-weight: 500; color: #2dd4bf;
+}
+
+/* STICKY PAYMENT PANEL */
+.payment-panel {
+  background: var(--glass); border: 0.5px solid var(--border);
+  border-radius: 16px; padding: 1.5rem;
+  position: sticky; top: 1.5rem;
+}
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.panel-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 500; }
+.panel-sub { font-size: 0.78rem; font-weight: 300; color: var(--muted); margin-top: 2px; }
+.mpesa-icon {
+  width: 44px; height: 44px; border-radius: 11px;
+  background: rgba(74,222,128,0.1); border: 0.5px solid rgba(74,222,128,0.2);
+  color: #4ade80; display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; animation: floatY 4s ease-in-out infinite;
+}
+@keyframes floatY { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+
+.form-group { margin-bottom: 1rem; }
+.form-label {
+  display: block; font-size: 0.72rem; font-weight: 500; color: var(--muted);
+  letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px;
+}
+.form-input {
+  width: 100%; padding: 10px 14px;
+  background: rgba(255,255,255,0.06); border: 0.5px solid var(--border);
+  border-radius: 9px; font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; color: #fff; outline: none;
+  transition: border-color 0.18s;
+}
+.form-input:focus { border-color: var(--border-h); }
+.form-input[readonly] { color: var(--muted); }
+
+.pay-btn {
+  width: 100%; padding: 12px;
+  background: #22c55e; border: none; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
+  color: #fff; cursor: pointer;
+  transition: background 0.18s, transform 0.12s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 0.25rem;
+}
+.pay-btn:hover:not(:disabled) { background: #16a34a; }
+.pay-btn:active:not(:disabled) { transform: scale(0.98); }
+.pay-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="page">
+
+  <!-- TOP -->
+  <div class="top-nav">
+    <div>
+      <div class="page-title">Book Your Seat</div>
+      <div class="page-sub">Select your seat, pay via M-Pesa STK Push and get your QR ticket instantly.</div>
+    </div>
+    <a href="{% url 'dashboard' %}" class="btn-outline">
+      <i class="fa-solid fa-arrow-left" style="font-size:0.8rem;"></i> Back to Dashboard
+    </a>
+  </div>
+
+  {% if error_message %}
+  <div class="error-banner">
+    <i class="fa-solid fa-circle-exclamation" style="margin-right:8px;"></i>{{ error_message }}
+  </div>
+  {% endif %}
+
+  <div class="layout">
+
+    <!-- LEFT: TRIP + SEAT MAP -->
+    <div class="card">
+      <div class="card-body">
+
+        <!-- TRIP INFO -->
+        <div class="card-section" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+          <div>
+            <div class="mode-badge">{{ mode|title }}</div>
+            <div class="trip-route">
+              {{ transport.route.from_location }}<span class="arr">→</span>{{ transport.route.to_location }}
+            </div>
+            <div class="trip-depart">Departure: {{ schedule.travel_time }} · {{ schedule.travel_date }}</div>
+          </div>
+          <div class="price-box">
+            <div class="price-label">Ticket Price</div>
+            <div class="price-value">KES {{ schedule.price }}</div>
+          </div>
+        </div>
+
+        <!-- PASSENGER COUNTER -->
+        <div class="pax-row">
+          <div>
+            <div class="pax-title">Select Your Seat</div>
+            <div class="pax-sub">Choose available seats from the map below</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:0.82rem;color:var(--muted);">Passengers</span>
+            <div class="pax-counter">
+              <button type="button" class="pax-btn" onclick="changePax(-1)">−</button>
+              <input type="number" id="pax-count" value="1" min="1" max="50" readonly class="pax-input">
+              <button type="button" class="pax-btn" onclick="changePax(1)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEGEND -->
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#2563eb;"></div>Normal</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ca8a04;"></div>VIP</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#dc2626;"></div>Booked</div>
+        </div>
+
+        <!-- SEAT MAP -->
+        <div id="seat-map"></div>
+
+        <!-- SELECTED SEATS -->
+        <div class="selected-box">
+          <div class="selected-header">
+            <span class="selected-label">Selected Seats</span>
+            <span class="selected-count">
+              <span id="sel-count">0</span> / <span id="pax-needed2">1</span>
+            </span>
+          </div>
+          <div class="selected-chips" id="selected-seat-display">
+            <span style="font-size:0.82rem;color:var(--muted);">None selected</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: PAYMENT -->
+    <div class="payment-panel">
+
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Payment</div>
+          <div class="panel-sub">Secure M-Pesa checkout</div>
+        </div>
+        <div class="mpesa-icon">
+          <i class="fa-solid fa-mobile-screen-button"></i>
+        </div>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="selected_seat" id="selected-seat-input">
+
+        <div class="form-group">
+          <label class="form-label">Passenger Name</label>
+          <input type="text" value="{{ passenger_name }}" readonly class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">M-Pesa Phone Number</label>
+          <input type="tel" name="phone" value="{{ default_phone }}"
+            placeholder="2547XXXXXXXX" required class="form-input"
+            style="color:#fff;">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Schedule</label>
+          <input type="text" value="{{ schedule.travel_date }} {{ schedule.travel_time }}" readonly class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Amount</label>
+          <input type="text" value="KES {{ schedule.price }}" readonly class="form-input">
+        </div>
+
+        <button type="submit" id="pay-btn" disabled class="pay-btn">
+          Select seat to continue
+        </button>
+
+      </form>
+
+    </div>
+
+  </div><!-- /layout -->
+
+</div><!-- /page -->
+
+<script>
+let selectedSeats = [];
+let paxNeeded = 1;
+
+function changePax(delta) {
+  const input = document.getElementById('pax-count');
+  const newVal = Math.max(1, parseInt(input.value) + delta);
+  input.value = newVal;
+  paxNeeded = newVal;
+  document.getElementById('pax-needed2').textContent = newVal;
+  selectedSeats = [];
+  document.querySelectorAll('#seat-map button').forEach(b => b.classList.remove('ring-4','ring-white'));
+  document.getElementById('selected-seat-input').value = '';
+  updateSelectedDisplay();
+  updatePayBtn();
+}
+
+function updateSelectedDisplay() {
+  const d = document.getElementById('selected-seat-display');
+  document.getElementById('sel-count').textContent = selectedSeats.length;
+  if (selectedSeats.length === 0) {
+    d.innerHTML = '<span style="font-size:0.82rem;color:var(--muted);">None selected</span>';
+  } else {
+    d.innerHTML = selectedSeats.map(s => `<span class="seat-chip">${s}</span>`).join('');
+  }
+}
+
+function updatePayBtn() {
+  const btn = document.getElementById('pay-btn');
+  const ready = selectedSeats.length >= paxNeeded;
+  btn.disabled = !ready;
+  btn.innerHTML = ready
+    ? '<i class="fa-solid fa-mobile-screen-button" style="font-size:0.85rem;"></i> Pay with STK Push'
+    : `Select ${paxNeeded} seat${paxNeeded > 1 ? 's' : ''} to continue`;
+}
+
+const seatMapContainer = document.getElementById('seat-map');
+const selectedSeatInput = document.getElementById('selected-seat-input');
+const seatLayoutUrl = '{% url "passenger_seat_layout" %}?mode={{ mode }}&schedule_id={{ schedule.id }}';
+
+function formatSeatElement(cell) {
+  if (cell.is_empty) {
+    const d = document.createElement('div');
+    d.className = 'w-12 h-12';
+    return d;
+  }
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = cell.seat_number || '';
+  btn.style.cssText = 'width:48px;height:48px;border-radius:10px;font-size:0.78rem;font-weight:500;transition:all 0.15s;border:none;cursor:pointer;';
+
+  if (cell.is_aisle) {
+    btn.textContent = '';
+    btn.style.background = 'transparent';
+    btn.disabled = true;
+    return btn;
+  }
+  if (cell.booking_status === 'booked') {
+    btn.style.background = '#dc2626';
+    btn.style.color = '#fff';
+    btn.style.opacity = '0.6';
+    btn.style.cursor = 'not-allowed';
+    btn.disabled = true;
+    return btn;
+  }
+
+  const classColors = {
+    'VIP': { bg: '#854d0e', color: '#fef08a' },
+    'Normal': { bg: '#1d4ed8', color: '#fff' },
+    'First Class': { bg: '#3730a3', color: '#fff' },
+    'Business': { bg: '#0f766e', color: '#fff' },
+    'Economy': { bg: '#374151', color: '#fff' },
+  };
+  const c = classColors[cell.seat_class] || { bg: '#374151', color: '#fff' };
+  btn.style.background = c.bg;
+  btn.style.color = c.color;
+
+  btn.addEventListener('click', () => {
+    const idx = selectedSeats.indexOf(cell.seat_number);
+    if (idx > -1) {
+      selectedSeats.splice(idx, 1);
+      btn.style.outline = 'none';
+    } else {
+      if (selectedSeats.length >= paxNeeded) {
+        const old = selectedSeats.shift();
+        document.querySelectorAll('#seat-map button').forEach(b => {
+          if (b.textContent.trim() === old) b.style.outline = 'none';
+        });
+      }
+      selectedSeats.push(cell.seat_number);
+      btn.style.outline = '2px solid #2dd4bf';
+      btn.style.outlineOffset = '2px';
+    }
+    selectedSeatInput.value = selectedSeats[0] || '';
+    updateSelectedDisplay();
+    updatePayBtn();
+  });
+  return btn;
+}
+
+function renderSeatMap(layoutData) {
+  seatMapContainer.innerHTML = '';
+  layoutData.rows.forEach(row => {
+    const rowWrapper = document.createElement('div');
+    rowWrapper.style.cssText = 'margin-bottom:14px;';
+    const rowLabel = document.createElement('div');
+    rowLabel.textContent = `Row ${row.row}`;
+    rowLabel.style.cssText = 'font-size:0.7rem;font-weight:500;color:#2dd4bf;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px;';
+    rowWrapper.appendChild(rowLabel);
+    const seatsRow = document.createElement('div');
+    seatsRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;';
+    row.seats.forEach(cell => seatsRow.appendChild(formatSeatElement(cell)));
+    rowWrapper.appendChild(seatsRow);
+    seatMapContainer.appendChild(rowWrapper);
+  });
+}
+
+fetch(seatLayoutUrl)
+  .then(r => r.json())
+  .then(data => {
+    if (data.rows) renderSeatMap(data);
+    else seatMapContainer.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">Unable to load seat layout.</p>';
+  })
+  .catch(() => {
+    seatMapContainer.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">Unable to load seat layout.</p>';
+  });
+</script>
+
+</body>
+</html>

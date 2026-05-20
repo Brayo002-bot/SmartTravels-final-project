@@ -1,0 +1,581 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}SmartTravels | Smart Journeys{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section id="about" class="relative min-h-screen overflow-hidden flex items-center">
+
+    <!-- Background -->
+    <div class="absolute inset-0">
+        <img src="{% static 'images/hero-image.jpeg' %}"
+             class="w-full h-full object-cover"
+             alt="">
+    </div>
+
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-950/95 via-indigo-950/80 to-purple-900/80"></div>
+
+    <!-- Glowing Background Blobs -->
+    <div class="absolute top-10 left-10 w-72 h-72 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
+
+    <div class="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+
+    <!-- HERO CONTENT -->
+    <div class="relative z-10 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-14 items-center">
+
+        <!-- LEFT -->
+        <div data-aos="fade-right">
+
+            <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 mb-8">
+
+                <span class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
+
+                <span class="text-sm text-white">
+                    Kenya's Unified Travel Ecosystem
+                </span>
+
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-black leading-tight text-white">
+
+                Smart Journeys.
+                <span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+                    Seamless Deliveries.
+                </span>
+
+            </h1>
+
+            <p class="mt-8 text-xl text-gray-300 leading-relaxed">
+                Book buses, SGR trains, domestic flights and send parcels
+                across Kenya using one intelligent modern platform.
+            </p>
+
+            <!-- Buttons -->
+            <div class="flex flex-col sm:flex-row gap-5 mt-10">
+
+                <a href="{% url 'login' %}"
+                   class="px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-105 transition duration-300 font-semibold shadow-2xl animate-gradient">
+
+                    Login
+                </a>
+
+                <a href="{% url 'register' %}"
+                   class="px-8 py-4 rounded-2xl border border-white/20 bg-white/10 backdrop-blur-lg hover:bg-white/20 transition duration-300">
+
+                    Create Account
+                </a>
+
+            </div>
+
+            <!-- Icons -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mt-14">
+
+                <div class="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5 hover:-translate-y-2 transition duration-300 animate-float">
+                    <p class="text-white font-semibold">
+                        Bus Booking
+                    </p>
+
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5 hover:-translate-y-2 transition duration-300 animate-float">
+                    <p class="text-white font-semibold">
+                        SGR Booking
+                    </p>
+
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5 hover:-translate-y-2 transition duration-300 animate-float">
+                    <p class="text-white font-semibold">
+                        Flights Booking
+                    </p>
+
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5 hover:-translate-y-2 transition duration-300 animate-float">
+                    <p class="text-white font-semibold">
+                        Parcel Delivery
+                    </p>
+
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5 hover:-translate-y-2 transition duration-300 animate-float">
+                    <p class="text-white font-semibold">
+                        GPS Tracking
+                    </p>
+
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5 hover:-translate-y-2 transition duration-300 animate-float">
+                    <p class="text-white font-semibold">
+                        M-Pesa Payments
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="relative" data-aos="fade-left">
+
+            <div class="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl p-8">
+
+                <div class="flex justify-between items-center mb-8">
+
+                    <div>
+                        <h2 class="text-3xl font-bold text-white">
+                            SmartTravels
+                        </h2>
+
+                        <p class="text-gray-300 mt-2">
+                            Intelligent Travel Platform
+                        </p>
+                    </div>
+
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center text-3xl shadow-2xl animate-float">
+
+                        ✈️
+
+                    </div>
+
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-2 gap-5">
+
+                    <div class="bg-white/10 rounded-3xl p-5">
+
+                        <h3 class="text-gray-300 text-sm">
+                            Routes
+                        </h3>
+
+                        <p class="text-white text-4xl font-black mt-2">
+                            250+
+                        </p>
+
+                    </div>
+
+                    <div class="bg-white/10 rounded-3xl p-5">
+
+                        <h3 class="text-gray-300 text-sm">
+                            Daily Bookings
+                        </h3>
+
+                        <p class="text-white text-4xl font-black mt-2">
+                            5K+
+                        </p>
+
+                    </div>
+
+                    <div class="bg-white/10 rounded-3xl p-5">
+
+                        <h3 class="text-gray-300 text-sm">
+                            Parcel Deliveries
+                        </h3>
+
+                        <p class="text-white text-4xl font-black mt-2">
+                            12K+
+                        </p>
+
+                    </div>
+
+                    <div class="bg-white/10 rounded-3xl p-5">
+
+                        <h3 class="text-gray-300 text-sm">
+                            Loyalty Rewards
+                        </h3>
+
+                        <p class="text-white text-4xl font-black mt-2">
+                            Live
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- Mpesa -->
+                <div class="mt-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-3xl p-5 flex items-center justify-between shadow-2xl">
+
+                    <div>
+
+                        <h3 class="text-xl font-bold text-white">
+                            M-Pesa Integrated
+                        </h3>
+
+                        <p class="text-green-100">
+                            Secure & Fast Payments
+                        </p>
+
+                    </div>
+
+                    <img src="{% static 'images/M-PESA.png' %}"
+                         class="w-16">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ROUTES SECTION -->
+<section id="routes" class="py-28 bg-slate-950">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="text-center mb-16" data-aos="fade-up">
+
+            <h2 class="text-5xl font-bold text-white">
+                Popular Routes
+            </h2>
+
+            <p class="text-gray-400 mt-5 text-lg">
+                Travel seamlessly across East Africa
+            </p>
+
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            <div class="bg-gradient-to-br from-cyan-500/10 to-blue-600/10 border border-cyan-500/20 rounded-[2rem] p-8 hover:-translate-y-3 transition duration-500 backdrop-blur-xl"
+                 data-aos="zoom-in">
+
+                <h3 class="text-2xl font-bold text-white">
+                    Nairobi → Mombasa
+                </h3>
+
+                <p class="text-gray-400 mt-4">
+                    Bus • SGR • Flights
+                </p>
+
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-500/10 to-pink-600/10 border border-purple-500/20 rounded-[2rem] p-8 hover:-translate-y-3 transition duration-500 backdrop-blur-xl"
+                 data-aos="zoom-in">
+
+                <h3 class="text-2xl font-bold text-white">
+                    Nairobi → Kisumu
+                </h3>
+
+                <p class="text-gray-400 mt-4">
+                    Bus • Flights
+                </p>
+
+            </div>
+
+            <div class="bg-gradient-to-br from-emerald-500/10 to-green-600/10 border border-emerald-500/20 rounded-[2rem] p-8 hover:-translate-y-3 transition duration-500 backdrop-blur-xl"
+                 data-aos="zoom-in">
+
+                <h3 class="text-2xl font-bold text-white">
+                    Nairobi → Kampala
+                </h3>
+
+                <p class="text-gray-400 mt-4">
+                    Shuttle • Bus
+                </p>
+
+            </div>
+
+            <div class="bg-gradient-to-br from-red-500/10 to-orange-600/10 border border-red-500/20 rounded-[2rem] p-8 hover:-translate-y-3 transition duration-500 backdrop-blur-xl"
+                 data-aos="zoom-in">
+
+                <h3 class="text-2xl font-bold text-white">
+                    Nairobi → Eldoret
+                </h3>
+
+                <p class="text-gray-400 mt-4">
+                    Bus • Flights
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="py-28 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="text-center mb-16">
+
+            <h2 class="text-5xl font-bold text-white">
+                Smart Services
+            </h2>
+
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <!-- Bus -->
+            <div class="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden hover:-translate-y-3 transition duration-500"
+                 data-aos="fade-up">
+
+                <div class="overflow-hidden">
+
+                    <img src="{% static 'images/EasyCoach.jpg' %}"
+                         class="w-full h-64 object-cover group-hover:scale-110 transition duration-700">
+
+                </div>
+
+                <div class="p-7">
+
+                    <h3 class="text-2xl font-bold text-white">
+                        Bus Booking
+                    </h3>
+
+                    <p class="text-gray-400 mt-4">
+                        Smart bus ticket booking with QR verification.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- SGR -->
+            <div class="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden hover:-translate-y-3 transition duration-500"
+                 data-aos="fade-up">
+
+                <div class="overflow-hidden">
+
+                    <img src="{% static 'images/sgr.jpg' %}"
+                         class="w-full h-64 object-cover group-hover:scale-110 transition duration-700">
+
+                </div>
+
+                <div class="p-7">
+
+                    <h3 class="text-2xl font-bold text-white">
+                        SGR Booking
+                    </h3>
+
+                    <p class="text-gray-400 mt-4">
+                        Digital train ticketing with live schedules.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- Flights -->
+            <div class="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden hover:-translate-y-3 transition duration-500"
+                 data-aos="fade-up">
+
+                <div class="overflow-hidden">
+
+                    <img src="{% static 'images/flight.png' %}"
+                         class="w-full h-64 object-cover group-hover:scale-110 transition duration-700">
+
+                </div>
+
+                <div class="p-7">
+
+                    <h3 class="text-2xl font-bold text-white">
+                        Domestic Flights
+                    </h3>
+
+                    <p class="text-gray-400 mt-4">
+                        Fast and secure local flight reservations.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- Parcel Delivery -->
+            <div class="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden hover:-translate-y-3 transition duration-500"
+                 data-aos="fade-up">
+
+                <div class="overflow-hidden">
+
+                    <img src="{% static 'images/parcel.jpg' %}"
+                         class="w-full h-64 object-cover group-hover:scale-110 transition duration-700">
+
+                </div>
+
+                <div class="p-7">
+
+                    <h3 class="text-2xl font-bold text-white">
+                        Parcel Delivery
+                    </h3>
+
+                    <p class="text-gray-400 mt-4">
+                        Nationwide parcel delivery with GPS tracking.
+                    </p>
+
+                </div>
+
+            </div>
+            <!-- GPS Tracking -->
+            <div class="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden hover:-translate-y-3 transition duration-500"
+                 data-aos="fade-up">
+
+                <div class="overflow-hidden">
+
+                    <img src="{% static 'images/gps.png' %}"
+                         class="w-full h-64 object-cover group-hover:scale-110 transition duration-700">
+
+                </div>
+
+                <div class="p-7">
+
+                    <h3 class="text-2xl font-bold text-white">
+                        GPS Tracking
+                    </h3>
+
+                    <p class="text-gray-400 mt-4">
+                        Real-time tracking for all your bookings and deliveries.
+                    </p>
+
+                </div>
+
+            </div>
+
+             <!-- AI Recommendations -->
+             <div class="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden hover:-translate-y-3 transition duration-500"
+                 data-aos="fade-up">
+
+                <div class="overflow-hidden">
+
+                    <img src="{% static 'images/ai.jpg' %}"
+                         class="w-full h-64 object-cover group-hover:scale-110 transition duration-700">
+
+                </div>
+
+                <div class="p-7">
+
+                    <h3 class="text-2xl font-bold text-white">
+                        AI Recommendations
+                    </h3>
+
+                    <p class="text-gray-400 mt-4">
+                        Personalized travel suggestions based on your preferences.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div> 
+
+    </div>
+
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="py-28 bg-slate-950">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="text-center mb-16">
+
+            <h2 class="text-5xl font-bold text-white">
+                What Travelers Say
+            </h2>
+
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+
+            <div class="bg-white/5 border border-white/10 rounded-[2rem] p-8 backdrop-blur-xl hover:-translate-y-3 transition duration-500"
+                 data-aos="flip-left">
+
+                <div class="flex items-center gap-4 mb-6">
+
+                    <img src="{% static 'images/user1.jpg' %}"
+                         class="w-16 h-16 rounded-full object-cover">
+
+                    <div>
+
+                        <h3 class="text-white font-bold">
+                            Brian Odhiambo
+                        </h3>
+
+                        <p class="text-gray-400 text-sm">
+                            Nairobi
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <p class="text-gray-300 leading-relaxed">
+                    “SmartTravels completely changed how I travel across Kenya. Booking SGR and buses is now effortless.”
+                </p>
+
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-[2rem] p-8 backdrop-blur-xl hover:-translate-y-3 transition duration-500"
+                 data-aos="flip-left">
+
+                <div class="flex items-center gap-4 mb-6">
+
+                    <img src="{% static 'images/user2.jpg' %}"
+                         class="w-16 h-16 rounded-full object-cover">
+
+                    <div>
+
+                        <h3 class="text-white font-bold">
+                            Sheila Akinyi
+                        </h3>
+
+                        <p class="text-gray-400 text-sm">
+                            Kisumu
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <p class="text-gray-300 leading-relaxed">
+                    “Parcel tracking and QR tickets make this platform feel futuristic and very reliable.”
+                </p>
+
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-[2rem] p-8 backdrop-blur-xl hover:-translate-y-3 transition duration-500"
+                 data-aos="flip-left">
+
+                <div class="flex items-center gap-4 mb-6">
+
+                    <img src="{% static 'images/user3.jpg' %}"
+                         class="w-16 h-16 rounded-full object-cover">
+
+                    <div>
+
+                        <h3 class="text-white font-bold">
+                            David Mwangi
+                        </h3>
+
+                        <p class="text-gray-400 text-sm">
+                            Mombasa
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <p class="text-gray-300 leading-relaxed">
+                    “The interface is smooth, modern and payments through M-Pesa are extremely fast.”
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

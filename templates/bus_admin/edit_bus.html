@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Bus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<div class="flex">
+    {% include 'bus_admin/sidebar.html' %}
+
+    <div class="ml-64 w-full p-8">
+
+        <h1 class="text-2xl font-bold mb-6">Edit Bus</h1>
+
+        <!-- Form -->
+        <div class="bg-white p-6 rounded-xl shadow mb-10">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+                    <!-- Bus Number -->
+                    <div>
+                        <label class="block mb-2 font-semibold">Bus Number</label>
+                        <input type="text" name="bus_number" value="{{ bus.bus_number }}" class="w-full p-3 border rounded-lg" required>
+                    </div>
+
+                    <!-- Number Plate -->
+                    <div>
+                        <label class="block mb-2 font-semibold">Number Plate <span class="text-gray-500 font-normal text-sm">(optional)</span></label>
+                        <input type="text" name="number_plate" value="{{ bus.number_plate|default:'' }}" class="w-full p-3 border rounded-lg" placeholder="e.g ABC-1234">
+                    </div>
+
+                    <!-- Route -->
+                    <div>
+                        <label class="block mb-2 font-semibold">Route</label>
+                        <select name="route" class="w-full p-3 border rounded-lg" required>
+                            {% for route in routes %}
+                                <option value="{{ route.id }}" {% if route.id == bus.route.id %}selected{% endif %}>
+                                    {{ route.from_location }} → {{ route.to_location }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Driver -->
+                    <div>
+                        <label class="block mb-2 font-semibold">Driver</label>
+                        <select name="driver" class="w-full p-3 border rounded-lg" required>
+                            {% for driver in drivers %}
+                                <option value="{{ driver.id }}" {% if driver.id == bus.driver.id %}selected{% endif %}>
+                                    {{ driver.name }} ({{ driver.phone }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- Description -->
+                <div class="mt-6">
+                    <label class="block mb-2 font-semibold">Description <span class="text-gray-500 font-normal text-sm">(optional, visible to passengers)</span></label>
+                    <textarea name="description" class="w-full p-3 border rounded-lg" rows="4" placeholder="Brief description of the bus (e.g., luxury coach with WiFi, comfortable seats, air-conditioned)">{{ bus.description|default:'' }}</textarea>
+                </div>
+
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold">
+                        Update Bus
+                    </button>
+                    <a href="{% url 'add_buses' %}" class="bg-gray-400 text-white px-6 py-3 rounded-lg hover:bg-gray-500 font-semibold">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

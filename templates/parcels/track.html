@@ -1,0 +1,46 @@
+{% extends 'base/base.html' %}
+{% block title %}Track Parcel{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto">
+  <h1 class="text-2xl font-bold mb-2">🔍 Track Parcel</h1>
+  <p class="text-white/50 mb-6">Enter your parcel ID to see real-time status.</p>
+  <form method="get" class="flex gap-3 mb-8">
+    <input name="id" value="{{ query }}" placeholder="PKG-XXXXXXXX" class="st-input flex-1 uppercase">
+    <button type="submit" class="st-btn px-6">Track →</button>
+  </form>
+  {% if query and not parcel %}
+    <div class="st-card text-center text-white/50">❌ No parcel found for ID <strong>{{ query }}</strong></div>
+  {% endif %}
+  {% if parcel %}
+  <div class="st-card mb-4">
+    <div class="flex justify-between items-start mb-4">
+      <div>
+        <p class="font-mono text-xl font-bold text-[#00B4D8]">{{ parcel.parcel_id }}</p>
+        <p class="font-semibold text-lg mt-1">{{ parcel.origin }} → {{ parcel.destination }}</p>
+        <p class="text-sm text-white/50">Recipient: {{ parcel.recipient_name }} · {{ parcel.recipient_phone }}</p>
+      </div>
+      <span class="px-3 py-1 rounded-full text-sm font-semibold
+        {% if parcel.status == 'collected' %}bg-green-500/20 text-green-300
+        {% elif parcel.status == 'in_transit' %}bg-blue-500/20 text-blue-300
+        {% else %}bg-amber-500/20 text-amber-300{% endif %}">
+        {{ parcel.get_status_display }}
+      </span>
+    </div>
+    {% if logs %}
+    <div class="border-t border-white/10 pt-4">
+      <p class="text-xs text-white/40 uppercase tracking-wide mb-3">Timeline</p>
+      {% for log in logs %}
+      <div class="flex gap-3 mb-3">
+        <div class="w-2 h-2 rounded-full bg-[#2979D9] mt-1.5 flex-shrink-0"></div>
+        <div>
+          <p class="text-sm font-medium">{{ log.get_status_display|default:log.status }}</p>
+          <p class="text-xs text-white/40">{{ log.timestamp|date:"d M Y H:i" }}{% if log.location %} · {{ log.location }}{% endif %}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

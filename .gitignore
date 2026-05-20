@@ -1,0 +1,62 @@
+# Python
+*.py[cod]
+*$py.class
+__pycache__/
+.pytest_cache/
+.python-version
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+media/
+*.sqlite3-journal
+
+# Environment variables
+.env
+.env.*
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Build / packaging
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnpm-debug.log*

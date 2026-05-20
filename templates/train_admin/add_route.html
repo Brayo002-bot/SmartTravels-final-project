@@ -1,0 +1,392 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Route Management | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        ::-webkit-scrollbar{
+            width:8px;
+            height:8px;
+        }
+
+        ::-webkit-scrollbar-thumb{
+            background:#cbd5e1;
+            border-radius:20px;
+        }
+
+        ::-webkit-scrollbar-track{
+            background:transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-blue-50 min-h-screen">
+
+<div class="flex">
+
+    {% include 'train_admin/sidebar.html' %}
+
+    <!-- MAIN CONTENT -->
+    <div class="ml-64 w-full p-8">
+
+        <!-- PAGE HEADER -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+
+            <div>
+
+                <div class="flex items-center gap-4">
+
+                    <div class="h-16 w-16 rounded-3xl bg-gradient-to-r from-indigo-600 to-blue-500 flex items-center justify-center text-3xl shadow-xl">
+                        🛤️
+                    </div>
+
+                    <div>
+                        <h1 class="text-4xl font-extrabold text-gray-800">
+                            Train Route Management
+                        </h1>
+
+                        <p class="text-gray-500 mt-1">
+                            Create, edit and manage train travel destinations.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- QUICK STATS -->
+            <div class="grid grid-cols-2 gap-4">
+
+                <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-2xl px-5 py-4 shadow-lg">
+                    <p class="text-sm text-gray-500">
+                        Total Routes
+                    </p>
+
+                    <h2 class="text-2xl font-bold text-indigo-600">
+                        {{ routes|length }}
+                    </h2>
+                </div>
+
+                <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-2xl px-5 py-4 shadow-lg">
+                    <p class="text-sm text-gray-500">
+                        Active Status
+                    </p>
+
+                    <h2 class="text-2xl font-bold text-green-600">
+                        Live
+                    </h2>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ALERTS -->
+        {% if messages %}
+            {% for message in messages %}
+
+            <div class="mb-5 p-4 rounded-2xl shadow-sm border
+                {% if message.tags == 'error' %}
+                    bg-red-50 border-red-200 text-red-700
+                {% elif message.tags == 'warning' %}
+                    bg-yellow-50 border-yellow-200 text-yellow-700
+                {% else %}
+                    bg-green-50 border-green-200 text-green-700
+                {% endif %}
+            ">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">
+                        {% if message.tags == 'error' %}
+                            ❌
+                        {% elif message.tags == 'warning' %}
+                            ⚠️
+                        {% else %}
+                            ✅
+                        {% endif %}
+                    </span>
+
+                    <span class="font-medium">
+                        {{ message }}
+                    </span>
+                </div>
+            </div>
+
+            {% endfor %}
+        {% endif %}
+
+        <!-- TOP GRID -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
+
+            <!-- ADD ROUTE FORM -->
+            <div class="xl:col-span-1">
+
+                <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-3xl shadow-xl p-8">
+
+                    <div class="flex items-center gap-3 mb-6">
+
+                        <div class="h-12 w-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-2xl">
+                            ➕
+                        </div>
+
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">
+                                Add Route
+                            </h2>
+
+                            <p class="text-sm text-gray-500">
+                                Create a new train destination route.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <form method="POST" class="space-y-5">
+
+                        {% csrf_token %}
+
+                        <!-- FROM -->
+                        <div>
+                            <label class="block mb-2 text-sm font-semibold text-gray-700">
+                                From Location
+                            </label>
+
+                            <input type="text"
+                                   name="from_location"
+                                   placeholder="e.g Nairobi"
+                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                                   required>
+                        </div>
+
+                        <!-- TO -->
+                        <div>
+                            <label class="block mb-2 text-sm font-semibold text-gray-700">
+                                To Location
+                            </label>
+
+                            <input type="text"
+                                   name="to_location"
+                                   placeholder="e.g Mombasa"
+                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                                   required>
+                        </div>
+
+                        <!-- PRICE -->
+                        <div>
+                            <label class="block mb-2 text-sm font-semibold text-gray-700">
+                                Ticket Price (KES)
+                            </label>
+
+                            <input type="number"
+                                   name="price"
+                                   placeholder="0.00"
+                                   step="0.01"
+                                   min="0"
+                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                        </div>
+
+                        <!-- BUTTON -->
+                        <button type="submit"
+                                class="w-full bg-gradient-to-r from-indigo-600 to-blue-500 text-white py-4 rounded-2xl hover:scale-[1.01] transition shadow-lg font-semibold">
+
+                            Save Route
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <!-- ROUTES TABLE -->
+            <div class="xl:col-span-2">
+
+                <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-3xl shadow-xl overflow-hidden">
+
+                    <!-- TABLE HEADER -->
+                    <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">
+                                Available Routes
+                            </h2>
+
+                            <p class="text-sm text-gray-500 mt-1">
+                                Manage all train destinations and ticket pricing.
+                            </p>
+                        </div>
+
+                        <div class="relative">
+
+                            <input type="text"
+                                   id="searchInput"
+                                   placeholder="Search routes..."
+                                   class="pl-11 pr-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none">
+
+                            <span class="absolute left-4 top-3.5 text-gray-400">
+                                🔍
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <!-- TABLE -->
+                    <div class="overflow-x-auto">
+
+                        <table class="min-w-full">
+
+                            <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
+
+                                <tr>
+                                    <th class="px-6 py-4 text-left">
+                                        From
+                                    </th>
+
+                                    <th class="px-6 py-4 text-left">
+                                        To
+                                    </th>
+
+                                    <th class="px-6 py-4 text-left">
+                                        Ticket Price
+                                    </th>
+
+                                    <th class="px-6 py-4 text-left">
+                                        Status
+                                    </th>
+
+                                    <th class="px-6 py-4 text-left">
+                                        Actions
+                                    </th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="routesTable" class="divide-y divide-gray-100">
+
+                                {% for route in routes %}
+
+                                <tr class="hover:bg-indigo-50/40 transition">
+
+                                    <td class="px-6 py-5 font-semibold text-gray-800">
+                                        {{ route.from_location }}
+                                    </td>
+
+                                    <td class="px-6 py-5 text-gray-700">
+                                        {{ route.to_location }}
+                                    </td>
+
+                                    <td class="px-6 py-5">
+
+                                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                            KES {{ route.price|floatformat:2 }}
+                                        </span>
+
+                                    </td>
+
+                                    <td class="px-6 py-5">
+
+                                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            Active
+                                        </span>
+
+                                    </td>
+
+                                    <td class="px-6 py-5">
+
+                                        <div class="flex flex-wrap gap-2">
+
+                                            <a href="{% url 'train_edit_route' route.id %}"
+                                               class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-blue-700 transition font-medium shadow">
+
+                                                ✏️ Edit
+
+                                            </a>
+
+                                            <a href="{% url 'train_delete_route' route.id %}"
+                                               onclick="return confirm('Delete this route?')"
+                                               class="bg-red-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-red-700 transition font-medium shadow">
+
+                                                🗑 Delete
+
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+
+                                        <div class="flex flex-col items-center gap-3">
+
+                                            <div class="text-5xl">
+                                                🚆
+                                            </div>
+
+                                            <div>
+                                                <p class="font-semibold">
+                                                    No routes added yet
+                                                </p>
+
+                                                <p class="text-sm text-gray-400 mt-1">
+                                                    Start by creating your first train route.
+                                                </p>
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- SEARCH SCRIPT -->
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const tableRows = document.querySelectorAll('#routesTable tr');
+
+    searchInput.addEventListener('keyup', function () {
+
+        const value = this.value.toLowerCase();
+
+        tableRows.forEach(row => {
+
+            const text = row.innerText.toLowerCase();
+
+            row.style.display = text.includes(value) ? '' : 'none';
+
+        });
+
+    });
+</script>
+
+</body>
+</html>

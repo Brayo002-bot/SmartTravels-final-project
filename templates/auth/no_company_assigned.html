@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>No Company Assigned</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+<div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+    <div class="text-center">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
+            <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Company Not Assigned</h2>
+        <p class="text-gray-600 mb-6">
+            You are registered as a {{ user_role }}, but no transportation company has been assigned to your account yet.
+        </p>
+        <p class="text-sm text-gray-500 mb-6">
+            Please contact the system administrator to assign you to a company before you can access your dashboard.
+        </p>
+        <a href="{% url 'logout' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Logout
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

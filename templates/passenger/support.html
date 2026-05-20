@@ -1,0 +1,465 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Center | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+            font-family:'DM Sans',sans-serif;
+            background:#071120;
+        }
+
+        .playfair{
+            font-family:'Playfair Display',serif;
+        }
+
+        .glass{
+            background:rgba(255,255,255,0.05);
+            backdrop-filter:blur(12px);
+            border:1px solid rgba(255,255,255,0.08);
+        }
+
+        .gold{
+            color:#d4af37;
+        }
+
+        .gold-bg{
+            background:#d4af37;
+        }
+
+        .support-card:hover{
+            transform:translateY(-4px);
+            transition:0.3s ease;
+        }
+
+        .gradient-bg{
+            background:
+            radial-gradient(circle at top right, rgba(212,175,55,0.14), transparent 30%),
+            radial-gradient(circle at bottom left, rgba(59,130,246,0.10), transparent 30%),
+            #071120;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar{
+            display:none;
+        }
+    </style>
+</head>
+<body class="text-white gradient-bg min-h-screen">
+
+<div class="flex">
+
+    <!-- Sidebar -->
+    {% include 'passenger/sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="flex-1 lg:ml-64 p-6 md:p-10">
+
+        <!-- Header -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
+
+            <div>
+                <h1 class="playfair text-4xl font-bold mb-3">
+                    Support Center
+                </h1>
+
+                <p class="text-gray-400 max-w-2xl leading-relaxed">
+                    Need help with your bookings, tickets, loyalty points, parcel delivery or account?
+                    Contact SmartTravels support or directly reach transport companies available on the platform.
+                </p>
+            </div>
+
+            <!-- Emergency Support -->
+            <div class="glass rounded-2xl px-6 py-5 max-w-sm">
+                <div class="flex items-center gap-4">
+
+                    <div class="w-14 h-14 rounded-2xl bg-red-500/20 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="w-7 h-7 text-red-400"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M12 8v4m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h3 class="font-semibold text-lg">Emergency Help</h3>
+                        <p class="text-gray-400 text-sm">Available 24/7</p>
+                        <p class="gold font-semibold mt-1">+254 700 123 456</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Quick Help Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+
+            <div class="glass rounded-3xl p-6 support-card">
+                <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-5">
+                    ✈️
+                </div>
+
+                <h3 class="text-lg font-semibold mb-2">
+                    Booking Support
+                </h3>
+
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Assistance with flights, buses, trains and seat reservations.
+                </p>
+            </div>
+
+            <div class="glass rounded-3xl p-6 support-card">
+                <div class="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center mb-5">
+                    💳
+                </div>
+
+                <h3 class="text-lg font-semibold mb-2">
+                    Payment Issues
+                </h3>
+
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Help with M-Pesa, refunds, failed payments and confirmations.
+                </p>
+            </div>
+
+            <div class="glass rounded-3xl p-6 support-card">
+                <div class="w-14 h-14 rounded-2xl bg-yellow-500/20 flex items-center justify-center mb-5">
+                    🎁
+                </div>
+
+                <h3 class="text-lg font-semibold mb-2">
+                    Loyalty Program
+                </h3>
+
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Redeem travel points and manage your rewards account.
+                </p>
+            </div>
+
+            <div class="glass rounded-3xl p-6 support-card">
+                <div class="w-14 h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center mb-5">
+                    📦
+                </div>
+
+                <h3 class="text-lg font-semibold mb-2">
+                    Parcel Tracking
+                </h3>
+
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Track parcels and get delivery support from transport companies.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Chatbot Support -->
+        <div class="glass rounded-3xl p-8 mb-12">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
+                <div>
+                    <h2 class="playfair text-3xl font-bold">SmartTravels Chatbot</h2>
+                    <p class="text-gray-400 mt-2">Ask a quick question or choose one of the suggested topics below.</p>
+                </div>
+                <div class="flex gap-3 flex-wrap">
+                    <a href="tel:+254700123456" class="rounded-2xl bg-red-500/15 px-5 py-3 text-sm font-semibold text-red-200 hover:bg-red-500/25 transition">Emergency Call</a>
+                    <button id="clear-chat" class="rounded-2xl bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/20 transition">Reset Chat</button>
+                </div>
+            </div>
+            <div class="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
+                <div class="rounded-3xl bg-slate-900/80 border border-white/10 p-6">
+                    <div id="chat-output" class="min-h-[280px] rounded-3xl bg-slate-950/90 p-5 overflow-y-auto text-sm leading-6 text-slate-300"></div>
+                    <div class="mt-5 flex gap-3 flex-wrap">
+                        <button data-question="How do I book a ticket?" class="chat-option rounded-2xl bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">Book a ticket</button>
+                        <button data-question="How can I track my parcel?" class="chat-option rounded-2xl bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">Track parcel</button>
+                        <button data-question="How do loyalty points work?" class="chat-option rounded-2xl bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">Loyalty points</button>
+                        <button data-question="What payment methods are supported?" class="chat-option rounded-2xl bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">Payment methods</button>
+                    </div>
+                </div>
+                <div class="rounded-3xl bg-slate-900/80 border border-white/10 p-6">
+                    <h3 class="text-xl font-semibold mb-4">Chatbot Answers</h3>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <p><span class="text-amber-300">Q:</span> How do I contact support?</p>
+                        <p><span class="text-slate-400">A:</span> Use the emergency button or reach out to our support team via the contact cards below.</p>
+                        <p><span class="text-amber-300">Q:</span> How do I redeem points?</p>
+                        <p><span class="text-slate-400">A:</span> Open Loyalty and choose a reward to redeem your travel points.</p>
+                        <p><span class="text-amber-300">Q:</span> Where do I see traffic alerts?</p>
+                        <p><span class="text-slate-400">A:</span> Go to Traffic Alerts from the sidebar to see the latest route warnings.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Admin Contacts -->
+        <div class="mb-12">
+
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="playfair text-3xl font-bold">
+                        SmartTravels Administrators
+                    </h2>
+
+                    <p class="text-gray-400 mt-2">
+                        Reach the platform support team directly.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+                {% for admin in admins %}
+                <div class="glass rounded-3xl p-6 support-card">
+
+                    <div class="flex items-center gap-4 mb-5">
+
+                        <div class="w-16 h-16 rounded-2xl bg-yellow-500/20 flex items-center justify-center text-2xl">
+                            👨‍💼
+                        </div>
+
+                        <div>
+                            <h3 class="font-semibold text-lg">
+                                {{ admin.full_name }}
+                            </h3>
+
+                            <p class="text-sm text-gray-400">
+                                System Administrator
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="space-y-4 text-sm">
+
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-500">📧</span>
+                            <span>{{ admin.email }}</span>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-500">📞</span>
+                            <span>{{ admin.phone }}</span>
+                        </div>
+
+                    </div>
+
+                    <button class="mt-6 w-full gold-bg text-black font-semibold py-3 rounded-xl hover:opacity-90 transition">
+                        Contact Admin
+                    </button>
+
+                </div>
+                {% empty %}
+                <div class="glass rounded-3xl p-8 text-gray-400">
+                    No administrators available at the moment.
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- Transport Companies -->
+        <div>
+
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="playfair text-3xl font-bold">
+                        Transport Companies
+                    </h2>
+
+                    <p class="text-gray-400 mt-2">
+                        Contact companies directly for route, luggage, parcel or travel inquiries.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+                {% for company in companies %}
+                <div class="glass rounded-3xl overflow-hidden support-card">
+
+                    <!-- Company Image -->
+                    <div class="h-44 overflow-hidden bg-gray-800">
+                        {% if company.logo_image %}
+                        <img src="{{ company.logo_image.url }}"
+                             alt="{{ company.name }}"
+                             class="w-full h-full object-cover">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-5xl">
+                            🚍
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Company Info -->
+                    <div class="p-6">
+
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold">
+                                {{ company.name }}
+                            </h3>
+
+                            <span class="bg-yellow-500/20 text-yellow-300 text-xs px-3 py-1 rounded-full">
+                                {{ company.get_transport_type_display }}
+                            </span>
+                        </div>
+
+                        <p class="text-gray-400 text-sm leading-relaxed mb-5">
+                            {{ company.description|truncatewords:20 }}
+                        </p>
+
+                        <div class="space-y-3 text-sm">
+
+                            <div class="flex items-center gap-3">
+                                <span class="text-gray-500">📧</span>
+                                <span>{{ company.contact_email }}</span>
+                            </div>
+
+                            <div class="flex items-center gap-3">
+                                <span class="text-gray-500">📞</span>
+                                <span>{{ company.contact_phone }}</span>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <span class="text-gray-500">📍</span>
+                                <span class="text-gray-300">
+                                    {{ company.address }}
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mt-6">
+
+                            <button class="bg-yellow-500 text-black font-semibold py-3 rounded-xl hover:opacity-90 transition">
+                                Contact
+                            </button>
+
+                            <button class="bg-white/10 border border-white/10 py-3 rounded-xl hover:bg-white/20 transition">
+                                View Routes
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                {% empty %}
+                <div class="glass rounded-3xl p-8 text-gray-400">
+                    No transport companies available.
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="mt-14">
+
+            <div class="glass rounded-3xl p-8">
+
+                <h2 class="playfair text-3xl font-bold mb-8">
+                    Frequently Asked Questions
+                </h2>
+
+                <div class="space-y-6">
+
+                    <div class="border-b border-white/10 pb-5">
+                        <h3 class="font-semibold mb-2">
+                            How do I redeem loyalty points?
+                        </h3>
+
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Visit the Loyalty page and choose an available travel reward.
+                            Points can be redeemed for bus, train or flight discounts.
+                        </p>
+                    </div>
+
+                    <div class="border-b border-white/10 pb-5">
+                        <h3 class="font-semibold mb-2">
+                            How do I cancel my booking?
+                        </h3>
+
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Go to My Bookings and select the ticket you wish to cancel.
+                            Refund policies vary depending on the transport company.
+                        </p>
+                    </div>
+
+                    <div class="border-b border-white/10 pb-5">
+                        <h3 class="font-semibold mb-2">
+                            What payment methods are supported?
+                        </h3>
+
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            SmartTravels supports M-Pesa, debit cards, credit cards and mobile banking.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="font-semibold mb-2">
+                            Can I send parcels through SmartTravels?
+                        </h3>
+
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Yes. Select the parcel delivery option and choose your preferred transport company.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+    <script>
+        const responses = {
+            'How do I book a ticket?': 'Use the passenger dashboard search to locate buses, trains, or flights. Select your route, date and complete the booking flow with payment.',
+            'How can I track my parcel?': 'Visit Track Parcel from the sidebar. Your parcel status will show live updates and current transit location.',
+            'How do loyalty points work?': 'Earn points on every booking. Redeem them on the Loyalty page for travel perks.',
+            'What payment methods are supported?': 'SmartTravels supports M-Pesa, cards, cash and loyalty point redemptions where available.',
+        };
+
+        const output = document.getElementById('chat-output');
+        const options = document.querySelectorAll('.chat-option');
+        const clearButton = document.getElementById('clear-chat');
+
+        function addMessage(role, message) {
+            const wrapper = document.createElement('div');
+            wrapper.className = role === 'user' ? 'bg-white/10 border border-slate-800 p-4 rounded-3xl text-slate-100' : 'bg-slate-800 border border-slate-700 p-4 rounded-3xl text-slate-300';
+            wrapper.innerHTML = `<strong class="block mb-2">${role === 'user' ? 'You' : 'Chatbot'}</strong><div>${message}</div>`;
+            output.appendChild(wrapper);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        options.forEach(button => {
+            button.addEventListener('click', () => {
+                const question = button.dataset.question;
+                addMessage('user', question);
+                setTimeout(() => {
+                    addMessage('bot', responses[question] || 'I am here to help. Please check the sidebar sections for more information.');
+                }, 250);
+            });
+        });
+
+        clearButton.addEventListener('click', () => {
+            output.innerHTML = '';
+        });
+    </script>
+</body>
+</html>

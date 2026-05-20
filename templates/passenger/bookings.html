@@ -1,0 +1,417 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Bookings | SmartTravels</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy: #080d1a;
+  --gold: #c9a84c;
+  --gold-l: #e8c97a;
+  --border: rgba(255,255,255,0.08);
+  --border-h: rgba(255,255,255,0.16);
+  --glass: rgba(255,255,255,0.04);
+  --glass-h: rgba(255,255,255,0.07);
+  --muted: rgba(255,255,255,0.45);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy); color: #fff;
+  min-height: 100vh; overflow-x: hidden;
+}
+
+.orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+.orb-1 { width: 500px; height: 500px; top: -150px; right: -150px; background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 65%); }
+.orb-2 { width: 400px; height: 400px; bottom: -120px; left: -100px; background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 65%); }
+
+.page { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; z-index: 1; }
+
+/* TOPBAR */
+.page-header {
+  background: var(--glass); border: 0.5px solid var(--border);
+  border-radius: 16px; padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;
+}
+.page-header-left { display: flex; align-items: center; gap: 14px; }
+.page-icon {
+  width: 52px; height: 52px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  background: rgba(201,168,76,0.1);
+  border: 0.5px solid rgba(201,168,76,0.2);
+  color: var(--gold);
+  animation: floatY 4s ease-in-out infinite;
+}
+@keyframes floatY { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem; font-weight: 500; color: #fff;
+}
+.page-sub { font-size: 0.8rem; font-weight: 300; color: var(--muted); margin-top: 2px; }
+
+.hdr-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn-outline {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: 9px;
+  background: var(--glass); border: 0.5px solid var(--border);
+  color: rgba(255,255,255,0.75); font-family: 'DM Sans', sans-serif;
+  font-size: 0.83rem; font-weight: 400; text-decoration: none;
+  transition: background 0.18s, border-color 0.18s;
+}
+.btn-outline:hover { background: var(--glass-h); border-color: var(--border-h); }
+.btn-gold {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: 9px;
+  background: var(--gold); border: none;
+  color: #0a0f1e; font-family: 'DM Sans', sans-serif;
+  font-size: 0.83rem; font-weight: 500; text-decoration: none;
+  transition: background 0.18s;
+}
+.btn-gold:hover { background: var(--gold-l); }
+.btn-danger {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: 9px;
+  background: rgba(239,68,68,0.1); border: 0.5px solid rgba(239,68,68,0.25);
+  color: #f87171; font-family: 'DM Sans', sans-serif;
+  font-size: 0.83rem; font-weight: 400; text-decoration: none;
+  transition: background 0.18s;
+}
+.btn-danger:hover { background: rgba(239,68,68,0.18); }
+
+/* STATS */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+  gap: 1rem; margin-bottom: 1.5rem;
+}
+.stat-card {
+  background: var(--glass); border: 0.5px solid var(--border);
+  border-radius: 14px; padding: 1.1rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: border-color 0.2s, transform 0.2s; position: relative; overflow: hidden;
+}
+.stat-card:hover { border-color: var(--border-h); transform: translateY(-3px); }
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: 14px 14px 0 0;
+}
+.stat-card.c-teal::before { background: #2dd4bf; }
+.stat-card.c-purple::before { background: #a78bfa; }
+.stat-card.c-pink::before { background: #f472b6; }
+.stat-card.c-amber::before { background: #fbbf24; }
+
+.stat-label { font-size: 0.73rem; font-weight: 400; color: var(--muted); }
+.stat-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; font-weight: 500; color: #fff; margin-top: 4px;
+}
+.stat-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.stat-icon.teal { background: rgba(45,212,191,0.1); color: #2dd4bf; }
+.stat-icon.purple { background: rgba(167,139,250,0.1); color: #a78bfa; }
+.stat-icon.pink { background: rgba(244,114,182,0.1); color: #f472b6; }
+.stat-icon.amber { background: rgba(251,191,36,0.1); color: #fbbf24; }
+
+/* BOOKING TABLES */
+.booking-section { margin-bottom: 1.5rem; }
+.booking-card {
+  background: var(--glass); border: 0.5px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+}
+.booking-card-header {
+  padding: 1rem 1.25rem; border-bottom: 0.5px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.bk-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.bk-icon.teal { background: rgba(45,212,191,0.1); color: #2dd4bf; }
+.bk-icon.purple { background: rgba(167,139,250,0.1); color: #a78bfa; }
+.bk-icon.pink { background: rgba(244,114,182,0.1); color: #f472b6; }
+.bk-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 500; color: #fff;
+}
+.bk-sub { font-size: 0.75rem; font-weight: 300; color: var(--muted); }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: rgba(255,255,255,0.03); }
+th {
+  padding: 10px 16px; text-align: left;
+  font-size: 0.72rem; font-weight: 500; color: var(--muted);
+  letter-spacing: 0.05em; text-transform: uppercase;
+  white-space: nowrap;
+}
+td { padding: 12px 16px; font-size: 0.85rem; font-weight: 300; white-space: nowrap; }
+tbody tr { border-top: 0.5px solid var(--border); transition: background 0.15s; }
+tbody tr:hover { background: var(--glass-h); }
+.ref { font-family: 'DM Mono', monospace; font-size: 0.8rem; font-weight: 500; }
+.ref.teal { color: #2dd4bf; }
+.ref.purple { color: #a78bfa; }
+.ref.pink { color: #f472b6; }
+
+.status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 100px;
+  font-size: 0.72rem; font-weight: 500; letter-spacing: 0.02em;
+}
+.status-badge.confirmed { background: rgba(74,222,128,0.1); color: #4ade80; border: 0.5px solid rgba(74,222,128,0.25); }
+.status-badge.cancelled { background: rgba(248,113,113,0.1); color: #f87171; border: 0.5px solid rgba(248,113,113,0.25); }
+.status-badge.pending { background: rgba(251,191,36,0.1); color: #fbbf24; border: 0.5px solid rgba(251,191,36,0.25); }
+
+/* EMPTY STATE */
+.empty-full {
+  background: var(--glass); border: 0.5px solid var(--border);
+  border-radius: 16px; padding: 4rem 2rem; text-align: center;
+}
+.empty-icon-lg {
+  width: 80px; height: 80px; border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem; font-size: 2rem;
+  background: rgba(201,168,76,0.08); color: var(--gold);
+  animation: floatY 4s ease-in-out infinite;
+}
+.empty-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem; font-weight: 500; color: #fff; margin-bottom: 0.75rem;
+}
+.empty-sub { font-size: 0.88rem; font-weight: 300; color: var(--muted); max-width: 440px; margin: 0 auto 2rem; line-height: 1.7; }
+.empty-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-icon"><i class="fa-solid fa-ticket"></i></div>
+      <div>
+        <div class="page-title">My Bookings</div>
+        <div class="page-sub">All your SmartTravels journeys in one place</div>
+      </div>
+    </div>
+    <div class="hdr-actions">
+      <a href="{% url 'dashboard' %}" class="btn-outline">
+        <i class="fa-solid fa-house" style="font-size:0.8rem;"></i> Dashboard
+      </a>
+      <a href="{% url 'tickets' %}" class="btn-gold">
+        <i class="fa-solid fa-qrcode" style="font-size:0.8rem;"></i> My Tickets
+      </a>
+      <a href="{% url 'logout' %}" class="btn-danger">
+        <i class="fa-solid fa-right-from-bracket" style="font-size:0.8rem;"></i> Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+
+    <div class="stat-card c-teal">
+      <div>
+        <div class="stat-label">Bus Trips</div>
+        <div class="stat-value">{{ bus_bookings|length }}</div>
+      </div>
+      <div class="stat-icon teal"><i class="fa-solid fa-bus"></i></div>
+    </div>
+
+    <div class="stat-card c-purple">
+      <div>
+        <div class="stat-label">Train Trips</div>
+        <div class="stat-value">{{ train_bookings|length }}</div>
+      </div>
+      <div class="stat-icon purple"><i class="fa-solid fa-train"></i></div>
+    </div>
+
+    <div class="stat-card c-pink">
+      <div>
+        <div class="stat-label">Flights</div>
+        <div class="stat-value">{{ flight_bookings|length }}</div>
+      </div>
+      <div class="stat-icon pink"><i class="fa-solid fa-plane"></i></div>
+    </div>
+
+    <div class="stat-card c-amber">
+      <div>
+        <div class="stat-label">Loyalty Points</div>
+        <div class="stat-value">{{ loyalty_points|default:'0' }}</div>
+      </div>
+      <div class="stat-icon amber"><i class="fa-solid fa-gift"></i></div>
+    </div>
+
+  </div>
+
+  <!-- BUS BOOKINGS -->
+  {% if bus_bookings %}
+  <div class="booking-section">
+    <div class="booking-card">
+      <div class="booking-card-header">
+        <div class="bk-icon teal"><i class="fa-solid fa-bus"></i></div>
+        <div>
+          <div class="bk-title">Bus Bookings</div>
+          <div class="bk-sub">Long-distance and shuttle journeys</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>Route</th>
+              <th>Date</th>
+              <th>Seat</th>
+              <th>Price</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in bus_bookings %}
+            <tr>
+              <td><span class="ref teal">{{ b.booking_reference|default:"—" }}</span></td>
+              <td>{{ b.route.from_location }} → {{ b.route.to_location }}</td>
+              <td>{{ b.travel_date }}</td>
+              <td>{{ b.seat_number|default:"—" }}</td>
+              <td style="font-weight:500;">KES {{ b.price }}</td>
+              <td>
+                <span class="status-badge {% if b.status == 'confirmed' %}confirmed{% elif b.status == 'cancelled' %}cancelled{% else %}pending{% endif %}">
+                  <i class="fa-solid fa-circle" style="font-size:0.45rem;"></i>
+                  {{ b.status|title }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- TRAIN BOOKINGS -->
+  {% if train_bookings %}
+  <div class="booking-section">
+    <div class="booking-card">
+      <div class="booking-card-header">
+        <div class="bk-icon purple"><i class="fa-solid fa-train"></i></div>
+        <div>
+          <div class="bk-title">Train Bookings</div>
+          <div class="bk-sub">SGR and railway journeys</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>Route</th>
+              <th>Date</th>
+              <th>Seat</th>
+              <th>Price</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in train_bookings %}
+            <tr>
+              <td><span class="ref purple">{{ b.booking_reference|default:"—" }}</span></td>
+              <td>{{ b.route.from_location }} → {{ b.route.to_location }}</td>
+              <td>{{ b.travel_date }}</td>
+              <td>{{ b.seat_number|default:"—" }}</td>
+              <td style="font-weight:500;">KES {{ b.price }}</td>
+              <td>
+                <span class="status-badge {% if b.status == 'confirmed' %}confirmed{% elif b.status == 'cancelled' %}cancelled{% else %}pending{% endif %}">
+                  <i class="fa-solid fa-circle" style="font-size:0.45rem;"></i>
+                  {{ b.status|title }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- FLIGHT BOOKINGS -->
+  {% if flight_bookings %}
+  <div class="booking-section">
+    <div class="booking-card">
+      <div class="booking-card-header">
+        <div class="bk-icon pink"><i class="fa-solid fa-plane"></i></div>
+        <div>
+          <div class="bk-title">Flight Bookings</div>
+          <div class="bk-sub">Domestic and regional flights</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>Route</th>
+              <th>Date</th>
+              <th>Seat</th>
+              <th>Price</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in flight_bookings %}
+            <tr>
+              <td><span class="ref pink">{{ b.booking_reference|default:"—" }}</span></td>
+              <td>{{ b.route.from_location }} → {{ b.route.to_location }}</td>
+              <td>{{ b.travel_date }}</td>
+              <td>{{ b.seat_number|default:"—" }}</td>
+              <td style="font-weight:500;">KES {{ b.price }}</td>
+              <td>
+                <span class="status-badge {% if b.status == 'confirmed' %}confirmed{% elif b.status == 'cancelled' %}cancelled{% else %}pending{% endif %}">
+                  <i class="fa-solid fa-circle" style="font-size:0.45rem;"></i>
+                  {{ b.status|title }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- EMPTY STATE -->
+  {% if not bus_bookings and not train_bookings and not flight_bookings %}
+  <div class="empty-full">
+    <div class="empty-icon-lg"><i class="fa-solid fa-ticket"></i></div>
+    <div class="empty-title">No bookings yet</div>
+    <div class="empty-sub">
+      Start your SmartTravels journey by searching for buses, trains,
+      flights and shuttles across the region.
+    </div>
+    <div class="empty-actions">
+      <a href="{% url 'dashboard' %}" class="btn-gold">
+        <i class="fa-solid fa-route" style="font-size:0.8rem;"></i> Search &amp; Book
+      </a>
+    </div>
+  </div>
+  {% endif %}
+
+</div><!-- /page -->
+
+</body>
+</html>

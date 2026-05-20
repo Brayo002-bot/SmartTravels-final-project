@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Privacy Policy | SmartTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="max-w-4xl mx-auto p-6">
+
+    <div class="bg-white rounded-2xl shadow p-8">
+
+        <h1 class="text-3xl font-bold mb-4">🔐 Privacy Policy</h1>
+        <p class="text-gray-500 mb-6">Effective Date: {{ date|default:"2026" }}</p>
+
+        <p class="mb-4 text-gray-700">
+            SmartTravels is committed to protecting your privacy. This policy explains how we collect,
+            use, and safeguard your information when you use our transport booking system.
+        </p>
+
+        <h2 class="text-xl font-bold mt-6 mb-2">1. Information We Collect</h2>
+        <ul class="list-disc ml-6 text-gray-700 space-y-1">
+            <li>Name (for ticket identification)</li>
+            <li>Phone number (for STK payments and ticket delivery)</li>
+            <li>Travel details (route, seat, time)</li>
+            <li>Location data (only for drivers during live trip tracking)</li>
+        </ul>
+
+        <h2 class="text-xl font-bold mt-6 mb-2">2. Why We Collect Your Data</h2>
+        <p class="text-gray-700 mb-2">
+            We collect your data strictly for the following purposes:
+        </p>
+
+        <ul class="list-disc ml-6 text-gray-700 space-y-1">
+            <li>To process bookings and issue valid tickets</li>
+            <li>To enable M-Pesa STK push payments</li>
+            <li>To track journeys for safety and real-time updates</li>
+            <li>To manage passenger manifests for drivers and transport operators</li>
+            <li><b>To award loyalty points for frequent travelers</b></li>
+            <li>To improve service reliability and customer experience</li>
+        </ul>
+
+        <h2 class="text-xl font-bold mt-6 mb-2">3. No Account Required</h2>
+        <p class="text-gray-700">
+            Passengers are not required to create an account or log in. We only store minimal booking data
+            needed to complete your journey and send your ticket.
+        </p>
+
+        <h2 class="text-xl font-bold mt-6 mb-2">4. Data Sharing</h2>
+        <p class="text-gray-700">
+            We do not sell your data. Information is only shared with transport operators (bus, train, flight)
+            to ensure smooth travel operations.
+        </p>
+
+        <h2 class="text-xl font-bold mt-6 mb-2">5. Data Security</h2>
+        <p class="text-gray-700">
+            Your data is protected using secure servers, encrypted transactions, and restricted access systems.
+        </p>
+
+        <h2 class="text-xl font-bold mt-6 mb-2">6. Driver GPS Tracking</h2>
+        <p class="text-gray-700">
+            Drivers are tracked in real-time during active journeys to improve passenger safety and trip monitoring.
+            Passenger tracking is only active during the trip and can be stopped when a passenger alights.
+        </p>
+
+        <h2 class="text-xl font-bold mt-6 mb-2">7. Contact</h2>
+        <p class="text-gray-700">
+            If you have questions about this policy, contact SmartTravels support.
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>

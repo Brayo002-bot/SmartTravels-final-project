@@ -1,0 +1,697 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Flight | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .glass-card{
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(14px);
+        }
+
+        .fade-up{
+            animation: fadeUp .5s ease;
+        }
+
+        @keyframes fadeUp{
+            from{
+                opacity:0;
+                transform: translateY(18px);
+            }
+            to{
+                opacity:1;
+                transform: translateY(0);
+            }
+        }
+
+        .seat-hover:hover{
+            transform: scale(1.08);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50">
+
+<div class="flex">
+
+    {% include 'flight_admin/sidebar.html' %}
+
+    <!-- MAIN CONTENT -->
+    <div class="ml-72 w-full min-h-screen p-8 fade-up">
+
+        <!-- HEADER -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+
+            <div class="flex items-center gap-5">
+
+                <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-sky-500 to-cyan-400 flex items-center justify-center text-4xl shadow-2xl">
+                    ✈️
+                </div>
+
+                <div>
+                    <h1 class="text-4xl font-extrabold text-gray-800">
+                        Flight Management
+                    </h1>
+
+                    <p class="text-gray-500 mt-2 text-lg">
+                        Create flights, manage seat classes and preview cabin layouts.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="glass-card rounded-3xl shadow-xl border border-white/40 px-6 py-5">
+                <p class="text-sm text-gray-500">
+                    System Status
+                </p>
+
+                <h2 class="text-xl font-bold text-gray-800 mt-1">
+                    Flight Operations Active
+                </h2>
+
+                <div class="mt-4 flex items-center gap-2 text-sm text-emerald-600 font-semibold">
+                    <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Live Cabin Simulation
+                </div>
+            </div>
+
+        </div>
+
+        <!-- QUICK STATS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">
+                            Total Flights
+                        </p>
+
+                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                            {{ flights|length }}
+                        </h2>
+                    </div>
+
+                    <div class="h-16 w-16 rounded-2xl bg-sky-100 flex items-center justify-center text-3xl">
+                        🛫
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">
+                            Total Pilots
+                        </p>
+
+                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                            {{ pilots|length }}
+                        </h2>
+                    </div>
+
+                    <div class="h-16 w-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-3xl">
+                        👨‍✈️
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">
+                            Available Routes
+                        </p>
+
+                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                            {{ routes|length }}
+                        </h2>
+                    </div>
+
+                    <div class="h-16 w-16 rounded-2xl bg-cyan-100 flex items-center justify-center text-3xl">
+                        🌍
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FORM + PREVIEW -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
+
+            <!-- ADD FLIGHT FORM -->
+            <div class="xl:col-span-2 glass-card rounded-3xl shadow-2xl border border-white/40 p-8">
+
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Add New Flight
+                    </h2>
+
+                    <p class="text-gray-500 mt-1">
+                        Configure flight details, pilot assignments and cabin seating.
+                    </p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="grid md:grid-cols-2 gap-6">
+
+                        <!-- Flight Number -->
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Flight Number
+                            </label>
+
+                            <input type="text"
+                                   name="flight_number"
+                                   placeholder="e.g. KQ101"
+                                   class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
+                                   required>
+                        </div>
+
+                        <!-- Route -->
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Route
+                            </label>
+
+                            <select name="route"
+                                    class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
+                                    required>
+
+                                <option value="">
+                                    Select Route
+                                </option>
+
+                                {% for route in routes %}
+                                <option value="{{ route.id }}">
+                                    {{ route }}
+                                </option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Pilot -->
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Pilot
+                            </label>
+
+                            <select name="pilot"
+                                    class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
+                                    required>
+
+                                <option value="">
+                                    Select Pilot
+                                </option>
+
+                                {% for pilot in pilots %}
+                                <option value="{{ pilot.id }}">
+                                    {{ pilot.name }}
+                                </option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Total Capacity -->
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Total Capacity
+                            </label>
+
+                            <input id="flight_total"
+                                   type="number"
+                                   value="150"
+                                   min="1"
+                                   max="1000"
+                                   oninput="autoAllocateFlight()"
+                                   class="w-full p-4 rounded-2xl border border-sky-300 focus:ring-2 focus:ring-sky-500 outline-none">
+
+                            <p class="text-xs text-gray-500 mt-2">
+                                Auto Allocation → First 10% • Business 25% • Economy 65%
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- SEAT CLASSES -->
+                    <div class="grid md:grid-cols-3 gap-6 mt-8">
+
+                        <div class="bg-purple-50 rounded-2xl p-5 border border-purple-100">
+                            <label class="block mb-2 font-semibold text-purple-700">
+                                First Class
+                            </label>
+
+                            <input id="flight_first_class_seats"
+                                   type="number"
+                                   name="first_class_seats"
+                                   value="20"
+                                   min="0"
+                                   onchange="fetchFlightPreview()"
+                                   class="w-full p-3 rounded-xl border border-purple-200">
+                        </div>
+
+                        <div class="bg-emerald-50 rounded-2xl p-5 border border-emerald-100">
+                            <label class="block mb-2 font-semibold text-emerald-700">
+                                Business Class
+                            </label>
+
+                            <input id="flight_business_seats"
+                                   type="number"
+                                   name="business_seats"
+                                   value="30"
+                                   min="0"
+                                   onchange="fetchFlightPreview()"
+                                   class="w-full p-3 rounded-xl border border-emerald-200">
+                        </div>
+
+                        <div class="bg-slate-100 rounded-2xl p-5 border border-slate-200">
+                            <label class="block mb-2 font-semibold text-slate-700">
+                                Economy Class
+                            </label>
+
+                            <input id="flight_economy_seats"
+                                   type="number"
+                                   name="economy_seats"
+                                   value="100"
+                                   min="0"
+                                   onchange="fetchFlightPreview()"
+                                   class="w-full p-3 rounded-xl border border-slate-300">
+                        </div>
+
+                    </div>
+
+                    <!-- DESCRIPTION -->
+                    <div class="mt-8">
+
+                        <label class="block mb-2 font-semibold text-gray-700">
+                            Flight Description
+                        </label>
+
+                        <textarea name="description"
+                                  rows="4"
+                                  placeholder="Modern aircraft with WiFi, premium meals, entertainment and luxury seating..."
+                                  class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"></textarea>
+
+                    </div>
+
+                    <!-- BUTTON -->
+                    <button class="mt-8 bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-700 hover:to-cyan-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-xl transition hover:scale-[1.02]">
+                        ✈️ Add Flight
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- SEAT PREVIEW -->
+            <div class="glass-card rounded-3xl shadow-2xl border border-white/40 p-6">
+
+                <div class="flex items-center justify-between mb-5">
+
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            Cabin Simulation
+                        </h2>
+
+                        <p class="text-gray-500 text-sm mt-1">
+                            Real-time flight seat preview.
+                        </p>
+                    </div>
+
+                    <div class="text-4xl">
+                        🪑
+                    </div>
+
+                </div>
+
+                <!-- LEGEND -->
+                <div class="flex flex-wrap gap-3 mb-6 text-xs font-semibold">
+
+                    <div class="flex items-center gap-2">
+                        <span class="w-4 h-4 rounded bg-purple-600"></span>
+                        First
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="w-4 h-4 rounded bg-emerald-600"></span>
+                        Business
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="w-4 h-4 rounded bg-slate-600"></span>
+                        Economy
+                    </div>
+
+                </div>
+
+                <div id="flight-seat-simulation" class="space-y-3 overflow-auto max-h-[650px] pr-2">
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FLIGHTS TABLE -->
+        <div class="glass-card rounded-3xl shadow-2xl border border-white/40 overflow-hidden mb-10">
+
+            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Flight Fleet
+                    </h2>
+
+                    <p class="text-gray-500 mt-1">
+                        All active registered flights.
+                    </p>
+                </div>
+
+                <div class="bg-sky-100 text-sky-700 px-4 py-2 rounded-xl font-semibold">
+                    ✈️ Active Fleet
+                </div>
+
+            </div>
+
+            <div class="overflow-x-auto">
+
+                <table class="min-w-full">
+
+                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
+
+                        <tr>
+                            <th class="px-6 py-4 text-left">Flight</th>
+                            <th class="px-6 py-4 text-left">Route</th>
+                            <th class="px-6 py-4 text-left">Pilot</th>
+                            <th class="px-6 py-4 text-left">Seats</th>
+                            <th class="px-6 py-4 text-left">Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-100">
+
+                        {% for flight in flights %}
+
+                        <tr class="hover:bg-sky-50 transition">
+
+                            <td class="px-6 py-4 font-semibold text-gray-800">
+                                {{ flight.flight_number }}
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-700">
+                                {{ flight.route }}
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-700">
+                                {{ flight.pilot }}
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <span class="bg-sky-100 text-sky-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                    {{ flight.available_seats }} Seats
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <button type="button"
+                                        onclick="generateFlightLayout({{ flight.id }}, {{ flight.first_class_seats }}, {{ flight.business_seats }}, {{ flight.economy_seats }})"
+                                        class="bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-700 hover:to-cyan-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition hover:scale-105">
+                                    Regenerate Layout
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                                No flights available.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- HISTORY -->
+        <div class="glass-card rounded-3xl shadow-2xl border border-white/40 p-8">
+
+            <div class="flex items-center justify-between mb-6">
+
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Seat Layout History
+                    </h2>
+
+                    <p class="text-gray-500 mt-1">
+                        Previously generated flight cabin layouts.
+                    </p>
+                </div>
+
+                <div class="text-4xl">
+                    📚
+                </div>
+
+            </div>
+
+            {% if seat_layout_histories %}
+
+            <div class="space-y-4">
+
+                {% for history in seat_layout_histories %}
+
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-lg transition">
+
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+                        <div>
+
+                            <div class="font-bold text-lg text-gray-800">
+                                {{ history.get_vehicle_type_display }} Layout
+                            </div>
+
+                            <div class="text-sm text-gray-500 mt-1">
+                                Vehicle ID: {{ history.vehicle_id }} • {{ history.created_at }}
+                            </div>
+
+                        </div>
+
+                        <div class="flex flex-wrap gap-3 text-sm font-semibold">
+
+                            <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
+                                F: {{ history.config.first_class_seats|default:0 }}
+                            </span>
+
+                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">
+                                B: {{ history.config.business_seats|default:0 }}
+                            </span>
+
+                            <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full">
+                                E: {{ history.config.economy_seats|default:0 }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <div class="text-center py-12 text-gray-500">
+                No seat layout history available yet.
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const FLIGHT_PREVIEW_URL = '{% url "flight_seat_preview" %}';
+const FLIGHT_GENERATE_URL = '{% url "generate_flight_layout" %}';
+
+const classStyles = {
+    'VIP': 'bg-yellow-500',
+    'Normal': 'bg-sky-600',
+    'First Class': 'bg-purple-600',
+    'Business': 'bg-emerald-600',
+    'Economy': 'bg-slate-600',
+};
+
+function autoAllocateFlight() {
+
+    const total = parseInt(document.getElementById('flight_total').value) || 0;
+
+    const first = Math.round(total * 0.10);
+    const business = Math.round(total * 0.25);
+    const economy = total - first - business;
+
+    document.getElementById('flight_first_class_seats').value = first;
+    document.getElementById('flight_business_seats').value = business;
+    document.getElementById('flight_economy_seats').value = Math.max(0, economy);
+
+    clearTimeout(window._flightTimer);
+
+    window._flightTimer = setTimeout(fetchFlightPreview, 300);
+}
+
+function renderFlightSeats(layoutData) {
+
+    const container = document.getElementById('flight-seat-simulation');
+
+    container.innerHTML = '';
+
+    if (!layoutData || !layoutData.rows || !layoutData.rows.length) {
+
+        container.innerHTML = `
+            <div class="text-gray-500 text-center py-10">
+                Enter seat counts to preview the cabin layout.
+            </div>
+        `;
+
+        return;
+    }
+
+    layoutData.rows.forEach(row => {
+
+        const rowEl = document.createElement('div');
+        rowEl.className = 'flex items-center gap-1';
+
+        const label = document.createElement('div');
+        label.className = 'w-10 text-xs text-gray-500 font-semibold';
+        label.textContent = row.row;
+
+        rowEl.appendChild(label);
+
+        row.seats.forEach(cell => {
+
+            const seatEl = document.createElement('div');
+
+            if (cell.is_aisle) {
+
+                seatEl.className = 'w-6';
+
+            } else if (cell.is_empty) {
+
+                seatEl.className = 'w-10 h-10';
+
+            } else {
+
+                const style = classStyles[cell.seat_class] || 'bg-gray-500';
+
+                seatEl.className =
+                    `w-10 h-10 rounded-lg flex items-center justify-center text-[10px] font-bold text-white ${style} transition seat-hover`;
+
+                seatEl.textContent = cell.seat_number;
+
+                seatEl.title = `${cell.seat_class} • ${cell.booking_status}`;
+            }
+
+            rowEl.appendChild(seatEl);
+
+        });
+
+        container.appendChild(rowEl);
+
+    });
+
+}
+
+function fetchFlightPreview() {
+
+    const first = Number(document.getElementById('flight_first_class_seats').value) || 0;
+    const business = Number(document.getElementById('flight_business_seats').value) || 0;
+    const economy = Number(document.getElementById('flight_economy_seats').value) || 0;
+
+    fetch(`${FLIGHT_PREVIEW_URL}?first_class_seats=${first}&business_seats=${business}&economy_seats=${economy}`)
+        .then(res => res.json())
+        .then(renderFlightSeats)
+        .catch(() => {
+
+            const container = document.getElementById('flight-seat-simulation');
+
+            container.innerHTML = `
+                <div class="text-red-500 text-center py-10">
+                    Unable to load preview.
+                </div>
+            `;
+        });
+}
+
+function generateFlightLayout(flightId, first, business, economy) {
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    const data = new FormData();
+
+    data.append('flight_id', flightId);
+    data.append('first_class_seats', first);
+    data.append('business_seats', business);
+    data.append('economy_seats', economy);
+
+    fetch(FLIGHT_GENERATE_URL, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken
+        },
+        body: data,
+    })
+    .then(res => res.json())
+    .then(renderFlightSeats)
+    .catch(() => {
+
+        const container = document.getElementById('flight-seat-simulation');
+
+        container.innerHTML = `
+            <div class="text-red-500 text-center py-10">
+                Unable to regenerate layout.
+            </div>
+        `;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', fetchFlightPreview);
+
+</script>
+
+</body>
+</html>

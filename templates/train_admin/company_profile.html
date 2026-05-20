@@ -1,0 +1,443 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ company.name }} | Company Profile</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .glass-card{
+            background: rgba(255,255,255,0.78);
+            backdrop-filter: blur(18px);
+        }
+
+        .gradient-border{
+            position: relative;
+        }
+
+        .gradient-border::before{
+            content:'';
+            position:absolute;
+            inset:0;
+            padding:1px;
+            border-radius:1.5rem;
+            background:linear-gradient(to right,#10b981,#06b6d4);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite:xor;
+            mask-composite:exclude;
+            pointer-events:none;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-cyan-50 to-emerald-50 min-h-screen">
+
+<div class="flex">
+
+    {% include 'train_admin/sidebar.html' %}
+
+    <!-- MAIN -->
+    <div class="ml-72 w-full min-h-screen p-8">
+
+        <!-- TOP HEADER -->
+        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 mb-10">
+
+            <div class="flex items-center gap-5">
+
+                <!-- LOGO -->
+                <div class="h-24 w-24 rounded-3xl overflow-hidden shadow-2xl border border-white/50 bg-white">
+
+                    {% if company.logo_image %}
+                        <img src="{{ company.logo_image.url }}"
+                             class="w-full h-full object-cover">
+                    {% else %}
+                        <div class="w-full h-full bg-gradient-to-r from-emerald-500 to-cyan-500 flex items-center justify-center text-white text-4xl">
+                            🚆
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <!-- TITLE -->
+                <div>
+
+                    <div class="flex items-center gap-3 flex-wrap">
+
+                        <h1 class="text-4xl font-black text-gray-800">
+                            {{ company.name }}
+                        </h1>
+
+                        <span class="px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-bold">
+                            {{ company.get_transport_type_display }}
+                        </span>
+
+                    </div>
+
+                    <p class="text-gray-500 text-lg mt-2">
+                        Manage your company profile, branding and passenger-facing details.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- STATUS CARD -->
+            <div class="glass-card rounded-3xl shadow-2xl border border-white/40 px-8 py-6">
+
+                <p class="text-sm text-gray-500">
+                    Company Profile Status
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-800 mt-2">
+                    Active & Visible
+                </h2>
+
+                <div class="flex items-center gap-2 mt-4 text-emerald-600 font-semibold">
+
+                    <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+
+                    Passenger Listing Enabled
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ALERTS -->
+        {% if messages %}
+            {% for message in messages %}
+
+            <div class="mb-6 p-5 rounded-2xl shadow-lg border
+                {% if message.tags == 'error' %}
+                    bg-red-50 border-red-200 text-red-700
+                {% elif message.tags == 'success' %}
+                    bg-emerald-50 border-emerald-200 text-emerald-700
+                {% else %}
+                    bg-blue-50 border-blue-200 text-blue-700
+                {% endif %}
+            ">
+
+                <div class="flex items-center gap-3">
+
+                    <span class="text-2xl">
+                        {% if message.tags == 'error' %}
+                            ❌
+                        {% elif message.tags == 'success' %}
+                            ✅
+                        {% else %}
+                            ℹ️
+                        {% endif %}
+                    </span>
+
+                    <p class="font-medium">
+                        {{ message }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+        {% endif %}
+
+        <!-- FORM WRAPPER -->
+        <div class="glass-card rounded-[2rem] shadow-2xl border border-white/40 overflow-hidden">
+
+            <!-- TOP BANNER -->
+            <div class="bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 p-8 text-white">
+
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+                    <div>
+
+                        <h2 class="text-3xl font-extrabold">
+                            Company Profile Settings
+                        </h2>
+
+                        <p class="text-emerald-100 mt-2">
+                            Customize how passengers see your company across SmartTravels.
+                        </p>
+
+                    </div>
+
+                    <div class="bg-white/20 backdrop-blur-lg px-6 py-4 rounded-2xl">
+
+                        <p class="text-sm text-emerald-100">
+                            Profile Completion
+                        </p>
+
+                        <h3 class="text-3xl font-black mt-1">
+                            92%
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- FORM -->
+            <form method="POST" enctype="multipart/form-data" class="p-8">
+
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 2xl:grid-cols-2 gap-10">
+
+                    <!-- LEFT COLUMN -->
+                    <div class="space-y-8">
+
+                        <!-- COMPANY DETAILS -->
+                        <div class="bg-white rounded-3xl p-8 shadow-xl border border-slate-100">
+
+                            <div class="flex items-center gap-4 mb-8">
+
+                                <div class="h-14 w-14 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white flex items-center justify-center text-2xl shadow-lg">
+                                    🏢
+                                </div>
+
+                                <div>
+
+                                    <h2 class="text-2xl font-bold text-gray-800">
+                                        Company Information
+                                    </h2>
+
+                                    <p class="text-gray-500">
+                                        Basic business details and contact information.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- COMPANY NAME -->
+                            <div class="mb-6">
+
+                                <label class="block mb-3 text-sm font-bold text-gray-600 uppercase tracking-wide">
+                                    Company Name
+                                </label>
+
+                                <input type="text"
+                                       value="{{ company.name }}"
+                                       class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-100 text-gray-600 font-semibold"
+                                       readonly>
+
+                            </div>
+
+                            <!-- TRANSPORT TYPE -->
+                            <div class="mb-6">
+
+                                <label class="block mb-3 text-sm font-bold text-gray-600 uppercase tracking-wide">
+                                    Transport Type
+                                </label>
+
+                                <input type="text"
+                                       value="{{ company.get_transport_type_display }}"
+                                       class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-100 text-gray-600 font-semibold"
+                                       readonly>
+
+                            </div>
+
+                            <!-- EMAIL -->
+                            <div class="mb-6">
+
+                                <label class="block mb-3 text-sm font-bold text-gray-600 uppercase tracking-wide">
+                                    Contact Email
+                                </label>
+
+                                <input type="email"
+                                       name="contact_email"
+                                       value="{{ company.contact_email }}"
+                                       placeholder="company@example.com"
+                                       class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">
+
+                            </div>
+
+                            <!-- PHONE -->
+                            <div class="mb-6">
+
+                                <label class="block mb-3 text-sm font-bold text-gray-600 uppercase tracking-wide">
+                                    Contact Phone
+                                </label>
+
+                                <input type="tel"
+                                       name="contact_phone"
+                                       value="{{ company.contact_phone }}"
+                                       placeholder="+254..."
+                                       class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">
+
+                            </div>
+
+                            <!-- ADDRESS -->
+                            <div>
+
+                                <label class="block mb-3 text-sm font-bold text-gray-600 uppercase tracking-wide">
+                                    Address
+                                </label>
+
+                                <textarea name="address"
+                                          rows="4"
+                                          placeholder="Company headquarters or station address..."
+                                          class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">{{ company.address }}</textarea>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="space-y-8">
+
+                        <!-- BRANDING -->
+                        <div class="bg-white rounded-3xl p-8 shadow-xl border border-slate-100">
+
+                            <div class="flex items-center gap-4 mb-8">
+
+                                <div class="h-14 w-14 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white flex items-center justify-center text-2xl shadow-lg">
+                                    🎨
+                                </div>
+
+                                <div>
+
+                                    <h2 class="text-2xl font-bold text-gray-800">
+                                        Branding & Description
+                                    </h2>
+
+                                    <p class="text-gray-500">
+                                        Passenger-facing company branding settings.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- CURRENT LOGO -->
+                            {% if company.logo_image %}
+
+                            <div class="gradient-border rounded-3xl p-1 mb-8">
+
+                                <div class="bg-slate-50 rounded-3xl p-6">
+
+                                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+                                        <div class="bg-white rounded-3xl p-4 shadow-lg border border-slate-100">
+
+                                            <img src="{{ company.logo_image.url }}"
+                                                 alt="{{ company.name }}"
+                                                 class="h-40 object-contain">
+
+                                        </div>
+
+                                        <label class="flex items-center gap-3 cursor-pointer bg-red-50 hover:bg-red-100 border border-red-200 px-5 py-4 rounded-2xl transition">
+
+                                            <input type="checkbox"
+                                                   name="delete_logo"
+                                                   class="h-5 w-5 rounded">
+
+                                            <span class="font-semibold text-red-600">
+                                                Delete Current Logo
+                                            </span>
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {% endif %}
+
+                            <!-- FILE INPUT -->
+                            <div class="mb-6">
+
+                                <label class="block mb-3 text-sm font-bold text-gray-600 uppercase tracking-wide">
+                                    Upload Company Logo
+                                </label>
+
+                                <div class="border-2 border-dashed border-emerald-300 rounded-3xl p-8 text-center bg-emerald-50/40">
+
+                                    <div class="text-5xl mb-4">
+                                        🖼️
+                                    </div>
+
+                                    <p class="font-semibold text-gray-700">
+                                        Upload a logo or company banner
+                                    </p>
+
+                                    <p class="text-sm text-gray-500 mt-2">
+                                        PNG, JPG or GIF supported
+                                    </p>
+
+                                    <input type="file"
+                                           name="logo_image"
+                                           accept="image/*"
+                                           class="mt-6 w-full p-4 rounded-2xl border border-gray-200 bg-white">
+
+                                </div>
+
+                            </div>
+
+                            <!-- DESCRIPTION -->
+                            <div>
+
+                                <label class="block mb-3 text-sm font-bold text-gray-600 uppercase tracking-wide">
+                                    Company Description
+                                </label>
+
+                                <textarea name="description"
+                                          rows="8"
+                                          placeholder="Describe your company, services, comfort, safety and destinations..."
+                                          class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">{{ company.description }}</textarea>
+
+                                <div class="mt-4 bg-blue-50 border border-blue-100 rounded-2xl p-4">
+
+                                    <p class="text-sm text-blue-700">
+                                        ℹ️ This description appears to passengers during searches and bookings.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="flex flex-col md:flex-row gap-4 mt-10">
+
+                    <button type="submit"
+                            class="flex-1 bg-gradient-to-r from-emerald-600 to-cyan-500 text-white py-5 rounded-2xl font-bold text-lg shadow-2xl hover:scale-[1.01] transition-all duration-300">
+
+                        💾 Save Company Changes
+
+                    </button>
+
+                    <a href="{% url 'train_dashboard' %}"
+                       class="flex-1 md:flex-none text-center bg-slate-200 hover:bg-slate-300 text-gray-700 px-10 py-5 rounded-2xl font-bold transition">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

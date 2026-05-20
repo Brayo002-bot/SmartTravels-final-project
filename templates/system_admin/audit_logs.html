@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Audit Logs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="flex">
+
+    <!-- SIDEBAR (UNCHANGED - BACKEND SAFE) -->
+    {% include 'system_admin/dashboard.html' %}
+
+    <div class="ml-64 p-8 w-full">
+
+        <!-- HEADER -->
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">📜 Audit Logs</h1>
+                <p class="text-sm text-gray-500">System activity tracking & security monitoring</p>
+            </div>
+
+            <!-- EXPORT BUTTONS -->
+            <div class="flex gap-3">
+                <a href="?export=csv"
+                   class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">
+                    ⬇ Export CSV
+                </a>
+
+                <a href="?export=pdf"
+                   class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm">
+                    📄 Export PDF
+                </a>
+            </div>
+        </div>
+
+        <!-- STATS CARDS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+            <div class="bg-white p-5 rounded-xl shadow">
+                <p class="text-gray-500 text-sm">Total Logs</p>
+                <p class="text-2xl font-bold text-gray-800">{{ total_logs }}</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow">
+                <p class="text-gray-500 text-sm">Today's Activity</p>
+                <p class="text-2xl font-bold text-blue-600">{{ today_logs }}</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow">
+                <p class="text-gray-500 text-sm">Critical Actions</p>
+                <p class="text-2xl font-bold text-red-600">{{ critical_logs }}</p>
+            </div>
+
+        </div>
+
+        <!-- FILTERS -->
+        <div class="bg-white p-5 rounded-xl shadow mb-6">
+
+            <form method="GET" class="grid md:grid-cols-4 gap-4 items-end">
+
+                <div>
+                    <label class="text-sm text-gray-600">Action</label>
+                    <select name="action" class="w-full p-3 border rounded-lg">
+                        <option value="">All Actions</option>
+                        {% for action_value, action_display in action_choices %}
+                        <option value="{{ action_value }}"
+                            {% if request.GET.action == action_value %}selected{% endif %}>
+                            {{ action_display }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-600">Username</label>
+                    <input type="text" name="user"
+                           placeholder="Search user"
+                           value="{{ request.GET.user }}"
+                           class="w-full p-3 border rounded-lg">
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-600">Date From</label>
+                    <input type="date" name="from_date"
+                           class="w-full p-3 border rounded-lg">
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-600">Date To</label>
+                    <input type="date" name="to_date"
+                           class="w-full p-3 border rounded-lg">
+                </div>
+
+                <div class="md:col-span-4 flex gap-3">
+                    <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                        🔍 Filter
+                    </button>
+
+                    <a href="{% url 'audit_logs' %}"
+                       class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600">
+                        Reset
+                    </a>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- LOG TABLE -->
+        <div class="bg-white shadow rounded-xl overflow-hidden">
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+
+                    <thead class="bg-gray-100 text-gray-600">
+                        <tr>
+                            <th class="p-4 text-left">Time</th>
+                            <th class="p-4 text-left">User</th>
+                            <th class="p-4 text-left">Action</th>
+                            <th class="p-4 text-left">Model</th>
+                            <th class="p-4 text-left">Details</th>
+                            <th class="p-4 text-left">IP Address</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for log in logs %}
+                        <tr class="border-t hover:bg-gray-50 transition">
+
+                            <td class="p-4 text-gray-500">
+                                {{ log.timestamp|date:"M d, Y H:i" }}
+                            </td>
+
+                            <td class="p-4 font-semibold text-gray-800">
+                                {{ log.user.username|default:"System" }}
+                            </td>
+
+                            <td class="p-4">
+                                <span class="px-2 py-1 text-xs rounded-full
+                                    {% if 'delete' in log.get_action_display|lower %}
+                                        bg-red-100 text-red-700
+                                    {% elif 'update' in log.get_action_display|lower %}
+                                        bg-yellow-100 text-yellow-700
+                                    {% else %}
+                                        bg-green-100 text-green-700
+                                    {% endif %}">
+                                    {{ log.get_action_display }}
+                                </span>
+                            </td>
+
+                            <td class="p-4 text-gray-600">
+                                {{ log.model_name }}
+                            </td>
+
+                            <td class="p-4 text-gray-600">
+                                {{ log.details|truncatechars:80 }}
+                            </td>
+
+                            <td class="p-4 text-gray-500">
+                                {{ log.ip_address|default:"-" }}
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

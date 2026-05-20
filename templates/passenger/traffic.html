@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Centre | SmartTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'DM Sans', sans-serif; background: #071120; color: #fff; }
+    </style>
+</head>
+<body>
+<div class="flex min-h-screen">
+    {% include 'passenger/sidebar.html' %}
+    <main class="flex-1 lg:ml-64 p-6 md:p-10">
+        <div class="space-y-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div>
+                    <h1 class="text-4xl font-semibold text-white">Traffic Centre</h1>
+                    <p class="mt-3 max-w-2xl text-slate-400">View real-time traffic alerts, incident reports and travel advisories for major passenger routes.</p>
+                </div>
+                <div class="rounded-3xl border border-white/10 bg-white/5 p-5 space-y-3">
+                    <p class="text-sm uppercase tracking-[0.24em] text-slate-400">Live Update</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
+                        <span class="text-white font-medium">Traffic data refreshed every 5 minutes</span>
+                    </div>
+                    <p class="text-slate-400 text-sm">Alerts are curated from SmartTravels operations and local transport partners.</p>
+                </div>
+            </div>
+
+            <div class="grid gap-6 lg:grid-cols-3">
+                <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+                    <h2 class="text-xl font-semibold mb-4">Current Impact</h2>
+                    <div class="space-y-4">
+                        <div class="rounded-2xl bg-slate-900/80 p-4 border border-white/10">
+                            <p class="text-slate-400 text-sm">Major delays</p>
+                            <p class="mt-2 text-3xl font-semibold">3</p>
+                        </div>
+                        <div class="rounded-2xl bg-slate-900/80 p-4 border border-white/10">
+                            <p class="text-slate-400 text-sm">Road closures</p>
+                            <p class="mt-2 text-3xl font-semibold">1</p>
+                        </div>
+                        <div class="rounded-2xl bg-slate-900/80 p-4 border border-white/10">
+                            <p class="text-slate-400 text-sm">Incidents reported</p>
+                            <p class="mt-2 text-3xl font-semibold">5</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="rounded-3xl border border-white/10 bg-white/5 p-6 lg:col-span-2">
+                    <h2 class="text-xl font-semibold mb-4">Recommended Routes</h2>
+                    <p class="text-slate-400 mb-6">SmartTravels recommends alternatives when a route is affected by delays or closures.</p>
+                    <ul class="space-y-4">
+                        <li class="rounded-3xl bg-slate-900/80 p-4 border border-white/10">
+                            <div class="flex items-center justify-between gap-4">
+                                <div>
+                                    <p class="text-lg font-semibold">Nairobi – Mombasa</p>
+                                    <p class="text-slate-400 text-sm">Delay due to accident near Emali</p>
+                                </div>
+                                <span class="text-amber-300 font-semibold">High</span>
+                            </div>
+                        </li>
+                        <li class="rounded-3xl bg-slate-900/80 p-4 border border-white/10">
+                            <div class="flex items-center justify-between gap-4">
+                                <div>
+                                    <p class="text-lg font-semibold">Nairobi – Kisumu</p>
+                                    <p class="text-slate-400 text-sm">Roadworks near Nakuru, expect 30m delay</p>
+                                </div>
+                                <span class="text-yellow-300 font-semibold">Medium</span>
+                            </div>
+                        </li>
+                        <li class="rounded-3xl bg-slate-900/80 p-4 border border-white/10">
+                            <div class="flex items-center justify-between gap-4">
+                                <div>
+                                    <p class="text-lg font-semibold">Mombasa – Malindi</p>
+                                    <p class="text-slate-400 text-sm">Traffic flow normal</p>
+                                </div>
+                                <span class="text-emerald-300 font-semibold">Low</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-semibold">Traffic Alerts</h2>
+                        <p class="text-slate-400">Latest alerts affecting passenger routes.</p>
+                    </div>
+                    <button class="rounded-2xl bg-amber-500/15 px-5 py-3 text-sm font-semibold text-amber-200 hover:bg-amber-500/25 transition">Refresh</button>
+                </div>
+                <div class="space-y-4">
+                    {% for alert in traffic_alerts %}
+                    <div class="rounded-3xl bg-slate-900/80 border border-white/10 p-5">
+                        <div class="flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                                <p class="text-sm uppercase tracking-[0.24em] text-slate-500">{{ alert.origin }} → {{ alert.destination }}</p>
+                                <h3 class="mt-2 text-xl font-semibold">{{ alert.title }}</h3>
+                            </div>
+                            <span class="rounded-full px-3 py-1 text-xs font-semibold {% if alert.severity == 'High' %}bg-red-500/15 text-red-300{% elif alert.severity == 'Medium' %}bg-yellow-500/15 text-yellow-300{% else %}bg-emerald-500/15 text-emerald-300{% endif %}">{{ alert.severity }}</span>
+                        </div>
+                        <p class="mt-4 text-slate-400">{{ alert.message }}</p>
+                        <p class="mt-4 text-xs uppercase text-slate-500">Updated {{ alert.updated_at }}</p>
+                    </div>
+                    {% empty %}
+                    <div class="rounded-3xl bg-slate-900/80 border border-white/10 p-5 text-slate-400">
+                        No traffic alerts available right now.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

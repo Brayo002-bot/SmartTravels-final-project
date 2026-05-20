@@ -1,0 +1,24 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Access Denied | SmartTravels{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat relative" style="background-image: url('{% static 'images/backgroundrl.webp' %}');">
+  <div class="absolute inset-0 bg-black/60"></div>
+  <div class="relative z-10 w-full max-w-2xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl rounded-3xl p-10 text-center text-white">
+    <h1 class="text-4xl font-bold mb-4">Access Denied</h1>
+    <p class="text-lg text-gray-200 mb-6">
+      Your account does not have a valid dashboard role assigned.
+      <strong>{{ user_role|default:'unassigned' }}</strong>
+    </p>
+    <p class="text-sm text-gray-300 mb-8">
+      Please contact the system administrator if you believe this is an error.
+    </p>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <a href="{% url 'dashboard' %}" class="px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 transition text-white font-semibold">Try Dashboard Again</a>
+      <a href="{% url 'logout' %}" class="px-6 py-3 rounded-full bg-gray-200 hover:bg-gray-300 transition text-gray-900 font-semibold">Logout</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

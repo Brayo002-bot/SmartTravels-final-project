@@ -1,0 +1,280 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manage Admins</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-gray-100 via-slate-100 to-blue-50 min-h-screen">
+
+<div class="flex">
+
+    <!-- SIDEBAR -->
+    {% include 'system_admin/dashboard.html' %}
+
+    <!-- MAIN -->
+    <div class="ml-64 p-8 w-full">
+
+        <!-- HEADER -->
+        <div class="flex justify-between items-center mb-8">
+
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">
+                    👋 Admin Management Center
+                </h1>
+                <p class="text-gray-500">Create, assign and manage system & transport administrators</p>
+            </div>
+
+        </div>
+
+        <!-- QUICK STATS -->
+        <div class="grid md:grid-cols-4 gap-6 mb-10">
+
+            <div class="bg-white p-5 rounded-2xl shadow hover:shadow-lg transition">
+                <p class="text-gray-500">System Admins</p>
+                <p class="text-2xl font-bold">{{ admin_roles|length }}</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow hover:shadow-lg transition">
+                <p class="text-gray-500">Transport Admins</p>
+                <p class="text-2xl font-bold">{{ transport_admins|length }}</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow hover:shadow-lg transition">
+                <p class="text-gray-500">Companies</p>
+                <p class="text-2xl font-bold">{{ companies|length }}</p>
+            </div>
+
+            <div class="bg-green-50 p-5 rounded-2xl shadow border border-green-200">
+                <p class="text-gray-500">System Status</p>
+                <p class="text-2xl font-bold text-green-600">Healthy</p>
+            </div>
+
+        </div>
+
+        {% if messages %}
+        <div class="mb-6 space-y-3">
+            {% for message in messages %}
+                <div class="rounded-lg p-4 text-sm shadow
+                {% if message.tags == 'error' %}bg-red-100 text-red-800
+                {% elif message.tags == 'success' %}bg-green-100 text-green-800
+                {% else %}bg-blue-100 text-blue-800{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- CREATE SYSTEM ADMIN -->
+        <div class="bg-white p-6 rounded-2xl shadow mb-8">
+            <h2 class="text-xl font-bold mb-4">➕ Create System Admin</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="grid md:grid-cols-2 gap-4">
+
+                    <input type="text" name="username" placeholder="Username" class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+
+                    <input type="email" name="email" placeholder="Email" class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+
+                    <input type="password" name="password" placeholder="Password" class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+
+                    <select name="role" class="p-3 border rounded-lg">
+                        <option value="">Select Role</option>
+                        <option value="super_admin">Super Administrator</option>
+                        <option value="user_manager">User Manager</option>
+                        <option value="content_manager">Content Manager</option>
+                        <option value="finance_manager">Finance Manager</option>
+                        <option value="support_manager">Support Manager</option>
+                    </select>
+
+                </div>
+
+                <button class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition" name="create_admin">
+                    Create System Admin
+                </button>
+
+            </form>
+        </div>
+
+        <!-- CREATE TRANSPORT ADMIN -->
+        <div class="bg-white p-6 rounded-2xl shadow mb-8">
+            <h2 class="text-xl font-bold mb-4">🚍 Create Transport Admin</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="grid md:grid-cols-2 gap-4">
+
+                    <input type="text" name="admin_username" placeholder="Username" class="p-3 border rounded-lg">
+
+                    <input type="email" name="admin_email" placeholder="Email" class="p-3 border rounded-lg">
+
+                    <input type="password" name="admin_password" placeholder="Password" class="p-3 border rounded-lg">
+
+                    <select name="admin_type" class="p-3 border rounded-lg">
+                        <option value="">Select Admin Type</option>
+                        <option value="bus_admin">Bus Admin</option>
+                        <option value="flight_admin">Flight Admin</option>
+                        <option value="train_admin">Train Admin</option>
+                    </select>
+
+                    <select name="company_id" class="p-3 border rounded-lg col-span-2">
+                        <option value="">Select Company</option>
+                        {% for company in companies %}
+                        <option value="{{ company.id }}">{{ company.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+                <button class="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition" name="create_transport_admin">
+                    Create Transport Admin
+                </button>
+
+            </form>
+        </div>
+
+        <!-- COMPANIES -->
+        <div class="bg-white p-6 rounded-2xl shadow mb-8">
+            <h2 class="text-xl font-bold mb-4">🏢 Create Company</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="grid md:grid-cols-2 gap-4">
+
+                    <input type="text" name="company_name" placeholder="Company Name" class="p-3 border rounded-lg">
+
+                    <select name="transport_type" class="p-3 border rounded-lg">
+                        <option value="">Transport Type</option>
+                        <option value="bus">Bus</option>
+                        <option value="flight">Flight</option>
+                        <option value="train">Train</option>
+                    </select>
+
+                    <input type="email" name="contact_email" placeholder="Email" class="p-3 border rounded-lg">
+
+                    <input type="text" name="contact_phone" placeholder="Phone" class="p-3 border rounded-lg">
+
+                </div>
+
+                <button class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition" name="create_company">
+                    Create Company
+                </button>
+
+            </form>
+        </div>
+
+        <!-- SYSTEM ADMINS TABLE -->
+        <div class="bg-white shadow rounded-2xl mb-8 overflow-hidden">
+
+            <h2 class="text-xl font-bold p-6">👤 System Admins</h2>
+
+            <table class="w-full">
+
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-3 text-left">Username</th>
+                        <th class="p-3 text-left">Email</th>
+                        <th class="p-3 text-left">Role</th>
+                        <th class="p-3 text-left">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for admin_role in admin_roles %}
+                    <tr class="border-t hover:bg-gray-50">
+                        <td class="p-3">{{ admin_role.user.username }}</td>
+                        <td class="p-3">{{ admin_role.user.email }}</td>
+                        <td class="p-3 text-blue-600 font-semibold">{{ admin_role.get_role_display }}</td>
+                        <td class="p-3">
+                            <form method="POST" class="flex gap-2 items-center">
+                                {% csrf_token %}
+                                <input type="hidden" name="admin_id" value="{{ admin_role.id }}">
+
+                                <select name="new_role" class="border p-1 rounded">
+                                    <option value="super_admin">Super Admin</option>
+                                    <option value="user_manager">User Manager</option>
+                                    <option value="content_manager">Content Manager</option>
+                                    <option value="finance_manager">Finance Manager</option>
+                                    <option value="support_manager">Support Manager</option>
+                                </select>
+
+                                <button class="bg-green-500 text-white px-2 py-1 rounded text-sm" name="update_system_role">
+                                    Update
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- TRANSPORT ADMINS -->
+        <div class="bg-white shadow rounded-2xl overflow-hidden">
+
+            <h2 class="text-xl font-bold p-6">🚍 Transport Admins</h2>
+
+            <table class="w-full">
+
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-3">Username</th>
+                        <th class="p-3">Email</th>
+                        <th class="p-3">Type</th>
+                        <th class="p-3">Company</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for admin in transport_admins %}
+                    <tr class="border-t hover:bg-gray-50">
+
+                        <td class="p-3">{{ admin.username }}</td>
+                        <td class="p-3">{{ admin.email }}</td>
+
+                        <td class="p-3 text-gray-700">{{ admin.get_role_display }}</td>
+
+                        <td class="p-3">{{ admin.company.name|default:"No Company" }}</td>
+
+                        <td class="p-3">
+                            {% if admin.is_active %}
+                                <span class="text-green-600 font-semibold">Active</span>
+                            {% else %}
+                                <span class="text-red-600 font-semibold">Inactive</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="p-3">
+                            <form method="POST" class="flex gap-2">
+                                {% csrf_token %}
+                                <input type="hidden" name="transport_admin_id" value="{{ admin.id }}">
+
+                                <button name="action" value="deactivate" class="bg-yellow-500 px-2 py-1 rounded text-white text-sm">Toggle</button>
+                                <button name="action" value="delete" class="bg-red-500 px-2 py-1 rounded text-white text-sm">Delete</button>
+                            </form>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

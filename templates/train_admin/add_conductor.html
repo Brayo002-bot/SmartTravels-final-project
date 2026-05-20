@@ -1,0 +1,429 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conductor Management | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        ::-webkit-scrollbar{
+            width:8px;
+            height:8px;
+        }
+
+        ::-webkit-scrollbar-thumb{
+            background:#cbd5e1;
+            border-radius:20px;
+        }
+
+        ::-webkit-scrollbar-track{
+            background:transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-blue-50 min-h-screen">
+
+<div class="flex">
+
+    {% include 'train_admin/sidebar.html' %}
+
+    <!-- MAIN CONTENT -->
+    <div class="ml-64 w-full p-8">
+
+        <!-- PAGE HEADER -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+
+            <div>
+
+                <div class="flex items-center gap-4">
+
+                    <div class="h-16 w-16 rounded-3xl bg-gradient-to-r from-emerald-600 to-green-500 flex items-center justify-center text-3xl shadow-xl">
+                        👨‍✈️
+                    </div>
+
+                    <div>
+                        <h1 class="text-4xl font-extrabold text-gray-800">
+                            Conductor Management
+                        </h1>
+
+                        <p class="text-gray-500 mt-1">
+                            Add, manage and assign login credentials to conductors.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- QUICK STATS -->
+            <div class="grid grid-cols-2 gap-4">
+
+                <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-2xl px-5 py-4 shadow-lg">
+                    <p class="text-sm text-gray-500">
+                        Total Conductors
+                    </p>
+
+                    <h2 class="text-2xl font-bold text-emerald-600">
+                        {{ conductors|length }}
+                    </h2>
+                </div>
+
+                <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-2xl px-5 py-4 shadow-lg">
+                    <p class="text-sm text-gray-500">
+                        System Status
+                    </p>
+
+                    <h2 class="text-2xl font-bold text-blue-600">
+                        Active
+                    </h2>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TOP GRID -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
+
+            <!-- ADD CONDUCTOR -->
+            <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-3xl shadow-xl p-8">
+
+                <div class="flex items-center gap-3 mb-6">
+
+                    <div class="h-12 w-12 rounded-2xl bg-green-100 flex items-center justify-center text-2xl">
+                        ➕
+                    </div>
+
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            Add Conductor
+                        </h2>
+
+                        <p class="text-sm text-gray-500">
+                            Register a new train conductor.
+                        </p>
+                    </div>
+
+                </div>
+
+                <form method="POST" class="space-y-5">
+
+                    {% csrf_token %}
+
+                    <!-- NAME -->
+                    <div>
+
+                        <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            Conductor Name
+                        </label>
+
+                        <input type="text"
+                               name="name"
+                               placeholder="Enter conductor name"
+                               class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+                               required>
+
+                    </div>
+
+                    <!-- PHONE -->
+                    <div>
+
+                        <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            Phone Number
+                        </label>
+
+                        <input type="text"
+                               name="phone"
+                               placeholder="e.g 0712345678"
+                               class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+                               required>
+
+                    </div>
+
+                    <!-- BUTTON -->
+                    <button type="submit"
+                            class="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white py-4 rounded-2xl hover:scale-[1.01] transition shadow-lg font-semibold">
+
+                        Save Conductor
+
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- ASSIGN LOGIN -->
+            <div class="xl:col-span-2 bg-white/80 backdrop-blur-lg border border-white/40 rounded-3xl shadow-xl p-8">
+
+                <div class="flex items-center gap-3 mb-6">
+
+                    <div class="h-12 w-12 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
+                        🔐
+                    </div>
+
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            Assign Login Credentials
+                        </h2>
+
+                        <p class="text-sm text-gray-500">
+                            Create login access for conductors.
+                        </p>
+                    </div>
+
+                </div>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                        <!-- SELECT -->
+                        <div>
+
+                            <label class="block mb-2 text-sm font-semibold text-gray-700">
+                                Select Conductor
+                            </label>
+
+                            <select name="conductor_id"
+                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
+                                    required>
+
+                                <option value="">
+                                    Select Conductor
+                                </option>
+
+                                {% for conductor in conductors %}
+
+                                <option value="{{ conductor.id }}">
+                                    {{ conductor.name }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+                        <!-- EMAIL -->
+                        <div>
+
+                            <label class="block mb-2 text-sm font-semibold text-gray-700">
+                                Email Address
+                            </label>
+
+                            <input type="email"
+                                   name="email"
+                                   placeholder="example@email.com"
+                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
+                                   required>
+
+                        </div>
+
+                        <!-- PASSWORD -->
+                        <div>
+
+                            <label class="block mb-2 text-sm font-semibold text-gray-700">
+                                Password
+                            </label>
+
+                            <input type="password"
+                                   name="password"
+                                   placeholder="Enter password"
+                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+                    <button type="submit"
+                            name="assign_login"
+                            class="mt-6 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-2xl hover:scale-[1.01] transition shadow-lg font-semibold">
+
+                        Assign Login Access
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- CONDUCTORS TABLE -->
+        <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-3xl shadow-xl overflow-hidden">
+
+            <!-- TABLE HEADER -->
+            <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+                <div>
+
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Conductors List
+                    </h2>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        View and manage all registered conductors.
+                    </p>
+
+                </div>
+
+                <!-- SEARCH -->
+                <div class="relative">
+
+                    <input type="text"
+                           id="searchInput"
+                           placeholder="Search conductors..."
+                           class="pl-11 pr-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none">
+
+                    <span class="absolute left-4 top-3.5 text-gray-400">
+                        🔍
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- TABLE -->
+            <div class="overflow-x-auto">
+
+                <table class="min-w-full">
+
+                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
+
+                        <tr>
+
+                            <th class="px-6 py-4 text-left">
+                                Conductor
+                            </th>
+
+                            <th class="px-6 py-4 text-left">
+                                Phone Number
+                            </th>
+
+                            <th class="px-6 py-4 text-left">
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="conductorsTable" class="divide-y divide-gray-100">
+
+                        {% for conductor in conductors %}
+
+                        <tr class="hover:bg-green-50/40 transition">
+
+                            <td class="px-6 py-5">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div class="h-11 w-11 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold shadow">
+                                        {{ conductor.name|slice:":1" }}
+                                    </div>
+
+                                    <div>
+
+                                        <h3 class="font-semibold text-gray-800">
+                                            {{ conductor.name }}
+                                        </h3>
+
+                                        <p class="text-sm text-gray-500">
+                                            Train Conductor
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="px-6 py-5 text-gray-700">
+                                {{ conductor.phone }}
+                            </td>
+
+                            <td class="px-6 py-5">
+
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                    Active
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="3" class="px-6 py-12 text-center text-gray-500">
+
+                                <div class="flex flex-col items-center gap-3">
+
+                                    <div class="text-5xl">
+                                        👨‍✈️
+                                    </div>
+
+                                    <div>
+
+                                        <p class="font-semibold">
+                                            No conductors added yet
+                                        </p>
+
+                                        <p class="text-sm text-gray-400 mt-1">
+                                            Add your first train conductor to begin.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- SEARCH FUNCTION -->
+<script>
+
+    const searchInput = document.getElementById('searchInput');
+    const rows = document.querySelectorAll('#conductorsTable tr');
+
+    searchInput.addEventListener('keyup', function () {
+
+        const value = this.value.toLowerCase();
+
+        rows.forEach(row => {
+
+            const text = row.innerText.toLowerCase();
+
+            row.style.display = text.includes(value) ? '' : 'none';
+
+        });
+
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,577 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcel Tracking | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50 min-h-screen">
+
+<div class="flex">
+
+{% include 'technical_staff/sidebar.html' %}
+
+<!-- MAIN -->
+<div class="ml-72 w-full min-h-screen p-8">
+
+    <!-- HEADER -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
+
+        <div class="flex items-center gap-5">
+
+            <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-4xl shadow-2xl">
+                📦
+            </div>
+
+            <div>
+
+                <h1 class="text-4xl font-extrabold text-gray-800">
+                    Traffic & Parcel Center
+                </h1>
+
+                <p class="text-gray-500 mt-2 text-lg">
+                    Track parcel deliveries, GPS movement and traffic status from one operations screen.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- LIVE STATUS -->
+        <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-3xl shadow-xl px-6 py-5">
+
+            <p class="text-sm text-gray-500">
+                Tracking System
+            </p>
+
+            <h2 class="text-xl font-bold text-gray-800 mt-1">
+                Live Tracking Active
+            </h2>
+
+            <div class="mt-4 flex items-center gap-2 text-sm text-emerald-600 font-semibold">
+                <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                Parcel Updates Enabled
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SEARCH + STATS -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
+
+        <!-- TRACK FORM -->
+        <div class="xl:col-span-2 bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-8">
+
+            <div class="mb-8">
+
+                <h2 class="text-2xl font-bold text-gray-800">
+                    Search Parcel
+                </h2>
+
+                <p class="text-gray-500 mt-1">
+                    Enter tracking ID or scan QR code to retrieve parcel information.
+                </p>
+
+            </div>
+
+            <form method="GET">
+
+                <div class="flex flex-col md:flex-row gap-4">
+
+                    <div class="flex-1 relative">
+
+                        <span class="absolute left-5 top-4 text-gray-400 text-xl">
+                            🔎
+                        </span>
+
+                        <input type="text"
+                               name="tracking_id"
+                               value="{{ request.GET.tracking_id }}"
+                               placeholder="Enter parcel tracking ID..."
+                               class="w-full pl-14 pr-5 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-lg">
+
+                    </div>
+
+                    <button class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-2xl font-bold shadow-xl hover:scale-[1.02] transition-all duration-300">
+
+                        Track Parcel
+
+                    </button>
+
+                </div>
+
+            </form>
+
+            <!-- QUICK ACTIONS -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+
+                <button type="button"
+                        class="bg-blue-100 text-blue-700 py-4 rounded-2xl font-semibold hover:bg-blue-200 transition">
+                    📷 Scan QR
+                </button>
+
+                <button type="button"
+                        class="bg-emerald-100 text-emerald-700 py-4 rounded-2xl font-semibold hover:bg-emerald-200 transition">
+                    🚚 In Transit
+                </button>
+
+                <button type="button"
+                        class="bg-yellow-100 text-yellow-700 py-4 rounded-2xl font-semibold hover:bg-yellow-200 transition">
+                    ⏳ Pending Pickup
+                </button>
+
+                <button type="button"
+                        class="bg-purple-100 text-purple-700 py-4 rounded-2xl font-semibold hover:bg-purple-200 transition">
+                    📍 Update Status
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- STATISTICS -->
+        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-8">
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-8">
+                Tracking Overview
+            </h2>
+
+            <div class="space-y-5">
+
+                <div class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white p-5 rounded-3xl shadow-lg">
+
+                    <p class="text-sm text-blue-100">
+                        Parcels In Transit
+                    </p>
+
+                    <h3 class="text-4xl font-extrabold mt-2">
+                        {{ parcels_in_transit|default:"0" }}
+                    </h3>
+
+                </div>
+
+                <div class="bg-gradient-to-r from-emerald-500 to-green-500 text-white p-5 rounded-3xl shadow-lg">
+
+                    <p class="text-sm text-emerald-100">
+                        Delivered Today
+                    </p>
+
+                    <h3 class="text-4xl font-extrabold mt-2">
+                        {{ delivered_today|default:"0" }}
+                    </h3>
+
+                </div>
+
+                <div class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-5 rounded-3xl shadow-lg">
+
+                    <p class="text-sm text-orange-100">
+                        Pending Pickup
+                    </p>
+
+                    <h3 class="text-4xl font-extrabold mt-2">
+                        {{ pending_pickups|default:"0" }}
+                    </h3>
+
+                </div>
+
+                <div class="bg-gradient-to-r from-rose-600 to-pink-500 text-white p-5 rounded-3xl shadow-lg">
+
+                    <p class="text-sm text-rose-100">
+                        Traffic Status
+                    </p>
+
+                    <h3 class="text-4xl font-extrabold mt-2">
+                        {{ traffic_status|default:"Monitoring..." }}
+                    </h3>
+
+                    <p class="text-sm text-rose-100 mt-3">
+                        Avg speed: {{ avg_speed|floatformat:0 }} km/h
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- PARCEL DETAILS -->
+    {% if parcel %}
+
+    <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
+
+        <!-- TOP BAR -->
+        <div class="bg-gradient-to-r from-blue-600 to-cyan-500 p-8 text-white">
+
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+                <div>
+
+                    <p class="uppercase tracking-wider text-sm text-blue-100">
+                        Tracking ID
+                    </p>
+
+                    <h2 class="text-4xl font-extrabold mt-2">
+                        {{ parcel.parcel_id }}
+                    </h2>
+
+                    <p class="text-blue-100 mt-3">
+                        SmartTravels Parcel Logistics System
+                    </p>
+
+                </div>
+
+                <div class="bg-white/20 backdrop-blur-lg px-6 py-4 rounded-2xl text-center">
+
+                    <p class="text-sm text-blue-100">
+                        Current Status
+                    </p>
+
+                    <h3 class="text-2xl font-bold mt-2">
+                        {{ parcel.status }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- DETAILS -->
+        <div class="p-8">
+
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+                <!-- LEFT SIDE -->
+                <div class="xl:col-span-2 space-y-8">
+
+                    <!-- SENDER & RECEIVER -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- SENDER -->
+                        <div class="bg-slate-50 rounded-3xl p-6 border border-slate-200">
+
+                            <div class="flex items-center gap-4 mb-5">
+
+                                <div class="h-14 w-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl shadow-lg">
+                                    👤
+                                </div>
+
+                                <div>
+
+                                    <p class="text-sm text-gray-400 uppercase font-bold">
+                                        Sender
+                                    </p>
+
+                                    <h3 class="text-xl font-bold text-gray-800">
+                                        {{ parcel.sender_name }}
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                            <p class="text-gray-600">
+                                {{ parcel.phone }}
+                            </p>
+
+                        </div>
+
+                        <!-- RECEIVER -->
+                        <div class="bg-slate-50 rounded-3xl p-6 border border-slate-200">
+
+                            <div class="flex items-center gap-4 mb-5">
+
+                                <div class="h-14 w-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-2xl shadow-lg">
+                                    📥
+                                </div>
+
+                                <div>
+
+                                    <p class="text-sm text-gray-400 uppercase font-bold">
+                                        Receiver
+                                    </p>
+
+                                    <h3 class="text-xl font-bold text-gray-800">
+                                        {{ parcel.receiver_name }}
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                            <p class="text-gray-600">
+                                Awaiting delivery confirmation
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PICKUP CONFIRMATION -->
+                    <div class="bg-gradient-to-r from-emerald-500 to-green-500 rounded-3xl p-8 shadow-xl text-white">
+
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+                            <div>
+
+                                <h3 class="text-2xl font-bold">
+                                    Parcel Pickup Confirmation
+                                </h3>
+
+                                <p class="text-emerald-100 mt-2">
+                                    Confirm when the receiver collects the parcel at destination.
+                                </p>
+
+                            </div>
+
+                            {% if parcel.status != "Picked Up" %}
+
+                            <form method="POST">
+
+                                {% csrf_token %}
+
+                                <input type="hidden"
+                                       name="parcel_id"
+                                       value="{{ parcel.id }}">
+
+                                <input type="hidden"
+                                       name="action"
+                                       value="confirm_pickup">
+
+                                <button class="bg-white text-emerald-600 px-8 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition-all duration-300">
+
+                                    ✅ Confirm Pickup
+
+                                </button>
+
+                            </form>
+
+                            {% else %}
+
+                            <div class="bg-white/20 px-6 py-4 rounded-2xl font-bold text-lg">
+                                ✅ Parcel Already Picked Up
+                            </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    <!-- ROUTE -->
+                    <div class="bg-slate-50 rounded-3xl p-6 border border-slate-200">
+
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">
+                            Delivery Route
+                        </h3>
+
+                        <div class="flex flex-col md:flex-row md:items-center gap-5">
+
+                            <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm">
+
+                                <p class="text-sm text-gray-400 uppercase font-bold">
+                                    Pickup Location
+                                </p>
+
+                                <h4 class="text-lg font-bold text-gray-800 mt-2">
+                                    {{ parcel.pickup_location }}
+                                </h4>
+
+                            </div>
+
+                            <div class="text-4xl text-blue-500 text-center">
+                                →
+                            </div>
+
+                            <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm">
+
+                                <p class="text-sm text-gray-400 uppercase font-bold">
+                                    Destination
+                                </p>
+
+                                <h4 class="text-lg font-bold text-gray-800 mt-2">
+                                    {{ parcel.destination }}
+                                </h4>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- TIMELINE -->
+                    <div class="bg-slate-50 rounded-3xl p-6 border border-slate-200">
+
+                        <h3 class="text-xl font-bold text-gray-800 mb-8">
+                            Parcel Tracking Timeline
+                        </h3>
+
+                        <div class="space-y-6">
+
+                            {% for update in tracking_updates %}
+
+                            <div class="flex gap-5">
+
+                                <div class="flex flex-col items-center">
+
+                                    <div class="h-5 w-5 rounded-full bg-emerald-500 shadow-lg"></div>
+
+                                    {% if not forloop.last %}
+                                    <div class="w-1 h-20 bg-emerald-200"></div>
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="pb-6">
+
+                                    <h4 class="font-bold text-gray-800 text-lg">
+                                        {{ update.status }}
+                                    </h4>
+
+                                    <p class="text-gray-500 mt-1">
+                                        {{ update.description }}
+                                    </p>
+
+                                    <p class="text-sm text-gray-400 mt-2">
+                                        {{ update.created_at }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            {% empty %}
+
+                            <div class="text-center py-10">
+
+                                <div class="text-6xl mb-4">
+                                    📍
+                                </div>
+
+                                <h3 class="text-xl font-bold text-gray-700">
+                                    No Tracking Updates Yet
+                                </h3>
+
+                                <p class="text-gray-500 mt-2">
+                                    Tracking history will appear here once updates are added.
+                                </p>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- RIGHT SIDE -->
+                <div class="space-y-6">
+
+                    <!-- QR -->
+                    <div class="bg-slate-50 rounded-3xl p-6 border border-slate-200 text-center">
+
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">
+                            Parcel QR Code
+                        </h3>
+
+                        {% if parcel.parcel_qr %}
+
+                        <div class="bg-white p-5 rounded-3xl shadow-lg inline-block">
+
+                            <img src="{{ parcel.parcel_qr.url }}"
+                                 class="w-56 h-56 object-contain">
+
+                        </div>
+
+                        {% endif %}
+
+                        <p class="text-sm text-gray-500 mt-5">
+                            Scan to retrieve live parcel information.
+                        </p>
+
+                    </div>
+
+                    <!-- UPDATE STATUS -->
+                    <div class="bg-slate-50 rounded-3xl p-6 border border-slate-200">
+
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">
+                            Update Parcel Status
+                        </h3>
+
+                        <form method="POST">
+
+                            {% csrf_token %}
+
+                            <input type="hidden"
+                                   name="parcel_id"
+                                   value="{{ parcel.id }}">
+
+                            <select name="status"
+                                    class="w-full p-4 border border-gray-200 rounded-2xl mb-5 focus:ring-2 focus:ring-blue-500 outline-none">
+
+                                <option value="Received">
+                                    Parcel Received
+                                </option>
+
+                                <option value="In Transit">
+                                    In Transit
+                                </option>
+
+                                <option value="Arrived">
+                                    Arrived at Destination
+                                </option>
+
+                                <option value="Out for Delivery">
+                                    Out for Delivery
+                                </option>
+
+                                <option value="Delivered">
+                                    Delivered
+                                </option>
+
+                                <option value="Picked Up">
+                                    Picked Up
+                                </option>
+
+                            </select>
+
+                            <textarea name="description"
+                                      rows="4"
+                                      placeholder="Add tracking notes..."
+                                      class="w-full p-4 border border-gray-200 rounded-2xl mb-5 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+
+                            <button class="w-full bg-gradient-to-r from-emerald-600 to-cyan-500 text-white py-4 rounded-2xl font-bold shadow-xl hover:scale-[1.02] transition-all duration-300">
+
+                                📍 Update Tracking
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</div>
+
+</body>
+</html>

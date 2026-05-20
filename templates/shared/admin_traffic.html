@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} | SmartTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50 min-h-screen">
+
+<div class="flex">
+
+    {% include sidebar_template %}
+
+    <div class="ml-72 w-full p-8">
+
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
+
+            <div class="flex items-center gap-5">
+                <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-rose-500 to-pink-500 shadow-2xl flex items-center justify-center text-4xl text-white">
+                    🚦
+                </div>
+
+                <div>
+                    <h1 class="text-4xl font-black text-gray-800">
+                        {{ page_title }}
+                    </h1>
+                    <p class="text-gray-500 mt-2 text-lg">
+                        {{ page_description }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-lg border border-white/50 rounded-3xl p-6 shadow-xl">
+                <p class="text-sm text-gray-500">{{ transport_label }} fleet traffic</p>
+                <h2 class="text-2xl font-bold text-gray-800 mt-2">{{ traffic_status }}</h2>
+                <p class="text-sm text-gray-500 mt-2">Average speed {{ avg_speed|floatformat:0 }} km/h across {{ active_vehicles }} active vehicles</p>
+            </div>
+
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-3 mb-10">
+            <div class="glass-card rounded-3xl shadow-2xl border border-white/50 p-6 bg-white/80">
+                <p class="text-sm uppercase tracking-[.2em] text-gray-500 font-semibold">Active Vehicles</p>
+                <h2 class="text-4xl font-black text-gray-900 mt-4">{{ active_vehicles }}</h2>
+            </div>
+            <div class="glass-card rounded-3xl shadow-2xl border border-white/50 p-6 bg-white/80">
+                <p class="text-sm uppercase tracking-[.2em] text-gray-500 font-semibold">Average Speed</p>
+                <h2 class="text-4xl font-black text-gray-900 mt-4">{{ avg_speed|floatformat:0 }} km/h</h2>
+            </div>
+            <div class="glass-card rounded-3xl shadow-2xl border border-white/50 p-6 bg-white/80">
+                <p class="text-sm uppercase tracking-[.2em] text-gray-500 font-semibold">Traffic Profile</p>
+                <h2 class="text-4xl font-black text-gray-900 mt-4">{{ traffic_status }}</h2>
+            </div>
+        </div>
+
+        <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-8 border-b border-slate-200">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800">Live GPS Vehicle Feed</h2>
+                    <p class="text-sm text-gray-500 mt-2">Latest reported positions for active {{ transport_label|lower }} vehicles.</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto p-8">
+                {% if latest_gps %}
+                <table class="w-full text-left border-separate border-spacing-y-3">
+                    <thead>
+                        <tr>
+                            <th class="pb-3 text-sm text-gray-500 uppercase">Vehicle</th>
+                            <th class="pb-3 text-sm text-gray-500 uppercase">Driver</th>
+                            <th class="pb-3 text-sm text-gray-500 uppercase">Coordinates</th>
+                            <th class="pb-3 text-sm text-gray-500 uppercase">Speed</th>
+                            <th class="pb-3 text-sm text-gray-500 uppercase">Recorded</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for point in latest_gps %}
+                        <tr class="border-t border-slate-200 hover:bg-slate-50 transition">
+                            <td class="py-4 text-sm text-gray-700">{{ transport_label }} #{{ point.vehicle_id }}</td>
+                            <td class="py-4 text-sm text-gray-700">{{ point.driver.get_full_name|default:point.driver.username }}</td>
+                            <td class="py-4 text-sm text-gray-700">{{ point.latitude }}, {{ point.longitude }}</td>
+                            <td class="py-4 text-sm text-gray-700">{{ point.speed_kmh }} km/h</td>
+                            <td class="py-4 text-sm text-gray-500">{{ point.recorded_at|date:'M d, Y H:i' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="rounded-3xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+                    No live GPS data recorded yet for this fleet.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

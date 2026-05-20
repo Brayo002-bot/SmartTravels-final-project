@@ -1,0 +1,453 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilot Management | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .glass-card{
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(14px);
+        }
+
+        .fade-up{
+            animation: fadeUp .5s ease;
+        }
+
+        @keyframes fadeUp{
+            from{
+                opacity:0;
+                transform:translateY(20px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50">
+
+<div class="flex">
+
+    {% include 'flight_admin/sidebar.html' %}
+
+    <!-- MAIN CONTENT -->
+    <div class="ml-72 w-full min-h-screen p-8 fade-up">
+
+        <!-- HEADER -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
+
+            <div class="flex items-center gap-5">
+
+                <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-sky-500 to-cyan-400 flex items-center justify-center text-4xl shadow-2xl">
+                    👨‍✈️
+                </div>
+
+                <div>
+
+                    <h1 class="text-4xl font-extrabold text-gray-800">
+                        Pilot Management
+                    </h1>
+
+                    <p class="text-gray-500 mt-2 text-lg">
+                        Manage airline pilots, credentials and crew access.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- STATUS -->
+            <div class="glass-card rounded-3xl shadow-xl border border-white/40 px-6 py-5">
+
+                <p class="text-sm text-gray-500">
+                    Crew Status
+                </p>
+
+                <h2 class="text-xl font-bold text-gray-800 mt-1">
+                    Active Operations
+                </h2>
+
+                <div class="mt-4 flex items-center gap-2 text-sm text-emerald-600 font-semibold">
+                    <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Pilot Database Online
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- QUICK STATS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+
+            <!-- TOTAL PILOTS -->
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-gray-500 text-sm font-medium">
+                            Total Pilots
+                        </p>
+
+                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                            {{ pilots|length }}
+                        </h2>
+
+                    </div>
+
+                    <div class="h-16 w-16 rounded-2xl bg-sky-100 flex items-center justify-center text-3xl">
+                        👨‍✈️
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ACTIVE CREW -->
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-gray-500 text-sm font-medium">
+                            Active Crew
+                        </p>
+
+                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                            {{ pilots|length }}
+                        </h2>
+
+                    </div>
+
+                    <div class="h-16 w-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-3xl">
+                        🛫
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- LOGIN ASSIGNMENTS -->
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-gray-500 text-sm font-medium">
+                            Login Credentials
+                        </p>
+
+                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                            Secure
+                        </h2>
+
+                    </div>
+
+                    <div class="h-16 w-16 rounded-2xl bg-cyan-100 flex items-center justify-center text-3xl">
+                        🔐
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FORMS -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-10">
+
+            <!-- ADD PILOT -->
+            <div class="glass-card rounded-3xl shadow-2xl border border-white/40 p-8">
+
+                <div class="flex items-center justify-between mb-6">
+
+                    <div>
+
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            Add New Pilot
+                        </h2>
+
+                        <p class="text-gray-500 mt-1">
+                            Register a new airline pilot.
+                        </p>
+
+                    </div>
+
+                    <div class="text-4xl">
+                        ✈️
+                    </div>
+
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="space-y-5">
+
+                        <!-- NAME -->
+                        <div>
+
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Pilot Name
+                            </label>
+
+                            <input type="text"
+                                   name="name"
+                                   placeholder="Enter pilot full name"
+                                   class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
+                                   required>
+
+                        </div>
+
+                        <!-- PHONE -->
+                        <div>
+
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Phone Number
+                            </label>
+
+                            <input type="text"
+                                   name="phone"
+                                   placeholder="+254..."
+                                   class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+                    <button type="submit"
+                            class="mt-8 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-xl transition hover:scale-[1.02]">
+                        ➕ Add Pilot
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- ASSIGN LOGIN -->
+            <div class="glass-card rounded-3xl shadow-2xl border border-white/40 p-8">
+
+                <div class="flex items-center justify-between mb-6">
+
+                    <div>
+
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            Assign Login Credentials
+                        </h2>
+
+                        <p class="text-gray-500 mt-1">
+                            Create secure pilot accounts and system access.
+                        </p>
+
+                    </div>
+
+                    <div class="text-4xl">
+                        🔐
+                    </div>
+
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="space-y-5">
+
+                        <!-- SELECT PILOT -->
+                        <div>
+
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Select Pilot
+                            </label>
+
+                            <select name="pilot_id"
+                                    class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
+                                    required>
+
+                                <option value="">
+                                    Select Pilot
+                                </option>
+
+                                {% for pilot in pilots %}
+                                <option value="{{ pilot.id }}">
+                                    {{ pilot.name }}
+                                </option>
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+                        <!-- EMAIL -->
+                        <div>
+
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Email Address
+                            </label>
+
+                            <input type="email"
+                                   name="email"
+                                   placeholder="pilot@example.com"
+                                   class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
+                                   required>
+
+                        </div>
+
+                        <!-- PASSWORD -->
+                        <div>
+
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Password
+                            </label>
+
+                            <input type="password"
+                                   name="password"
+                                   placeholder="Create secure password"
+                                   class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+                    <button type="submit"
+                            name="assign_login"
+                            class="mt-8 bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-700 hover:to-cyan-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-xl transition hover:scale-[1.02]">
+                        🔑 Assign Login
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- PILOTS TABLE -->
+        <div class="glass-card rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
+
+            <!-- TABLE HEADER -->
+            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+
+                <div>
+
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Registered Pilots
+                    </h2>
+
+                    <p class="text-gray-500 mt-1">
+                        All airline pilots currently available in the system.
+                    </p>
+
+                </div>
+
+                <div class="bg-sky-100 text-sky-700 px-4 py-2 rounded-xl font-semibold">
+                    👨‍✈️ Crew Members
+                </div>
+
+            </div>
+
+            <!-- TABLE -->
+            <div class="overflow-x-auto">
+
+                <table class="min-w-full">
+
+                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
+
+                        <tr>
+
+                            <th class="px-6 py-4 text-left">
+                                Pilot
+                            </th>
+
+                            <th class="px-6 py-4 text-left">
+                                Phone Number
+                            </th>
+
+                            <th class="px-6 py-4 text-left">
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-100">
+
+                        {% for pilot in pilots %}
+
+                        <tr class="hover:bg-sky-50 transition">
+
+                            <td class="px-6 py-4">
+
+                                <div class="flex items-center gap-4">
+
+                                    <div class="h-12 w-12 rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg">
+                                        {{ pilot.name|slice:":1" }}
+                                    </div>
+
+                                    <div>
+
+                                        <p class="font-semibold text-gray-800">
+                                            {{ pilot.name }}
+                                        </p>
+
+                                        <p class="text-sm text-gray-500">
+                                            Airline Pilot
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-700 font-medium">
+                                {{ pilot.phone }}
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                                <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                    Active
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="3" class="px-6 py-12 text-center text-gray-500">
+                                No pilots registered yet.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

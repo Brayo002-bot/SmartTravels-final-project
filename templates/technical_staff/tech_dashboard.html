@@ -1,0 +1,586 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Dashboard | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .glass-card{
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .gradient-border{
+            position: relative;
+        }
+
+        .gradient-border::before{
+            content: "";
+            position: absolute;
+            inset: 0;
+            padding: 1px;
+            border-radius: 24px;
+            background: linear-gradient(to right, rgba(16,185,129,.4), rgba(59,130,246,.4));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            pointer-events: none;
+        }
+    </style>
+
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50 min-h-screen">
+
+<div class="flex">
+
+    {% include 'technical_staff/sidebar.html' %}
+
+    <!-- MAIN -->
+    <div class="ml-72 w-full min-h-screen p-8">
+
+        <!-- TOP HEADER -->
+        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-8 mb-10">
+
+            <!-- WELCOME -->
+            <div class="flex items-center gap-6">
+
+                <div class="h-24 w-24 rounded-3xl bg-gradient-to-r from-cyan-500 via-blue-600 to-emerald-500 flex items-center justify-center shadow-2xl text-5xl text-white">
+                    🛠️
+                </div>
+
+                <div>
+
+                    <h1 class="text-4xl font-extrabold text-gray-800">
+                        Technical Operations Dashboard
+                    </h1>
+
+                    <p class="text-gray-500 mt-2 text-lg">
+                        Manage bookings, verify passengers, register parcels and monitor daily transport operations.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- STATUS -->
+            <div class="glass-card gradient-border rounded-3xl px-8 py-6 shadow-2xl">
+
+                <div class="flex items-center gap-3">
+
+                    <div class="h-4 w-4 rounded-full bg-emerald-500 animate-pulse"></div>
+
+                    <span class="font-semibold text-emerald-700">
+                        System Online
+                    </span>
+
+                </div>
+
+                <p class="text-sm text-gray-500 mt-3">
+                    Real-time booking, parcel and boarding verification services are active.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- COMPANY CARD -->
+        {% if company %}
+        <div class="glass-card gradient-border rounded-[30px] shadow-2xl p-8 mb-10 overflow-hidden relative">
+
+            <!-- BACKGROUND EFFECT -->
+            <div class="absolute -top-20 -right-20 h-64 w-64 bg-cyan-400/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-20 -left-20 h-64 w-64 bg-emerald-400/20 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center gap-8">
+
+                <!-- COMPANY INFO -->
+                <div class="flex-1">
+
+                    <div class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold mb-5">
+                        🚍 {{ transport_label }} Operations
+                    </div>
+
+                    <h2 class="text-4xl font-extrabold text-gray-800">
+                        {{ company.name }}
+                    </h2>
+
+                    <p class="text-gray-600 mt-3 text-lg leading-relaxed">
+                        {{ company.description|default:"Manage transport operations, passenger verification, parcel tracking and payment assistance efficiently from one dashboard." }}
+                    </p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+
+                        <div class="bg-white/70 rounded-2xl p-4 border border-white/50 shadow">
+                            <p class="text-xs uppercase text-gray-400 font-bold">
+                                Transport
+                            </p>
+                            <h3 class="font-bold text-gray-800 mt-1">
+                                {{ transport_label }}
+                            </h3>
+                        </div>
+
+                        <div class="bg-white/70 rounded-2xl p-4 border border-white/50 shadow">
+                            <p class="text-xs uppercase text-gray-400 font-bold">
+                                Routes
+                            </p>
+                            <h3 class="font-bold text-gray-800 mt-1">
+                                {{ company_routes.count }}
+                            </h3>
+                        </div>
+
+                        <div class="bg-white/70 rounded-2xl p-4 border border-white/50 shadow">
+                            <p class="text-xs uppercase text-gray-400 font-bold">
+                                Support
+                            </p>
+                            <h3 class="font-bold text-gray-800 mt-1">
+                                Active
+                            </h3>
+                        </div>
+
+                        <div class="bg-white/70 rounded-2xl p-4 border border-white/50 shadow">
+                            <p class="text-xs uppercase text-gray-400 font-bold">
+                                Status
+                            </p>
+                            <h3 class="font-bold text-emerald-600 mt-1">
+                                Online
+                            </h3>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- LOGO -->
+                {% if company.logo_image %}
+                <div class="relative">
+
+                    <div class="absolute inset-0 bg-cyan-400/20 blur-2xl rounded-full"></div>
+
+                    <div class="relative h-56 w-56 rounded-3xl overflow-hidden border border-white/50 bg-white shadow-2xl">
+                        <img src="{{ company.logo_image.url }}"
+                             alt="{{ company.name }}"
+                             class="w-full h-full object-cover">
+                    </div>
+
+                </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <!-- NO COMPANY -->
+        <div class="bg-yellow-50 border border-yellow-200 rounded-3xl p-8 shadow-lg mb-10">
+
+            <div class="flex items-start gap-4">
+
+                <div class="text-5xl">
+                    ⚠️
+                </div>
+
+                <div>
+
+                    <h2 class="text-2xl font-bold text-yellow-800">
+                        No Company Assigned
+                    </h2>
+
+                    <p class="text-yellow-700 mt-2">
+                        Your account is not currently linked to any transport company.
+                        Please contact the system administrator.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+        <!-- STATISTICS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+
+            <!-- BOOKINGS -->
+            <div class="glass-card rounded-3xl shadow-2xl p-7 border border-white/50 hover:scale-[1.02] transition duration-300">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-gray-500 font-medium">
+                            Bookings Assisted
+                        </p>
+
+                        <h2 class="text-5xl font-extrabold text-gray-800 mt-3">
+                            {{ bookings_today }}
+                        </h2>
+
+                    </div>
+
+                    <div class="h-16 w-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
+                        🎫
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- PAYMENTS -->
+            <div class="glass-card rounded-3xl shadow-2xl p-7 border border-white/50 hover:scale-[1.02] transition duration-300">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-gray-500 font-medium">
+                            Pending Payments
+                        </p>
+
+                        <h2 class="text-5xl font-extrabold text-gray-800 mt-3">
+                            {{ pending_payments }}
+                        </h2>
+
+                    </div>
+
+                    <div class="h-16 w-16 rounded-2xl bg-amber-100 flex items-center justify-center text-3xl">
+                        💳
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- PARCELS -->
+            <div class="glass-card rounded-3xl shadow-2xl p-7 border border-white/50 hover:scale-[1.02] transition duration-300">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-gray-500 font-medium">
+                            Parcels Registered
+                        </p>
+
+                        <h2 class="text-5xl font-extrabold text-gray-800 mt-3">
+                            {{ parcels_today }}
+                        </h2>
+
+                    </div>
+
+                    <div class="h-16 w-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-3xl">
+                        📦
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ACTIVE ROUTES -->
+            <div class="glass-card rounded-3xl shadow-2xl p-7 border border-white/50 hover:scale-[1.02] transition duration-300">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-gray-500 font-medium">
+                            Active Routes
+                        </p>
+
+                        <h2 class="text-5xl font-extrabold text-gray-800 mt-3">
+                            {{ company_routes.count }}
+                        </h2>
+
+                    </div>
+
+                    <div class="h-16 w-16 rounded-2xl bg-cyan-100 flex items-center justify-center text-3xl">
+                        📍
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TRAFFIC STATUS -->
+            <div class="glass-card rounded-3xl shadow-2xl p-7 border border-white/50 hover:scale-[1.02] transition duration-300">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-gray-500 font-medium">
+                            Traffic Status
+                        </p>
+
+                        <h2 class="text-5xl font-extrabold text-gray-800 mt-3">
+                            {{ traffic_status }}
+                        </h2>
+
+                    </div>
+
+                    <div class="h-16 w-16 rounded-2xl bg-rose-100 flex items-center justify-center text-3xl">
+                        🚦
+                    </div>
+
+                </div>
+
+                <p class="text-sm text-gray-500 mt-3">
+                    Fleet average speed: {{ avg_speed|floatformat:0 }} km/h across {{ active_vehicles }} vehicles
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+
+            <a href="{% url 'tech_booking_assist' %}"
+               class="group bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-3xl p-7 shadow-2xl hover:scale-[1.03] transition duration-300">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <h2 class="text-2xl font-bold">
+                            Booking
+                        </h2>
+
+                        <p class="text-blue-100 mt-2">
+                            Assist passengers & payments
+                        </p>
+
+                    </div>
+
+                    <div class="text-5xl group-hover:rotate-6 transition">
+                        🎫
+                    </div>
+
+                </div>
+
+            </a>
+
+            <a href="{% url 'tech_parcels' %}"
+               class="group bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-3xl p-7 shadow-2xl hover:scale-[1.03] transition duration-300">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <h2 class="text-2xl font-bold">
+                            Parcels
+                        </h2>
+
+                        <p class="text-emerald-100 mt-2">
+                            Register & track parcels
+                        </p>
+
+                    </div>
+
+                    <div class="text-5xl group-hover:rotate-6 transition">
+                        📦
+                    </div>
+
+                </div>
+
+            </a>
+
+            <a href="{% url 'tech_ticket_scanner' %}"
+               class="group bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white rounded-3xl p-7 shadow-2xl hover:scale-[1.03] transition duration-300">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <h2 class="text-2xl font-bold">
+                            Scanner
+                        </h2>
+
+                        <p class="text-purple-100 mt-2">
+                            Verify tickets & QR codes
+                        </p>
+
+                    </div>
+
+                    <div class="text-5xl group-hover:rotate-6 transition">
+                        📷
+                    </div>
+
+                </div>
+
+            </a>
+
+            <a href="{% url 'tech_boarding' %}"
+               class="group bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-3xl p-7 shadow-2xl hover:scale-[1.03] transition duration-300">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <h2 class="text-2xl font-bold">
+                            Boarding
+                        </h2>
+
+                        <p class="text-orange-100 mt-2">
+                            Confirm passenger boarding
+                        </p>
+
+                    </div>
+
+                    <div class="text-5xl group-hover:rotate-6 transition">
+                        🚌
+                    </div>
+
+                </div>
+
+            </a>
+
+            <a href="{% url 'tech_tracking' %}"
+               class="group bg-gradient-to-r from-rose-600 to-pink-500 text-white rounded-3xl p-7 shadow-2xl hover:scale-[1.03] transition duration-300">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <h2 class="text-2xl font-bold">
+                            Traffic Centre
+                        </h2>
+
+                        <p class="text-pink-100 mt-2">
+                            Monitor GPS & route traffic
+                        </p>
+
+                    </div>
+
+                    <div class="text-5xl group-hover:rotate-6 transition">
+                        🚦
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+        <!-- ROUTES TABLE -->
+        {% if company_routes %}
+        <div class="glass-card rounded-[30px] shadow-2xl border border-white/50 overflow-hidden">
+
+            <!-- HEADER -->
+            <div class="p-8 border-b border-white/30 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+                <div>
+
+                    <h2 class="text-3xl font-bold text-gray-800">
+                        Company Routes
+                    </h2>
+
+                    <p class="text-gray-500 mt-2">
+                        Active routes available for {{ company.name }}
+                    </p>
+
+                </div>
+
+                <div class="bg-emerald-100 text-emerald-700 px-5 py-3 rounded-2xl font-semibold">
+                    {{ company_routes.count }} Active Routes
+                </div>
+
+            </div>
+
+            <!-- TABLE -->
+            <div class="overflow-x-auto">
+
+                <table class="w-full">
+
+                    <thead class="bg-white/60 text-gray-600 uppercase text-sm">
+
+                        <tr>
+
+                            <th class="p-5 text-left">
+                                Route
+                            </th>
+
+                            <th class="p-5 text-left">
+                                Price
+                            </th>
+
+                            <th class="p-5 text-left">
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for route in company_routes %}
+                        <tr class="border-t border-white/40 hover:bg-white/40 transition">
+
+                            <td class="p-5">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div class="h-12 w-12 rounded-2xl bg-cyan-100 flex items-center justify-center text-xl">
+                                        📍
+                                    </div>
+
+                                    <div>
+
+                                        <h3 class="font-bold text-gray-800">
+                                            {{ route.from_location }} → {{ route.to_location }}
+                                        </h3>
+
+                                        <p class="text-sm text-gray-500">
+                                            Operational Route
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="p-5">
+
+                                <span class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl font-bold">
+                                    Ksh {{ route.price }}
+                                </span>
+
+                            </td>
+
+                            <td class="p-5">
+
+                                <span class="bg-green-100 text-green-700 px-4 py-2 rounded-xl text-sm font-semibold">
+                                    Active
+                                </span>
+
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

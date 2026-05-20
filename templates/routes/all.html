@@ -1,0 +1,43 @@
+{% extends 'base/base.html' %}
+{% block title %}All Routes{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <h1 class="text-2xl font-bold mb-8">🗺️ All Available Routes</h1>
+  {% if bus_routes %}
+  <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">🚌 Bus Routes</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+    {% for r in bus_routes %}
+    <div class="st-card text-sm">
+      <p class="font-semibold">{{ r.from_location }} → {{ r.to_location }}</p>
+      {% if r.company %}<p class="text-white/40 text-xs mt-1">{{ r.company.name }}</p>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if train_routes %}
+  <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">🚂 Train Routes</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+    {% for r in train_routes %}
+    <div class="st-card text-sm">
+      <p class="font-semibold">{{ r.from_location }} → {{ r.to_location }}</p>
+      {% if r.company %}<p class="text-white/40 text-xs mt-1">{{ r.company.name }}</p>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if flight_routes %}
+  <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">✈️ Flight Routes</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+    {% for r in flight_routes %}
+    <div class="st-card text-sm">
+      <p class="font-semibold">{{ r.from_location }} → {{ r.to_location }}</p>
+      {% if r.company %}<p class="text-white/40 text-xs mt-1">{{ r.company.name }}</p>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if not bus_routes and not train_routes and not flight_routes %}
+  <div class="text-center py-20 text-white/40"><div class="text-5xl mb-4">🗺️</div><p>No routes configured yet. Add routes via the admin dashboards.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

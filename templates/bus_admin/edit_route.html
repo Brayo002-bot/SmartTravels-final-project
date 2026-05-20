@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Route | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+            font-family:'Plus Jakarta Sans',sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-blue-50">
+
+<div class="flex">
+
+    <!-- Sidebar -->
+    {% include 'bus_admin/sidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="ml-64 w-full min-h-screen p-8">
+
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+
+            <div>
+                <h1 class="text-3xl font-extrabold text-gray-800">
+                    Edit Route
+                </h1>
+
+                <p class="text-gray-500 mt-2">
+                    Modify route details and pricing.
+                </p>
+            </div>
+
+            <a href="{% url 'bus_add_route' %}" class="bg-gray-400 text-white px-6 py-3 rounded-2xl shadow-lg hover:bg-gray-500 transition font-semibold">
+                ← Back to Routes
+            </a>
+
+        </div>
+
+        <!-- Edit Route Form -->
+        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/40 p-8 max-w-2xl">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="space-y-6">
+
+                    <!-- FROM -->
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            Departure Location
+                        </label>
+
+                        <input type="text"
+                               name="from_location"
+                               value="{{ route.from_location }}"
+                               placeholder="e.g Nairobi"
+                               class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                               required>
+                    </div>
+
+                    <!-- TO -->
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            Destination
+                        </label>
+
+                        <input type="text"
+                               name="to_location"
+                               value="{{ route.to_location }}"
+                               placeholder="e.g Mombasa"
+                               class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                               required>
+                    </div>
+
+                    <!-- PRICE -->
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            Ticket Price (KES)
+                        </label>
+
+                        <input type="number"
+                               name="price"
+                               value="{{ route.price|floatformat:2 }}"
+                               step="0.01"
+                               min="0"
+                               placeholder="0.00"
+                               class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                               required>
+                    </div>
+
+                </div>
+
+                <div class="mt-8 flex flex-wrap gap-4">
+
+                    <button type="submit" class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:scale-105 transition">
+                        ✓ Update Route
+                    </button>
+
+                    <a href="{% url 'bus_add_route' %}" class="bg-gray-200 text-gray-700 px-8 py-4 rounded-2xl font-semibold hover:bg-gray-300 transition">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

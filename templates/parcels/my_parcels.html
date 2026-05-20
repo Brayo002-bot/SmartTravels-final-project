@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %}
+{% load humanize %}
+{% block title %}My Parcels{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <div class="flex justify-between items-center mb-8">
+    <div><h1 class="text-2xl font-bold">📦 My Parcels</h1><p class="text-white/50 text-sm mt-1">{{ parcels.count }} parcel{{ parcels.count|pluralize }}</p></div>
+    <a href="/parcels/" class="st-btn text-sm px-4 py-2">+ Send Parcel</a>
+  </div>
+  {% if parcels %}
+  <div class="space-y-4">
+    {% for p in parcels %}
+    <div class="st-card flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="font-mono font-bold text-[#00B4D8]">{{ p.parcel_id }}</p>
+        <p class="font-semibold mt-1">{{ p.origin }} → {{ p.destination }}</p>
+        <p class="text-sm text-white/50">To: {{ p.recipient_name }} · {{ p.recipient_phone }}</p>
+        <p class="text-xs text-white/30 mt-1">{{ p.created_at|naturaltime }}</p>
+      </div>
+      <div class="text-right">
+        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold
+          {% if p.status == 'collected' %}bg-green-500/20 text-green-300
+          {% elif p.status == 'in_transit' %}bg-blue-500/20 text-blue-300
+          {% elif p.status == 'arrived' %}bg-cyan-500/20 text-cyan-300
+          {% else %}bg-amber-500/20 text-amber-300{% endif %}">
+          {{ p.get_status_display }}
+        </span>
+        <p class="text-sm font-bold mt-2">KES {{ p.shipping_cost|intcomma }}</p>
+        <a href="/parcels/{{ p.parcel_id }}/" class="text-xs text-[#2979D9] hover:underline">View details →</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-20 text-white/40">
+    <div class="text-6xl mb-4">📦</div>
+    <p class="text-lg">No parcels yet. <a href="/parcels/" class="text-[#2979D9] hover:underline">Send your first parcel →</a></p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

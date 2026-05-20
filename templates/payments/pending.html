@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waiting for Payment | SmartTravels</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-md mx-auto p-6">
+
+  <div class="bg-white p-8 rounded-xl shadow text-center">
+    <div class="text-6xl mb-4">📱</div>
+    <h2 class="text-2xl font-bold text-gray-900 mb-2">Check Your Phone</h2>
+    <p class="text-gray-500 mb-1">M-Pesa push sent to</p>
+    <p class="text-blue-700 font-bold text-lg mb-6">{{ payment.phone_number }}</p>
+
+    <div class="bg-gray-50 border rounded-xl p-4 text-left text-sm text-gray-600 mb-6 space-y-2">
+      <p>1. Open the M-Pesa pop-up on your phone</p>
+      <p>2. Enter your <strong>M-Pesa PIN</strong></p>
+      <p>3. Wait for confirmation SMS</p>
+    </div>
+
+    <div id="status-msg" class="flex items-center justify-center gap-2 text-amber-600 text-sm mb-4">
+      <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+      </svg>
+      Waiting for payment confirmation…
+    </div>
+
+    <p class="text-xs text-gray-400 mb-5">Auto-checking every 5 seconds</p>
+
+    <a href="{% url 'dashboard' %}" class="text-sm text-gray-400 hover:text-gray-600">← Return to Dashboard</a>
+  </div>
+
+</div>
+<script>
+let tries = 0;
+(function poll() {
+  if (++tries > 36) return;
+  fetch('/payments/status/{{ payment.id }}/')
+    .then(r => r.json())
+    .then(d => {
+      const el = document.getElementById('status-msg');
+      if (d.status === 'completed') {
+        el.innerHTML = '✅ Payment confirmed! Redirecting…';
+        el.className = 'flex items-center justify-center gap-2 text-green-600 text-sm mb-4';
+        setTimeout(() => window.location = '/payments/success/{{ payment.id }}/', 1500);
+      } else if (d.status === 'failed') {
+        el.innerHTML = '❌ Payment failed. <a href="{% url 'dashboard' %}" class="underline ml-1">Go back</a>';
+        el.className = 'flex items-center justify-center gap-2 text-red-600 text-sm mb-4';
+      } else {
+        setTimeout(poll, 5000);
+      }
+    }).catch(() => setTimeout(poll, 5000));
+})();
+</script>
+</body>
+</html>

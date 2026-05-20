@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} | SmartTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50 min-h-screen">
+
+<div class="flex">
+
+    {% include sidebar_template %}
+
+    <div class="ml-72 w-full p-8">
+
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
+
+            <div class="flex items-center gap-5">
+
+                <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-amber-500 to-yellow-500 shadow-2xl flex items-center justify-center text-4xl text-white">
+                    📦
+                </div>
+
+                <div>
+                    <h1 class="text-4xl font-black text-gray-800">
+                        {{ page_title }}
+                    </h1>
+                    <p class="text-gray-500 mt-2 text-lg">
+                        {{ page_description }}
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-lg border border-white/50 rounded-3xl p-6 shadow-xl">
+                <p class="text-sm text-gray-500">{{ transport_label }} cargo center</p>
+                <h2 class="text-2xl font-bold text-gray-800 mt-2">{{ shipments_count }}</h2>
+                <p class="text-sm text-gray-500 mt-1">Shipments created by this admin</p>
+            </div>
+
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-3 mb-10">
+
+            <div class="glass-card rounded-3xl shadow-2xl border border-white/50 p-6 bg-white/80">
+                <p class="text-sm text-gray-500 uppercase tracking-[.2em] font-semibold">Total Weight</p>
+                <h3 class="text-4xl font-black text-gray-900 mt-4">{{ total_weight|floatformat:2 }} kg</h3>
+            </div>
+
+            <div class="glass-card rounded-3xl shadow-2xl border border-white/50 p-6 bg-white/80">
+                <p class="text-sm text-gray-500 uppercase tracking-[.2em] font-semibold">Total Value</p>
+                <h3 class="text-4xl font-black text-gray-900 mt-4">KES {{ total_value|floatformat:2 }}</h3>
+            </div>
+
+            <div class="glass-card rounded-3xl shadow-2xl border border-white/50 p-6 bg-white/80">
+                <p class="text-sm text-gray-500 uppercase tracking-[.2em] font-semibold">Origin Routes</p>
+                <h3 class="text-4xl font-black text-gray-900 mt-4">{{ routes|length }}</h3>
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-10">
+
+            <div class="xl:col-span-2 bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-8">
+
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Create Cargo Shipment</h2>
+
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Sender Name</label>
+                            <input type="text" name="sender_name" value="{{ request.user.get_full_name|default:request.user.email }}" class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-400 outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Sender Phone</label>
+                            <input type="text" name="sender_phone" value="{{ request.user.phone_number }}" class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-400 outline-none" required>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Recipient Name</label>
+                            <input type="text" name="recipient_name" class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-400 outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Recipient Phone</label>
+                            <input type="text" name="recipient_phone" class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-400 outline-none" required>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Origin</label>
+                            <select name="origin" class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-400 outline-none" required>
+                                <option value="">Select origin</option>
+                                {% for route in routes %}
+                                <option value="{{ route.from_location }}">{{ route.from_location }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Destination</label>
+                            <select name="destination" class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-400 outline-none" required>
+                                <option value="">Select destination</option>
+                                {% for route in routes %}
+                                <option value="{{ route.to_location }}">{{ route.to_location }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Category</label>
+                            <select name="category" class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-400 outline-none">
+                                {% for value,label in category_choices %}
+                                <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Weight (kg)</label>
+                            <input type="number" name="weight_kg" min="0.1" step="0.1" value="1.0" class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-400 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Declared Value</label>
+                            <input type="number" name="declared_value" min="0" step="0.01" value="0" class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-400 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                            <textarea name="description" rows="4" class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-400 outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+                            <textarea name="notes" rows="4" class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-400 outline-none"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <label class="inline-flex items-center gap-3 text-sm text-gray-700">
+                            <input type="checkbox" name="is_fragile" class="rounded border-gray-300 text-amber-600 focus:ring-amber-400">
+                            Fragile item
+                        </label>
+                        <label class="inline-flex items-center gap-3 text-sm text-gray-700">
+                            <input type="checkbox" name="is_paid" class="rounded border-gray-300 text-amber-600 focus:ring-amber-400">
+                            Payment received
+                        </label>
+                    </div>
+
+                    <button type="submit" class="w-full md:w-auto bg-amber-500 hover:bg-amber-600 text-white px-6 py-4 rounded-3xl font-semibold transition">
+                        Create Shipment
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Shipment History</h2>
+                {% if cargo_items %}
+                    <div class="space-y-4">
+                        {% for parcel in cargo_items %}
+                        <div class="rounded-3xl border border-slate-200 p-5 bg-slate-50">
+                            <div class="flex items-center justify-between gap-4">
+                                <div>
+                                    <p class="text-sm text-gray-500">{{ parcel.parcel_id }}</p>
+                                    <h3 class="text-lg font-semibold text-gray-800">{{ parcel.origin }} → {{ parcel.destination }}</h3>
+                                </div>
+                                <span class="text-xs text-slate-500">{{ parcel.created_at|date:'M d, Y' }}</span>
+                            </div>
+                            <div class="mt-4 grid grid-cols-1 gap-2 text-sm text-gray-600">
+                                <div><strong>Recipient:</strong> {{ parcel.recipient_name }} ({{ parcel.recipient_phone }})</div>
+                                <div><strong>Weight:</strong> {{ parcel.weight_kg }} kg</div>
+                                <div><strong>Status:</strong> {{ parcel.get_status_display }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
+                        No shipments created yet. Create one to get started.
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

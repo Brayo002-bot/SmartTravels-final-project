@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Terms & Conditions | SmartTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="max-w-4xl mx-auto p-6">
+
+    <div class="bg-white rounded-2xl shadow p-8">
+
+        <h1 class="text-3xl font-bold mb-4">📜 Terms & Conditions</h1>
+        <p class="text-gray-500 mb-6">Last Updated: {{ date|default:"2026" }}</p>
+
+        <h2 class="text-xl font-bold mb-2">1. Acceptance of Terms</h2>
+        <p class="text-gray-700 mb-4">
+            By using SmartTravels, you agree to these terms. If you do not agree, please do not use the platform.
+        </p>
+
+        <h2 class="text-xl font-bold mb-2">2. Booking System</h2>
+        <p class="text-gray-700 mb-4">
+            SmartTravels allows passengers to book transport seats without requiring account registration.
+            Bookings are confirmed upon successful payment.
+        </p>
+
+        <h2 class="text-xl font-bold mb-2">3. Payments</h2>
+        <p class="text-gray-700 mb-4">
+            All payments are processed via M-Pesa STK Push. Tickets are only valid after successful payment confirmation.
+        </p>
+
+        <h2 class="text-xl font-bold mb-2">4. Passenger Responsibilities</h2>
+        <ul class="list-disc ml-6 text-gray-700 space-y-1">
+            <li>Provide accurate phone number for ticket delivery</li>
+            <li>Arrive on time for departure</li>
+            <li>Follow transport provider rules</li>
+        </ul>
+
+        <h2 class="text-xl font-bold mt-6 mb-2">5. Driver & GPS Tracking</h2>
+        <p class="text-gray-700 mb-4">
+            Drivers are tracked during active trips for safety and operational monitoring.
+            Passenger GPS tracking is used only to manage boarding and alighting events during the journey.
+        </p>
+
+        <h2 class="text-xl font-bold mb-2">6. Loyalty Program</h2>
+        <p class="text-gray-700 mb-4">
+            SmartTravels may reward passengers with loyalty points based on completed trips.
+            These points can be used for discounts and promotions.
+        </p>
+
+        <h2 class="text-xl font-bold mb-2">7. Cancellation Policy</h2>
+        <p class="text-gray-700 mb-4">
+            Cancellations may be allowed depending on transport provider rules. Refunds are subject to approval.
+        </p>
+
+        <h2 class="text-xl font-bold mb-2">8. System Usage</h2>
+        <p class="text-gray-700 mb-4">
+            Misuse of the system, fraud, or interference with tracking systems may result in restricted access.
+        </p>
+
+        <h2 class="text-xl font-bold mb-2">9. Changes to Terms</h2>
+        <p class="text-gray-700 mb-4">
+            SmartTravels may update these terms at any time. Continued use means acceptance of changes.
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>

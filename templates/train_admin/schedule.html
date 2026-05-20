@@ -1,0 +1,281 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Schedule Management | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-cyan-50">
+
+<div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    {% include 'train_admin/sidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="ml-72 w-full p-8">
+
+        <!-- Header -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+
+            <div>
+
+                <div class="flex items-center gap-4">
+
+                    <div class="h-16 w-16 rounded-3xl bg-gradient-to-r from-cyan-600 to-blue-600 flex items-center justify-center text-3xl shadow-xl text-white">
+                        🚆
+                    </div>
+
+                    <div>
+                        <h1 class="text-4xl font-extrabold text-gray-800">
+                            Train Schedule Management
+                        </h1>
+
+                        <p class="text-gray-500 mt-1">
+                            Manage daily train schedules and departures.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Filter -->
+            <form method="get"
+                  class="bg-white/80 backdrop-blur-lg border border-white/40 shadow-xl rounded-3xl px-5 py-4 flex flex-wrap gap-3 items-center">
+
+                <label class="text-gray-600 font-medium">
+                    View Date
+                </label>
+
+                <input type="date"
+                       name="date"
+                       value="{{ selected_date }}"
+                       class="border border-gray-200 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+
+                <button type="submit"
+                        class="bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-6 py-3 rounded-2xl font-semibold hover:scale-105 transition">
+                    View
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+            <!-- Add Schedule Form -->
+            <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-8">
+
+                <div class="flex items-center gap-3 mb-6">
+
+                    <div class="h-12 w-12 rounded-2xl bg-cyan-100 flex items-center justify-center text-2xl">
+                        ➕
+                    </div>
+
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            Add Schedule
+                        </h2>
+
+                        <p class="text-sm text-gray-500">
+                            Create a new train schedule.
+                        </p>
+                    </div>
+
+                </div>
+
+                <form method="post" class="space-y-5">
+
+                    {% csrf_token %}
+
+                    <!-- Train -->
+                    <div>
+
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Select Train
+                        </label>
+
+                        <select name="train"
+                                class="w-full border border-gray-200 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white"
+                                required>
+
+                            <option value="">
+                                Choose train
+                            </option>
+
+                            {% for train in trains %}
+                            <option value="{{ train.id }}">
+                                {{ train.train_number }} ({{ train.route.from_location }} → {{ train.route.to_location }})
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- Travel Date -->
+                    <div>
+
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Travel Date
+                        </label>
+
+                        <input type="date"
+                               name="travel_date"
+                               class="w-full border border-gray-200 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                               required>
+
+                    </div>
+
+                    <!-- Travel Time -->
+                    <div>
+
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Departure Time
+                        </label>
+
+                        <input type="time"
+                               name="travel_time"
+                               class="w-full border border-gray-200 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                               required>
+
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit"
+                            class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white py-4 rounded-2xl font-bold text-lg hover:scale-[1.02] transition shadow-xl">
+
+                        Create Schedule
+
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- Schedule Table -->
+            <div class="xl:col-span-2 bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
+
+                <!-- Header -->
+                <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+                    <div>
+
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            Schedules for {{ selected_date }}
+                        </h2>
+
+                        <p class="text-sm text-gray-500 mt-1">
+                            View all scheduled train departures.
+                        </p>
+
+                    </div>
+
+                    <div class="bg-cyan-100 text-cyan-700 px-4 py-2 rounded-2xl font-semibold text-sm">
+                        🚉 {{ schedules|length }} Schedule{{ schedules|length|pluralize }}
+                    </div>
+
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto">
+
+                    <table class="min-w-full">
+
+                        <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
+
+                            <tr>
+                                <th class="px-6 py-4 text-left">Departure Time</th>
+                                <th class="px-6 py-4 text-left">Train</th>
+                                <th class="px-6 py-4 text-left">Route</th>
+                                <th class="px-6 py-4 text-left">Price</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody class="divide-y divide-gray-100 bg-white">
+
+                            {% for schedule in schedules %}
+
+                            <tr class="hover:bg-cyan-50 transition">
+
+                                <td class="px-6 py-5 font-semibold text-gray-700">
+                                    {{ schedule.travel_time }}
+                                </td>
+
+                                <td class="px-6 py-5 text-gray-700">
+                                    <div class="flex items-center gap-3">
+
+                                        <div class="h-10 w-10 rounded-xl bg-cyan-100 flex items-center justify-center text-lg">
+                                            🚆
+                                        </div>
+
+                                        <span class="font-semibold">
+                                            {{ schedule.train.train_number }}
+                                        </span>
+
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-5 text-gray-700 font-medium">
+                                    {{ schedule.train.route.from_location }} → {{ schedule.train.route.to_location }}
+                                </td>
+
+                                <td class="px-6 py-5">
+                                    <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-bold">
+                                        KES {{ schedule.price }}
+                                    </span>
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="4" class="px-6 py-16 text-center">
+
+                                    <div class="flex flex-col items-center justify-center">
+
+                                        <div class="text-6xl mb-4">
+                                            🚉
+                                        </div>
+
+                                        <h3 class="text-xl font-bold text-gray-700">
+                                            No Schedules Found
+                                        </h3>
+
+                                        <p class="text-gray-500 mt-2">
+                                            No train schedules available for this date.
+                                        </p>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

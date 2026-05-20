@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}SmartTravels{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background: #020617;
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Gradient Animation */
+        @keyframes gradient {
+
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 8s ease infinite;
+        }
+
+        /* Glow Effect */
+        .glow:hover {
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.5);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #06b6d4, #8b5cf6);
+            border-radius: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body class="bg-slate-950 text-white">
+
+    <!-- FLOATING SOCIAL SIDEBAR -->
+    <div class="fixed left-5 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-4">
+
+        <a href="#"
+           class="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center shadow-2xl hover:scale-110 transition duration-300 animate-bounce glow">
+
+            <i class="fab fa-facebook-f text-white text-xl"></i>
+
+        </a>
+
+        <a href="#"
+           class="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center shadow-2xl hover:scale-110 transition duration-300 animate-pulse glow">
+
+            <i class="fab fa-instagram text-white text-xl"></i>
+
+        </a>
+
+        <a href="#"
+           class="w-14 h-14 rounded-2xl bg-black flex items-center justify-center shadow-2xl hover:scale-110 transition duration-300 glow">
+
+            <i class="fab fa-x-twitter text-white text-xl"></i>
+
+        </a>
+
+        <a href="#"
+           class="w-14 h-14 rounded-2xl bg-green-500 flex items-center justify-center shadow-2xl hover:scale-110 transition duration-300 animate-bounce glow">
+
+            <i class="fab fa-whatsapp text-white text-xl"></i>
+
+        </a>
+
+    </div>
+
+    <!-- Navbar -->
+    {% include 'base/navbar.html' %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% include 'base/footer.html' %}
+
+    <!-- AOS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        AOS.init({
+            duration: 1200,
+            once: true,
+        });
+    </script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'js/app.js' %}"></script>
+
+</body>
+</html>

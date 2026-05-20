@@ -1,0 +1,338 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Route | SmartTravels</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        ::-webkit-scrollbar{
+            width:8px;
+            height:8px;
+        }
+
+        ::-webkit-scrollbar-thumb{
+            background:#cbd5e1;
+            border-radius:20px;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-blue-50">
+
+<div class="flex">
+
+    {% include 'train_admin/sidebar.html' %}
+
+    <!-- MAIN CONTENT -->
+    <div class="ml-64 w-full min-h-screen p-8">
+
+        <!-- HEADER -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+
+            <div>
+
+                <div class="flex items-center gap-4">
+
+                    <div class="h-16 w-16 rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-3xl shadow-xl">
+                        🛤️
+                    </div>
+
+                    <div>
+
+                        <h1 class="text-4xl font-extrabold text-gray-800">
+                            Edit Train Route
+                        </h1>
+
+                        <p class="text-gray-500 mt-1">
+                            Modify destination details and update ticket pricing.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- STATUS CARD -->
+            <div class="bg-white px-6 py-4 rounded-2xl shadow-lg border border-gray-100">
+
+                <p class="text-sm text-gray-500">
+                    Current Route
+                </p>
+
+                <h3 class="text-xl font-bold text-blue-600 mt-1">
+                    {{ route.from_location }} → {{ route.to_location }}
+                </h3>
+
+            </div>
+
+        </div>
+
+        <!-- MAIN GRID -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+            <!-- FORM SECTION -->
+            <div class="xl:col-span-2 bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/40 p-8">
+
+                <!-- FORM HEADER -->
+                <div class="flex items-center justify-between mb-8">
+
+                    <div>
+
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            Route Information
+                        </h2>
+
+                        <p class="text-gray-500 text-sm mt-1">
+                            Update route destinations and pricing details.
+                        </p>
+
+                    </div>
+
+                    <div class="h-14 w-14 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
+                        ✏️
+                    </div>
+
+                </div>
+
+                <!-- FORM -->
+                <form method="POST" class="space-y-6">
+
+                    {% csrf_token %}
+
+                    <!-- FROM -->
+                    <div>
+
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">
+                            From Location
+                        </label>
+
+                        <input type="text"
+                               name="from_location"
+                               value="{{ route.from_location }}"
+                               placeholder="Departure location"
+                               class="w-full p-4 border border-gray-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               required>
+
+                    </div>
+
+                    <!-- TO -->
+                    <div>
+
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">
+                            To Location
+                        </label>
+
+                        <input type="text"
+                               name="to_location"
+                               value="{{ route.to_location }}"
+                               placeholder="Destination location"
+                               class="w-full p-4 border border-gray-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               required>
+
+                    </div>
+
+                    <!-- PRICE -->
+                    <div>
+
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">
+                            Ticket Price (KES)
+                        </label>
+
+                        <div class="relative">
+
+                            <span class="absolute left-4 top-4 text-gray-400 font-semibold">
+                                KES
+                            </span>
+
+                            <input type="number"
+                                   step="0.01"
+                                   min="0"
+                                   name="price"
+                                   value="{{ route.price|floatformat:2 }}"
+                                   placeholder="0.00"
+                                   class="w-full pl-16 p-4 border border-gray-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+
+                        <button type="submit"
+                                class="flex-1 bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:scale-[1.01] transition">
+
+                            💾 Update Route
+
+                        </button>
+
+                        <a href="{% url 'train_add_route' %}"
+                           class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-4 rounded-2xl font-bold text-lg text-center transition">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- SIDEBAR INFO -->
+            <div class="space-y-6">
+
+                <!-- ROUTE SUMMARY -->
+                <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/40 p-6">
+
+                    <h2 class="text-xl font-bold text-gray-800 mb-5">
+                        Route Summary
+                    </h2>
+
+                    <div class="space-y-5">
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">
+                                Departure
+                            </span>
+
+                            <span class="font-bold text-blue-600">
+                                {{ route.from_location }}
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">
+                                Destination
+                            </span>
+
+                            <span class="font-bold text-emerald-600">
+                                {{ route.to_location }}
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">
+                                Current Price
+                            </span>
+
+                            <span class="font-bold text-yellow-600">
+                                KES {{ route.price|floatformat:2 }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ROUTE PERFORMANCE -->
+                <div class="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl shadow-xl p-6 text-white">
+
+                    <h2 class="text-xl font-bold mb-5">
+                        Route Performance
+                    </h2>
+
+                    <div class="space-y-5">
+
+                        <!-- BOOKINGS -->
+                        <div>
+
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm">
+                                    Route Popularity
+                                </span>
+
+                                <span class="text-sm">
+                                    89%
+                                </span>
+                            </div>
+
+                            <div class="w-full bg-gray-700 rounded-full h-3">
+                                <div class="bg-green-400 h-3 rounded-full w-[89%]"></div>
+                            </div>
+
+                        </div>
+
+                        <!-- OCCUPANCY -->
+                        <div>
+
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm">
+                                    Seat Occupancy
+                                </span>
+
+                                <span class="text-sm">
+                                    74%
+                                </span>
+                            </div>
+
+                            <div class="w-full bg-gray-700 rounded-full h-3">
+                                <div class="bg-blue-400 h-3 rounded-full w-[74%]"></div>
+                            </div>
+
+                        </div>
+
+                        <!-- SATISFACTION -->
+                        <div>
+
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm">
+                                    Passenger Satisfaction
+                                </span>
+
+                                <span class="text-sm">
+                                    96%
+                                </span>
+                            </div>
+
+                            <div class="w-full bg-gray-700 rounded-full h-3">
+                                <div class="bg-yellow-400 h-3 rounded-full w-[96%]"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- INFO CARD -->
+                <div class="bg-blue-50 border border-blue-100 rounded-3xl p-6">
+
+                    <div class="flex items-start gap-4">
+
+                        <div class="h-12 w-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-xl shadow-md">
+                            ℹ️
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-bold text-blue-900 text-lg">
+                                Route Tips
+                            </h3>
+
+                            <p class="text-blue-800 text-sm mt-2 leading-relaxed">
+                                Ensure route destinations are accurate and ticket pricing reflects current travel costs and train class standards.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

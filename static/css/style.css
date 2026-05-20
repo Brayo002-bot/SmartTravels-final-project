@@ -1,0 +1,22 @@
+/* Navbar & mobile menu animations */
+@keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+.animate-fade-in { animation: fade-in 1s ease-out forwards; }
+
+@keyframes slide-down { 0% { transform: translateY(-50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+.animate-slide-down { animation: slide-down 0.8s ease-out forwards; }
+
+/* Floating shapes */
+@keyframes bounce-slow { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-15px);} }
+@keyframes spin-slow {0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
+@keyframes pulse-slow {0%,100%{opacity:0.25;}50%{opacity:0.5;}}
+.animate-bounce-slow { animation: bounce-slow 6s infinite ease-in-out; }
+.animate-spin-slow { animation: spin-slow 20s linear infinite; }
+.animate-pulse-slow { animation: pulse-slow 5s infinite ease-in-out; }
+
+/* Slide-fade for hero */
+@keyframes slide-fade { 0% {opacity:0; transform:translateX(-50px);} 100% {opacity:1; transform:translateX(0);} }
+.animate-slide-fade { animation: slide-fade 1s ease-out forwards; }
+
+.hero-bg {
+    background-image: url("../images/hero-image.jpeg");
+}

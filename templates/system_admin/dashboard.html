@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>System Admin Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body class="bg-gradient-to-br from-gray-100 via-slate-100 to-blue-50 min-h-screen">
+
+<div class="flex">
+
+<!-- SIDEBAR -->
+<aside class="w-64 bg-gray-900 text-white min-h-screen fixed shadow-2xl">
+
+    <div class="p-6 text-xl font-bold border-b border-gray-700 flex items-center gap-2">
+        ⚙️ System Admin
+    </div>
+
+    <nav class="mt-6 space-y-1">
+
+        <a href="{% url 'system_admin_dashboard' %}" class="block px-6 py-3 hover:bg-gray-800">📊 Dashboard</a>
+        <a href="{% url 'manage_users' %}" class="block px-6 py-3 hover:bg-gray-800">👥 Manage Users</a>
+        <a href="{% url 'manage_admins' %}" class="block px-6 py-3 hover:bg-gray-800">🛠️ Manage Admins</a>
+        <a href="{% url 'system_reports' %}" class="block px-6 py-3 hover:bg-gray-800">📈 Reports</a>
+        <a href="{% url 'system_settings' %}" class="block px-6 py-3 hover:bg-gray-800">⚙️ Settings</a>
+        <a href="{% url 'audit_logs' %}" class="block px-6 py-3 hover:bg-gray-800">📜 Audit Logs</a>
+
+    </nav>
+
+</aside>
+
+<!-- MAIN -->
+<div class="ml-64 p-8 w-full">
+
+    <!-- WELCOME HEADER -->
+    <div class="flex justify-between items-center mb-8">
+
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">
+                👋 Welcome back, {{ request.user.username }}
+            </h1>
+            <p class="text-gray-500">Here’s what’s happening in your system today.</p>
+        </div>
+
+        <!-- EXPORT BUTTONS -->
+        <div class="flex gap-3">
+
+            <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                ⬇ Export CSV
+            </button>
+
+            <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                🧾 Export PDF
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- STATS CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
+            <p class="text-gray-500">Total Users</p>
+            <p class="text-3xl font-bold">{{ total_users }}</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
+            <p class="text-gray-500">Total Admins</p>
+            <p class="text-3xl font-bold">{{ total_admins }}</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
+            <p class="text-gray-500">Total Revenue</p>
+            <p class="text-3xl font-bold text-green-600">KES {{ total_revenue|default:"0" }}</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
+            <p class="text-gray-500">System Health</p>
+            <p class="text-2xl font-bold text-blue-600">{{ system_health }}</p>
+        </div>
+
+    </div>
+
+    <!-- CHARTS SECTION -->
+    <div class="grid md:grid-cols-2 gap-6 mt-10">
+
+        <div class="bg-white p-6 rounded-2xl shadow">
+            <h2 class="font-bold mb-4">📊 Bookings Overview</h2>
+            <canvas id="bookingsChart"></canvas>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow">
+            <h2 class="font-bold mb-4">💰 Revenue Growth</h2>
+            <canvas id="revenueChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- QUICK INSIGHTS -->
+    <div class="grid md:grid-cols-3 gap-6 mt-10">
+
+        <div class="bg-white p-6 rounded-2xl shadow">
+            <h3 class="font-bold">🚌 Bus Bookings</h3>
+            <p class="text-2xl">{{ bus_bookings|default:"0" }}</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow">
+            <h3 class="font-bold">🚆 Train Bookings</h3>
+            <p class="text-2xl">{{ train_bookings|default:"0" }}</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow">
+            <h3 class="font-bold">✈️ Flight Bookings</h3>
+            <p class="text-2xl">{{ flight_bookings|default:"0" }}</p>
+        </div>
+
+    </div>
+
+    <!-- AUDIT LOGS -->
+    <div class="mt-10">
+        <h2 class="text-xl font-bold mb-4">Recent Activity</h2>
+
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+
+            <table class="w-full">
+
+                <thead class="bg-gray-100 text-gray-600 text-sm">
+                    <tr>
+                        <th class="p-4 text-left">User</th>
+                        <th class="p-4 text-left">Action</th>
+                        <th class="p-4 text-left">Details</th>
+                        <th class="p-4 text-left">Time</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for log in recent_logs %}
+                    <tr class="border-t hover:bg-gray-50">
+                        <td class="p-4">{{ log.user.username|default:"System" }}</td>
+                        <td class="p-4 text-blue-600 font-semibold">{{ log.get_action_display }}</td>
+                        <td class="p-4 text-gray-600">{{ log.details|truncatechars:60 }}</td>
+                        <td class="p-4 text-gray-500 text-sm">{{ log.timestamp }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- CHART SCRIPT -->
+<script>
+const bookingsChart = new Chart(document.getElementById('bookingsChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Bus', 'Train', 'Flight'],
+        datasets: [{
+            label: 'Bookings',
+            data: [
+                {{ bus_bookings|default:0 }},
+                {{ train_bookings|default:0 }},
+                {{ flight_bookings|default:0 }}
+            ],
+            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b']
+        }]
+    }
+});
+
+const revenueChart = new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        datasets: [{
+            label: 'Revenue',
+            data: [12000, 19000, 15000, 22000, 30000],
+            borderColor: '#22c55e',
+            fill: true
+        }]
+    }
+});
+</script>
+
+</body>
+</html>

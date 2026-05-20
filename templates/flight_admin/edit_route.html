@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Route | SmartTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+<div class="flex">
+    {% include 'flight_admin/sidebar.html' %}
+    <div class="ml-64 w-full p-8">
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold">Edit Flight Route</h1>
+            <p class="text-gray-600 mt-1">Modify route details and pricing.</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-6 max-w-2xl">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-sm font-semibold mb-2">From Location</label>
+                    <input type="text" name="from_location" value="{{ route.from_location }}" class="w-full border rounded-lg p-3" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">To Location</label>
+                    <input type="text" name="to_location" value="{{ route.to_location }}" class="w-full border rounded-lg p-3" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Ticket Price (KES)</label>
+                    <input type="number" step="0.01" min="0" name="price" value="{{ route.price|floatformat:2 }}" class="w-full border rounded-lg p-3" required>
+                </div>
+
+                <div class="flex gap-4">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold">
+                        Update Route
+                    </button>
+                    <a href="{% url 'flight_add_route' %}" class="bg-gray-400 text-white px-6 py-3 rounded-lg hover:bg-gray-500 font-semibold">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

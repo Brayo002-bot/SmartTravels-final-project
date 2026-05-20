@@ -1,0 +1,596 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passenger Dashboard | SmartTravels</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy: #080d1a;
+  --navy-2: #0d1628;
+  --gold: #c9a84c;
+  --gold-l: #e8c97a;
+  --border: rgba(255,255,255,0.08);
+  --border-h: rgba(255,255,255,0.16);
+  --glass: rgba(255,255,255,0.04);
+  --glass-h: rgba(255,255,255,0.07);
+  --muted: rgba(255,255,255,0.45);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed; left: 0; top: 0;
+  height: 100vh; width: 260px;
+  background: rgba(13,22,40,0.95);
+  border-right: 0.5px solid var(--border);
+  backdrop-filter: blur(20px);
+  display: flex; flex-direction: column;
+  z-index: 50;
+  transition: transform 0.3s;
+}
+@media (max-width: 1023px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); } }
+
+.sidebar-logo {
+  padding: 1.5rem;
+  border-bottom: 0.5px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.sidebar-logo img {
+  width: 44px; height: 44px; border-radius: 10px;
+  object-fit: cover; border: 0.5px solid rgba(255,255,255,0.12);
+}
+.sidebar-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 500; color: #fff;
+}
+.sidebar-subbrand {
+  font-size: 0.68rem; font-weight: 300;
+  color: var(--muted); letter-spacing: 0.08em;
+  text-transform: uppercase; margin-top: 2px;
+}
+
+.sidebar-nav {
+  flex: 1; padding: 1.25rem 1rem;
+  overflow-y: auto; display: flex; flex-direction: column; gap: 4px;
+}
+.nav-label {
+  font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(255,255,255,0.22);
+  padding: 0.75rem 0.75rem 0.35rem;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-radius: 10px;
+  font-size: 0.88rem; font-weight: 400;
+  color: var(--muted); text-decoration: none;
+  transition: background 0.18s, color 0.18s;
+  border: 0.5px solid transparent;
+}
+.nav-item:hover {
+  background: var(--glass-h); color: rgba(255,255,255,0.85);
+  border-color: var(--border);
+}
+.nav-item.active {
+  background: rgba(201,168,76,0.1);
+  border-color: rgba(201,168,76,0.25);
+  color: var(--gold-l);
+}
+.nav-item i { width: 18px; text-align: center; font-size: 0.85rem; }
+
+.sidebar-user {
+  padding: 1rem;
+  border-top: 0.5px solid var(--border);
+}
+.sidebar-user-card {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-radius: 10px;
+  background: var(--glass); border: 0.5px solid var(--border);
+}
+.sidebar-user-name { font-size: 0.88rem; font-weight: 500; }
+.sidebar-user-role { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+.logout-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: rgba(239,68,68,0.1); border: 0.5px solid rgba(239,68,68,0.25);
+  display: flex; align-items: center; justify-content: center;
+  color: #f87171; text-decoration: none;
+  transition: background 0.18s;
+}
+.logout-btn:hover { background: rgba(239,68,68,0.2); }
+
+/* MAIN */
+.main { margin-left: 260px; min-height: 100vh; }
+@media (max-width: 1023px) { .main { margin-left: 0; } }
+
+/* TOPBAR */
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  background: rgba(8,13,26,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 0.5px solid var(--border);
+  padding: 1rem 1.75rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.topbar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem; font-weight: 500; color: #fff;
+}
+.topbar-title span { color: var(--gold-l); }
+.topbar-sub { font-size: 0.8rem; font-weight: 300; color: var(--muted); margin-top: 2px; }
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.search-wrap { position: relative; }
+.search-wrap input {
+  width: 220px; padding: 8px 36px 8px 14px;
+  background: var(--glass); border: 0.5px solid var(--border);
+  border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 0.83rem; color: #fff; outline: none;
+  transition: border-color 0.18s;
+}
+.search-wrap input::placeholder { color: rgba(255,255,255,0.25); }
+.search-wrap input:focus { border-color: var(--border-h); }
+.search-wrap i {
+  position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
+  color: rgba(255,255,255,0.25); font-size: 0.8rem;
+}
+.icon-btn {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: var(--glass); border: 0.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); cursor: pointer; transition: background 0.18s;
+}
+.icon-btn:hover { background: var(--glass-h); }
+.menu-btn { display: none; }
+@media (max-width: 1023px) { .menu-btn { display: flex; } }
+
+/* CONTENT */
+.content { padding: 1.75rem; }
+
+/* STAT CARDS */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; margin-bottom: 1.75rem;
+}
+.stat-card {
+  background: var(--glass);
+  border: 0.5px solid var(--border);
+  border-radius: 16px; padding: 1.25rem;
+  transition: border-color 0.2s, transform 0.2s;
+  position: relative; overflow: hidden;
+}
+.stat-card:hover { border-color: var(--border-h); transform: translateY(-3px); }
+.stat-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  border-radius: 16px 16px 0 0;
+}
+.stat-card.gold::before { background: var(--gold); }
+.stat-card.purple::before { background: #a78bfa; }
+.stat-card.teal::before { background: #2dd4bf; }
+.stat-card.amber::before { background: #fbbf24; }
+
+.stat-label { font-size: 0.75rem; font-weight: 400; color: var(--muted); letter-spacing: 0.03em; }
+.stat-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem; font-weight: 500; color: #fff; margin: 0.5rem 0 0.25rem;
+  line-height: 1;
+}
+.stat-sub { font-size: 0.72rem; font-weight: 300; color: var(--muted); }
+.stat-icon {
+  position: absolute; right: 1.25rem; top: 1.25rem;
+  width: 42px; height: 42px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+}
+.stat-icon.gold { background: rgba(201,168,76,0.12); color: var(--gold); }
+.stat-icon.purple { background: rgba(167,139,250,0.12); color: #a78bfa; }
+.stat-icon.teal { background: rgba(45,212,191,0.12); color: #2dd4bf; }
+.stat-icon.amber { background: rgba(251,191,36,0.12); color: #fbbf24; }
+
+/* CARD */
+.card {
+  background: var(--glass);
+  border: 0.5px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 0.5px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+}
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem; font-weight: 500; color: #fff;
+}
+.card-sub { font-size: 0.78rem; font-weight: 300; color: var(--muted); margin-top: 3px; }
+.card-body { padding: 1.5rem; }
+
+/* SEARCH FORM */
+.trip-icons { display: flex; gap: 8px; }
+.trip-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem;
+  border: 0.5px solid var(--border);
+  animation: floatY 4s ease-in-out infinite;
+}
+.trip-icon.bus { background: rgba(45,212,191,0.08); color: #2dd4bf; animation-delay: 0s; }
+.trip-icon.train { background: rgba(167,139,250,0.08); color: #a78bfa; animation-delay: 0.8s; }
+.trip-icon.plane { background: rgba(96,165,250,0.08); color: #60a5fa; animation-delay: 1.6s; }
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem; align-items: end;
+}
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label {
+  font-size: 0.72rem; font-weight: 500; color: var(--muted);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.form-input {
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.05);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; color: #fff; outline: none;
+  transition: border-color 0.18s, background 0.18s;
+  -webkit-appearance: none;
+}
+.form-input::placeholder { color: rgba(255,255,255,0.22); }
+.form-input:focus { border-color: var(--border-h); background: rgba(255,255,255,0.07); }
+.form-input option { background: #0d1628; }
+
+/* SEARCH BTN */
+.btn-gold {
+  padding: 10px 20px;
+  background: var(--gold); border: none; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500;
+  color: #0a0f1e; cursor: pointer;
+  transition: background 0.18s, transform 0.12s;
+  white-space: nowrap;
+}
+.btn-gold:hover { background: var(--gold-l); }
+.btn-gold:active { transform: scale(0.98); }
+
+/* TRIP RESULTS */
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem; margin-top: 1.5rem;
+}
+.trip-card {
+  background: rgba(255,255,255,0.035);
+  border: 0.5px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.trip-card:hover { border-color: var(--border-h); transform: translateY(-3px); }
+.trip-card-top { padding: 1.1rem 1.25rem; border-bottom: 0.5px solid var(--border); }
+.trip-card-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 0.85rem;
+}
+.mode-badge {
+  font-size: 0.7rem; font-weight: 500; letter-spacing: 0.04em;
+  padding: 4px 10px; border-radius: 100px;
+  border: 0.5px solid rgba(45,212,191,0.3);
+  background: rgba(45,212,191,0.08); color: #2dd4bf;
+}
+.seat-badge { font-size: 0.75rem; font-weight: 400; }
+.seat-badge.ok { color: #4ade80; }
+.seat-badge.full { color: #f87171; }
+.trip-route {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem; font-weight: 500; color: #fff; margin-bottom: 0.4rem;
+}
+.trip-route .arrow { color: var(--gold); margin: 0 4px; }
+.trip-depart { font-size: 0.78rem; font-weight: 300; color: var(--muted); }
+.trip-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem; font-weight: 500; color: #fff; margin-top: 0.75rem;
+}
+.trip-card-foot { padding: 1rem 1.25rem; }
+.book-btn {
+  display: block; width: 100%; text-align: center;
+  padding: 9px; border-radius: 9px;
+  background: var(--gold); color: #0a0f1e;
+  font-size: 0.85rem; font-weight: 500;
+  text-decoration: none;
+  transition: background 0.18s;
+}
+.book-btn:hover { background: var(--gold-l); }
+.book-btn.disabled { opacity: 0.4; pointer-events: none; }
+
+/* EMPTY STATE */
+.empty-state {
+  padding: 3rem 1rem; text-align: center;
+}
+.empty-icon {
+  width: 64px; height: 64px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.25rem; font-size: 1.5rem;
+}
+.empty-icon.gold { background: rgba(201,168,76,0.1); color: var(--gold); }
+.empty-icon.teal { background: rgba(45,212,191,0.1); color: #2dd4bf; }
+.empty-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem; font-weight: 500; color: #fff; margin-bottom: 0.5rem;
+}
+.empty-sub { font-size: 0.85rem; font-weight: 300; color: var(--muted); max-width: 360px; margin: 0 auto; line-height: 1.6; }
+
+/* BG ORBS */
+.orb {
+  position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+}
+.orb-1 {
+  width: 500px; height: 500px; top: -150px; right: -150px;
+  background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 65%);
+}
+.orb-2 {
+  width: 400px; height: 400px; bottom: -120px; left: 100px;
+  background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 65%);
+}
+
+/* GRID OVERLAY on topbar */
+.grid-overlay {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* DIVIDER */
+.section-gap { margin-bottom: 1.75rem; }
+</style>
+
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- ═══════════════════════════ SIDEBAR ═══════════════════════════ -->
+{% include 'passenger/sidebar.html' %}
+
+<!-- ═══════════════════════════ MAIN ═══════════════════════════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar" style="position:relative;">
+    <div class="grid-overlay"></div>
+    <div style="position:relative;z-index:1;">
+      <button class="icon-btn menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">
+        <i class="fa-solid fa-bars" style="font-size:0.85rem;"></i>
+      </button>
+    </div>
+    <div style="position:relative;z-index:1;flex:1;">
+      <div class="topbar-title">
+        Good to see you, <span>{{ request.user.username }}</span>
+      </div>
+      <div class="topbar-sub">Manage your bookings, parcels and rewards</div>
+    </div>
+    <div class="topbar-right" style="position:relative;z-index:1;">
+      <div class="search-wrap">
+        <input type="text" placeholder="Search anything…">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+      <button class="icon-btn">
+        <i class="fa-solid fa-bell" style="font-size:0.85rem;"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid section-gap" data-aos="fade-up">
+
+      <div class="stat-card gold">
+        <div class="stat-icon gold"><i class="fa-solid fa-gift"></i></div>
+        <div class="stat-label">Loyalty Points</div>
+        <div class="stat-value">{{ loyalty_points|default:'0' }}</div>
+        <div class="stat-sub">1 point = KES 100 spent</div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-icon purple"><i class="fa-solid fa-route"></i></div>
+        <div class="stat-label">Total Trips</div>
+        <div class="stat-value">{{ total_bookings|default:'0' }}</div>
+        <div class="stat-sub">Journeys completed</div>
+      </div>
+
+      <div class="stat-card teal">
+        <div class="stat-icon teal"><i class="fa-solid fa-box"></i></div>
+        <div class="stat-label">Parcels Sent</div>
+        <div class="stat-value">{{ total_parcels|default:'0' }}</div>
+        <div class="stat-sub">Across all routes</div>
+      </div>
+
+      <div class="stat-card amber">
+        <div class="stat-icon amber"><i class="fa-solid fa-wallet"></i></div>
+        <div class="stat-label">Total Spent</div>
+        <div class="stat-value" style="font-size:1.6rem;">KES {{ total_spent|default:'0' }}</div>
+        <div class="stat-sub">Lifetime spend</div>
+      </div>
+
+    </div>
+
+    <!-- SEARCH -->
+    <div class="card section-gap" id="search" data-aos="fade-up" data-aos-delay="80">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Search Your Trip</div>
+          <div class="card-sub">Book buses, trains, shuttles and flights</div>
+        </div>
+        <div class="trip-icons">
+          <div class="trip-icon bus"><i class="fa-solid fa-bus"></i></div>
+          <div class="trip-icon train"><i class="fa-solid fa-train"></i></div>
+          <div class="trip-icon plane"><i class="fa-solid fa-plane"></i></div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <form method="GET" action="">
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label class="form-label">From</label>
+              <input type="text" name="from" list="from-options"
+                value="{{ query_from|default:'' }}"
+                placeholder="Nairobi" class="form-input" required>
+              <datalist id="from-options">
+                {% for option in from_choices %}<option value="{{ option }}"></option>{% endfor %}
+              </datalist>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">To</label>
+              <input type="text" name="to" list="to-options"
+                value="{{ query_to|default:'' }}"
+                placeholder="Mombasa" class="form-input" required>
+              <datalist id="to-options">
+                {% for option in to_choices %}<option value="{{ option }}"></option>{% endfor %}
+              </datalist>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Date</label>
+              <input type="date" name="date"
+                value="{{ query_date|default:'' }}"
+                class="form-input" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Mode</label>
+              <select name="mode" class="form-input">
+                <option value="">All Modes</option>
+                <option value="bus">Bus</option>
+                <option value="train">Train</option>
+                <option value="flight">Flight</option>
+                <option value="shuttle">Shuttle</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <button type="submit" class="btn-gold" style="width:100%;">
+                <i class="fa-solid fa-magnifying-glass" style="margin-right:6px;"></i>
+                Search
+              </button>
+            </div>
+
+          </div>
+        </form>
+
+        <!-- RESULTS -->
+        {% if search_performed %}
+        <div class="results-grid">
+          {% for trip in trips %}
+          <div class="trip-card">
+            <div class="trip-card-top">
+              <!-- Company Info -->
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 0.5px solid rgba(255,255,255,0.08);">
+                {% if trip.company_logo %}
+                  <img src="{{ trip.company_logo }}" alt="{{ trip.company_name }}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 0.5px solid rgba(255,255,255,0.12);">
+                {% else %}
+                  <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(201,168,76,0.1); display: flex; align-items: center; justify-content: center; border: 0.5px solid rgba(201,168,76,0.25);">
+                    <i class="fa-solid fa-building" style="font-size: 0.9rem; color: var(--gold);"></i>
+                  </div>
+                {% endif %}
+                <div style="flex: 1;">
+                  <div style="font-size: 0.85rem; font-weight: 500; color: #fff;">{{ trip.company_name }}</div>
+                  {% if trip.company_description %}
+                    <div style="font-size: 0.7rem; color: rgba(255,255,255,0.45); margin-top: 2px; line-height: 1.3;">{{ trip.company_description|truncatewords:8 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="trip-card-meta">
+                <span class="mode-badge">{{ trip.mode|title }}</span>
+                {% if trip.available_seats > 0 %}
+                <span class="seat-badge ok"><i class="fa-solid fa-circle-check" style="font-size:0.65rem;margin-right:4px;"></i>{{ trip.available_seats }} seats</span>
+                {% else %}
+                <span class="seat-badge full"><i class="fa-solid fa-circle-xmark" style="font-size:0.65rem;margin-right:4px;"></i>Full</span>
+                {% endif %}
+              </div>
+              <div class="trip-route">
+                {{ trip.from_location }} <span class="arrow">→</span> {{ trip.to_location }}
+              </div>
+              {% if trip.transport_description %}
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 6px; line-height: 1.3; font-style: italic;">{{ trip.transport_description|truncatewords:12 }}</div>
+              {% endif %}
+              <div class="trip-depart">Departs {{ trip.departure_time }}</div>
+              <div class="trip-price">KES {{ trip.price }}</div>
+            </div>
+            <div class="trip-card-foot">
+              <a href="{% url 'book_trip' trip.mode trip.schedule_id %}"
+                class="book-btn {% if trip.available_seats == 0 %}disabled{% endif %}">
+                {% if trip.available_seats == 0 %}Fully Booked{% else %}Book Now{% endif %}
+              </a>
+            </div>
+          </div>
+          {% empty %}
+          <div style="grid-column:1/-1;">
+            <div class="empty-state">
+              <div class="empty-icon gold"><i class="fa-solid fa-circle-exclamation"></i></div>
+              <div class="empty-title">No schedules found</div>
+              <div class="empty-sub">Try a different route or date and we'll find your journey.</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state" style="padding-top:2rem;">
+          <div class="empty-icon teal"><i class="fa-solid fa-route"></i></div>
+          <div class="empty-title">Ready for your next journey?</div>
+          <div class="empty-sub">Search above to discover available schedules across buses, trains and flights.</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+AOS.init({ duration: 700, once: true, easing: 'ease-out' });
+
+// close sidebar on outside click (mobile)
+document.addEventListener('click', function(e) {
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar.classList.contains('open') && !sidebar.contains(e.target)) {
+    sidebar.classList.remove('open');
+  }
+});
+</script>
+
+</body>
+</html>
