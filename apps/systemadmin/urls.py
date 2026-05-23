@@ -10,4 +10,6 @@ urlpatterns = [
     path('reports/',             views.analytics,              name='system_reports'),
     path('audit/',              views.audit_logs,             name='audit_logs'),
     path('settings/',           views.system_settings,        name='system_settings'),
+    path('subscribers/',        views.subscribers,            name='subscribers'),
+    path('subscribe/',          views.subscribe,              name='subscribe'),
 ]

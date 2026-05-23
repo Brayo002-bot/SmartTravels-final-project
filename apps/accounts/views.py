@@ -216,6 +216,8 @@ def dashboard_view(request):
                         bus__route__from_location__iexact=query_from,
                         bus__route__to_location__iexact=query_to,
                         travel_date=travel_date,
+                        bus__available_seats__gt=0,
+                        bus__is_cargo=False,
                     )
                     if time_filters is not None:
                         bus_schedules = bus_schedules.filter(time_filters)
@@ -226,6 +228,8 @@ def dashboard_view(request):
                         train__route__from_location__iexact=query_from,
                         train__route__to_location__iexact=query_to,
                         travel_date=travel_date,
+                        train__available_seats__gt=0,
+                        train__is_cargo=False,
                     )
                     if time_filters is not None:
                         train_schedules = train_schedules.filter(time_filters)
@@ -236,10 +240,18 @@ def dashboard_view(request):
                         flight__route__from_location__iexact=query_from,
                         flight__route__to_location__iexact=query_to,
                         travel_date=travel_date,
+                        flight__available_seats__gt=0,
+                        flight__is_cargo=False,
                     )
                     if time_filters is not None:
                         flight_schedules = flight_schedules.filter(time_filters)
                     trips.extend([build_trip(schedule, 'flight') for schedule in flight_schedules])
+
+        # Compute loyalty points for the passenger dashboard
+        from apps.payments.models import Payment
+        payments_for_user = Payment.objects.filter(passenger=request.user)
+        payment_total = payments_for_user.aggregate(total=Sum('amount'))['total'] or 0
+        loyalty_balance = payments_for_user.count() * 100 + int(payment_total)
 
         return render(request, template_name, {
             'active': 'dashboard',
@@ -252,6 +264,7 @@ def dashboard_view(request):
             'query_date': query_date,
             'query_mode': query_mode,
             'query_time': query_time,
+            'loyalty_points': f"{loyalty_balance:,}",
             'recommendations': {
                 'most_used_mode': most_used_mode,
                 'top_modes': top_modes,
@@ -325,11 +338,14 @@ def passenger_track_parcel(request):
 
     from apps.parcels.models import Parcel
 
-    parcels = Parcel.objects.filter(sender=request.user).order_by('-created_at')[:12]
-    total_parcels = parcels.count()
-    in_transit = parcels.filter(status='in_transit').count()
-    delivered = parcels.filter(status='arrived').count()
-    pending = parcels.exclude(status__in=['arrived', 'collected']).count()
+    # Keep a QuerySet to allow aggregation/filtering, then slice for display
+    parcels_qs = Parcel.objects.filter(sender=request.user).order_by('-created_at')
+    total_parcels = parcels_qs.count()
+    in_transit = parcels_qs.filter(status='in_transit').count()
+    delivered = parcels_qs.filter(status='arrived').count()
+    pending = parcels_qs.exclude(status__in=['arrived', 'collected']).count()
+
+    parcels = parcels_qs[:12]
 
     return render(request, 'passenger/track_parcel.html', {
         'active': 'track_parcel',
@@ -359,6 +375,40 @@ def passenger_loyalty(request):
         'loyalty_points': f"{point_balance:,}",
         'current_tier': tier,
         'savings_earned': f"KES {savings:,}",
+    })
+
+
+@login_required
+def passenger_tickets(request):
+    if request.user.role != 'passenger':
+        raise PermissionDenied
+
+    from apps.buses.models import Booking as BusBooking
+    from apps.trains.models import Booking as TrainBooking
+    from apps.flights.models import Booking as FlightBooking
+    from apps.payments.models import Payment
+
+    name = request.user.get_full_name() or request.user.username
+    bus_tickets = BusBooking.objects.filter(passenger_name__icontains=name)
+    train_tickets = TrainBooking.objects.filter(passenger_name__icontains=name)
+    flight_tickets = FlightBooking.objects.filter(passenger_name__icontains=name)
+
+    total_tickets = bus_tickets.count() + train_tickets.count() + flight_tickets.count()
+    confirmed_tickets = (
+        bus_tickets.filter(status='confirmed').count() +
+        train_tickets.filter(status='confirmed').count() +
+        flight_tickets.filter(status='confirmed').count()
+    )
+
+    payments = Payment.objects.filter(passenger=request.user)
+    payment_total = payments.aggregate(total=Sum('amount'))['total'] or 0
+    point_balance = payments.count() * 100 + int(payment_total)
+
+    return render(request, 'passenger/tickets.html', {
+        'active': 'tickets',
+        'total_tickets': total_tickets,
+        'confirmed_tickets': confirmed_tickets,
+        'loyalty_points': f"{point_balance:,}",
     })
 
 

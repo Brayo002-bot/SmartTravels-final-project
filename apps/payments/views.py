@@ -93,8 +93,33 @@ def _confirm_booking(ref, btype):
             from apps.buses.models import Booking
         elif btype == 'train':
             from apps.trains.models import Booking
-        else:
+        elif btype == 'flight':
             from apps.flights.models import Booking
+        elif btype == 'parcel':
+            from apps.parcels.models import Parcel
+            p = Parcel.objects.filter(parcel_id=ref).first()
+            if p:
+                p.is_paid = True
+                p.status = 'booked'
+                p.save(update_fields=['is_paid','status'])
+                from apps.parcels.models import ParcelLog
+                ParcelLog.objects.create(parcel=p, status='paid', note='Payment received via MPesa', updated_by=None)
+                # try sending a simple email receipt if settings configured
+                try:
+                    from django.core.mail import send_mail
+                    from django.conf import settings
+                    send_mail(
+                        f'Parcel Payment Received - {p.parcel_id}',
+                        f'Your parcel {p.parcel_id} has been paid. Tracking ID: {p.parcel_id}',
+                        settings.DEFAULT_FROM_EMAIL,
+                        [p.sender.email],
+                        fail_silently=True,
+                    )
+                except Exception:
+                    pass
+            return
+        else:
+            return
         b = Booking.objects.filter(booking_reference=ref).first()
         if b:
             b.status = 'confirmed'

@@ -233,6 +233,25 @@
                             </select>
                         </div>
 
+                        <!-- Vehicle Type -->
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Vehicle Type
+                            </label>
+
+                            <select id="flight-vehicle-type"
+                                    name="vehicle_type"
+                                    class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
+                                    onchange="updateFlightMode()"
+                                    required>
+                                <option value="passenger">Passenger Flight</option>
+                                <option value="cargo">Cargo Flight</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div id="flight-passenger-config">
                         <!-- Total Capacity -->
                         <div>
                             <label class="block mb-2 font-semibold text-gray-700">
@@ -252,10 +271,8 @@
                             </p>
                         </div>
 
-                    </div>
-
-                    <!-- SEAT CLASSES -->
-                    <div class="grid md:grid-cols-3 gap-6 mt-8">
+                        <!-- SEAT CLASSES -->
+                        <div class="grid md:grid-cols-3 gap-6 mt-8">
 
                         <div class="bg-purple-50 rounded-2xl p-5 border border-purple-100">
                             <label class="block mb-2 font-semibold text-purple-700">
@@ -300,6 +317,7 @@
                         </div>
 
                     </div>
+                </div>
 
                     <!-- DESCRIPTION -->
                     <div class="mt-8">
@@ -325,7 +343,7 @@
             </div>
 
             <!-- SEAT PREVIEW -->
-            <div class="glass-card rounded-3xl shadow-2xl border border-white/40 p-6">
+            <div id="flight-seat-preview-section" class="glass-card rounded-3xl shadow-2xl border border-white/40 p-6">
 
                 <div class="flex items-center justify-between mb-5">
 
@@ -433,14 +451,16 @@
                                 </span>
                             </td>
 
-                            <td class="px-6 py-4">
-
-                                <button type="button"
-                                        onclick="generateFlightLayout({{ flight.id }}, {{ flight.first_class_seats }}, {{ flight.business_seats }}, {{ flight.economy_seats }})"
-                                        class="bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-700 hover:to-cyan-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition hover:scale-105">
-                                    Regenerate Layout
-                                </button>
-
+                            <td class="px-6 py-4 flex flex-wrap gap-2">
+                                <a href="{% url 'flight_edit_flight' flight.id %}"
+                                   class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
+                                    ✏️ Edit
+                                </a>
+                                <a href="{% url 'flight_delete_flight' flight.id %}"
+                                   class="bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-red-700 transition"
+                                   onclick="return confirm('Delete this flight? This action cannot be undone.')">
+                                    🗑️ Delete
+                                </a>
                             </td>
 
                         </tr>
@@ -689,7 +709,28 @@ function generateFlightLayout(flightId, first, business, economy) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', fetchFlightPreview);
+function updateFlightMode() {
+    const mode = document.getElementById('flight-vehicle-type').value;
+    const passengerConfig = document.getElementById('flight-passenger-config');
+    const previewSection = document.getElementById('flight-seat-preview-section');
+
+    if (mode === 'cargo') {
+        passengerConfig.style.display = 'none';
+        previewSection.style.display = 'none';
+        document.getElementById('flight_first_class_seats').value = 0;
+        document.getElementById('flight_business_seats').value = 0;
+        document.getElementById('flight_economy_seats').value = 0;
+        document.getElementById('flight_total').value = 0;
+    } else {
+        passengerConfig.style.display = '';
+        previewSection.style.display = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchFlightPreview();
+    updateFlightMode();
+});
 
 </script>
 

@@ -203,6 +203,22 @@
                             </select>
                         </div>
 
+                        <!-- Vehicle Type -->
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Vehicle Type
+                            </label>
+
+                            <select id="bus-vehicle-type"
+                                    name="vehicle_type"
+                                    class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500"
+                                    onchange="updateBusMode()"
+                                    required>
+                                <option value="passenger">Passenger Bus</option>
+                                <option value="cargo">Cargo Truck</option>
+                            </select>
+                        </div>
+
                         <!-- Driver -->
                         <div>
                             <label class="block mb-2 font-semibold text-gray-700">
@@ -222,54 +238,56 @@
                             </select>
                         </div>
 
-                        <!-- Total Passengers -->
-                        <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                Total Capacity
-                            </label>
+                        <div id="bus-passenger-config">
+                            <!-- Total Passengers -->
+                            <div>
+                                <label class="block mb-2 font-semibold text-gray-700">
+                                    Total Capacity
+                                </label>
 
-                            <input id="total_passengers"
-                                   type="number"
-                                   name="total_passengers"
-                                   value="40"
-                                   min="1"
-                                   max="300"
-                                   oninput="autoAllocate()"
-                                   class="w-full p-4 rounded-2xl border border-blue-300 focus:ring-2 focus:ring-blue-500">
+                                <input id="total_passengers"
+                                       type="number"
+                                       name="total_passengers"
+                                       value="40"
+                                       min="1"
+                                       max="300"
+                                       oninput="autoAllocate()"
+                                       class="w-full p-4 rounded-2xl border border-blue-300 focus:ring-2 focus:ring-blue-500">
 
-                            <p class="text-xs text-gray-500 mt-2">
-                                VIP: 15% · Normal: 85%
-                            </p>
-                        </div>
+                                <p class="text-xs text-gray-500 mt-2">
+                                    VIP: 15% · Normal: 85%
+                                </p>
+                            </div>
 
-                        <!-- VIP Seats -->
-                        <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                VIP Seats
-                            </label>
+                            <!-- VIP Seats -->
+                            <div>
+                                <label class="block mb-2 font-semibold text-gray-700">
+                                    VIP Seats
+                                </label>
 
-                            <input id="vip_seats"
-                                   type="number"
-                                   name="vip_seats"
-                                   value="6"
-                                   min="0"
-                                   onchange="renderBusPreview()"
-                                   class="w-full p-4 rounded-2xl border border-gray-200">
-                        </div>
+                                <input id="vip_seats"
+                                       type="number"
+                                       name="vip_seats"
+                                       value="6"
+                                       min="0"
+                                       onchange="renderBusPreview()"
+                                       class="w-full p-4 rounded-2xl border border-gray-200">
+                            </div>
 
-                        <!-- Normal Seats -->
-                        <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                Normal Seats
-                            </label>
+                            <!-- Normal Seats -->
+                            <div>
+                                <label class="block mb-2 font-semibold text-gray-700">
+                                    Normal Seats
+                                </label>
 
-                            <input id="normal_seats"
-                                   type="number"
-                                   name="normal_seats"
-                                   value="35"
-                                   min="0"
-                                   onchange="renderBusPreview()"
-                                   class="w-full p-4 rounded-2xl border border-gray-200">
+                                <input id="normal_seats"
+                                       type="number"
+                                       name="normal_seats"
+                                       value="35"
+                                       min="0"
+                                       onchange="renderBusPreview()"
+                                       class="w-full p-4 rounded-2xl border border-gray-200">
+                            </div>
                         </div>
 
                     </div>
@@ -297,7 +315,7 @@
         </div>
 
         <!-- SEAT PREVIEW -->
-        <div class="glass-card rounded-3xl shadow-2xl border border-white/40 p-8 mb-10">
+        <div id="bus-seat-preview-section" class="glass-card rounded-3xl shadow-2xl border border-white/40 p-8 mb-10">
 
             <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
 
@@ -619,7 +637,27 @@ function fetchBusPreview() {
         });
 }
 
-document.addEventListener('DOMContentLoaded', fetchBusPreview);
+function updateBusMode() {
+    const mode = document.getElementById('bus-vehicle-type').value;
+    const passengerConfig = document.getElementById('bus-passenger-config');
+    const previewSection = document.getElementById('bus-seat-preview-section');
+
+    if (mode === 'cargo') {
+        passengerConfig.style.display = 'none';
+        previewSection.style.display = 'none';
+        document.getElementById('vip_seats').value = 0;
+        document.getElementById('normal_seats').value = 0;
+        document.getElementById('total_passengers').value = 0;
+    } else {
+        passengerConfig.style.display = '';
+        previewSection.style.display = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchBusPreview();
+    updateBusMode();
+});
 </script>
 
 </body>

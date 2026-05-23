@@ -277,9 +277,11 @@
                             Bus
                         </label>
 
-                        <select name="bus"
-                                class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none bg-white/70">
+                        <select id="bus-select" name="bus"
+                                class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none bg-white/70"
+                                onchange="loadSeats()">
 
+                            <option value="">Select a bus</option>
                             {% for bus in buses %}
                                 {% if bus.available_seats > 0 %}
                                 <option value="{{ bus.id }}">
@@ -293,11 +295,115 @@
 
                 </div>
 
+                <!-- Seat Selection -->
+                <div id="seat-section" style="display:none;" class="mb-8">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Select Seat</h3>
+                    <div id="seat-grid" class="grid grid-cols-6 gap-2 mb-4"></div>
+                    <input type="hidden" id="selected-seat" name="seat_number">
+                    <p id="seat-status" class="text-sm text-gray-600"></p>
+                </div>
+
                 <button class="mt-8 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl font-bold">
                     Confirm Booking
                 </button>
 
             </form>
+
+            <script>
+            function formatSeatElement(cell) {
+                if (cell.is_empty) {
+                    const d = document.createElement('div');
+                    d.className = 'w-12 h-12';
+                    return d;
+                }
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = cell.seat_number || '';
+                btn.className = 'p-3 rounded-lg font-semibold';
+                if (cell.is_aisle) {
+                    btn.style.background = 'transparent';
+                    btn.disabled = true;
+                    return btn;
+                }
+                if (cell.booking_status === 'booked') {
+                    btn.classList.add('bg-red-500','text-white','opacity-60');
+                    btn.disabled = true;
+                    return btn;
+                }
+
+                const classMap = {
+                    'VIP': ['bg-yellow-500','text-black'],
+                    'Normal': ['bg-sky-600','text-white'],
+                };
+                const cls = classMap[cell.seat_class] || ['bg-gray-600','text-white'];
+                btn.classList.add(...cls);
+
+                btn.addEventListener('click', () => {
+                    document.getElementById('selected-seat').value = cell.seat_number;
+                    document.getElementById('seat-status').textContent = `Seat ${cell.seat_number} selected`;
+                    document.querySelectorAll('#seat-grid button').forEach(b => b.classList.remove('ring-2','ring-yellow-400'));
+                    btn.classList.add('ring-2','ring-yellow-400');
+                });
+                return btn;
+            }
+
+            function renderSeatMap(layout) {
+                const seatGrid = document.getElementById('seat-grid');
+                seatGrid.innerHTML = '';
+                layout.rows.forEach(row => {
+                    const rowWrap = document.createElement('div');
+                    rowWrap.style.marginBottom = '12px';
+                    const rowLabel = document.createElement('div');
+                    rowLabel.textContent = `Row ${row.row}`;
+                    rowLabel.className = 'text-sm font-semibold text-gray-700 mb-2';
+                    rowWrap.appendChild(rowLabel);
+                    const seatsRow = document.createElement('div');
+                    seatsRow.style.display = 'flex';
+                    seatsRow.style.gap = '8px';
+                    row.seats.forEach(cell => seatsRow.appendChild(formatSeatElement(cell)));
+                    rowWrap.appendChild(seatsRow);
+                    seatGrid.appendChild(rowWrap);
+                });
+                document.getElementById('seat-section').style.display = 'block';
+            }
+
+            function loadSeats() {
+                const busId = document.getElementById('bus-select').value;
+                const travelDate = document.querySelector('input[name="travel_date"]').value;
+                if (!busId) {
+                    document.getElementById('seat-section').style.display = 'none';
+                    document.getElementById('selected-seat').value = '';
+                    return;
+                }
+                const url = `{% url 'bus_get_available_seats' %}?bus_id=${busId}` + (travelDate ? `&travel_date=${travelDate}` : '');
+                fetch(url)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.rows) renderSeatMap(data);
+                        else if (data.available_seats) {
+                            // fallback simple list
+                            const seatGrid = document.getElementById('seat-grid');
+                            seatGrid.innerHTML = '';
+                            data.available_seats.forEach(seat => {
+                                const btn = document.createElement('button');
+                                btn.type = 'button'; btn.textContent = seat;
+                                btn.className = 'p-3 rounded-lg bg-green-500 text-white font-semibold';
+                                btn.addEventListener('click', () => {
+                                    document.getElementById('selected-seat').value = seat;
+                                    document.getElementById('seat-status').textContent = `Seat ${seat} selected`;
+                                    document.querySelectorAll('#seat-grid button').forEach(b => b.classList.remove('ring-2','ring-yellow-400'));
+                                    btn.classList.add('ring-2','ring-yellow-400');
+                                });
+                                seatGrid.appendChild(btn);
+                            });
+                            document.getElementById('seat-section').style.display = data.available_seats.length ? 'block' : 'none';
+                        } else {
+                            document.getElementById('seat-section').style.display = 'none';
+                        }
+                    })
+                    .catch(e => console.error(e));
+            }
+            </script>
 
         </div>
 

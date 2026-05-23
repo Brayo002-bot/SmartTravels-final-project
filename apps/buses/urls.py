@@ -10,6 +10,7 @@ urlpatterns = [
     path('delete-route/<int:route_id>/', views.delete_route, name='bus_delete_route'),
     path('reports/', views.reports, name='bus_reports'),
     path('booking/', views.booking, name='bus_booking'),
+    path('api/available-seats/', views.get_available_seats, name='bus_get_available_seats'),
     path('schedule/', views.schedule, name='bus_schedule'),
     path('add-driver/', views.add_driver, name='add_driver'),
     path('add-buses/', views.add_buses, name='add_buses'),

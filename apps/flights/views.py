@@ -123,6 +123,7 @@ def booking(request):
         route_id = request.POST.get('route')
         flight_id = request.POST.get('flight')
         travel_date = request.POST.get('travel_date')
+        seat_number = request.POST.get('seat_number', '').strip()
 
         if passenger_name and phone and route_id and flight_id and travel_date:
             flight = get_object_or_404(Flight, id=flight_id, company=company)
@@ -135,6 +136,7 @@ def booking(request):
                     flight=flight,
                     route=route,
                     travel_date=travel_date,
+                    seat_number=seat_number if seat_number else None,
                     status='confirmed',
                 )
                 flight.available_seats -= 1
@@ -146,6 +148,38 @@ def booking(request):
         'flights': flights,
         'bookings': bookings,
     })
+
+
+@flight_admin_required
+def get_available_seats(request):
+    flight_id = request.GET.get('flight_id')
+    travel_date = request.GET.get('travel_date')
+    if not flight_id:
+        return JsonResponse({'error': 'Flight ID required'}, status=400)
+
+    company = request.user.company
+    flight = get_object_or_404(Flight, id=flight_id, company=company)
+
+    booked_qs = Booking.objects.filter(flight=flight)
+    if travel_date:
+        booked_qs = booked_qs.filter(travel_date=travel_date)
+    booked_seats = list(booked_qs.exclude(seat_number__isnull=True).exclude(seat_number='').values_list('seat_number', flat=True))
+
+    try:
+        counts = {
+            'first_class_seats': flight.first_class_seats,
+            'business_seats': flight.business_seats,
+            'economy_seats': flight.economy_seats,
+        }
+        layout = generate_seat_layout('flight', counts, booked_numbers=booked_seats, vehicle_id=flight.id)
+        return JsonResponse(layout)
+    except Exception:
+        available = []
+        for i in range(1, (flight.first_class_seats or 0) + (flight.business_seats or 0) + (flight.economy_seats or 0) + 1):
+            seat_str = str(i)
+            if seat_str not in booked_seats:
+                available.append(seat_str)
+        return JsonResponse({'available_seats': available})
 
 
 @flight_admin_required
@@ -236,23 +270,27 @@ def add_flights(request):
         description = request.POST.get('description', '').strip()
         route_id = request.POST.get('route')
         pilot_id = request.POST.get('pilot')
+        vehicle_type = request.POST.get('vehicle_type', 'passenger')
+        is_cargo = vehicle_type == 'cargo'
         total_passengers = int(request.POST.get('total_passengers') or 0)
-        first_percent = float(request.POST.get('first_percent') or 0)
-        business_percent = float(request.POST.get('business_percent') or 0)
-        economy_percent = float(request.POST.get('economy_percent') or 0)
         economy_seats = int(request.POST.get('economy_seats') or 0)
         business_seats = int(request.POST.get('business_seats') or 0)
         first_class_seats = int(request.POST.get('first_class_seats') or 0)
 
-        if total_passengers > 0:
-            counts = normalize_class_counts('flight', total_passengers, {
-                'first_class_seats': first_percent / 100,
-                'business_seats': business_percent / 100,
-                'economy_seats': economy_percent / 100,
-            })
-            first_class_seats = counts['first_class_seats']
-            business_seats = counts['business_seats']
-            economy_seats = counts['economy_seats']
+        if not is_cargo:
+            if first_class_seats + business_seats + economy_seats <= 0 and total_passengers > 0:
+                counts = normalize_class_counts('flight', total_passengers, {
+                    'first_class_seats': 0.10,
+                    'business_seats': 0.25,
+                    'economy_seats': 0.65,
+                })
+                first_class_seats = counts['first_class_seats']
+                business_seats = counts['business_seats']
+                economy_seats = counts['economy_seats']
+        else:
+            first_class_seats = 0
+            business_seats = 0
+            economy_seats = 0
 
         if flight_number and route_id and pilot_id:
             route = get_object_or_404(Route, id=route_id, company=company)
@@ -260,6 +298,7 @@ def add_flights(request):
             flight = Flight.objects.create(
                 flight_number=flight_number,
                 description=description or None,
+                is_cargo=is_cargo,
                 route=route,
                 pilot=pilot,
                 company=company,
@@ -267,29 +306,27 @@ def add_flights(request):
                 business_seats=business_seats,
                 first_class_seats=first_class_seats,
             )
-            layout = generate_seat_layout(
-                'flight',
-                {
-                    'first_class_seats': first_class_seats,
-                    'business_seats': business_seats,
-                    'economy_seats': economy_seats,
-                },
-                vehicle_id=flight.id,
-            )
-            SeatLayoutHistory.objects.create(
-                vehicle_type='flight',
-                vehicle_id=flight.id,
-                config={
-                    'total_passengers': total_passengers,
-                    'first_percent': first_percent,
-                    'business_percent': business_percent,
-                    'economy_percent': economy_percent,
-                    'first_class_seats': first_class_seats,
-                    'business_seats': business_seats,
-                    'economy_seats': economy_seats,
-                },
-                layout=layout,
-            )
+            if not is_cargo:
+                layout = generate_seat_layout(
+                    'flight',
+                    {
+                        'first_class_seats': first_class_seats,
+                        'business_seats': business_seats,
+                        'economy_seats': economy_seats,
+                    },
+                    vehicle_id=flight.id,
+                )
+                SeatLayoutHistory.objects.create(
+                    vehicle_type='flight',
+                    vehicle_id=flight.id,
+                    config={
+                        'total_passengers': total_passengers,
+                        'first_class_seats': first_class_seats,
+                        'business_seats': business_seats,
+                        'economy_seats': economy_seats,
+                    },
+                    layout=layout,
+                )
             return redirect('add_flights')
 
     routes = Route.objects.filter(company=company)
@@ -358,6 +395,17 @@ def cargo(request):
                 updated_by=request.user,
                 note='Cargo shipment created by admin.',
             )
+            vehicle_id = request.POST.get('vehicle_id')
+            if vehicle_id:
+                try:
+                    v = Flight.objects.filter(id=vehicle_id, company=company).first()
+                    if v:
+                        parcel.assigned_vehicle_type = 'flight'
+                        parcel.assigned_vehicle_id = v.id
+                        parcel.assigned_vehicle_name = str(v)
+                        parcel.save(update_fields=['assigned_vehicle_type','assigned_vehicle_id','assigned_vehicle_name'])
+                except Exception:
+                    pass
             messages.success(request, f'Cargo shipment {parcel.parcel_id} created successfully.')
             return redirect('flight_cargo')
         else:
@@ -374,6 +422,7 @@ def cargo(request):
         'page_description': 'Create cargo and parcel shipments for your flight routes.',
         'transport_label': 'Flight',
         'category_choices': Parcel.CATEGORY,
+        'vehicles': Flight.objects.filter(company=company, is_cargo=True),
     })
 
 
@@ -520,3 +569,43 @@ def company_profile(request):
         return redirect('flight_company_profile')
     
     return render(request, 'flight_admin/company_profile.html', {'company': company})
+
+
+@flight_admin_required
+def edit_flight(request, flight_id):
+    """Edit flight details"""
+    company = request.user.company
+    flight = get_object_or_404(Flight, id=flight_id, company=company)
+    
+    if request.method == 'POST':
+        flight.flight_number = request.POST.get('flight_number', '').strip()
+        flight.description = request.POST.get('description', '').strip() or None
+        route_id = request.POST.get('route')
+        pilot_id = request.POST.get('pilot')
+        
+        if route_id:
+            flight.route = get_object_or_404(Route, id=route_id, company=company)
+        if pilot_id:
+            flight.pilot = get_object_or_404(Pilot, id=pilot_id, company=company)
+        
+        flight.save()
+        messages.success(request, 'Flight updated successfully.')
+        return redirect('add_flights')
+    
+    routes = Route.objects.filter(company=company)
+    pilots = Pilot.objects.filter(company=company)
+    return render(request, 'flight_admin/edit_flight.html', {
+        'flight': flight,
+        'routes': routes,
+        'pilots': pilots,
+    })
+
+
+@flight_admin_required
+def delete_flight(request, flight_id):
+    """Delete a flight"""
+    company = request.user.company
+    flight = get_object_or_404(Flight, id=flight_id, company=company)
+    flight.delete()
+    messages.success(request, 'Flight deleted successfully.')
+    return redirect('add_flights')

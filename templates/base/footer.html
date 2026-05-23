@@ -250,10 +250,11 @@
 
                 </div>
 
-                <form class="flex flex-col sm:flex-row gap-4">
-
-                    <input type="email"
+                <form method="POST" action="{% url 'subscribe' %}" class="flex flex-col sm:flex-row gap-4">
+                    {% csrf_token %}
+                    <input type="email" name="email"
                            placeholder="Enter your email"
+                           required
                            class="flex-1 px-6 py-4 rounded-2xl bg-white/10 border border-white/10 text-white placeholder:text-gray-400 outline-none focus:border-cyan-400">
 
                     <button type="submit"

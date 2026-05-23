@@ -138,6 +138,7 @@ def booking(request):
         route_id = request.POST.get('route')
         train_id = request.POST.get('train')
         travel_date = request.POST.get('travel_date')
+        seat_number = request.POST.get('seat_number', '').strip()
 
         if passenger_name and phone and route_id and train_id and travel_date:
             train = get_object_or_404(Train, id=train_id, company=company)
@@ -150,10 +151,12 @@ def booking(request):
                     train=train,
                     route=route,
                     travel_date=travel_date,
+                    seat_number=seat_number if seat_number else None,
                     status='confirmed',
                 )
                 train.available_seats -= 1
                 train.save()
+                messages.success(request, f'Booking confirmed for {passenger_name}' + (f' at seat {seat_number}' if seat_number else '') + '.')
                 return redirect('train_booking')
 
     return render(request, 'train_admin/booking.html', {
@@ -161,6 +164,38 @@ def booking(request):
         'trains': trains,
         'bookings': bookings,
     })
+
+
+@train_admin_required
+def get_available_seats(request):
+    train_id = request.GET.get('train_id')
+    travel_date = request.GET.get('travel_date')
+    if not train_id:
+        return JsonResponse({'error': 'Train ID required'}, status=400)
+
+    company = request.user.company
+    train = get_object_or_404(Train, id=train_id, company=company)
+
+    booked_qs = Booking.objects.filter(train=train)
+    if travel_date:
+        booked_qs = booked_qs.filter(travel_date=travel_date)
+    booked_seats = list(booked_qs.exclude(seat_number__isnull=True).exclude(seat_number='').values_list('seat_number', flat=True))
+
+    try:
+        counts = {
+            'first_class_seats': train.first_class_seats,
+            'business_seats': train.business_seats,
+            'economy_seats': train.economy_seats,
+        }
+        layout = generate_seat_layout('train', counts, booked_numbers=booked_seats, vehicle_id=train.id)
+        return JsonResponse(layout)
+    except Exception:
+        available = []
+        for i in range(1, (train.first_class_seats or 0) + (train.business_seats or 0) + (train.economy_seats or 0) + 1):
+            seat_str = str(i)
+            if seat_str not in booked_seats:
+                available.append(seat_str)
+        return JsonResponse({'available_seats': available})
 
 
 @train_admin_required
@@ -338,23 +373,27 @@ def add_trains(request):
         description = request.POST.get('description', '').strip()
         route_id = request.POST.get('route')
         conductor_id = request.POST.get('conductor')
+        vehicle_type = request.POST.get('vehicle_type', 'passenger')
+        is_cargo = vehicle_type == 'cargo'
         total_passengers = int(request.POST.get('total_passengers') or 0)
-        first_percent = float(request.POST.get('first_percent') or 0)
-        business_percent = float(request.POST.get('business_percent') or 0)
-        economy_percent = float(request.POST.get('economy_percent') or 0)
         economy_seats = int(request.POST.get('economy_seats') or 0)
         business_seats = int(request.POST.get('business_seats') or 0)
         first_class_seats = int(request.POST.get('first_class_seats') or 0)
 
-        if total_passengers > 0:
-            counts = normalize_class_counts('train', total_passengers, {
-                'first_class_seats': first_percent / 100,
-                'business_seats': business_percent / 100,
-                'economy_seats': economy_percent / 100,
-            })
-            first_class_seats = counts['first_class_seats']
-            business_seats = counts['business_seats']
-            economy_seats = counts['economy_seats']
+        if not is_cargo:
+            if first_class_seats + business_seats + economy_seats <= 0 and total_passengers > 0:
+                counts = normalize_class_counts('train', total_passengers, {
+                    'first_class_seats': 0.10,
+                    'business_seats': 0.25,
+                    'economy_seats': 0.65,
+                })
+                first_class_seats = counts['first_class_seats']
+                business_seats = counts['business_seats']
+                economy_seats = counts['economy_seats']
+        else:
+            first_class_seats = 0
+            business_seats = 0
+            economy_seats = 0
 
         if train_number and route_id and conductor_id:
             route = get_object_or_404(Route, id=route_id, company=company)
@@ -362,6 +401,7 @@ def add_trains(request):
             train = Train.objects.create(
                 train_number=train_number,
                 description=description or None,
+                is_cargo=is_cargo,
                 route=route,
                 conductor=conductor,
                 company=company,
@@ -369,29 +409,27 @@ def add_trains(request):
                 business_seats=business_seats,
                 first_class_seats=first_class_seats,
             )
-            layout = generate_seat_layout(
-                'train',
-                {
-                    'first_class_seats': first_class_seats,
-                    'business_seats': business_seats,
-                    'economy_seats': economy_seats,
-                },
-                vehicle_id=train.id,
-            )
-            SeatLayoutHistory.objects.create(
-                vehicle_type='train',
-                vehicle_id=train.id,
-                config={
-                    'total_passengers': total_passengers,
-                    'first_percent': first_percent,
-                    'business_percent': business_percent,
-                    'economy_percent': economy_percent,
-                    'first_class_seats': first_class_seats,
-                    'business_seats': business_seats,
-                    'economy_seats': economy_seats,
-                },
-                layout=layout,
-            )
+            if not is_cargo:
+                layout = generate_seat_layout(
+                    'train',
+                    {
+                        'first_class_seats': first_class_seats,
+                        'business_seats': business_seats,
+                        'economy_seats': economy_seats,
+                    },
+                    vehicle_id=train.id,
+                )
+                SeatLayoutHistory.objects.create(
+                    vehicle_type='train',
+                    vehicle_id=train.id,
+                    config={
+                        'total_passengers': total_passengers,
+                        'first_class_seats': first_class_seats,
+                        'business_seats': business_seats,
+                        'economy_seats': economy_seats,
+                    },
+                    layout=layout,
+                )
             return redirect('add_trains')
 
     routes = Route.objects.filter(company=company)
@@ -460,6 +498,17 @@ def cargo(request):
                 updated_by=request.user,
                 note='Cargo shipment created by admin.',
             )
+            vehicle_id = request.POST.get('vehicle_id')
+            if vehicle_id:
+                try:
+                    v = Train.objects.filter(id=vehicle_id, company=company).first()
+                    if v:
+                        parcel.assigned_vehicle_type = 'train'
+                        parcel.assigned_vehicle_id = v.id
+                        parcel.assigned_vehicle_name = str(v)
+                        parcel.save(update_fields=['assigned_vehicle_type','assigned_vehicle_id','assigned_vehicle_name'])
+                except Exception:
+                    pass
             messages.success(request, f'Cargo shipment {parcel.parcel_id} created successfully.')
             return redirect('train_cargo')
         else:
@@ -476,6 +525,7 @@ def cargo(request):
         'page_description': 'Create cargo and parcel shipments for your train routes.',
         'transport_label': 'Train',
         'category_choices': Parcel.CATEGORY,
+        'vehicles': Train.objects.filter(company=company, is_cargo=True),
     })
 
 

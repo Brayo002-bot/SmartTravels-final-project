@@ -236,8 +236,9 @@
                             Flight
                         </label>
 
-                        <select name="flight"
+                        <select id="flight-select" name="flight"
                                 class="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none"
+                                onchange="loadFlightSeats()"
                                 required>
 
                             <option value="">
@@ -266,6 +267,14 @@
                                class="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none"
                                required>
 
+                    </div>
+
+                    <!-- Seat Selection -->
+                    <div id="seat-section" style="display:none;">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-2">Select Seat</h3>
+                        <div id="seat-grid" class="grid grid-cols-6 gap-2 mb-4"></div>
+                        <input type="hidden" id="selected-seat" name="seat_number">
+                        <p id="seat-status" class="text-sm text-gray-600"></p>
                     </div>
 
                     <!-- BUTTON -->
@@ -441,6 +450,69 @@
     </div>
 
 </div>
+
+<script>
+function loadFlightSeats() {
+    const flightId = document.getElementById('flight-select').value;
+    const seatSection = document.getElementById('seat-section');
+    const seatGrid = document.getElementById('seat-grid');
+    if (!flightId) {
+        seatSection.style.display = 'none';
+        document.getElementById('selected-seat').value = '';
+        return;
+    }
+    const travelDate = document.querySelector('input[name="travel_date"]').value;
+    const url = `{% url 'flight_get_available_seats' %}?flight_id=${flightId}` + (travelDate ? `&travel_date=${travelDate}` : '');
+    fetch(url)
+        .then(r => r.json())
+        .then(data => {
+            seatGrid.innerHTML = '';
+            if (data.rows) {
+                data.rows.forEach(row => {
+                    const rowWrap = document.createElement('div');
+                    rowWrap.style.marginBottom = '12px';
+                    const rowLabel = document.createElement('div');
+                    rowLabel.textContent = `Row ${row.row}`;
+                    rowLabel.className = 'text-sm font-semibold text-gray-700 mb-2';
+                    rowWrap.appendChild(rowLabel);
+                    const seatsRow = document.createElement('div');
+                    seatsRow.style.display = 'flex';
+                    seatsRow.style.gap = '8px';
+                    row.seats.forEach(cell => {
+                        const btn = document.createElement('button');
+                        if (cell.is_empty) { btn.className = 'w-12 h-12'; btn.disabled = true; seatsRow.appendChild(btn); return; }
+                        if (cell.is_aisle) { btn.className = 'w-12 h-12'; btn.disabled = true; seatsRow.appendChild(btn); return; }
+                        btn.type = 'button'; btn.textContent = cell.seat_number;
+                        if (cell.booking_status === 'booked') { btn.className = 'p-3 rounded-lg bg-red-500 text-white opacity-60'; btn.disabled = true; }
+                        else { btn.className = 'p-3 rounded-lg bg-slate-600 text-white font-semibold'; btn.addEventListener('click', () => {
+                            document.getElementById('selected-seat').value = cell.seat_number;
+                            document.getElementById('seat-status').textContent = `Seat ${cell.seat_number} selected`;
+                            document.querySelectorAll('#seat-grid button').forEach(b => b.classList.remove('ring-2','ring-yellow-400'));
+                            btn.classList.add('ring-2','ring-yellow-400');
+                        }); }
+                        seatsRow.appendChild(btn);
+                    });
+                    rowWrap.appendChild(seatsRow);
+                    seatGrid.appendChild(rowWrap);
+                });
+                seatSection.style.display = 'block';
+            } else if (data.available_seats && data.available_seats.length > 0) {
+                data.available_seats.forEach(seat => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button'; btn.textContent = seat;
+                    btn.className = 'p-3 rounded-lg bg-green-500 text-white hover:bg-green-600 font-semibold';
+                    btn.onclick = (e) => { e.preventDefault(); document.getElementById('selected-seat').value = seat; document.getElementById('seat-status').textContent = `Seat ${seat} selected`; document.querySelectorAll('#seat-grid button').forEach(b => b.classList.remove('ring-2','ring-yellow-400')); btn.classList.add('ring-2','ring-yellow-400'); };
+                    seatGrid.appendChild(btn);
+                });
+                seatSection.style.display = 'block';
+            } else {
+                seatSection.style.display = 'none';
+                document.getElementById('seat-status').textContent = 'No seats available';
+            }
+        })
+        .catch(e => console.error(e));
+}
+</script>
 
 </body>
 </html>

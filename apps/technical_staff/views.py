@@ -141,12 +141,175 @@ def tech_dashboard(request):
 
 @technical_staff_required
 def tech_booking_assist(request):
-    return render(request, 'technical_staff/tech_booking_assist.html')
+    company = request.user.company
+    routes = []
+    available_trips = []
+
+    query_from = request.POST.get('from_location', '').strip() if request.method == 'POST' else request.GET.get('from', '').strip()
+    query_to = request.POST.get('destination', '').strip() if request.method == 'POST' else request.GET.get('to', '').strip()
+    query_date = request.POST.get('travel_date', '').strip() if request.method == 'POST' else request.GET.get('date', '').strip()
+
+    if company:
+        routes = _get_company_routes(company)
+        if request.method == 'POST' and query_from and query_to and query_date:
+            if company.transport_type == 'bus':
+                from apps.buses.models import Schedule
+                schedules = Schedule.objects.filter(bus__company=company, travel_date=query_date, bus__is_cargo=False)
+                for s in schedules:
+                    if s.bus.route.from_location == query_from and s.bus.route.to_location == query_to:
+                        available_trips.append({
+                            'transport_type': 'Bus',
+                            'available_seats': s.bus.available_seats,
+                            'from_location': s.bus.route.from_location,
+                            'to_location': s.bus.route.to_location,
+                            'vehicle_name': str(s.bus),
+                            'departure_time': s.travel_time,
+                            'price': s.price,
+                        })
+            elif company.transport_type == 'train':
+                from apps.trains.models import Schedule
+                schedules = Schedule.objects.filter(train__company=company, travel_date=query_date, train__is_cargo=False)
+                for s in schedules:
+                    if s.train.route.from_location == query_from and s.train.route.to_location == query_to:
+                        available_trips.append({
+                            'transport_type': 'Train',
+                            'available_seats': s.train.available_seats,
+                            'from_location': s.train.route.from_location,
+                            'to_location': s.train.route.to_location,
+                            'vehicle_name': str(s.train),
+                            'departure_time': s.travel_time,
+                            'price': s.price,
+                        })
+            elif company.transport_type == 'flight':
+                from apps.flights.models import Schedule
+                schedules = Schedule.objects.filter(flight__company=company, travel_date=query_date, flight__is_cargo=False)
+                for s in schedules:
+                    if s.flight.route.from_location == query_from and s.flight.route.to_location == query_to:
+                        available_trips.append({
+                            'transport_type': 'Flight',
+                            'available_seats': s.flight.available_seats,
+                            'from_location': s.flight.route.from_location,
+                            'to_location': s.flight.route.to_location,
+                            'vehicle_name': str(s.flight),
+                            'departure_time': s.travel_time,
+                            'price': s.price,
+                        })
+
+    return render(request, 'technical_staff/tech_booking_assist.html', {
+        'routes': routes,
+        'available_trips': available_trips,
+    })
 
 
 @technical_staff_required
 def tech_parcels(request):
-    return render(request, 'technical_staff/tech_parcels.html')
+    company = request.user.company
+    routes = []
+    buses = []
+    trucks = []
+    flights = []
+    trains = []
+    if company:
+        if company.transport_type == 'bus':
+            from apps.buses.models import Route as BusRoute, Bus
+            routes = BusRoute.objects.filter(company=company)
+            buses = Bus.objects.filter(company=company)
+        elif company.transport_type == 'train':
+            from apps.trains.models import Route as TrainRoute, Train
+            routes = TrainRoute.objects.filter(company=company)
+            trains = Train.objects.filter(company=company)
+        elif company.transport_type == 'flight':
+            from apps.flights.models import Route as FlightRoute, Flight
+            routes = FlightRoute.objects.filter(company=company)
+            flights = Flight.objects.filter(company=company)
+
+    parcel_qr = None
+    tracking_id = None
+
+    if request.method == 'POST':
+        from apps.parcels.models import Parcel, ParcelLog
+        from apps.payments.models import Payment, MPesaService
+        sender_name = request.POST.get('sender_name', '').strip() or str(request.user)
+        sender_phone = request.POST.get('phone', '').strip() or request.user.phone_number or ''
+        receiver_name = request.POST.get('receiver_name', '').strip()
+        payment_phone = request.POST.get('payment_phone', '').strip() or sender_phone
+        pickup_location = request.POST.get('pickup_location', '').strip() or ''
+        destination = request.POST.get('destination', '').strip() or ''
+        route_id = request.POST.get('route')
+        parcel_type = request.POST.get('parcel_type', 'other')
+        weight = float(request.POST.get('weight') or 1)
+        amount = float(request.POST.get('amount') or 0)
+        payment_status = request.POST.get('payment_status', 'Pending')
+        description = request.POST.get('description', '').strip()
+
+        if sender_name and sender_phone and receiver_name and pickup_location and destination:
+            parcel = Parcel.objects.create(
+                sender=request.user,
+                sender_name=sender_name,
+                sender_phone=sender_phone,
+                recipient_name=receiver_name,
+                recipient_phone=payment_phone,
+                origin=pickup_location,
+                destination=destination,
+                category=parcel_type,
+                description=description,
+                weight_kg=weight,
+                declared_value=0,
+                shipping_cost=amount,
+                is_fragile=False,
+                is_paid=(payment_status == 'Paid'),
+                status='booked' if payment_status == 'Paid' else 'booked',
+            )
+            ParcelLog.objects.create(parcel=parcel, status='booked', note='Registered by technical staff', updated_by=request.user)
+
+            # assign vehicle if any
+            transport_choice = request.POST.get('transport_choice')
+            if transport_choice == 'bus' and request.POST.get('bus'):
+                try:
+                    from apps.buses.models import Bus
+                    b = Bus.objects.filter(id=request.POST.get('bus'), company=company).first()
+                    if b:
+                        parcel.assigned_vehicle_type = 'bus'
+                        parcel.assigned_vehicle_id = b.id
+                        parcel.assigned_vehicle_name = str(b)
+                except Exception:
+                    pass
+            elif transport_choice == 'truck' and request.POST.get('truck'):
+                # trucks may be modelled differently; store id/name as provided
+                parcel.assigned_vehicle_name = f"Truck {request.POST.get('truck')}"
+
+            parcel.save()
+
+            # If payment pending and amount provided, create Payment and push STK
+            if payment_status == 'Pending' and amount > 0:
+                try:
+                    pay = Payment.objects.create(
+                        booking_reference=parcel.parcel_id,
+                        booking_type='parcel',
+                        passenger=request.user,
+                        amount=amount,
+                        method='mpesa',
+                        phone_number=payment_phone,
+                    )
+                    svc = MPesaService()
+                    res = svc.stk_push(payment_phone, amount, parcel.parcel_id)
+                    if isinstance(res, dict) and res.get('ResponseCode') == '0':
+                        pay.merchant_ref = res.get('CheckoutRequestID', '')
+                        pay.save(update_fields=['merchant_ref'])
+                except Exception:
+                    pass
+
+            messages.success(request, 'Parcel registered. You can prompt payment if required.')
+            return redirect('tech_parcels')
+
+    return render(request, 'technical_staff/tech_parcels.html', {
+        'routes': routes,
+        'buses': buses,
+        'trains': trains,
+        'flights': flights,
+        'parcel_qr': parcel_qr,
+        'tracking_id': tracking_id,
+    })
 
 
 @technical_staff_required
@@ -156,7 +319,113 @@ def tech_ticket_scanner(request):
 
 @technical_staff_required
 def tech_boarding(request):
-    return render(request, 'technical_staff/tech_boarding.html')
+    company = request.user.company
+    routes = _get_company_routes(company) if company else []
+    buses = trains = flights = []
+    selected_route = None
+    selected_vehicle = None
+    selected_date = request.GET.get('travel_date') or ''
+    bookings = []
+
+    # Load company vehicles
+    if company:
+        if company.transport_type == 'bus':
+            from apps.buses.models import Route as BusRoute, Bus
+            routes = BusRoute.objects.filter(company=company)
+            buses = Bus.objects.filter(company=company)
+        elif company.transport_type == 'train':
+            from apps.trains.models import Route as TrainRoute, Train
+            routes = TrainRoute.objects.filter(company=company)
+            trains = Train.objects.filter(company=company)
+        elif company.transport_type == 'flight':
+            from apps.flights.models import Route as FlightRoute, Flight
+            routes = FlightRoute.objects.filter(company=company)
+            flights = Flight.objects.filter(company=company)
+
+    # Handle POST actions: confirm boarding by booking_id or ticket
+    if request.method == 'POST':
+        booking_id = request.POST.get('booking_id')
+        verify_ticket = request.POST.get('verify_ticket', '').strip()
+        if booking_id:
+            # mark booking as boarded
+            from apps.buses.models import Booking as BusBooking
+            from apps.trains.models import Booking as TrainBooking
+            from apps.flights.models import Booking as FlightBooking
+            for Model in (BusBooking, TrainBooking, FlightBooking):
+                try:
+                    b = Model.objects.filter(id=booking_id).first()
+                    if b:
+                        b.boarded = True
+                        b.save(update_fields=['boarded'])
+                        messages.success(request, 'Passenger marked as boarded.')
+                        break
+                except Exception:
+                    continue
+        elif verify_ticket:
+            # try to find booking by booking reference
+            from apps.buses.models import Booking as BusBooking
+            from apps.trains.models import Booking as TrainBooking
+            from apps.flights.models import Booking as FlightBooking
+            for Model in (BusBooking, TrainBooking, FlightBooking):
+                b = Model.objects.filter(booking_reference__iexact=verify_ticket).first()
+                if b:
+                    b.boarded = True
+                    b.save(update_fields=['boarded'])
+                    messages.success(request, 'Ticket validated and passenger boarded.')
+                    break
+
+        return redirect('tech_boarding')
+
+    # GET: filter bookings based on selected vehicle and date
+    selected_route_id = request.GET.get('route')
+    selected_bus_id = request.GET.get('bus')
+    selected_train_id = request.GET.get('train')
+    selected_flight_id = request.GET.get('flight')
+
+    if company and selected_date:
+        if company.transport_type == 'bus' and selected_bus_id:
+            from apps.buses.models import Bus, Booking as BusBooking
+            selected_vehicle = Bus.objects.filter(id=selected_bus_id, company=company).first()
+            if selected_vehicle:
+                bookings = BusBooking.objects.filter(bus=selected_vehicle, travel_date=selected_date).order_by('seat_number')
+
+        if company.transport_type == 'train' and selected_train_id:
+            from apps.trains.models import Train, Booking as TrainBooking
+            selected_vehicle = Train.objects.filter(id=selected_train_id, company=company).first()
+            if selected_vehicle:
+                bookings = TrainBooking.objects.filter(train=selected_vehicle, travel_date=selected_date).order_by('seat_number')
+
+        if company.transport_type == 'flight' and selected_flight_id:
+            from apps.flights.models import Flight, Booking as FlightBooking
+            selected_vehicle = Flight.objects.filter(id=selected_flight_id, company=company).first()
+            if selected_vehicle:
+                bookings = FlightBooking.objects.filter(flight=selected_vehicle, travel_date=selected_date).order_by('seat_number')
+
+    # Ensure bookings is a QuerySet so template methods like .count() work
+    if not hasattr(bookings, 'count'):
+        if company and company.transport_type == 'bus':
+            from apps.buses.models import Booking as BusBooking
+            bookings = BusBooking.objects.none()
+        elif company and company.transport_type == 'train':
+            from apps.trains.models import Booking as TrainBooking
+            bookings = TrainBooking.objects.none()
+        elif company and company.transport_type == 'flight':
+            from apps.flights.models import Booking as FlightBooking
+            bookings = FlightBooking.objects.none()
+
+    return render(request, 'technical_staff/tech_boarding.html', {
+        'company': company,
+        'routes': routes,
+        'buses': buses,
+        'trains': trains,
+        'flights': flights,
+        'selected_bus': selected_vehicle if company and company.transport_type == 'bus' else None,
+        'selected_train': selected_vehicle if company and company.transport_type == 'train' else None,
+        'selected_flight': selected_vehicle if company and company.transport_type == 'flight' else None,
+        'selected_route': int(selected_route_id) if selected_route_id else None,
+        'selected_date': selected_date,
+        'bookings': bookings,
+    })
 
 
 @technical_staff_required

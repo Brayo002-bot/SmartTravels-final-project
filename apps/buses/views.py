@@ -128,6 +128,7 @@ def booking(request):
         route_id = request.POST.get('route')
         bus_id = request.POST.get('bus')
         travel_date = request.POST.get('travel_date')
+        seat_number = request.POST.get('seat_number', '').strip()
 
         if passenger_name and phone and route_id and bus_id and travel_date:
             bus = get_object_or_404(Bus, id=bus_id, company=company)
@@ -140,10 +141,12 @@ def booking(request):
                     bus=bus,
                     route=route,
                     travel_date=travel_date,
+                    seat_number=seat_number if seat_number else None,
                     status='confirmed',
                 )
                 bus.available_seats -= 1
                 bus.save()
+                messages.success(request, f'Booking confirmed for {passenger_name}' + (f' at seat {seat_number}' if seat_number else '') + '.')
                 return redirect('bus_booking')
 
     return render(request, 'bus_admin/booking.html', {
@@ -151,6 +154,39 @@ def booking(request):
         'buses': buses,
         'bookings': bookings,
     })
+
+
+@bus_admin_required
+def get_available_seats(request):
+    bus_id = request.GET.get('bus_id')
+    travel_date = request.GET.get('travel_date')
+    if not bus_id:
+        return JsonResponse({'error': 'Bus ID required'}, status=400)
+
+    company = request.user.company
+    bus = get_object_or_404(Bus, id=bus_id, company=company)
+
+    # Get booked seats for this bus on the provided travel_date
+    booked_qs = Booking.objects.filter(bus=bus)
+    if travel_date:
+        booked_qs = booked_qs.filter(travel_date=travel_date)
+    booked_seats = list(booked_qs.exclude(seat_number__isnull=True).exclude(seat_number='').values_list('seat_number', flat=True))
+
+    try:
+        counts = {
+            'vip_seats': bus.vip_seats,
+            'normal_seats': bus.normal_seats,
+        }
+        layout = generate_seat_layout('bus', counts, booked_numbers=booked_seats, vehicle_id=bus.id)
+        return JsonResponse(layout)
+    except Exception:
+        # Fallback: return simple seat numbers
+        available = []
+        for i in range(1, (bus.vip_seats or 0) + (bus.normal_seats or 0) + 1):
+            seat_str = str(i)
+            if seat_str not in booked_seats:
+                available.append(seat_str)
+        return JsonResponse({'available_seats': available})
 
 
 @bus_admin_required
@@ -289,14 +325,19 @@ def add_buses(request):
         description = request.POST.get('description', '').strip()
         route_id = request.POST.get('route')
         driver_id = request.POST.get('driver')
+        vehicle_type = request.POST.get('vehicle_type', 'passenger')
+        is_cargo = vehicle_type == 'cargo'
         total_passengers = int(request.POST.get('total_passengers') or 0)
-        vip_percent = float(request.POST.get('vip_percent') or 0)
         vip_seats = int(request.POST.get('vip_seats') or 0)
         normal_seats = int(request.POST.get('normal_seats') or 0)
 
-        if total_passengers > 0:
-            vip_seats = int(round(total_passengers * (vip_percent / 100)))
-            normal_seats = total_passengers - vip_seats
+        if not is_cargo:
+            if vip_seats + normal_seats <= 0 and total_passengers > 0:
+                vip_seats = int(round(total_passengers * 0.15))
+                normal_seats = total_passengers - vip_seats
+        else:
+            vip_seats = 0
+            normal_seats = 0
 
         if bus_number and route_id and driver_id:
             route = get_object_or_404(Route, id=route_id, company=company)
@@ -305,28 +346,29 @@ def add_buses(request):
                 bus_number=bus_number,
                 number_plate=number_plate or None,
                 description=description or None,
+                is_cargo=is_cargo,
                 route=route,
                 driver=driver,
                 company=company,
                 vip_seats=vip_seats,
                 normal_seats=normal_seats,
             )
-            layout = generate_seat_layout(
-                'bus',
-                {'vip_seats': vip_seats, 'normal_seats': normal_seats},
-                vehicle_id=bus.id,
-            )
-            SeatLayoutHistory.objects.create(
-                vehicle_type='bus',
-                vehicle_id=bus.id,
-                config={
-                    'total_passengers': total_passengers,
-                    'vip_percent': vip_percent,
-                    'vip_seats': vip_seats,
-                    'normal_seats': normal_seats,
-                },
-                layout=layout,
-            )
+            if not is_cargo:
+                layout = generate_seat_layout(
+                    'bus',
+                    {'vip_seats': vip_seats, 'normal_seats': normal_seats},
+                    vehicle_id=bus.id,
+                )
+                SeatLayoutHistory.objects.create(
+                    vehicle_type='bus',
+                    vehicle_id=bus.id,
+                    config={
+                        'total_passengers': total_passengers,
+                        'vip_seats': vip_seats,
+                        'normal_seats': normal_seats,
+                    },
+                    layout=layout,
+                )
             return redirect('add_buses')
 
     routes = Route.objects.filter(company=company)
@@ -386,6 +428,18 @@ def cargo(request):
                 status='booked',
                 notes=notes,
             )
+            # assign vehicle if provided
+            vehicle_id = request.POST.get('vehicle_id')
+            if vehicle_id:
+                try:
+                    v = Bus.objects.filter(id=vehicle_id, company=company).first()
+                    if v:
+                        parcel.assigned_vehicle_type = 'bus'
+                        parcel.assigned_vehicle_id = v.id
+                        parcel.assigned_vehicle_name = str(v)
+                        parcel.save(update_fields=['assigned_vehicle_type','assigned_vehicle_id','assigned_vehicle_name'])
+                except Exception:
+                    pass
             parcel.shipping_cost = parcel.calc_cost()
             parcel.save(update_fields=['shipping_cost'])
             ParcelLog.objects.create(
@@ -411,7 +465,9 @@ def cargo(request):
         'page_description': 'Create cargo and parcel shipments for your bus routes.',
         'transport_label': 'Bus',
         'category_choices': Parcel.CATEGORY,
+        'vehicles': Bus.objects.filter(company=company, is_cargo=True),
     })
+
 
 
 @bus_admin_required

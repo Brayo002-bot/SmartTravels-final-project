@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.db.models import Count, Sum, Q
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from datetime import timedelta
 import json
 
@@ -18,6 +19,9 @@ from apps.flights.models import Flight, Route as FlightRoute, Booking as FlightB
 from apps.payments.models import Payment
 from apps.parcels.models  import Parcel
 from apps.systemadmin.models import AuditLog, Company, SystemAdminRole, SystemSetting
+from apps.systemadmin.models import Subscriber
+from django.core.mail import send_mail, EmailMessage
+from django.conf import settings
 
 
 def get_client_ip(request):
@@ -210,6 +214,46 @@ def toggle_user_status(request, user_id):
     u.is_active = not u.is_active
     u.save(update_fields=['is_active'])
     return JsonResponse({'active': u.is_active, 'name': u.get_full_name() or u.username})
+
+
+@login_required
+@sysadmin_required
+def subscribers(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'send_email':
+            subject = request.POST.get('subject', '').strip()
+            body = request.POST.get('body', '').strip()
+            emails = Subscriber.objects.values_list('email', flat=True)
+            if subject and body and emails:
+                try:
+                    email = EmailMessage(subject, body, settings.DEFAULT_FROM_EMAIL, list(emails))
+                    email.send(fail_silently=False)
+                    messages.success(request, 'Email sent to subscribers.')
+                except Exception as exc:
+                    messages.error(request, f'Failed to send emails: {exc}')
+            return redirect('subscribers')
+
+    subs = Subscriber.objects.all()
+    return render(request, 'system_admin/subscribers.html', {
+        'subscribers': subs,
+    })
+
+
+@csrf_exempt
+def subscribe(request):
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        if email:
+            s, created = Subscriber.objects.get_or_create(email=email)
+            if created:
+                try:
+                    send_mail('Thanks for subscribing', 'You have been subscribed to SmartTravels updates.', settings.DEFAULT_FROM_EMAIL, [email], fail_silently=True)
+                except Exception:
+                    pass
+            messages.success(request, 'Thank you for subscribing.')
+            return redirect('index')
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 # ── ADMIN MANAGEMENT ─────────────────────────────────────────────────────────

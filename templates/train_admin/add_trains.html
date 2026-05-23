@@ -116,6 +116,22 @@
 
                         </div>
 
+                        <!-- Vehicle Type -->
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700">
+                                Vehicle Type
+                            </label>
+
+                            <select id="train-vehicle-type"
+                                    name="vehicle_type"
+                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                    onchange="updateTrainMode()"
+                                    required>
+                                <option value="passenger">Passenger Train</option>
+                                <option value="cargo">Cargo Truck</option>
+                            </select>
+                        </div>
+
                         <!-- Conductor -->
                         <div>
 
@@ -158,7 +174,7 @@
                     </div>
 
                     <!-- RIGHT SIDE -->
-                    <div>
+                    <div id="train-passenger-config">
 
                         <div class="bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-100 rounded-3xl p-6">
 
@@ -274,7 +290,7 @@
         </div>
 
         <!-- Seat Simulation -->
-        <div class="bg-white/80 backdrop-blur-lg border border-white/40 shadow-2xl rounded-3xl p-8 mb-10">
+        <div id="train-seat-preview-section" class="bg-white/80 backdrop-blur-lg border border-white/40 shadow-2xl rounded-3xl p-8 mb-10">
 
             <div class="flex items-center gap-3 mb-6">
 
@@ -555,7 +571,28 @@ function fetchTrainPreview() {
         });
 }
 
-document.addEventListener('DOMContentLoaded', fetchTrainPreview);
+function updateTrainMode() {
+    const mode = document.getElementById('train-vehicle-type').value;
+    const passengerConfig = document.getElementById('train-passenger-config');
+    const previewSection = document.getElementById('train-seat-preview-section');
+
+    if (mode === 'cargo') {
+        passengerConfig.style.display = 'none';
+        previewSection.style.display = 'none';
+        document.getElementById('train_first_class_seats').value = 0;
+        document.getElementById('train_business_seats').value = 0;
+        document.getElementById('train_economy_seats').value = 0;
+        document.getElementById('train_total').value = 0;
+    } else {
+        passengerConfig.style.display = '';
+        previewSection.style.display = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchTrainPreview();
+    updateTrainMode();
+});
 </script>
 
 </body>

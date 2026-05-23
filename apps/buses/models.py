@@ -44,6 +44,7 @@ class Bus(models.Model):
     bus_number = models.CharField(max_length=100, unique=True)
     number_plate = models.CharField(max_length=20, blank=True, null=True, help_text="Vehicle registration number plate")
     description = models.TextField(blank=True, null=True, help_text="Brief description of the bus (visible to passengers)")
+    is_cargo = models.BooleanField(default=False, help_text="Mark this vehicle as cargo only (not visible to passenger bookings)")
     route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name='buses')
     driver = models.ForeignKey(Driver, on_delete=models.SET_NULL, null=True, blank=True, related_name='buses')
     company = models.ForeignKey(
@@ -58,7 +59,10 @@ class Bus(models.Model):
     available_seats = models.PositiveIntegerField(default=40)
 
     def save(self, *args, **kwargs):
-        self.available_seats = self.vip_seats + self.normal_seats
+        if self.is_cargo:
+            self.available_seats = 0
+        else:
+            self.available_seats = self.vip_seats + self.normal_seats
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -82,6 +86,7 @@ class Booking(models.Model):
     seat_number = models.CharField(max_length=10, blank=True, null=True)
     booking_reference = models.CharField(max_length=20, unique=True, blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    boarded = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
