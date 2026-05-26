@@ -263,11 +263,11 @@
                                    value="150"
                                    min="1"
                                    max="1000"
-                                   oninput="autoAllocateFlight()"
+                                   oninput="validateFlightTotals()"
                                    class="w-full p-4 rounded-2xl border border-sky-300 focus:ring-2 focus:ring-sky-500 outline-none">
 
                             <p class="text-xs text-gray-500 mt-2">
-                                Auto Allocation → First 10% • Business 25% • Economy 65%
+                                Enter the actual seat counts per cabin section. Total capacity must match the sum.
                             </p>
                         </div>
 
@@ -284,7 +284,7 @@
                                    name="first_class_seats"
                                    value="20"
                                    min="0"
-                                   onchange="fetchFlightPreview()"
+                                   oninput="updateFlightCapacityAndPreview()"
                                    class="w-full p-3 rounded-xl border border-purple-200">
                         </div>
 
@@ -298,7 +298,7 @@
                                    name="business_seats"
                                    value="30"
                                    min="0"
-                                   onchange="fetchFlightPreview()"
+                                   oninput="updateFlightCapacityAndPreview()"
                                    class="w-full p-3 rounded-xl border border-emerald-200">
                         </div>
 
@@ -312,9 +312,14 @@
                                    name="economy_seats"
                                    value="100"
                                    min="0"
-                                   onchange="fetchFlightPreview()"
+                                   oninput="updateFlightCapacityAndPreview()"
                                    class="w-full p-3 rounded-xl border border-slate-300">
                         </div>
+
+                    </div>
+                    <p id="flight-total-warning" class="hidden text-sm text-red-600 mt-4">
+                        Seat counts must match total capacity before the preview updates.
+                    </p>
 
                     </div>
                 </div>
@@ -345,7 +350,7 @@
             <!-- SEAT PREVIEW -->
             <div id="flight-seat-preview-section" class="glass-card rounded-3xl shadow-2xl border border-white/40 p-6">
 
-                <div class="flex items-center justify-between mb-5">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
 
                     <div>
                         <h2 class="text-2xl font-bold text-gray-800">
@@ -353,7 +358,7 @@
                         </h2>
 
                         <p class="text-gray-500 text-sm mt-1">
-                            Real-time flight seat preview.
+                            Visualize airline seating with class zones, aisle spaces and row labels.
                         </p>
                     </div>
 
@@ -363,27 +368,41 @@
 
                 </div>
 
-                <!-- LEGEND -->
-                <div class="flex flex-wrap gap-3 mb-6 text-xs font-semibold">
+                <div class="grid gap-6 xl:grid-cols-[280px_1fr]">
 
-                    <div class="flex items-center gap-2">
-                        <span class="w-4 h-4 rounded bg-purple-600"></span>
-                        First
+                    <div class="space-y-4">
+                        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Layout Tools</h3>
+                            <p class="text-sm text-slate-600">Drag cabin sections, aisles and pilot/cockpit markers into the flight layout.</p>
+                            <div id="flight-seat-palette" class="mt-4 grid gap-2"></div>
+                        </div>
+                        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Legend</h3>
+                            <div class="grid gap-3 text-sm text-slate-700">
+                                <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-purple-600"></span>First Class</div>
+                                <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-emerald-600"></span>Business</div>
+                                <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-slate-600"></span>Economy</div>
+                                <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-red-600"></span>Booked</div>
+                                <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-yellow-500"></span>Reserved</div>
+                            </div>
+                        </div>
+                        <div id="flight-seat-details" class="hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Selected Seat</h3>
+                            <div id="flight-seat-details-content" class="text-sm text-slate-700">
+                                Click a seat to see seat number, class, status and section.
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <span class="w-4 h-4 rounded bg-emerald-600"></span>
-                        Business
+                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4 overflow-auto">
+                        <div class="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-600">
+                            <span class="rounded-full bg-white px-3 py-1 shadow-sm">Cockpit</span>
+                            <span class="rounded-full bg-white px-3 py-1 shadow-sm">Aisle</span>
+                            <span class="rounded-full bg-white px-3 py-1 shadow-sm">Lavatory</span>
+                        </div>
+                        <div id="flight-seat-simulation" class="space-y-3"></div>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <span class="w-4 h-4 rounded bg-slate-600"></span>
-                        Economy
-                    </div>
-
-                </div>
-
-                <div id="flight-seat-simulation" class="space-y-3 overflow-auto max-h-[650px] pr-2">
                 </div>
 
             </div>
@@ -567,146 +586,257 @@
 <script>
 
 const FLIGHT_PREVIEW_URL = '{% url "flight_seat_preview" %}';
-const FLIGHT_GENERATE_URL = '{% url "generate_flight_layout" %}';
 
-const classStyles = {
-    'VIP': 'bg-yellow-500',
-    'Normal': 'bg-sky-600',
+const flightPaletteItems = [
+    {type: 'seat', seat_class: 'First Class', label: 'First Class', style: 'bg-purple-600'},
+    {type: 'seat', seat_class: 'Business', label: 'Business', style: 'bg-emerald-600'},
+    {type: 'seat', seat_class: 'Economy', label: 'Economy', style: 'bg-slate-600'},
+    {type: 'aisle', label: 'Aisle', style: 'bg-slate-400'},
+    {type: 'cockpit', label: 'Cockpit', style: 'bg-sky-600'},
+];
+
+const flightSeatStatusStyles = {
+    available: 'bg-emerald-500',
+    booked: 'bg-red-500',
+    reserved: 'bg-yellow-500',
+    blocked: 'bg-slate-500',
+};
+
+const flightClassStyles = {
     'First Class': 'bg-purple-600',
     'Business': 'bg-emerald-600',
     'Economy': 'bg-slate-600',
 };
 
-function autoAllocateFlight() {
+let currentFlightLayout = null;
+let selectedFlightSeat = null;
 
-    const total = parseInt(document.getElementById('flight_total').value) || 0;
+function getFlightCounts() {
+    return {
+        first_class_seats: Number(document.getElementById('flight_first_class_seats').value) || 0,
+        business_seats: Number(document.getElementById('flight_business_seats').value) || 0,
+        economy_seats: Number(document.getElementById('flight_economy_seats').value) || 0,
+    };
+}
 
-    const first = Math.round(total * 0.10);
-    const business = Math.round(total * 0.25);
-    const economy = total - first - business;
+function validateFlightTotals() {
+    const total = Number(document.getElementById('flight_total').value) || 0;
+    const counts = getFlightCounts();
+    const sum = counts.first_class_seats + counts.business_seats + counts.economy_seats;
+    const warning = document.getElementById('flight-total-warning');
 
-    document.getElementById('flight_first_class_seats').value = first;
-    document.getElementById('flight_business_seats').value = business;
-    document.getElementById('flight_economy_seats').value = Math.max(0, economy);
+    if (sum !== total) {
+        warning.classList.remove('hidden');
+        return false;
+    }
 
-    clearTimeout(window._flightTimer);
+    warning.classList.add('hidden');
+    return true;
+}
 
-    window._flightTimer = setTimeout(fetchFlightPreview, 300);
+function updateFlightCapacityAndPreview() {
+    const counts = getFlightCounts();
+    document.getElementById('flight_total').value = counts.first_class_seats + counts.business_seats + counts.economy_seats;
+
+    if (validateFlightTotals()) {
+        fetchFlightPreview();
+    }
+}
+
+function renderFlightPalette() {
+    const palette = document.getElementById('flight-seat-palette');
+    palette.innerHTML = '';
+
+    flightPaletteItems.forEach(item => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-semibold text-white ${item.style}`;
+        button.textContent = item.label;
+        button.draggable = true;
+        button.dataset.palette = JSON.stringify(item);
+        button.addEventListener('dragstart', onFlightPaletteDragStart);
+        palette.appendChild(button);
+    });
+}
+
+function onFlightPaletteDragStart(event) {
+    const payload = JSON.parse(event.currentTarget.dataset.palette || '{}');
+    event.dataTransfer.setData('application/json', JSON.stringify({source: 'palette', payload}));
+    event.dataTransfer.effectAllowed = 'copy';
+}
+
+function onFlightCellDragStart(event, rowIndex, colIndex) {
+    const cell = currentFlightLayout.rows[rowIndex].seats[colIndex];
+    event.dataTransfer.setData('application/json', JSON.stringify({
+        source: 'seat',
+        rowIndex,
+        colIndex,
+        cell,
+    }));
+    event.dataTransfer.effectAllowed = 'move';
+}
+
+function onFlightDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+}
+
+function onFlightDrop(event, rowIndex, colIndex) {
+    event.preventDefault();
+    if (!currentFlightLayout) return;
+
+    const raw = event.dataTransfer.getData('application/json');
+    if (!raw) return;
+
+    const data = JSON.parse(raw);
+    const targetCell = currentFlightLayout.rows[rowIndex].seats[colIndex];
+
+    if (data.source === 'palette') {
+        const payload = data.payload;
+        if (payload.type === 'seat') {
+            currentFlightLayout.rows[rowIndex].seats[colIndex] = {
+                seat_number: targetCell.seat_number || `${currentFlightLayout.rows[rowIndex].row}${colIndex + 1}`,
+                seat_class: payload.seat_class,
+                section: targetCell.section || 'Custom',
+                booking_status: 'available',
+            };
+        } else {
+            currentFlightLayout.rows[rowIndex].seats[colIndex] = {
+                type: payload.type,
+                label: payload.label,
+                is_aisle: payload.type === 'aisle',
+            };
+        }
+    } else if (data.source === 'seat') {
+        const sourceCell = currentFlightLayout.rows[data.rowIndex].seats[data.colIndex];
+        currentFlightLayout.rows[data.rowIndex].seats[data.colIndex] = targetCell;
+        currentFlightLayout.rows[rowIndex].seats[colIndex] = sourceCell;
+    }
+
+    selectedFlightSeat = null;
+    renderFlightSeats(currentFlightLayout);
+    updateFlightSeatDetails(null);
+}
+
+function getFlightCellStyle(cell) {
+    if (!cell || cell.is_aisle || cell.type === 'aisle') {
+        return 'bg-slate-200';
+    }
+    if (cell.type === 'cockpit') {
+        return 'bg-sky-600';
+    }
+    if (cell.booking_status && flightSeatStatusStyles[cell.booking_status]) {
+        return flightSeatStatusStyles[cell.booking_status];
+    }
+    return flightClassStyles[cell.seat_class] || 'bg-slate-500';
+}
+
+function updateFlightSeatDetails(cell) {
+    const details = document.getElementById('flight-seat-details');
+    const content = document.getElementById('flight-seat-details-content');
+    if (!cell || cell.is_aisle || cell.is_empty || cell.type === 'aisle' || cell.type === 'cockpit') {
+        details.classList.add('hidden');
+        return;
+    }
+    details.classList.remove('hidden');
+    content.innerHTML = `
+        <div class="space-y-2 text-sm text-slate-700">
+            <div><strong>Seat:</strong> ${cell.seat_number}</div>
+            <div><strong>Class:</strong> ${cell.seat_class}</div>
+            <div><strong>Status:</strong> ${cell.booking_status}</div>
+            <div><strong>Section:</strong> ${cell.section}</div>
+        </div>
+    `;
 }
 
 function renderFlightSeats(layoutData) {
 
     const container = document.getElementById('flight-seat-simulation');
-
     container.innerHTML = '';
 
     if (!layoutData || !layoutData.rows || !layoutData.rows.length) {
-
         container.innerHTML = `
             <div class="text-gray-500 text-center py-10">
                 Enter seat counts to preview the cabin layout.
             </div>
         `;
-
         return;
     }
 
-    layoutData.rows.forEach(row => {
+    currentFlightLayout = layoutData;
 
+    layoutData.rows.forEach((row, rowIndex) => {
         const rowEl = document.createElement('div');
         rowEl.className = 'flex items-center gap-1';
 
         const label = document.createElement('div');
-        label.className = 'w-10 text-xs text-gray-500 font-semibold';
+        label.className = 'w-10 text-xs font-semibold text-slate-500';
         label.textContent = row.row;
-
         rowEl.appendChild(label);
 
-        row.seats.forEach(cell => {
-
+        row.seats.forEach((cell, colIndex) => {
             const seatEl = document.createElement('div');
+            seatEl.classList.add('min-w-[40px]', 'min-h-[40px]', 'rounded-2xl', 'flex', 'items-center', 'justify-center', 'text-[10px]', 'font-bold', 'text-white', 'cursor-pointer', 'transition-all', 'duration-200');
+            seatEl.dataset.rowIndex = rowIndex;
+            seatEl.dataset.colIndex = colIndex;
+            seatEl.draggable = true;
+            seatEl.addEventListener('dragstart', event => onFlightCellDragStart(event, rowIndex, colIndex));
+            seatEl.addEventListener('dragover', onFlightDragOver);
+            seatEl.addEventListener('drop', event => onFlightDrop(event, rowIndex, colIndex));
 
-            if (cell.is_aisle) {
-
-                seatEl.className = 'w-6';
-
+            if (cell.is_aisle || cell.type === 'aisle') {
+                seatEl.classList.add('bg-slate-200');
+                seatEl.innerHTML = '<span class="text-[10px] text-slate-500">AISLE</span>';
             } else if (cell.is_empty) {
-
-                seatEl.className = 'w-10 h-10';
-
+                seatEl.classList.add('bg-white', 'border', 'border-dashed', 'border-slate-300');
+                seatEl.innerHTML = '';
+            } else if (cell.type === 'cockpit') {
+                seatEl.classList.add(getFlightCellStyle(cell));
+                seatEl.textContent = cell.label;
+                seatEl.title = cell.label;
             } else {
-
-                const style = classStyles[cell.seat_class] || 'bg-gray-500';
-
-                seatEl.className =
-                    `w-10 h-10 rounded-lg flex items-center justify-center text-[10px] font-bold text-white ${style} transition seat-hover`;
-
+                const style = getFlightCellStyle(cell);
+                seatEl.className = `w-10 h-10 rounded-2xl flex items-center justify-center text-[10px] font-bold text-white cursor-pointer transition-all duration-200 ${style}`;
+                if (selectedFlightSeat === cell.seat_number) {
+                    seatEl.classList.add('ring-4', 'ring-slate-300');
+                }
                 seatEl.textContent = cell.seat_number;
-
                 seatEl.title = `${cell.seat_class} • ${cell.booking_status}`;
+                seatEl.onclick = () => {
+                    selectedFlightSeat = cell.seat_number;
+                    updateFlightSeatDetails(cell);
+                    renderFlightSeats(currentFlightLayout);
+                };
             }
 
             rowEl.appendChild(seatEl);
-
         });
 
         container.appendChild(rowEl);
-
     });
-
 }
 
 function fetchFlightPreview() {
+    if (!validateFlightTotals()) {
+        return;
+    }
 
-    const first = Number(document.getElementById('flight_first_class_seats').value) || 0;
-    const business = Number(document.getElementById('flight_business_seats').value) || 0;
-    const economy = Number(document.getElementById('flight_economy_seats').value) || 0;
-
-    fetch(`${FLIGHT_PREVIEW_URL}?first_class_seats=${first}&business_seats=${business}&economy_seats=${economy}`)
+    const counts = getFlightCounts();
+    fetch(`${FLIGHT_PREVIEW_URL}?first_class_seats=${counts.first_class_seats}&business_seats=${counts.business_seats}&economy_seats=${counts.economy_seats}`)
         .then(res => res.json())
-        .then(renderFlightSeats)
+        .then(data => {
+            selectedFlightSeat = null;
+            renderFlightSeats(data);
+            updateFlightSeatDetails(null);
+        })
         .catch(() => {
-
             const container = document.getElementById('flight-seat-simulation');
-
             container.innerHTML = `
                 <div class="text-red-500 text-center py-10">
                     Unable to load preview.
                 </div>
             `;
         });
-}
-
-function generateFlightLayout(flightId, first, business, economy) {
-
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-    const data = new FormData();
-
-    data.append('flight_id', flightId);
-    data.append('first_class_seats', first);
-    data.append('business_seats', business);
-    data.append('economy_seats', economy);
-
-    fetch(FLIGHT_GENERATE_URL, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': csrfToken
-        },
-        body: data,
-    })
-    .then(res => res.json())
-    .then(renderFlightSeats)
-    .catch(() => {
-
-        const container = document.getElementById('flight-seat-simulation');
-
-        container.innerHTML = `
-            <div class="text-red-500 text-center py-10">
-                Unable to regenerate layout.
-            </div>
-        `;
-    });
 }
 
 function updateFlightMode() {
@@ -728,6 +858,8 @@ function updateFlightMode() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    renderFlightPalette();
+    validateFlightTotals();
     fetchFlightPreview();
     updateFlightMode();
 });

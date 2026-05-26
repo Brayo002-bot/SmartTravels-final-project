@@ -3,158 +3,267 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>System Reports</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>System Reports • SmartTravels</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 </head>
 
-<body class="bg-gradient-to-br from-gray-100 via-slate-100 to-blue-50 min-h-screen">
+<body class="bg-gradient-to-br from-slate-100 via-indigo-50 to-slate-200 min-h-screen">
 
 <div class="flex">
 
-    <!-- SIDEBAR -->
-    <aside class="w-64 bg-gray-900 text-white min-h-screen fixed shadow-2xl">
+{% include 'system_admin/sidebar.html' with active_page='system_reports' %}
 
-        <div class="p-6 text-xl font-bold border-b border-gray-700">
-            ⚙️ System Admin
-        </div>
+<!-- MAIN -->
+<div class="ml-72 w-full p-8">
 
-        <nav class="mt-6 space-y-1">
+    <!-- HEADER -->
+    <div class="bg-white/60 backdrop-blur-xl rounded-3xl shadow-xl border border-white/30 p-6 mb-8">
 
-            <a href="{% url 'system_admin_dashboard' %}" class="block px-6 py-3 hover:bg-gray-800">Dashboard</a>
-            <a href="{% url 'manage_users' %}" class="block px-6 py-3 hover:bg-gray-800">Manage Users</a>
-            <a href="{% url 'manage_admins' %}" class="block px-6 py-3 hover:bg-gray-800">Manage Admins</a>
-            <a href="{% url 'system_reports' %}" class="block px-6 py-3 bg-gray-800">Reports</a>
-            <a href="{% url 'system_settings' %}" class="block px-6 py-3 hover:bg-gray-800">Settings</a>
-            <a href="{% url 'audit_logs' %}" class="block px-6 py-3 hover:bg-gray-800">Audit Logs</a>
+        <div class="flex flex-col md:flex-row justify-between md:items-center gap-5">
 
-        </nav>
+            <div>
+                <p class="text-indigo-600 font-medium mb-1">
+                    SmartTravels Enterprise Analytics
+                </p>
 
-    </aside>
+                <h1 class="text-3xl font-bold text-slate-800">
+                    System Reports & Analytics
+                </h1>
 
-    <!-- MAIN -->
-    <div class="ml-64 p-8 w-full">
+                <p class="text-slate-500">
+                    Monitor performance, bookings, revenue and transport analytics
+                </p>
+            </div>
 
-        <!-- HEADER -->
-        <div class="flex justify-between items-center mb-6">
-
-            <h1 class="text-3xl font-bold text-gray-800">
-                📊 Analytics Dashboard
-            </h1>
-
-            <!-- EXPORT BUTTONS -->
+            <!-- EXPORTS -->
             <div class="flex gap-3">
 
-                <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                    ⬇ Export CSV
+                <button class="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg hover:scale-105 transition">
+                    <i class="fas fa-file-csv mr-2"></i>
+                    Export CSV
                 </button>
 
-                <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
-                    🧾 Export PDF
+                <button class="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-lg hover:scale-105 transition">
+                    <i class="fas fa-file-pdf mr-2"></i>
+                    Export PDF
                 </button>
 
-            </div>
-
-        </div>
-
-        <!-- KPI CARDS -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-
-            <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
-                <p class="text-gray-500">Total Buses</p>
-                <p class="text-3xl font-bold">{{ total_buses }}</p>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
-                <p class="text-gray-500">Total Flights</p>
-                <p class="text-3xl font-bold">{{ total_flights }}</p>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
-                <p class="text-gray-500">Total Trains</p>
-                <p class="text-3xl font-bold">{{ total_trains }}</p>
-            </div>
-
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow">
-                <p class="opacity-80">Total Revenue</p>
-                <p class="text-3xl font-bold">KES {{ total_revenue }}</p>
-            </div>
-
-        </div>
-
-        <!-- CHARTS SECTION -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-
-            <!-- BAR CHART -->
-            <div class="bg-white p-6 rounded-2xl shadow">
-                <h2 class="font-bold mb-4 text-gray-700">Bookings by Transport Mode</h2>
-                <canvas id="barChart"></canvas>
-            </div>
-
-            <!-- PIE CHART -->
-            <div class="bg-white p-6 rounded-2xl shadow">
-                <h2 class="font-bold mb-4 text-gray-700">Booking Distribution</h2>
-                <canvas id="pieChart"></canvas>
-            </div>
-
-        </div>
-
-        <!-- BOOKINGS SUMMARY -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-            <div class="bg-white p-6 rounded-2xl shadow">
-                <p class="text-gray-500">🚌 Bus Bookings</p>
-                <p class="text-3xl font-bold">{{ bus_bookings }}</p>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow">
-                <p class="text-gray-500">✈️ Flight Bookings</p>
-                <p class="text-3xl font-bold">{{ flight_bookings }}</p>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow">
-                <p class="text-gray-500">🚆 Train Bookings</p>
-                <p class="text-3xl font-bold">{{ train_bookings }}</p>
             </div>
 
         </div>
 
     </div>
+
+    <!-- KPI CARDS -->
+    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+
+        <div class="rounded-3xl p-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl">
+            <div class="flex justify-between">
+                <div>
+                    <p class="text-indigo-100">Total Buses</p>
+                    <h2 class="text-4xl font-bold mt-2">
+                        {{ total_buses }}
+                    </h2>
+                </div>
+                <i class="fas fa-bus text-3xl"></i>
+            </div>
+        </div>
+
+        <div class="rounded-3xl p-6 bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-xl">
+            <div class="flex justify-between">
+                <div>
+                    <p class="text-sky-100">Flights</p>
+                    <h2 class="text-4xl font-bold mt-2">
+                        {{ total_flights }}
+                    </h2>
+                </div>
+                <i class="fas fa-plane text-3xl"></i>
+            </div>
+        </div>
+
+        <div class="rounded-3xl p-6 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xl">
+            <div class="flex justify-between">
+                <div>
+                    <p class="text-amber-100">Trains</p>
+                    <h2 class="text-4xl font-bold mt-2">
+                        {{ total_trains }}
+                    </h2>
+                </div>
+                <i class="fas fa-train text-3xl"></i>
+            </div>
+        </div>
+
+        <div class="rounded-3xl p-6 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-xl">
+            <div class="flex justify-between">
+                <div>
+                    <p class="text-emerald-100">Revenue</p>
+                    <h2 class="text-3xl font-bold mt-2">
+                        KES {{ total_revenue }}
+                    </h2>
+                </div>
+                <i class="fas fa-wallet text-3xl"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CHARTS ROW 1 -->
+    <div class="grid lg:grid-cols-2 gap-6 mb-6">
+
+        <!-- BAR -->
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+            <h2 class="font-bold text-slate-700 text-lg mb-5">
+                <i class="fas fa-chart-column text-indigo-600 mr-2"></i>
+                Bookings by Transport Mode
+            </h2>
+            <canvas id="barChart"></canvas>
+        </div>
+
+        <!-- DOUGHNUT -->
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+            <h2 class="font-bold text-slate-700 text-lg mb-5">
+                <i class="fas fa-chart-pie text-emerald-600 mr-2"></i>
+                Booking Distribution
+            </h2>
+            <canvas id="pieChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- CHARTS ROW 2 -->
+    <div class="grid lg:grid-cols-2 gap-6 mb-8">
+
+        <!-- REVENUE TREND -->
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+            <h2 class="font-bold text-slate-700 text-lg mb-5">
+                <i class="fas fa-chart-line text-emerald-600 mr-2"></i>
+                Revenue Growth
+            </h2>
+            <canvas id="revenueChart"></canvas>
+        </div>
+
+        <!-- PERFORMANCE -->
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+            <h2 class="font-bold text-slate-700 text-lg mb-5">
+                <i class="fas fa-chart-area text-violet-600 mr-2"></i>
+                Transport Performance
+            </h2>
+            <canvas id="performanceChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- REPORT SUMMARY -->
+    <div class="grid md:grid-cols-3 gap-6">
+
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-slate-500">Bus Bookings</p>
+                    <h2 class="text-3xl font-bold text-slate-800">
+                        {{ bus_bookings }}
+                    </h2>
+                </div>
+                <i class="fas fa-bus text-3xl text-indigo-500"></i>
+            </div>
+        </div>
+
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-slate-500">Flight Bookings</p>
+                    <h2 class="text-3xl font-bold text-slate-800">
+                        {{ flight_bookings }}
+                    </h2>
+                </div>
+                <i class="fas fa-plane text-3xl text-emerald-500"></i>
+            </div>
+        </div>
+
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-slate-500">Train Bookings</p>
+                    <h2 class="text-3xl font-bold text-slate-800">
+                        {{ train_bookings }}
+                    </h2>
+                </div>
+                <i class="fas fa-train text-3xl text-amber-500"></i>
+            </div>
+        </div>
+
+    </div>
+
+</div>
 </div>
 
-<!-- CHART JS SCRIPT -->
 <script>
-const bus = {{ bus_bookings|default:0 }};
-const flight = {{ flight_bookings|default:0 }};
-const train = {{ train_bookings|default:0 }};
+const bus={{ bus_bookings|default:0 }};
+const flight={{ flight_bookings|default:0 }};
+const train={{ train_bookings|default:0 }};
 
-/* BAR CHART */
-new Chart(document.getElementById('barChart'), {
-    type: 'bar',
-    data: {
-        labels: ['Bus', 'Flight', 'Train'],
-        datasets: [{
-            label: 'Bookings',
-            data: [bus, flight, train],
-            backgroundColor: ['#3B82F6', '#10B981', '#F59E0B']
-        }]
-    }
+// BOOKINGS BAR
+new Chart(document.getElementById('barChart'),{
+type:'bar',
+data:{
+labels:['Bus','Flight','Train'],
+datasets:[{
+data:[bus,flight,train],
+backgroundColor:['#6366F1','#10B981','#F59E0B'],
+borderRadius:10
+}]
+},
+options:{plugins:{legend:{display:false}}}
 });
 
-/* PIE CHART */
-new Chart(document.getElementById('pieChart'), {
-    type: 'pie',
-    data: {
-        labels: ['Bus', 'Flight', 'Train'],
-        datasets: [{
-            data: [bus, flight, train],
-            backgroundColor: ['#2563EB', '#14B8A6', '#F97316']
-        }]
-    }
+// DISTRIBUTION
+new Chart(document.getElementById('pieChart'),{
+type:'doughnut',
+data:{
+labels:['Bus','Flight','Train'],
+datasets:[{
+data:[bus,flight,train],
+backgroundColor:['#4F46E5','#14B8A6','#F97316']
+}]
+}
+});
+
+// REVENUE
+new Chart(document.getElementById('revenueChart'),{
+type:'line',
+data:{
+labels:['Jan','Feb','Mar','Apr','May','Jun'],
+datasets:[{
+label:'Revenue',
+data:[12000,17000,14000,22000,28000,34000],
+borderColor:'#10B981',
+backgroundColor:'rgba(16,185,129,.15)',
+fill:true,
+tension:.4
+}]
+}
+});
+
+// PERFORMANCE
+new Chart(document.getElementById('performanceChart'),{
+type:'radar',
+data:{
+labels:['Speed','Bookings','Revenue','Growth','Engagement'],
+datasets:[{
+label:'Performance',
+data:[80,90,75,85,88],
+backgroundColor:'rgba(99,102,241,.2)',
+borderColor:'#6366F1'
+}]
+}
 });
 </script>
 

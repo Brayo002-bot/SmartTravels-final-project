@@ -17,7 +17,7 @@ def my_bookings(request):
         from apps.payments.models import Payment
         payments = Payment.objects.filter(passenger=request.user)
         payment_total = payments.aggregate(total=Sum('amount'))['total'] or 0
-        point_balance = payments.count() * 100 + int(payment_total)
+        point_balance = int(payment_total / 100)  # 1 point per 100 KSH spent
     except Exception:
         point_balance = 0
 

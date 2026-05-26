@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Parcel, ParcelLog
+from apps.payments.models import Payment
 
 
 @login_required
@@ -40,6 +41,17 @@ def parcel_view(request):
             note='Booked online by passenger',
             updated_by=request.user
         )
+        # Award loyalty points for parcel (1 point per 100 KSH spent)
+        try:
+            Payment.objects.create(
+                passenger=request.user,
+                amount=p.shipping_cost,
+                method='parcel',
+                reference=f'Parcel-{p.parcel_id}',
+                status='completed'
+            )
+        except Exception as e:
+            messages.warning(request, f'Parcel booked but loyalty points could not be awarded: {str(e)}')
         messages.success(request, f'Parcel {p.parcel_id} booked successfully! Cost: KES {p.shipping_cost}')
         return redirect('parcel')
 

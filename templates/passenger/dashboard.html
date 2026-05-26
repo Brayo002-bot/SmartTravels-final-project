@@ -461,24 +461,26 @@ body {
         <form method="GET" action="">
           <div class="form-grid">
 
-            <div class="form-group">
+            <div class="form-group" style="position:relative;">
               <label class="form-label">From</label>
-              <input type="text" name="from" list="from-options"
+              <input id="passenger-from-input" type="text" name="from" list="from-options"
                 value="{{ query_from|default:'' }}"
-                placeholder="Nairobi" class="form-input" required>
+                placeholder="Nairobi" class="form-input route-autocomplete-input" autocomplete="off" required>
               <datalist id="from-options">
                 {% for option in from_choices %}<option value="{{ option }}"></option>{% endfor %}
               </datalist>
+              <div id="from-suggestion-box" class="route-suggestion-box hidden" style="position:absolute; z-index:50; left:0; right:0; top:100%; margin-top:0.4rem; max-height:14rem; overflow-y:auto; background:rgba(15,23,42,0.96); border:1px solid rgba(148,163,184,0.2); border-radius:0.75rem; box-shadow:0 20px 45px -20px rgba(15,23,42,0.6);"></div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="position:relative;">
               <label class="form-label">To</label>
-              <input type="text" name="to" list="to-options"
+              <input id="passenger-to-input" type="text" name="to" list="to-options"
                 value="{{ query_to|default:'' }}"
-                placeholder="Mombasa" class="form-input" required>
+                placeholder="Mombasa" class="form-input route-autocomplete-input" autocomplete="off" required>
               <datalist id="to-options">
                 {% for option in to_choices %}<option value="{{ option }}"></option>{% endfor %}
               </datalist>
+              <div id="to-suggestion-box" class="route-suggestion-box hidden" style="position:absolute; z-index:50; left:0; right:0; top:100%; margin-top:0.4rem; max-height:14rem; overflow-y:auto; background:rgba(15,23,42,0.96); border:1px solid rgba(148,163,184,0.2); border-radius:0.75rem; box-shadow:0 20px 45px -20px rgba(15,23,42,0.6);"></div>
             </div>
 
             <div class="form-group">
@@ -508,6 +510,66 @@ body {
 
           </div>
         </form>
+
+        <script>
+          const passengerRouteSuggestionUrl = '{% url "passenger_route_suggestions" %}';
+
+          function hideSuggestionBox(box) {
+            box.classList.add('hidden');
+            box.innerHTML = '';
+          }
+
+          function selectSuggestion(value, input, box) {
+            input.value = value;
+            hideSuggestionBox(box);
+          }
+
+          function renderSuggestionItems(options, box, input) {
+            box.innerHTML = options
+              .map(option => `
+                <button type="button" class="w-full text-left px-4 py-3 text-sm text-slate-100 hover:bg-slate-800/95 transition" data-value="${option}">${option}</button>
+              `)
+              .join('');
+            box.querySelectorAll('button').forEach(button => {
+              button.addEventListener('click', () => selectSuggestion(button.dataset.value, input, box));
+            });
+            box.classList.remove('hidden');
+          }
+
+          function fetchRouteSuggestions(direction, query, box, input) {
+            const trimmed = query.trim();
+            if (!trimmed) {
+              hideSuggestionBox(box);
+              return;
+            }
+
+            fetch(`${passengerRouteSuggestionUrl}?direction=${direction}&q=${encodeURIComponent(trimmed)}`)
+              .then(response => response.json())
+              .then(data => {
+                if (!data.options || !data.options.length) {
+                  hideSuggestionBox(box);
+                  return;
+                }
+                renderSuggestionItems(data.options, box, input);
+              })
+              .catch(() => hideSuggestionBox(box));
+          }
+
+          const fromInput = document.getElementById('passenger-from-input');
+          const toInput = document.getElementById('passenger-to-input');
+          const fromBox = document.getElementById('from-suggestion-box');
+          const toBox = document.getElementById('to-suggestion-box');
+
+          fromInput.addEventListener('input', () => fetchRouteSuggestions('from', fromInput.value, fromBox, fromInput));
+          toInput.addEventListener('input', () => fetchRouteSuggestions('to', toInput.value, toBox, toInput));
+
+          document.addEventListener('click', event => {
+            if (!event.target.closest('.route-suggestion-box') && !event.target.closest('.route-autocomplete-input')) {
+              hideSuggestionBox(fromBox);
+              hideSuggestionBox(toBox);
+            }
+          });
+        </script>
 
         <!-- RESULTS -->
         {% if search_performed %}

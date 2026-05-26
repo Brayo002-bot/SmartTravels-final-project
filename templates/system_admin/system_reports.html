@@ -11,25 +11,7 @@
 
 <div class="flex">
 
-    <!-- SIDEBAR (clean reused style, NO backend changes) -->
-    <aside class="w-64 bg-gray-900 text-white min-h-screen fixed shadow-2xl">
-
-        <div class="p-6 text-xl font-bold border-b border-gray-700">
-            ⚙️ System Admin
-        </div>
-
-        <nav class="mt-6 space-y-1">
-
-            <a href="{% url 'system_admin_dashboard' %}" class="block px-6 py-3 hover:bg-gray-800">Dashboard</a>
-            <a href="{% url 'manage_users' %}" class="block px-6 py-3 hover:bg-gray-800">Manage Users</a>
-            <a href="{% url 'manage_admins' %}" class="block px-6 py-3 hover:bg-gray-800">Manage Admins</a>
-            <a href="{% url 'system_reports' %}" class="block px-6 py-3 bg-gray-800">Reports</a>
-            <a href="{% url 'system_settings' %}" class="block px-6 py-3 hover:bg-gray-800">Settings</a>
-            <a href="{% url 'audit_logs' %}" class="block px-6 py-3 hover:bg-gray-800">Audit Logs</a>
-
-        </nav>
-
-    </aside>
+    {% include 'system_admin/sidebar.html' with active_page='system_reports' %}
 
     <!-- MAIN -->
     <div class="ml-64 p-8 w-full">

@@ -1,0 +1,615 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Layout Builder - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .layout-editor {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+        }
+
+        .seat-preview {
+            width: 40px;
+            height: 40px;
+            background: #2ecc71;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 4px;
+            border: 2px solid white;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .seat-preview-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .config-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+
+        .template-card {
+            background: white;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .template-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .template-card.selected {
+            background: #f0f4ff;
+            border-color: #667eea;
+        }
+
+        .seat-class-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .seat-class-btn {
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: white;
+            font-weight: bold;
+        }
+
+        .seat-class-btn.active {
+            border-color: #667eea;
+            background: #f0f4ff;
+            color: #667eea;
+        }
+
+        .seat-class-btn:hover {
+            border-color: #667eea;
+        }
+
+        .color-picker {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid #bdc3c7;
+        }
+
+        .success-message {
+            background: #d5f4e6;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            border-radius: 6px;
+            color: #229954;
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            background: #fadbd8;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            border-radius: 6px;
+            color: #c0392b;
+            margin-bottom: 15px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-button {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: bold;
+            color: #95a5a6;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid #ecf0f1;
+            margin-bottom: 20px;
+        }
+
+        .preview-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-4xl font-bold text-gray-800 mb-2">🎨 Seat Layout Builder</h1>
+                <p class="text-gray-600">Configure vehicle seat layouts for your {{ vehicle_type | upper }}</p>
+            </div>
+
+            <div id="messages"></div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left: Configuration -->
+                <div class="lg:col-span-2">
+                    <div class="tabs">
+                        <button class="tab-button active" onclick="switchTab('step1')">Step 1: Choose Template</button>
+                        <button class="tab-button" onclick="switchTab('step2')">Step 2: Customize Layout</button>
+                        <button class="tab-button" onclick="switchTab('step3')">Step 3: Assign Classes</button>
+                        <button class="tab-button" onclick="switchTab('step4')">Step 4: Review & Save</button>
+                    </div>
+
+                    <!-- Step 1: Choose Template -->
+                    <div id="step1" class="tab-content active">
+                        <div class="config-panel">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Choose a Template</h2>
+                            <p class="text-gray-600 mb-6">Select a pre-configured template or start from scratch</p>
+
+                            {% if vehicle_type == 'bus' %}
+                            <div id="busTemplates">
+                                <div class="template-card" onclick="selectTemplate('14_seater')">
+                                    <h3 class="font-bold">14-Seater</h3>
+                                    <p class="text-sm text-gray-600">Compact shuttle bus</p>
+                                </div>
+                                <div class="template-card" onclick="selectTemplate('25_seater')">
+                                    <h3 class="font-bold">25-Seater</h3>
+                                    <p class="text-sm text-gray-600">Standard mini coach</p>
+                                </div>
+                                <div class="template-card" onclick="selectTemplate('33_seater')">
+                                    <h3 class="font-bold">33-Seater</h3>
+                                    <p class="text-sm text-gray-600">Standard coach</p>
+                                </div>
+                                <div class="template-card" onclick="selectTemplate('49_seater')">
+                                    <h3 class="font-bold">49-Seater</h3>
+                                    <p class="text-sm text-gray-600">Large coach (Dreamline style)</p>
+                                </div>
+                                <div class="template-card" onclick="selectTemplate('custom')">
+                                    <h3 class="font-bold">Custom</h3>
+                                    <p class="text-sm text-gray-600">Define your own layout</p>
+                                </div>
+                            </div>
+                            {% elif vehicle_type == 'train' %}
+                            <div id="trainTemplates">
+                                <div class="template-card" onclick="selectTemplate('standard_train')">
+                                    <h3 class="font-bold">Standard Train (3 Cabins)</h3>
+                                    <p class="text-sm text-gray-600">First, Business, Economy</p>
+                                </div>
+                                <div class="template-card" onclick="selectTemplate('madaraka_express')">
+                                    <h3 class="font-bold">Madaraka Express Style</h3>
+                                    <p class="text-sm text-gray-600">Luxury train configuration</p>
+                                </div>
+                                <div class="template-card" onclick="selectTemplate('custom')">
+                                    <h3 class="font-bold">Custom</h3>
+                                    <p class="text-sm text-gray-600">Define your own cabins</p>
+                                </div>
+                            </div>
+                            {% elif vehicle_type == 'flight' %}
+                            <div id="flightTemplates">
+                                <div class="template-card" onclick="selectTemplate('narrow_body')">
+                                    <h3 class="font-bold">Narrow Body (3-3)</h3>
+                                    <p class="text-sm text-gray-600">Airbus A320 style</p>
+                                </div>
+                                <div class="template-card" onclick="selectTemplate('regional')">
+                                    <h3 class="font-bold">Regional (2-2)</h3>
+                                    <p class="text-sm text-gray-600">Small regional aircraft</p>
+                                </div>
+                                <div class="template-card" onclick="selectTemplate('custom')">
+                                    <h3 class="font-bold">Custom</h3>
+                                    <p class="text-sm text-gray-600">Define your own layout</p>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <button class="btn btn-primary" onclick="nextStep(2)" style="margin-top: 20px;">Next →</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Customize Layout -->
+                    <div id="step2" class="tab-content">
+                        <div class="config-panel">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Customize Layout</h2>
+
+                            <div class="form-group">
+                                <label>Total Seats</label>
+                                <input type="number" id="totalSeats" value="49" min="1" max="500" onchange="updatePreview()">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Number of Rows</label>
+                                <input type="number" id="numRows" value="7" min="1" max="100" onchange="updatePreview()">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Seats per Row (Columns)</label>
+                                <input type="number" id="numColumns" value="7" min="1" max="20" onchange="updatePreview()">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Aisle Position (column number)</label>
+                                <select id="aislePosition" onchange="updatePreview()">
+                                    <option value="2">After column 2</option>
+                                    <option value="3">After column 3</option>
+                                    <option value="4">After column 4</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="hasDriver" checked onchange="updatePreview()">
+                                    Has Driver/Cockpit
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Driver Location</label>
+                                <select id="driverLocation">
+                                    <option value="front">Front (Driver position)</option>
+                                    <option value="left">Left side</option>
+                                    <option value="right">Right side</option>
+                                </select>
+                            </div>
+
+                            <!-- Preview -->
+                            <div class="preview-container">
+                                <p class="text-sm text-gray-600 mb-4">Layout Preview:</p>
+                                <div id="layoutPreview" style="overflow-x: auto;"></div>
+                            </div>
+
+                            <div class="button-group">
+                                <button class="btn btn-secondary" onclick="switchTab('step1')">← Back</button>
+                                <button class="btn btn-primary" onclick="nextStep(3)">Next →</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Assign Seat Classes -->
+                    <div id="step3" class="tab-content">
+                        <div class="config-panel">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Assign Seat Classes</h2>
+                            <p class="text-gray-600 mb-6">Define seat classes and their pricing</p>
+
+                            <div id="seatClassesContainer"></div>
+
+                            <div class="button-group">
+                                <button class="btn btn-secondary" onclick="switchTab('step2')">← Back</button>
+                                <button class="btn btn-primary" onclick="nextStep(4)">Next →</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Review & Save -->
+                    <div id="step4" class="tab-content">
+                        <div class="config-panel">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Review & Save</h2>
+
+                            <div class="form-group">
+                                <label>Template Name</label>
+                                <input type="text" id="templateName" placeholder="e.g., Dreamline VIP 49-Seater">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="templateDescription" placeholder="Describe this layout..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="saveAsTemplate" checked>
+                                    Save as reusable template
+                                </label>
+                            </div>
+
+                            <h3 class="text-lg font-bold mt-6 mb-4">Configuration Summary</h3>
+                            <div id="configSummary" class="bg-gray-50 rounded p-4 mb-4"></div>
+
+                            <div class="button-group">
+                                <button class="btn btn-secondary" onclick="switchTab('step3')">← Back</button>
+                                <button class="btn btn-primary" onclick="saveLayout()">Save Layout ✓</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Info Panel -->
+                <div class="sticky top-8">
+                    <div class="config-panel">
+                        <h3 class="text-lg font-bold mb-4">💡 Tips</h3>
+                        <ul class="space-y-4 text-sm text-gray-700">
+                            <li>✓ Start with a preset template</li>
+                            <li>✓ Adjust rows and columns to match your vehicle</li>
+                            <li>✓ Position the aisle correctly</li>
+                            <li>✓ Define pricing for each seat class</li>
+                            <li>✓ Save as template for future use</li>
+                        </ul>
+
+                        <h3 class="text-lg font-bold mt-6 mb-4">📊 Common Layouts</h3>
+                        <div class="text-sm text-gray-700">
+                            <p><strong>Bus 2×2:</strong> 7 rows × 4 cols = 28 seats</p>
+                            <p><strong>Bus 3×2:</strong> 7 rows × 5 cols = 35 seats</p>
+                            <p><strong>Flight 3-3:</strong> 35 rows × 6 cols = 180 seats</p>
+                            <p><strong>Train cabins:</strong> 3-4 cabins, 60-80 seats each</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const config = {
+            vehicleType: '{{ vehicle_type }}',
+            selectedTemplate: null,
+            layout: {},
+            seatClasses: []
+        };
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function selectTemplate(template) {
+            config.selectedTemplate = template;
+            loadTemplateDefaults(template);
+            
+            // Highlight selected card
+            document.querySelectorAll('.template-card').forEach(el => el.classList.remove('selected'));
+            event.target.closest('.template-card').classList.add('selected');
+        }
+
+        function loadTemplateDefaults(template) {
+            const defaults = {
+                '14_seater': { rows: 7, columns: 2, aislePos: 2, totalSeats: 14 },
+                '25_seater': { rows: 7, columns: 4, aislePos: 2, totalSeats: 25 },
+                '33_seater': { rows: 7, columns: 5, aislePos: 3, totalSeats: 33 },
+                '49_seater': { rows: 7, columns: 7, aislePos: 4, totalSeats: 49 },
+                'standard_train': { rows: 10, columns: 2, totalSeats: 60, cabins: 3 },
+                'narrow_body': { rows: 35, columns: 6, aislePos: 3, totalSeats: 180 },
+                'regional': { rows: 30, columns: 4, aislePos: 2, totalSeats: 90 },
+            };
+
+            const def = defaults[template] || {};
+            document.getElementById('totalSeats').value = def.totalSeats || 49;
+            document.getElementById('numRows').value = def.rows || 7;
+            document.getElementById('numColumns').value = def.columns || 7;
+            document.getElementById('aislePosition').value = def.aislePos || 2;
+            
+            config.layout = def;
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const rows = parseInt(document.getElementById('numRows').value);
+            const cols = parseInt(document.getElementById('numColumns').value);
+            const aislePos = parseInt(document.getElementById('aislePosition').value);
+
+            let html = '';
+            for (let r = 1; r <= Math.min(rows, 5); r++) {
+                html += '<div class="seat-preview-row">';
+                for (let c = 1; c <= cols; c++) {
+                    if (c === aislePos) {
+                        html += '<div style="width: 5px; background: #bdc3c7; border-radius: 3px;"></div>';
+                    }
+                    const colLetter = String.fromCharCode(64 + c);
+                    html += `<div class="seat-preview">${r}${colLetter}</div>`;
+                }
+                html += '</div>';
+            }
+            if (rows > 5) {
+                html += '<div class="text-center text-gray-600 text-sm mt-2">... and ' + (rows - 5) + ' more rows</div>';
+            }
+            document.getElementById('layoutPreview').innerHTML = html;
+        }
+
+        function nextStep(step) {
+            const stepId = 'step' + step;
+            switchTab(stepId);
+            if (step === 3) loadSeatClasses();
+            if (step === 4) loadSummary();
+        }
+
+        function loadSeatClasses() {
+            const container = document.getElementById('seatClassesContainer');
+            const classes = config.vehicleType === 'bus' 
+                ? ['normal', 'vip', 'executive'] 
+                : ['economy', 'business', 'first_class'];
+
+            let html = '';
+            classes.forEach(cls => {
+                html += `
+                    <div class="form-group">
+                        <label>${cls.charAt(0).toUpperCase() + cls.slice(1)} Seats</label>
+                        <div class="flex gap-4">
+                            <input type="number" id="class_${cls}_count" placeholder="Number of seats" value="0">
+                            <input type="number" id="class_${cls}_price" placeholder="Price (KES)" value="1200" step="100">
+                            <input type="color" id="class_${cls}_color" value="#2ecc71" class="color-picker">
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function loadSummary() {
+            const summary = `
+                <p><strong>Vehicle Type:</strong> ${config.vehicleType.toUpperCase()}</p>
+                <p><strong>Layout:</strong> ${document.getElementById('numRows').value} rows × ${document.getElementById('numColumns').value} columns</p>
+                <p><strong>Total Seats:</strong> ${document.getElementById('totalSeats').value}</p>
+                <p><strong>Aisle Position:</strong> Column ${document.getElementById('aislePosition').value}</p>
+            `;
+            document.getElementById('configSummary').innerHTML = summary;
+        }
+
+        function saveLayout() {
+            const templateName = document.getElementById('templateName').value;
+            if (!templateName) {
+                showMessage('Please enter a template name', 'error');
+                return;
+            }
+
+            const payload = {
+                template_name: templateName,
+                description: document.getElementById('templateDescription').value,
+                total_seats: parseInt(document.getElementById('totalSeats').value),
+                rows: parseInt(document.getElementById('numRows').value),
+                columns: parseInt(document.getElementById('numColumns').value),
+                aisle_position: parseInt(document.getElementById('aislePosition').value),
+                has_driver: document.getElementById('hasDriver').checked,
+                driver_location: document.getElementById('driverLocation').value,
+                save_as_template: document.getElementById('saveAsTemplate').checked,
+                vehicle_type: config.vehicleType,
+            };
+
+            fetch('/systemadmin/api/save-layout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('Layout saved successfully! Layout ID: ' + data.layout_id, 'success');
+                    setTimeout(() => {
+                        window.location.href = `/systemadmin/layouts/${data.layout_id}/`;
+                    }, 2000);
+                } else {
+                    showMessage(data.error || 'Failed to save layout', 'error');
+                }
+            })
+            .catch(err => showMessage('Error: ' + err.message, 'error'));
+        }
+
+        function showMessage(text, type) {
+            const container = document.getElementById('messages');
+            const msgClass = type === 'error' ? 'error-message' : 'success-message';
+            const msg = document.createElement('div');
+            msg.className = msgClass;
+            msg.textContent = text;
+            container.appendChild(msg);
+            setTimeout(() => msg.remove(), 4000);
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Initialize with first template
+        window.addEventListener('load', () => {
+            updatePreview();
+        });
+    </script>
+</body>
+</html>

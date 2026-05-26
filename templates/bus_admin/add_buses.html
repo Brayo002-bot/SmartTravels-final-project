@@ -251,11 +251,11 @@
                                        value="40"
                                        min="1"
                                        max="300"
-                                       oninput="autoAllocate()"
+                                       oninput="validateBusTotals()"
                                        class="w-full p-4 rounded-2xl border border-blue-300 focus:ring-2 focus:ring-blue-500">
 
                                 <p class="text-xs text-gray-500 mt-2">
-                                    VIP: 15% · Normal: 85%
+                                    Enter direct seat counts for each class. Total capacity must match the sum.
                                 </p>
                             </div>
 
@@ -270,7 +270,7 @@
                                        name="vip_seats"
                                        value="6"
                                        min="0"
-                                       onchange="renderBusPreview()"
+                                       oninput="updateBusCapacityAndPreview()"
                                        class="w-full p-4 rounded-2xl border border-gray-200">
                             </div>
 
@@ -283,10 +283,14 @@
                                 <input id="normal_seats"
                                        type="number"
                                        name="normal_seats"
-                                       value="35"
+                                       value="34"
                                        min="0"
-                                       onchange="renderBusPreview()"
+                                       oninput="updateBusCapacityAndPreview()"
                                        class="w-full p-4 rounded-2xl border border-gray-200">
+                            </div>
+
+                            <div id="bus-total-warning" class="hidden text-sm text-red-600 mt-4">
+                                Seat counts must match total capacity before the preview can update.
                             </div>
                         </div>
 
@@ -317,7 +321,7 @@
         <!-- SEAT PREVIEW -->
         <div id="bus-seat-preview-section" class="glass-card rounded-3xl shadow-2xl border border-white/40 p-8 mb-10">
 
-            <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
 
                 <div>
                     <h2 class="text-2xl font-black text-gray-800">
@@ -325,28 +329,63 @@
                     </h2>
 
                     <p class="text-gray-500 mt-1">
-                        Preview your seating arrangement before saving.
+                        Preview a realistic coach cabin with seat classes, aisle layout and true vehicle styling.
                     </p>
                 </div>
 
-                <div class="flex gap-3 text-sm">
-
+                <div class="flex flex-wrap gap-3 text-sm">
+                    <div class="flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl">
+                        <span class="h-3 w-3 rounded-full bg-emerald-600"></span>
+                        Available
+                    </div>
+                    <div class="flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-xl">
+                        <span class="h-3 w-3 rounded-full bg-red-600"></span>
+                        Booked
+                    </div>
                     <div class="flex items-center gap-2 bg-yellow-100 text-yellow-700 px-4 py-2 rounded-xl">
                         <span class="h-3 w-3 rounded-full bg-yellow-500"></span>
                         VIP
                     </div>
-
-                    <div class="flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-xl">
-                        <span class="h-3 w-3 rounded-full bg-sky-600"></span>
-                        Normal
+                    <div class="flex items-center gap-2 bg-slate-100 text-slate-700 px-4 py-2 rounded-xl">
+                        <span class="h-3 w-3 rounded-full bg-slate-500"></span>
+                        Blocked
                     </div>
-
                 </div>
 
             </div>
 
-            <div id="bus-seat-simulation"
-                 class="overflow-x-auto scrollbar-hide space-y-2">
+            <div class="grid gap-6 xl:grid-cols-[320px_1fr]">
+
+                <div class="space-y-4">
+
+                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                                <h3 class="font-semibold text-gray-800 mb-3">Layout Tools</h3>
+                                <p class="text-sm text-gray-600">
+                                    Drag seat types, aisle sections, driver and door markers into the coach grid.
+                                </p>
+                                <div id="bus-seat-palette" class="mt-4 grid gap-2"></div>
+                            </div>
+
+                            <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                                <h3 class="font-semibold text-gray-800 mb-3">Coach Overview</h3>
+                                <p class="text-sm text-gray-600">
+                                    Seats are arranged in rows with aisles and class zones. Click any seat to inspect its details.
+                                </p>
+                            </div>
+
+                            <div id="bus-seat-details" class="hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-3">Selected Seat</h3>
+                                <p class="text-sm text-slate-600" id="bus-seat-details-content">
+                                    Click a seat to reveal seat number, class and status.
+                                </p>
+                            </div>
+                        <span class="rounded-full bg-white px-3 py-1 shadow-sm">Driver Front</span>
+                        <span class="rounded-full bg-white px-3 py-1 shadow-sm">Door</span>
+                        <span class="rounded-full bg-white px-3 py-1 shadow-sm">Aisle</span>
+                    </div>
+                    <div id="bus-seat-simulation" class="space-y-3"></div>
+                </div>
+
             </div>
 
         </div>
@@ -543,76 +582,230 @@
 <script>
 const BUS_PREVIEW_URL = '{% url "bus_seat_preview" %}';
 
-function autoAllocate() {
-    const total  = parseInt(document.getElementById('total_passengers').value) || 0;
-    const vip    = Math.round(total * 0.15);
-    const normal = total - vip;
+const busPaletteItems = [
+    {type: 'seat', seat_class: 'VIP', label: 'VIP Seat', style: 'bg-purple-600'},
+    {type: 'seat', seat_class: 'Normal', label: 'Normal Seat', style: 'bg-sky-600'},
+    {type: 'aisle', label: 'Aisle', style: 'bg-slate-400'},
+    {type: 'driver', label: 'Driver', style: 'bg-blue-600'},
+    {type: 'door', label: 'Door', style: 'bg-amber-500'},
+];
 
-    document.getElementById('vip_seats').value = vip;
-    document.getElementById('normal_seats').value = normal;
+const busSeatStatusStyles = {
+    available: 'bg-emerald-500',
+    booked: 'bg-red-500',
+    reserved: 'bg-yellow-500',
+    blocked: 'bg-slate-500',
+};
 
-    clearTimeout(window._busTimer);
-    window._busTimer = setTimeout(fetchBusPreview, 350);
-}
-
-const classStyles = {
-    'VIP': 'bg-yellow-500',
+const busClassStyles = {
+    'VIP': 'bg-purple-600',
     'Normal': 'bg-sky-600',
 };
 
-function renderBusSeats(layoutData) {
+let currentBusLayout = null;
+let selectedBusSeat = null;
 
+function getBusCounts() {
+    return {
+        vip_seats: Number(document.getElementById('vip_seats').value) || 0,
+        normal_seats: Number(document.getElementById('normal_seats').value) || 0,
+    };
+}
+
+function validateBusTotals() {
+    const total = Number(document.getElementById('total_passengers').value) || 0;
+    const counts = getBusCounts();
+    const sum = counts.vip_seats + counts.normal_seats;
+    const warning = document.getElementById('bus-total-warning');
+
+    if (sum !== total) {
+        warning.classList.remove('hidden');
+        return false;
+    }
+
+    warning.classList.add('hidden');
+    return true;
+}
+
+function updateBusCapacityAndPreview() {
+    const total = Number(document.getElementById('total_passengers').value) || 0;
+    const counts = getBusCounts();
+    const sum = counts.vip_seats + counts.normal_seats;
+    document.getElementById('total_passengers').value = sum;
+
+    if (validateBusTotals()) {
+        fetchBusPreview();
+    }
+}
+
+function renderBusPalette() {
+    const palette = document.getElementById('bus-seat-palette');
+    palette.innerHTML = '';
+
+    busPaletteItems.forEach(item => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-semibold text-white ${item.style}`;
+        button.textContent = item.label;
+        button.draggable = true;
+        button.dataset.palette = JSON.stringify(item);
+        button.addEventListener('dragstart', onBusPaletteDragStart);
+        palette.appendChild(button);
+    });
+}
+
+function onBusPaletteDragStart(event) {
+    const payload = JSON.parse(event.currentTarget.dataset.palette || '{}');
+    event.dataTransfer.setData('application/json', JSON.stringify({source: 'palette', payload}));
+    event.dataTransfer.effectAllowed = 'copy';
+}
+
+function onBusCellDragStart(event, rowIndex, colIndex) {
+    const cell = currentBusLayout.rows[rowIndex].seats[colIndex];
+    event.dataTransfer.setData('application/json', JSON.stringify({
+        source: 'seat',
+        rowIndex,
+        colIndex,
+        cell,
+    }));
+    event.dataTransfer.effectAllowed = 'move';
+}
+
+function onBusDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+}
+
+function onBusDrop(event, rowIndex, colIndex) {
+    event.preventDefault();
+    if (!currentBusLayout) return;
+
+    const raw = event.dataTransfer.getData('application/json');
+    if (!raw) return;
+
+    const data = JSON.parse(raw);
+    const targetCell = currentBusLayout.rows[rowIndex].seats[colIndex];
+
+    if (data.source === 'palette') {
+        const payload = data.payload;
+        if (payload.type === 'seat') {
+            currentBusLayout.rows[rowIndex].seats[colIndex] = {
+                seat_number: targetCell.seat_number || `${currentBusLayout.rows[rowIndex].row}${colIndex + 1}`,
+                seat_class: payload.seat_class,
+                section: targetCell.section || 'Custom',
+                booking_status: 'available',
+            };
+        } else {
+            currentBusLayout.rows[rowIndex].seats[colIndex] = {
+                type: payload.type,
+                label: payload.label,
+                is_aisle: payload.type === 'aisle',
+            };
+        }
+    } else if (data.source === 'seat') {
+        const sourceCell = currentBusLayout.rows[data.rowIndex].seats[data.colIndex];
+        currentBusLayout.rows[data.rowIndex].seats[data.colIndex] = targetCell;
+        currentBusLayout.rows[rowIndex].seats[colIndex] = sourceCell;
+    }
+
+    selectedBusSeat = null;
+    renderBusSeats(currentBusLayout);
+    updateBusSeatDetails(null);
+}
+
+function getBusCellStyle(cell) {
+    if (!cell || cell.is_aisle || cell.type === 'aisle') {
+        return 'bg-slate-200';
+    }
+    if (cell.type === 'driver') {
+        return 'bg-blue-600';
+    }
+    if (cell.type === 'door') {
+        return 'bg-amber-500';
+    }
+    if (cell.booking_status && busSeatStatusStyles[cell.booking_status]) {
+        return busSeatStatusStyles[cell.booking_status];
+    }
+    return busClassStyles[cell.seat_class] || 'bg-slate-500';
+}
+
+function updateBusSeatDetails(cell) {
+    const details = document.getElementById('bus-seat-details');
+    const content = document.getElementById('bus-seat-details-content');
+    if (!cell || cell.is_aisle || cell.is_empty || cell.type === 'aisle' || cell.type === 'door' || cell.type === 'driver') {
+        details.classList.add('hidden');
+        return;
+    }
+    details.classList.remove('hidden');
+    content.innerHTML = `
+        <div class="space-y-2 text-sm text-slate-700">
+            <div><strong>Seat:</strong> ${cell.seat_number}</div>
+            <div><strong>Class:</strong> ${cell.seat_class}</div>
+            <div><strong>Status:</strong> ${cell.booking_status}</div>
+            <div><strong>Zone:</strong> ${cell.section}</div>
+        </div>
+    `;
+}
+
+function renderBusSeats(layoutData) {
     const container = document.getElementById('bus-seat-simulation');
     container.innerHTML = '';
 
     if (!layoutData || !layoutData.rows || !layoutData.rows.length) {
         container.innerHTML = `
-            <div class="text-gray-500">
+            <div class="text-gray-500 text-center py-10">
                 Enter seat counts to preview layout.
             </div>
         `;
         return;
     }
 
-    layoutData.rows.forEach(row => {
+    currentBusLayout = layoutData;
 
+    layoutData.rows.forEach((row, rowIndex) => {
         const rowEl = document.createElement('div');
         rowEl.className = 'flex items-center gap-2';
 
         const label = document.createElement('div');
-        label.className = 'w-10 text-xs text-gray-500';
-        label.textContent = row.row;
-
+        label.className = 'w-10 text-xs font-semibold text-slate-600';
+        label.textContent = `Row ${row.row}`;
         rowEl.appendChild(label);
 
-        row.seats.forEach(cell => {
-
+        row.seats.forEach((cell, colIndex) => {
             const seatEl = document.createElement('div');
+            seatEl.classList.add('min-w-[40px]', 'min-h-[40px]', 'rounded-2xl', 'flex', 'items-center', 'justify-center', 'text-[10px]', 'font-bold', 'text-white', 'cursor-pointer', 'transition-all', 'duration-200');
+            seatEl.dataset.rowIndex = rowIndex;
+            seatEl.dataset.colIndex = colIndex;
+            seatEl.draggable = true;
+            seatEl.addEventListener('dragstart', event => onBusCellDragStart(event, rowIndex, colIndex));
+            seatEl.addEventListener('dragover', onBusDragOver);
+            seatEl.addEventListener('drop', event => onBusDrop(event, rowIndex, colIndex));
 
-            if (cell.is_aisle) {
-
-                seatEl.className = 'w-6';
-
+            if (cell.is_aisle || cell.type === 'aisle') {
+                seatEl.classList.add('bg-slate-200');
+                seatEl.innerHTML = '<span class="text-[10px] text-slate-500">AISLE</span>';
             } else if (cell.is_empty) {
-
-                seatEl.className = 'w-10 h-10';
-
+                seatEl.classList.add('bg-white', 'border', 'border-dashed', 'border-slate-300');
+                seatEl.innerHTML = '';
+            } else if (cell.type === 'driver' || cell.type === 'door') {
+                seatEl.classList.add(getBusCellStyle(cell));
+                seatEl.textContent = cell.label;
+                seatEl.title = cell.label;
             } else {
-
-                const style = classStyles[cell.seat_class] || 'bg-gray-500';
-
-                seatEl.className = `
-                    w-10 h-10 rounded-lg
-                    flex items-center justify-center
-                    text-[10px] font-bold text-white
-                    ${style}
-                `;
-
+                const style = getBusCellStyle(cell);
+                seatEl.className = `w-10 h-10 rounded-2xl flex items-center justify-center text-[10px] font-bold text-white cursor-pointer transition-all duration-200 ${style}`;
+                if (selectedBusSeat === cell.seat_number) {
+                    seatEl.classList.add('ring-4', 'ring-slate-300');
+                }
                 seatEl.textContent = cell.seat_number;
+                seatEl.title = `${cell.seat_class} • ${cell.booking_status}`;
+                seatEl.onclick = () => {
+                    selectedBusSeat = cell.seat_number;
+                    updateBusSeatDetails(cell);
+                    renderBusSeats(currentBusLayout);
+                };
             }
-
             rowEl.appendChild(seatEl);
-
         });
 
         container.appendChild(rowEl);
@@ -620,17 +813,21 @@ function renderBusSeats(layoutData) {
 }
 
 function fetchBusPreview() {
+    if (!validateBusTotals()) {
+        return;
+    }
 
-    const vip = Number(document.getElementById('vip_seats').value) || 0;
-    const normal = Number(document.getElementById('normal_seats').value) || 0;
-
-    fetch(`${BUS_PREVIEW_URL}?vip_seats=${vip}&normal_seats=${normal}`)
+    const counts = getBusCounts();
+    fetch(`${BUS_PREVIEW_URL}?vip_seats=${counts.vip_seats}&normal_seats=${counts.normal_seats}`)
         .then(res => res.json())
-        .then(renderBusSeats)
+        .then(data => {
+            selectedBusSeat = null;
+            renderBusSeats(data);
+            updateBusSeatDetails(null);
+        })
         .catch(() => {
-
             document.getElementById('bus-seat-simulation').innerHTML = `
-                <div class="text-red-500">
+                <div class="text-red-500 text-center py-10">
                     Unable to load preview.
                 </div>
             `;
@@ -655,6 +852,8 @@ function updateBusMode() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    renderBusPalette();
+    validateBusTotals();
     fetchBusPreview();
     updateBusMode();
 });

@@ -1,4 +1,5 @@
 from datetime import date
+import uuid
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -7,6 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Avg, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 
 from apps.gps.models import GPSPoint
@@ -26,6 +28,13 @@ def flight_admin_required(view_func):
             raise PermissionDenied('You do not have access to the flight admin section.')
         return view_func(request, *args, **kwargs)
     return _wrapped_view
+
+
+def _generate_booking_reference():
+    reference = uuid.uuid4().hex[:10].upper()
+    if Booking.objects.filter(booking_reference=reference).exists():
+        return _generate_booking_reference()
+    return reference
 
 
 @flight_admin_required
@@ -128,8 +137,13 @@ def booking(request):
         if passenger_name and phone and route_id and flight_id and travel_date:
             flight = get_object_or_404(Flight, id=flight_id, company=company)
             route = get_object_or_404(Route, id=route_id, company=company)
+            price = route.price
+            schedule = Schedule.objects.filter(flight=flight, travel_date=travel_date).first()
+            if schedule:
+                price = schedule.price
 
             if flight.available_seats > 0:
+                booking_reference = _generate_booking_reference()
                 Booking.objects.create(
                     passenger_name=passenger_name,
                     phone=phone,
@@ -137,11 +151,13 @@ def booking(request):
                     route=route,
                     travel_date=travel_date,
                     seat_number=seat_number if seat_number else None,
-                    status='confirmed',
+                    price=price,
+                    booking_reference=booking_reference,
+                    status='pending',
                 )
                 flight.available_seats -= 1
                 flight.save()
-                return redirect('flight_booking')
+                return redirect(reverse('payment_checkout_typed', args=[booking_reference, 'flight']) + f'?amount={price}')
 
     return render(request, 'flight_admin/booking.html', {
         'routes': routes,
@@ -430,9 +446,10 @@ def cargo(request):
 def traffic(request):
     company = request.user.company
     flight_ids = list(Flight.objects.filter(company=company).values_list('id', flat=True))
-    latest_points = GPSPoint.objects.filter(vehicle_type='flight', vehicle_id__in=flight_ids).select_related('driver').order_by('-recorded_at')[:20]
+    latest_points_qs = GPSPoint.objects.filter(vehicle_type='flight', vehicle_id__in=flight_ids)
+    latest_points = latest_points_qs.select_related('driver').order_by('-recorded_at')[:20]
     avg_speed = latest_points.aggregate(avg_speed=Avg('speed_kmh'))['avg_speed'] or 0
-    active_vehicles = latest_points.values('vehicle_id').distinct().count()
+    active_vehicles = latest_points_qs.values('vehicle_id').distinct().count()
     if avg_speed < 25:
         traffic_status = 'Heavy congestion'
     elif avg_speed < 50:

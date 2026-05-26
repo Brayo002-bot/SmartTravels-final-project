@@ -3,191 +3,340 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>System Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SmartTravels • System Admin</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 </head>
 
-<body class="bg-gradient-to-br from-gray-100 via-slate-100 to-blue-50 min-h-screen">
+<body class="bg-gradient-to-br from-slate-100 via-indigo-50 to-slate-200 min-h-screen">
 
 <div class="flex">
 
-<!-- SIDEBAR -->
-<aside class="w-64 bg-gray-900 text-white min-h-screen fixed shadow-2xl">
+{% include 'system_admin/sidebar.html' with active_page='dashboard' %}
 
-    <div class="p-6 text-xl font-bold border-b border-gray-700 flex items-center gap-2">
-        ⚙️ System Admin
-    </div>
+<!-- MAIN CONTENT -->
+<div class="ml-72 w-full min-h-screen p-8">
 
-    <nav class="mt-6 space-y-1">
+    <!-- TOP HEADER -->
+    <div class="bg-white/60 backdrop-blur-xl border border-white/30 rounded-3xl shadow-xl p-6 mb-8">
 
-        <a href="{% url 'system_admin_dashboard' %}" class="block px-6 py-3 hover:bg-gray-800">📊 Dashboard</a>
-        <a href="{% url 'manage_users' %}" class="block px-6 py-3 hover:bg-gray-800">👥 Manage Users</a>
-        <a href="{% url 'manage_admins' %}" class="block px-6 py-3 hover:bg-gray-800">🛠️ Manage Admins</a>
-        <a href="{% url 'system_reports' %}" class="block px-6 py-3 hover:bg-gray-800">📈 Reports</a>
-        <a href="{% url 'system_settings' %}" class="block px-6 py-3 hover:bg-gray-800">⚙️ Settings</a>
-        <a href="{% url 'audit_logs' %}" class="block px-6 py-3 hover:bg-gray-800">📜 Audit Logs</a>
+        <div class="flex flex-col md:flex-row justify-between md:items-center gap-5">
 
-    </nav>
+            <!-- Welcome -->
+            <div>
 
-</aside>
+                <p class="text-indigo-600 font-medium mb-1">
+                    SmartTravels Enterprise Dashboard
+                </p>
 
-<!-- MAIN -->
-<div class="ml-64 p-8 w-full">
+                <h1 class="text-3xl font-bold text-slate-800">
+                    Welcome back, {{ request.user.username }}
+                </h1>
 
-    <!-- WELCOME HEADER -->
-    <div class="flex justify-between items-center mb-8">
+                <p class="text-slate-500 mt-1">
+                    Monitor bookings, revenue, and platform activity.
+                </p>
 
-        <div>
-            <h1 class="text-3xl font-bold text-gray-800">
-                👋 Welcome back, {{ request.user.username }}
-            </h1>
-            <p class="text-gray-500">Here’s what’s happening in your system today.</p>
-        </div>
+            </div>
 
-        <!-- EXPORT BUTTONS -->
-        <div class="flex gap-3">
+            <!-- Actions -->
+            <div class="flex gap-3">
 
-            <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                ⬇ Export CSV
-            </button>
+                <button class="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg hover:scale-105 transition">
+                    <i class="fas fa-file-csv mr-2"></i>
+                    Export CSV
+                </button>
 
-            <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                🧾 Export PDF
-            </button>
+                <button class="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-lg hover:scale-105 transition">
+                    <i class="fas fa-file-pdf mr-2"></i>
+                    Export PDF
+                </button>
+
+            </div>
 
         </div>
 
     </div>
 
-    <!-- STATS CARDS -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <!-- KPI CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
-            <p class="text-gray-500">Total Users</p>
-            <p class="text-3xl font-bold">{{ total_users }}</p>
+        <!-- Users -->
+        <div class="rounded-3xl p-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl hover:-translate-y-1 transition">
+
+            <div class="flex justify-between">
+
+                <div>
+                    <p class="text-indigo-100">Total Users</p>
+                    <h2 class="text-4xl font-bold mt-2">
+                        {{ total_users }}
+                    </h2>
+                </div>
+
+                <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+                    <i class="fas fa-users text-2xl"></i>
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
-            <p class="text-gray-500">Total Admins</p>
-            <p class="text-3xl font-bold">{{ total_admins }}</p>
+        <!-- Admins -->
+        <div class="rounded-3xl p-6 bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-xl hover:-translate-y-1 transition">
+
+            <div class="flex justify-between">
+
+                <div>
+                    <p class="text-sky-100">Total Admins</p>
+                    <h2 class="text-4xl font-bold mt-2">
+                        {{ total_admins }}
+                    </h2>
+                </div>
+
+                <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+                    <i class="fas fa-user-shield text-2xl"></i>
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
-            <p class="text-gray-500">Total Revenue</p>
-            <p class="text-3xl font-bold text-green-600">KES {{ total_revenue|default:"0" }}</p>
+        <!-- Revenue -->
+        <div class="rounded-3xl p-6 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-xl hover:-translate-y-1 transition">
+
+            <div class="flex justify-between">
+
+                <div>
+                    <p class="text-emerald-100">Revenue</p>
+                    <h2 class="text-3xl font-bold mt-2">
+                        KES {{ total_revenue|default:"0" }}
+                    </h2>
+                </div>
+
+                <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+                    <i class="fas fa-wallet text-2xl"></i>
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
-            <p class="text-gray-500">System Health</p>
-            <p class="text-2xl font-bold text-blue-600">{{ system_health }}</p>
+        <!-- Health -->
+        <div class="rounded-3xl p-6 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xl hover:-translate-y-1 transition">
+
+            <div class="flex justify-between">
+
+                <div>
+                    <p class="text-amber-100">System Health</p>
+                    <h2 class="text-3xl font-bold mt-2">
+                        {{ system_health }}
+                    </h2>
+                </div>
+
+                <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+                    <i class="fas fa-heart-pulse text-2xl"></i>
+                </div>
+
+            </div>
+
         </div>
 
     </div>
 
-    <!-- CHARTS SECTION -->
-    <div class="grid md:grid-cols-2 gap-6 mt-10">
+    <!-- CHARTS -->
+    <div class="grid lg:grid-cols-2 gap-6 mt-8">
 
-        <div class="bg-white p-6 rounded-2xl shadow">
-            <h2 class="font-bold mb-4">📊 Bookings Overview</h2>
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-11 h-11 rounded-2xl bg-indigo-100 flex items-center justify-center">
+                    <i class="fas fa-chart-column text-indigo-600"></i>
+                </div>
+
+                <h2 class="font-bold text-slate-700 text-lg">
+                    Bookings Overview
+                </h2>
+            </div>
+
             <canvas id="bookingsChart"></canvas>
+
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow">
-            <h2 class="font-bold mb-4">💰 Revenue Growth</h2>
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-11 h-11 rounded-2xl bg-emerald-100 flex items-center justify-center">
+                    <i class="fas fa-chart-line text-emerald-600"></i>
+                </div>
+
+                <h2 class="font-bold text-slate-700 text-lg">
+                    Revenue Growth
+                </h2>
+            </div>
+
             <canvas id="revenueChart"></canvas>
+
         </div>
 
     </div>
 
-    <!-- QUICK INSIGHTS -->
-    <div class="grid md:grid-cols-3 gap-6 mt-10">
+    <!-- BOOKING INSIGHTS -->
+    <div class="grid md:grid-cols-3 gap-6 mt-8">
 
-        <div class="bg-white p-6 rounded-2xl shadow">
-            <h3 class="font-bold">🚌 Bus Bookings</h3>
-            <p class="text-2xl">{{ bus_bookings|default:"0" }}</p>
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-slate-500">Bus Bookings</p>
+                    <h2 class="text-3xl font-bold text-slate-800">
+                        {{ bus_bookings|default:"0" }}
+                    </h2>
+                </div>
+                <i class="fas fa-bus text-3xl text-indigo-500"></i>
+            </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow">
-            <h3 class="font-bold">🚆 Train Bookings</h3>
-            <p class="text-2xl">{{ train_bookings|default:"0" }}</p>
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-slate-500">Train Bookings</p>
+                    <h2 class="text-3xl font-bold text-slate-800">
+                        {{ train_bookings|default:"0" }}
+                    </h2>
+                </div>
+                <i class="fas fa-train text-3xl text-emerald-500"></i>
+            </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow">
-            <h3 class="font-bold">✈️ Flight Bookings</h3>
-            <p class="text-2xl">{{ flight_bookings|default:"0" }}</p>
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-slate-500">Flight Bookings</p>
+                    <h2 class="text-3xl font-bold text-slate-800">
+                        {{ flight_bookings|default:"0" }}
+                    </h2>
+                </div>
+                <i class="fas fa-plane text-3xl text-amber-500"></i>
+            </div>
         </div>
 
     </div>
 
-    <!-- AUDIT LOGS -->
-    <div class="mt-10">
-        <h2 class="text-xl font-bold mb-4">Recent Activity</h2>
+    <!-- ACTIVITY TABLE -->
+    <div class="mt-8">
 
-        <div class="bg-white rounded-2xl shadow overflow-hidden">
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl border border-white/30 overflow-hidden">
 
-            <table class="w-full">
+            <div class="px-6 py-5 border-b border-slate-200">
 
-                <thead class="bg-gray-100 text-gray-600 text-sm">
-                    <tr>
-                        <th class="p-4 text-left">User</th>
-                        <th class="p-4 text-left">Action</th>
-                        <th class="p-4 text-left">Details</th>
-                        <th class="p-4 text-left">Time</th>
-                    </tr>
-                </thead>
+                <h2 class="text-xl font-bold text-slate-800">
+                    Recent Activity
+                </h2>
 
-                <tbody>
-                    {% for log in recent_logs %}
-                    <tr class="border-t hover:bg-gray-50">
-                        <td class="p-4">{{ log.user.username|default:"System" }}</td>
-                        <td class="p-4 text-blue-600 font-semibold">{{ log.get_action_display }}</td>
-                        <td class="p-4 text-gray-600">{{ log.details|truncatechars:60 }}</td>
-                        <td class="p-4 text-gray-500 text-sm">{{ log.timestamp }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+                <p class="text-sm text-slate-500">
+                    Latest system actions and audit logs
+                </p>
 
-            </table>
+            </div>
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full">
+
+                    <thead class="bg-slate-100 text-slate-600 text-sm">
+                        <tr>
+                            <th class="p-4 text-left">User</th>
+                            <th class="p-4 text-left">Action</th>
+                            <th class="p-4 text-left">Details</th>
+                            <th class="p-4 text-left">Time</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for log in recent_logs %}
+                        <tr class="border-t hover:bg-slate-50 transition">
+
+                            <td class="p-4 font-medium">
+                                {{ log.user.username|default:"System" }}
+                            </td>
+
+                            <td class="p-4">
+                                <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-sm font-semibold">
+                                    {{ log.get_action_display }}
+                                </span>
+                            </td>
+
+                            <td class="p-4 text-slate-600">
+                                {{ log.details|truncatechars:60 }}
+                            </td>
+
+                            <td class="p-4 text-sm text-slate-500">
+                                {{ log.timestamp }}
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
+
     </div>
 
 </div>
 </div>
 
-<!-- CHART SCRIPT -->
 <script>
-const bookingsChart = new Chart(document.getElementById('bookingsChart'), {
+new Chart(document.getElementById('bookingsChart'), {
     type: 'bar',
     data: {
-        labels: ['Bus', 'Train', 'Flight'],
+        labels: ['Bus','Train','Flight'],
         datasets: [{
-            label: 'Bookings',
             data: [
                 {{ bus_bookings|default:0 }},
                 {{ train_bookings|default:0 }},
                 {{ flight_bookings|default:0 }}
             ],
-            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b']
+            backgroundColor: [
+                '#6366f1',
+                '#10b981',
+                '#f59e0b'
+            ],
+            borderRadius: 10
         }]
+    },
+    options: {
+        plugins:{legend:{display:false}},
+        responsive:true
     }
 });
 
-const revenueChart = new Chart(document.getElementById('revenueChart'), {
-    type: 'line',
-    data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-        datasets: [{
-            label: 'Revenue',
-            data: [12000, 19000, 15000, 22000, 30000],
-            borderColor: '#22c55e',
-            fill: true
+new Chart(document.getElementById('revenueChart'), {
+    type:'line',
+    data:{
+        labels:['Jan','Feb','Mar','Apr','May'],
+        datasets:[{
+            label:'Revenue',
+            data:[12000,19000,15000,22000,30000],
+            borderColor:'#10b981',
+            backgroundColor:'rgba(16,185,129,.15)',
+            tension:.4,
+            fill:true
         }]
+    },
+    options:{
+        responsive:true
     }
 });
 </script>

@@ -251,7 +251,7 @@ def dashboard_view(request):
         from apps.payments.models import Payment
         payments_for_user = Payment.objects.filter(passenger=request.user)
         payment_total = payments_for_user.aggregate(total=Sum('amount'))['total'] or 0
-        loyalty_balance = payments_for_user.count() * 100 + int(payment_total)
+        loyalty_balance = int(payment_total / 100)  # 1 point per 100 KSH spent
 
         return render(request, template_name, {
             'active': 'dashboard',
@@ -281,6 +281,30 @@ def dashboard_view(request):
 
 
 @login_required
+def passenger_route_suggestions(request):
+    if request.user.role != 'passenger':
+        raise PermissionDenied
+
+    from apps.buses.models import Route as BusRoute
+    from apps.flights.models import Route as FlightRoute
+    from apps.trains.models import Route as TrainRoute
+
+    query = request.GET.get('q', '').strip()
+    direction = request.GET.get('direction', 'from').lower()
+    lookup_field = 'to_location' if direction == 'to' else 'from_location'
+
+    route_values = set()
+    for RouteModel in (BusRoute, TrainRoute, FlightRoute):
+        routes = RouteModel.objects.all()
+        if query:
+            routes = routes.filter(**{f'{lookup_field}__icontains': query})
+        route_values.update(routes.values_list(lookup_field, flat=True))
+
+    options = sorted(route_values)
+    return JsonResponse({'options': options})
+
+
+@login_required
 def passenger_my_bookings(request):
     if request.user.role != 'passenger':
         raise PermissionDenied
@@ -299,6 +323,11 @@ def passenger_my_bookings(request):
     upcoming = sum(1 for booking in all_bookings if getattr(booking, 'travel_date', None) and booking.travel_date >= date.today())
     completed = sum(1 for booking in all_bookings if getattr(booking, 'travel_date', None) and booking.travel_date < date.today())
 
+    from apps.payments.models import Payment
+    payments_for_user = Payment.objects.filter(passenger=request.user)
+    payment_total = payments_for_user.aggregate(total=Sum('amount'))['total'] or 0
+    loyalty_balance = int(payment_total / 100)
+
     return render(request, 'passenger/my_bookings.html', {
         'active': 'bookings',
         'total_bookings': total_bookings,
@@ -307,6 +336,7 @@ def passenger_my_bookings(request):
         'bus_bookings': bus_bookings,
         'train_bookings': train_bookings,
         'flight_bookings': flight_bookings,
+        'loyalty_points': f"{loyalty_balance:,}",
     })
 
 
@@ -366,15 +396,41 @@ def passenger_loyalty(request):
 
     payments = Payment.objects.filter(passenger=request.user)
     payment_total = payments.aggregate(total=Sum('amount'))['total'] or 0
-    point_balance = payments.count() * 100 + int(payment_total)
+    point_balance = int(payment_total / 100)  # 1 point per 100 KSH spent
     tier = 'Platinum' if point_balance >= 3000 else 'Gold' if point_balance >= 1500 else 'Silver'
     savings = int(point_balance * 0.22)
+
+    name = request.user.get_full_name() or request.user.username
+    from apps.buses.models import Booking as BusBooking
+    from apps.trains.models import Booking as TrainBooking
+    from apps.flights.models import Booking as FlightBooking
+
+    bus_count = BusBooking.objects.filter(passenger_name__icontains=name, status='confirmed').count()
+    train_count = TrainBooking.objects.filter(passenger_name__icontains=name, status='confirmed').count()
+    flight_count = FlightBooking.objects.filter(passenger_name__icontains=name, status='confirmed').count()
+    completed_trips = bus_count + train_count + flight_count
+
+    next_threshold = 3000 if point_balance >= 1500 else 1500
+    if point_balance >= 3000:
+        progress = 100
+        next_reward = 'VIP Upgrade'
+        points_needed = 0
+    else:
+        progress = int(min(100, (point_balance / next_threshold) * 100)) if next_threshold else 100
+        next_reward = 'Free Bus Ticket' if point_balance < 1500 else 'VIP Upgrade'
+        points_needed = max(0, next_threshold - point_balance)
 
     return render(request, 'passenger/loyalty.html', {
         'active': 'loyalty',
         'loyalty_points': f"{point_balance:,}",
         'current_tier': tier,
         'savings_earned': f"KES {savings:,}",
+        'lifetime_points': f"{point_balance:,}",
+        'trips_completed': completed_trips,
+        'loyalty_badge': f"{tier} Traveller",
+        'loyalty_progress': progress,
+        'next_reward': next_reward,
+        'points_to_next_tier': f"{points_needed:,}",
     })
 
 
@@ -402,7 +458,7 @@ def passenger_tickets(request):
 
     payments = Payment.objects.filter(passenger=request.user)
     payment_total = payments.aggregate(total=Sum('amount'))['total'] or 0
-    point_balance = payments.count() * 100 + int(payment_total)
+    point_balance = int(payment_total / 100)  # 1 point per 100 KSH spent
 
     return render(request, 'passenger/tickets.html', {
         'active': 'tickets',
@@ -738,33 +794,48 @@ def book_trip(request, mode, schedule_id):
             error_message = 'No available seats remain for this trip.'
         else:
             booking_reference = _generate_booking_reference() # Generate before STK push for AccountReference
-            payment = _initiate_stk_push_daraja(phone, float(schedule.price), booking_reference)
-            if payment['success']:
-                BookingModel, _ = _load_transport_models(mode)
-                booking_kwargs = {
-                    'passenger_name': passenger_name,
-                    'phone': phone,
-                    'route': transport.route,
-                    mode: transport,
-                    'travel_date': schedule.travel_date,
-                    'travel_time': schedule.travel_time,
-                    'price': schedule.price,
-                    'seat_number': selected_seat,
-                    'booking_reference': booking_reference,
-                    'status': 'confirmed',
-                }
-                booking = BookingModel.objects.create(**booking_kwargs)
-                transport.available_seats = max(0, transport.available_seats - 1)
-                transport.save()
-                if request.user.email:
-                    sent_email = _send_ticket_email(request.user.email, booking)
-                    if sent_email:
-                        messages.success(request, 'Booking confirmed and ticket emailed to you.')
-                    else:
-                        messages.warning(request, 'Booking confirmed. Ticket email could not be delivered at this time.')
-                return redirect('download_ticket', booking_reference=booking.booking_reference)
-            else:
-                error_message = payment.get('message', 'STK push failed. Please try again.')
+            try:
+                from apps.payments.models import Payment, MPesaService
+                payment_record = Payment.objects.create(
+                    booking_reference=booking_reference,
+                    booking_type=mode,
+                    passenger=request.user,
+                    amount=schedule.price,
+                    method='mpesa',
+                    phone_number=phone,
+                    status='pending',
+                )
+                service = MPesaService()
+                response = service.stk_push(phone, schedule.price, booking_reference)
+                if response.get('ResponseCode') == '0':
+                    payment_record.merchant_ref = response.get('CheckoutRequestID', '')
+                    payment_record.save(update_fields=['merchant_ref'])
+
+                    BookingModel, _ = _load_transport_models(mode)
+                    booking_kwargs = {
+                        'passenger_name': passenger_name,
+                        'phone': phone,
+                        'route': transport.route,
+                        mode: transport,
+                        'travel_date': schedule.travel_date,
+                        'travel_time': schedule.travel_time,
+                        'price': schedule.price,
+                        'seat_number': selected_seat,
+                        'booking_reference': booking_reference,
+                        'status': 'pending',
+                    }
+                    BookingModel.objects.create(**booking_kwargs)
+                    transport.available_seats = max(0, transport.available_seats - 1)
+                    transport.save()
+
+                    messages.success(request, '📱 STK push sent. Please confirm payment on your phone.')
+                    return redirect('payment_pending', payment_id=payment_record.id)
+                else:
+                    payment_record.status = 'failed'
+                    payment_record.save(update_fields=['status'])
+                    error_message = response.get('CustomerMessage') or response.get('errorMessage') or 'STK push failed. Please try again.'
+            except Exception as exc:
+                error_message = f'Unable to start M-Pesa push: {exc}'
 
     return render(request, 'passenger/book_trip.html', {
         'mode': mode,

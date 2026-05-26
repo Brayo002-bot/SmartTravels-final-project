@@ -66,7 +66,7 @@
                     </div>
 
                     <div class="text-xs text-slate-400 mt-1">
-                        Premium Passenger
+                        {{ loyalty_tier|default:'Passenger' }} Member
                     </div>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                             Loyalty Points
                         </div>
                         <div class="text-2xl font-bold text-amber-300 mt-1">
-                            2,450
+                            {{ loyalty_points }}
                         </div>
                     </div>
 

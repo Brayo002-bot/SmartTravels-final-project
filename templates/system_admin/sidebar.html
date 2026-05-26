@@ -1,0 +1,163 @@
+<!-- SYSTEM ADMIN SIDEBAR -->
+<aside class="fixed top-0 left-0 w-72 min-h-screen bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-900 text-white shadow-2xl border-r border-indigo-900/40 backdrop-blur-xl z-50">
+
+    <!-- Logo / Brand -->
+    <div class="px-6 py-6 border-b border-indigo-800/40">
+
+        <div class="flex items-center gap-3">
+
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg">
+                <i class="fas fa-plane-departure text-xl"></i>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-bold tracking-wide">
+                    SmartTravels
+                </h2>
+                <p class="text-xs text-indigo-300">
+                    System Administration
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Admin Profile -->
+    <div class="px-5 py-5 border-b border-indigo-800/30">
+
+        <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-4 border border-white/10 shadow-lg">
+
+            <div class="flex items-center gap-3">
+
+                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-lg shadow-md">
+                    {{ request.user.username|first|upper }}
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-sm">
+                        {{ request.user.username }}
+                    </h3>
+
+                    <p class="text-xs text-indigo-300">
+                        Super Administrator
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Navigation -->
+    <nav class="mt-5 px-4 space-y-2">
+
+        <!-- Dashboard -->
+        <a href="{% url 'system_admin_dashboard' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
+           {% if active_page == 'dashboard' %}
+           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
+           {% else %}
+           hover:bg-white/10 hover:translate-x-1
+           {% endif %}">
+            <i class="fas fa-chart-pie text-lg"></i>
+            <span class="font-medium">Dashboard</span>
+        </a>
+
+        <!-- Users -->
+        <a href="{% url 'manage_users' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
+           {% if active_page == 'manage_users' %}
+           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
+           {% else %}
+           hover:bg-white/10 hover:translate-x-1
+           {% endif %}">
+            <i class="fas fa-users text-lg"></i>
+            <span class="font-medium">Manage Users</span>
+        </a>
+
+        <!-- Admins -->
+        <a href="{% url 'manage_admins' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
+           {% if active_page == 'manage_admins' %}
+           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
+           {% else %}
+           hover:bg-white/10 hover:translate-x-1
+           {% endif %}">
+            <i class="fas fa-user-shield text-lg"></i>
+            <span class="font-medium">Manage Admins</span>
+        </a>
+
+        <!-- Reports -->
+        <a href="{% url 'system_reports' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
+           {% if active_page == 'system_reports' %}
+           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
+           {% else %}
+           hover:bg-white/10 hover:translate-x-1
+           {% endif %}">
+            <i class="fas fa-chart-line text-lg"></i>
+            <span class="font-medium">Reports</span>
+        </a>
+
+        <!-- Subscribers -->
+        <a href="{% url 'subscribers' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
+           {% if active_page == 'subscribers' %}
+           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
+           {% else %}
+           hover:bg-white/10 hover:translate-x-1
+           {% endif %}">
+            <i class="fas fa-envelope-open-text text-lg"></i>
+            <span class="font-medium">Subscribers</span>
+        </a>
+
+        <!-- Settings -->
+        <a href="{% url 'system_settings' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
+           {% if active_page == 'system_settings' %}
+           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
+           {% else %}
+           hover:bg-white/10 hover:translate-x-1
+           {% endif %}">
+            <i class="fas fa-cogs text-lg"></i>
+            <span class="font-medium">Settings</span>
+        </a>
+
+        <!-- Audit Logs -->
+        <a href="{% url 'audit_logs' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
+           {% if active_page == 'audit_logs' %}
+           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
+           {% else %}
+           hover:bg-white/10 hover:translate-x-1
+           {% endif %}">
+            <i class="fas fa-clipboard-list text-lg"></i>
+            <span class="font-medium">Audit Logs</span>
+        </a>
+
+    </nav>
+
+    <!-- Footer -->
+    <div class="absolute bottom-5 left-4 right-4">
+
+        <div class="bg-gradient-to-r from-indigo-600/20 to-violet-600/20 border border-indigo-500/20 rounded-2xl p-4 text-center backdrop-blur-lg">
+
+            <p class="text-xs text-indigo-200">
+                SmartTravels Enterprise
+            </p>
+
+            <p class="text-[11px] text-gray-400 mt-1">
+                System Admin Panel v1.0
+            </p>
+
+        </div>
+
+    </div>
+
+</aside>
+
+<!-- FONT AWESOME -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">

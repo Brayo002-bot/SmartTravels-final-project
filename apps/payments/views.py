@@ -33,10 +33,19 @@ def checkout(request, booking_reference, booking_type='bus'):
                     messages.success(request, '📱 M-Pesa push sent! Enter your PIN.')
                     return redirect('payment_pending', payment_id=pay.id)
                 else:
+                    pay.status = 'failed'
+                    pay.save(update_fields=['status'])
                     messages.error(request, f"M-Pesa: {res.get('errorMessage','Please try again.')}")
             except Exception as e:
                 logger.warning(f'M-Pesa STK failed: {e}')
-                messages.warning(request, 'M-Pesa unavailable — payment saved as pending.')
+                pay.status = 'failed'
+                pay.save(update_fields=['status'])
+                messages.warning(request, 'M-Pesa unavailable — payment saved as failed.')
+            return render(request, 'payments/checkout.html', {
+                'booking_reference': booking_reference,
+                'booking_type': booking_type,
+                'amount': amount,
+            })
         pay.mark_completed()
         messages.success(request, f'✅ Payment for booking {booking_reference} recorded.')
         return redirect('payment_success', payment_id=pay.id)
@@ -72,7 +81,7 @@ def mpesa_callback(request):
             if code == 0:
                 items = {i['Name']: i.get('Value') for i in stk.get('CallbackMetadata', {}).get('Item', [])}
                 pay.mark_completed(str(items.get('MpesaReceiptNumber', '')))
-                _confirm_booking(pay.booking_reference, pay.booking_type)
+                _confirm_booking(pay.booking_reference, pay.booking_type, pay)
             else:
                 pay.status = 'failed'
                 pay.save(update_fields=['status'])
@@ -87,7 +96,7 @@ def check_status(request, payment_id):
     return JsonResponse({'status': pay.status, 'code': pay.mpesa_code})
 
 
-def _confirm_booking(ref, btype):
+def _confirm_booking(ref, btype, pay=None):
     try:
         if btype == 'bus':
             from apps.buses.models import Booking
@@ -124,5 +133,26 @@ def _confirm_booking(ref, btype):
         if b:
             b.status = 'confirmed'
             b.save(update_fields=['status'])
+            try:
+                from django.core.mail import send_mail
+                from django.conf import settings as django_settings
+                if pay and pay.passenger.email:
+                    send_mail(
+                        f'SmartTravels Ticket Confirmed - {b.booking_reference}',
+                        (
+                            f'Hello {b.passenger_name},\n\n'
+                            f'Your booking {b.booking_reference} has been confirmed.\n'
+                            f'Route: {b.route.from_location} → {b.route.to_location}\n'
+                            f'Date: {b.travel_date} {b.travel_time or "TBD"}\n'
+                            f'Seat: {b.seat_number or "Unassigned"}\n'
+                            f'Price: KES {b.price:.2f}\n\n'
+                            'Thank you for using SmartTravels. Please present this ticket at boarding.\n'
+                        ),
+                        django_settings.DEFAULT_FROM_EMAIL,
+                        [pay.passenger.email],
+                        fail_silently=True,
+                    )
+            except Exception:
+                pass
     except Exception:
         pass

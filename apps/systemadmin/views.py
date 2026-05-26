@@ -252,7 +252,7 @@ def subscribe(request):
                 except Exception:
                     pass
             messages.success(request, 'Thank you for subscribing.')
-            return redirect('index')
+            return redirect('homepage')
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
