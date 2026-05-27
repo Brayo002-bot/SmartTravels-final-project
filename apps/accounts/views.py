@@ -3,6 +3,7 @@ from datetime import date, time, datetime
 import io
 import logging
 import uuid
+import os
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
@@ -669,6 +670,12 @@ def _generate_ticket_pdf(booking):
         route_display = f"{booking.route.from_location} → {booking.route.to_location}"
         issue_date = datetime.now().strftime('%Y-%m-%d %H:%M')
 
+        # Attempt to include company name if available
+        transport = getattr(booking, 'bus', None) or getattr(booking, 'train', None) or getattr(booking, 'flight', None)
+        company = None
+        if transport:
+            company = getattr(transport, 'company', None) or getattr(getattr(transport, 'route', None), 'company', None)
+
         qr_data = f'TICKET|{booking.booking_reference}|{mode_label}|{route_display}|{booking.travel_date}|{booking.seat_number or "NA"}'
 
         ticket_text = f"""
@@ -684,6 +691,7 @@ Time: {booking.travel_time or "TBD"}
 Seat: {booking.seat_number or "Unassigned"}
 Price: KES {booking.price:.2f}
 Issued: {issue_date}
+    Company: {company.name if company else 'SmartTravels'}
 
 QR Code Data: {qr_data}
 
@@ -698,8 +706,35 @@ Present this ticket when boarding.
 
     buffer = io.BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=letter)
+    # Attempt to show company logo (left) and SmartTravels logo (right) when available
+    transport = getattr(booking, 'bus', None) or getattr(booking, 'train', None) or getattr(booking, 'flight', None)
+    company = None
+    if transport:
+        company = getattr(transport, 'company', None) or getattr(getattr(transport, 'route', None), 'company', None)
+    try:
+        y_top = 730
+        if company and getattr(company, 'logo_image', None):
+            logo_path = getattr(company.logo_image, 'path', None)
+            if logo_path and os.path.exists(logo_path):
+                pdf.drawImage(ImageReader(logo_path), 72, y_top, width=1 * inch, height=1 * inch, preserveAspectRatio=True, mask='auto')
+    except Exception:
+        pass
+    try:
+        st_logo_path = os.path.join(str(settings.BASE_DIR), 'static', 'images', 'logo.jpeg')
+        if os.path.exists(st_logo_path):
+            pdf.drawImage(ImageReader(st_logo_path), 450, y_top, width=1 * inch, height=1 * inch, preserveAspectRatio=True, mask='auto')
+    except Exception:
+        pass
     pdf.setFont('Helvetica-Bold', 18)
     pdf.drawString(72, 720, 'SmartTravels Ticket')
+    # Company name (if available)
+    try:
+        if company:
+            pdf.setFont('Helvetica-Bold', 12)
+            pdf.drawString(72, 745, f"Company: {company.name}")
+            pdf.setFont('Helvetica', 10)
+    except Exception:
+        pass
     pdf.setFont('Helvetica', 10)
     pdf.drawString(72, 700, f'Reference: {booking.booking_reference}')
     pdf.drawString(72, 685, f'Passenger: {booking.passenger_name}')
@@ -837,6 +872,17 @@ def book_trip(request, mode, schedule_id):
             except Exception as exc:
                 error_message = f'Unable to start M-Pesa push: {exc}'
 
+    # Determine company and logo for the transport (show to passenger)
+    company = None
+    if transport:
+        company = getattr(transport, 'company', None) or getattr(getattr(transport, 'route', None), 'company', None)
+    company_logo_url = None
+    try:
+        if company and getattr(company, 'logo_image', None):
+            company_logo_url = company.logo_image.url
+    except Exception:
+        company_logo_url = None
+
     return render(request, 'passenger/book_trip.html', {
         'mode': mode,
         'schedule': schedule,
@@ -844,6 +890,8 @@ def book_trip(request, mode, schedule_id):
         'passenger_name': passenger_name,
         'default_phone': default_phone,
         'error_message': error_message,
+        'company': company,
+        'company_logo_url': company_logo_url,
     })
 
 

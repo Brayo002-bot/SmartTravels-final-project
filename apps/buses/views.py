@@ -268,11 +268,19 @@ def add_driver(request):
                 messages.error(request, 'A user account with that email already exists.')
                 return redirect('add_driver')
 
+            # Extract first and last name from driver name
+            name_parts = driver.name.split(' ', 1)
+            first_name = name_parts[0]
+            last_name = name_parts[1] if len(name_parts) > 1 else ''
+
             user = User.objects.create_user(
                 username=email,
                 email=email,
                 password=password,
-                role='driver'
+                first_name=first_name,
+                last_name=last_name,
+                role='driver',
+                company=company
             )
             driver.user = user
             driver.save()

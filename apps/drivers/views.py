@@ -47,9 +47,58 @@ def driver_dashboard(request):
             booked_seats=booked_seats,
         )
 
+    # Build passenger manifest for the current trip (if any)
+    passengers = []
+    if booking:
+        booking_qs = Booking.objects.filter(
+            bus=booking.bus,
+            travel_date=booking.travel_date,
+            status='confirmed'
+        )
+        for b in booking_qs:
+            passengers.append(SimpleNamespace(
+                id=b.id,
+                name=b.passenger_name,
+                seat=b.seat_number or '-',
+                phone=b.phone,
+            ))
+
+    # Provide a role display string for template use (user carries role)
+    role_display = getattr(request.user, 'get_role_display', None)
+    if callable(role_display):
+        role_display = request.user.get_role_display()
+    else:
+        role_display = getattr(request.user, 'role', '')
+
+    # Get driver company and details
+    company = request.driver.company
+    company_logo_url = None
+    if company and hasattr(company, 'logo_image') and company.logo_image:
+        try:
+            company_logo_url = company.logo_image.url
+        except Exception:
+            company_logo_url = None
+
+    # Prepare driver credentials object with all available fields
+    credentials = {
+        'driver_name': request.driver.name,
+        'driver_phone': request.driver.phone,
+        'user_email': request.user.email,
+        'user_first_name': request.user.first_name,
+        'user_last_name': request.user.last_name,
+        'user_phone': request.user.phone_number,
+        'username': request.user.username,
+    }
+
     return render(request, 'driver/driver.html', {
         'driver': request.driver,
+        'user': request.user,
+        'credentials': credentials,
         'trip': trip,
+        'passengers': passengers,
+        'role_display': role_display,
+        'company': company,
+        'company_logo_url': company_logo_url,
     })
 
 

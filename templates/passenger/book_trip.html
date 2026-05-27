@@ -236,6 +236,14 @@ body {
               {{ transport.route.from_location }}<span class="arr">→</span>{{ transport.route.to_location }}
             </div>
             <div class="trip-depart">Departure: {{ schedule.travel_time }} · {{ schedule.travel_date }}</div>
+            {% if company %}
+            <div style="margin-top:8px;display:flex;align-items:center;gap:10px;">
+              {% if company_logo_url %}
+                <img src="{{ company_logo_url }}" alt="{{ company.name }}" style="width:48px;height:48px;border-radius:8px;object-fit:cover;">
+              {% endif %}
+              <div style="font-size:0.9rem;color:var(--muted);">{{ company.name }}</div>
+            </div>
+            {% endif %}
           </div>
           <div class="price-box">
             <div class="price-label">Ticket Price</div>

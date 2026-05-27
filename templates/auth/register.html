@@ -6,532 +6,324 @@
 {% block content %}
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-  :root {
-    --st-navy: #0a0f1e;
-    --st-card: rgba(255,255,255,0.04);
-    --st-border: rgba(255,255,255,0.1);
-    --st-border-hover: rgba(255,255,255,0.22);
-    --st-gold: #c9a84c;
-    --st-gold-light: #e8c97a;
-    --st-text: rgba(255,255,255,0.9);
-    --st-muted: rgba(255,255,255,0.5);
-    --st-input-bg: rgba(255,255,255,0.06);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  .st-wrapper {
-    min-height: 100vh;
-    display: flex;
-    font-family: 'DM Sans', sans-serif;
-    background: var(--st-navy);
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Left brand panel */
-  .st-brand {
-    display: none;
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-  }
-  @media (min-width: 900px) { .st-brand { display: flex; flex-direction: column; justify-content: flex-end; padding: 3rem; } }
-
-  .st-brand-bg { position: absolute; inset: 0; }
-  .st-brand-bg img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.4) saturate(0.8); }
-  .st-brand-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(10,15,30,0.3) 0%, rgba(10,15,30,0.7) 60%, rgba(10,15,30,0.95) 100%);
-  }
-  .st-brand-content { position: relative; z-index: 2; }
-
-  .st-brand-tagline {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 3vw, 2.8rem);
-    font-weight: 500;
-    color: #fff;
-    line-height: 1.2;
-    margin-bottom: 1.25rem;
-  }
-  .st-brand-tagline span { color: var(--st-gold-light); }
-
-  .st-brand-desc {
-    font-size: 0.88rem;
-    color: rgba(255,255,255,0.5);
-    line-height: 1.7;
-    max-width: 340px;
-    margin-bottom: 2.5rem;
-  }
-
-  /* Steps */
-  .st-steps { display: flex; flex-direction: column; gap: 16px; }
-  .st-step { display: flex; align-items: flex-start; gap: 14px; }
-  .st-step-num {
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background: rgba(201,168,76,0.15);
-    border: 0.5px solid rgba(201,168,76,0.35);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.72rem;
-    font-weight: 500;
-    color: var(--st-gold);
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .st-step-text {
-    font-size: 0.82rem;
-    color: rgba(255,255,255,0.55);
-    line-height: 1.5;
-  }
-  .st-step-text strong {
-    display: block;
-    font-weight: 500;
-    color: rgba(255,255,255,0.8);
-    margin-bottom: 2px;
-  }
-
-  /* Ambient orbs */
-  .st-orb {
-    position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
-  }
-  .st-orb-1 {
-    width: 600px; height: 600px; top: -200px; right: -250px;
-    background: radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 65%);
-  }
-  .st-orb-2 {
-    width: 400px; height: 400px; bottom: -100px; left: -100px;
-    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 65%);
-  }
-
-  /* Form panel */
-  .st-form-panel {
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 2.5rem 2rem;
-    position: relative; z-index: 2;
-  }
-  @media (min-width: 900px) { .st-form-panel { padding: 2.5rem 3.5rem 2.5rem 3rem; } }
-
-  /* Logo lockup */
-  .st-logo-lockup {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 2rem;
-  }
-  .st-logo-img {
-    width: 44px; height: 44px;
-    border-radius: 10px; object-fit: cover;
-    border: 0.5px solid rgba(255,255,255,0.15);
-  }
-  .st-logo-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.25rem; font-weight: 500; color: #fff; letter-spacing: -0.01em;
-  }
-  .st-logo-sub {
-    font-size: 0.7rem; font-weight: 300; color: var(--st-muted);
-    letter-spacing: 0.1em; text-transform: uppercase; margin-top: 1px;
-  }
-
-  .st-heading {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 3vw, 2rem);
-    font-weight: 500; color: #fff; margin-bottom: 0.35rem; line-height: 1.2;
-  }
-  .st-subheading {
-    font-size: 0.85rem; font-weight: 300; color: var(--st-muted);
-    margin-bottom: 1.5rem; line-height: 1.6;
-  }
-
-  /* Progress indicator */
-  .st-progress {
-    display: flex; gap: 6px; margin-bottom: 1.5rem;
-  }
-  .st-progress-step {
-    height: 3px; border-radius: 100px; flex: 1;
-    background: rgba(255,255,255,0.1);
-    transition: background 0.3s;
-  }
-  .st-progress-step.active { background: var(--st-gold); }
-  .st-progress-step.done { background: rgba(201,168,76,0.4); }
-
-  /* Error */
-  .st-alert {
-    margin-bottom: 1.25rem;
-    padding: 12px 16px;
-    background: rgba(239,68,68,0.1);
-    border: 0.5px solid rgba(239,68,68,0.35);
-    border-radius: 10px;
-    font-size: 0.82rem; color: #fca5a5; line-height: 1.5;
-  }
-  .st-alert strong { display: block; margin-bottom: 6px; font-weight: 500; }
-  .st-alert ul { padding-left: 1rem; }
-  .st-alert li { margin-bottom: 2px; }
-
-  /* Fields */
-  .st-field { margin-bottom: 1rem; }
-  .st-label {
-    display: block; font-size: 0.78rem; font-weight: 500;
-    color: var(--st-muted); letter-spacing: 0.04em;
-    text-transform: uppercase; margin-bottom: 7px;
-  }
-  .st-input-wrap { position: relative; }
-  .st-input-icon {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    color: rgba(255,255,255,0.3); display: flex; align-items: center; pointer-events: none;
-  }
-  .st-input {
-    width: 100%;
-    padding: 11px 40px 11px 42px;
-    background: var(--st-input-bg);
-    border: 0.5px solid var(--st-border);
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem; font-weight: 300;
-    color: var(--st-text);
-    transition: border-color 0.18s, background 0.18s;
-    outline: none; -webkit-appearance: none;
-  }
-  .st-input::placeholder { color: rgba(255,255,255,0.22); }
-  .st-input:focus {
-    border-color: var(--st-border-hover);
-    background: rgba(255,255,255,0.08);
-  }
-
-  /* Two-col grid */
-  .st-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  @media (max-width: 520px) { .st-grid-2 { grid-template-columns: 1fr; } }
-
-  .st-eye-btn {
-    position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
-    background: none; border: none; cursor: pointer;
-    color: rgba(255,255,255,0.3); display: flex; align-items: center;
-    padding: 4px; transition: color 0.15s;
-  }
-  .st-eye-btn:hover { color: rgba(255,255,255,0.6); }
-
-  /* CTA */
-  .st-btn {
-    width: 100%; padding: 12px;
-    background: var(--st-gold); border: none; border-radius: 10px;
-    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
-    color: #0a0f1e; cursor: pointer; letter-spacing: 0.02em;
-    transition: background 0.18s, transform 0.12s;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    margin-top: 0.5rem; margin-bottom: 1.5rem;
-  }
-  .st-btn:hover { background: var(--st-gold-light); }
-  .st-btn:active { transform: scale(0.985); }
-
-  /* Terms note */
-  .st-terms {
-    font-size: 0.76rem; font-weight: 300;
-    color: rgba(255,255,255,0.3); text-align: center;
-    line-height: 1.5; margin-bottom: 1.25rem;
-  }
-
-  /* Divider */
-  .st-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; }
-  .st-divider-line { flex: 1; height: 0.5px; background: var(--st-border); }
-  .st-divider-text { font-size: 0.75rem; color: rgba(255,255,255,0.25); letter-spacing: 0.06em; text-transform: uppercase; }
-
-  /* Login link */
-  .st-login-link {
-    text-align: center; font-size: 0.85rem; font-weight: 300; color: var(--st-muted);
-  }
-  .st-login-link a { color: var(--st-gold); font-weight: 500; text-decoration: none; transition: color 0.15s; }
-  .st-login-link a:hover { color: var(--st-gold-light); }
-
-  /* Grid overlay */
-  .st-grid-overlay {
-    position: absolute; inset: 0; z-index: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-  }
-
-  /* Strength bar */
-  .st-strength { margin-top: 6px; display: flex; gap: 4px; }
-  .st-strength-seg {
-    height: 3px; flex: 1; border-radius: 100px;
-    background: rgba(255,255,255,0.1); transition: background 0.25s;
-  }
-  .st-strength-label {
-    font-size: 0.72rem; color: var(--st-muted); margin-top: 4px; min-height: 14px;
-    transition: color 0.25s;
-  }
+body{
+    font-family:'Outfit',sans-serif;
+}
 </style>
 
-<div class="st-wrapper">
+<div class="min-h-screen relative overflow-hidden">
 
-  <div class="st-orb st-orb-1"></div>
-  <div class="st-orb st-orb-2"></div>
+    <!-- BACKGROUND -->
+    <div class="absolute inset-0">
 
-  <!-- Left brand panel -->
-  <div class="st-brand">
-    <div class="st-brand-bg">
-      <img src="{% static 'images/backgroundrl.webp' %}" alt="">
+        <img
+            src="{% static 'images/backgrd.webp' %}"
+            class="w-full h-full object-cover"
+            alt="Travel Background"
+        >
+
+        <!-- Better Gradient -->
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-950/70 via-slate-900/55 to-cyan-950/40"></div>
+
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-slate-950/35"></div>
+
+        <!-- Glow Effects -->
+        <div class="absolute top-0 right-0 w-[550px] h-[550px] bg-cyan-500/20 blur-[140px] rounded-full"></div>
+
+        <div class="absolute bottom-0 left-0 w-[450px] h-[450px] bg-blue-600/20 blur-[140px] rounded-full"></div>
+
     </div>
-    <div class="st-brand-overlay"></div>
-    <div class="st-brand-content">
-      <p class="st-brand-tagline">
-        Your journey<br>starts <span>right here.</span>
-      </p>
-      <p class="st-brand-desc">
-        Create your SmartTravels account and unlock seamless booking for buses, flights, trains and parcel delivery across the region.
-      </p>
-      <div class="st-steps">
-        <div class="st-step">
-          <div class="st-step-num">1</div>
-          <div class="st-step-text">
-            <strong>Create your account</strong>
-            Fill in your details to get started in seconds.
-          </div>
-        </div>
-        <div class="st-step">
-          <div class="st-step-num">2</div>
-          <div class="st-step-text">
-            <strong>Browse & book</strong>
-            Find routes and schedules that work for you.
-          </div>
-        </div>
-        <div class="st-step">
-          <div class="st-step-num">3</div>
-          <div class="st-step-text">
-            <strong>Travel with ease</strong>
-            Get e-tickets and real-time updates on the go.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Right form panel -->
-  <div class="st-form-panel">
-    <div class="st-grid-overlay"></div>
-    <div style="position: relative; z-index: 2;">
+    <!-- CONTENT -->
+    <div class="relative z-10 min-h-screen flex">
 
-      <!-- Logo -->
-      <div class="st-logo-lockup">
-        <img src="{% static 'images/logo.jpeg' %}" alt="SmartTravels" class="st-logo-img">
-        <div>
-          <div class="st-logo-name">SmartTravels</div>
-          <div class="st-logo-sub">Unified Travel Platform</div>
-        </div>
-      </div>
+        <!-- LEFT HERO -->
+        <div class="hidden lg:flex flex-1 items-center px-16">
 
-      <h1 class="st-heading">Create account</h1>
-      <p class="st-subheading">Join thousands of travellers across Kenya</p>
+            <div class="max-w-2xl">
 
-      <!-- Progress bar (visual only) -->
-      <div class="st-progress">
-        <div class="st-progress-step active"></div>
-        <div class="st-progress-step active"></div>
-        <div class="st-progress-step active"></div>
-        <div class="st-progress-step"></div>
-      </div>
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/10 backdrop-blur-xl text-cyan-300 text-sm mb-6">
+                    🚍 Kenya's Smart Transport Platform
+                </div>
 
-      <!-- Errors -->
-      {% if form.errors %}
-      <div class="st-alert">
-        <strong>Please fix the following:</strong>
-        <ul>
-          {% for field in form %}
-            {% for error in field.errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
-          {% endfor %}
-          {% for error in form.non_field_errors %}
-            <li>{{ error }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
+                <h1 class="text-6xl font-bold text-white leading-tight mb-6">
 
-      <!-- Form -->
-      <form method="POST" action="{% url 'register' %}">
-        {% csrf_token %}
+                    Begin Your
+                    <br>
 
-        <!-- Full Name -->
-        <div class="st-field">
-          <label class="st-label">Full Name</label>
-          <div class="st-input-wrap">
-            <span class="st-input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </span>
-            <input
-              type="text"
-              name="full_name"
-              value="{{ form.full_name.value|default_if_none:'' }}"
-              placeholder="e.g. Amina Wanjiru"
-              class="st-input"
-              required
-            >
-          </div>
-        </div>
+                    <span class="text-cyan-400">
+                        Smart Journey
+                    </span>
 
-        <!-- Email & Phone — 2 col -->
-        <div class="st-grid-2">
-          <div class="st-field">
-            <label class="st-label">Email</label>
-            <div class="st-input-wrap">
-              <span class="st-input-icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              </span>
-              <input
-                type="email"
-                name="email"
-                value="{{ form.email.value|default_if_none:'' }}"
-                placeholder="you@email.com"
-                class="st-input"
-                required
-              >
+                </h1>
+
+                <p class="text-slate-300 text-lg leading-8 mb-10">
+
+                    Create your SmartTravels account and enjoy seamless
+                    booking for buses, trains, flights and parcel delivery
+                    services across Kenya and beyond.
+
+                </p>
+
+                <!-- FEATURES -->
+                <div class="grid grid-cols-3 gap-4">
+
+                    <div class="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5">
+                        <div class="text-3xl mb-2">🎫</div>
+                        <h3 class="text-white font-semibold">E-Tickets</h3>
+                        <p class="text-slate-400 text-sm mt-1">
+                            Instant booking
+                        </p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5">
+                        <div class="text-3xl mb-2">💳</div>
+                        <h3 class="text-white font-semibold">M-Pesa</h3>
+                        <p class="text-slate-400 text-sm mt-1">
+                            Secure payments
+                        </p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5">
+                        <div class="text-3xl mb-2">📦</div>
+                        <h3 class="text-white font-semibold">Parcels</h3>
+                        <p class="text-slate-400 text-sm mt-1">
+                            Track deliveries
+                        </p>
+                    </div>
+
+                </div>
+
             </div>
-          </div>
 
-          <div class="st-field">
-            <label class="st-label">Phone</label>
-            <div class="st-input-wrap">
-              <span class="st-input-icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.22 2.18 2 2 0 012.18 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.27 7.91a16 16 0 006.72 6.72l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-              </span>
-              <input
-                type="tel"
-                name="phone"
-                value="{{ form.phone.value|default_if_none:'' }}"
-                placeholder="+254 7XX XXX XXX"
-                class="st-input"
-                required
-              >
+        </div>
+
+        <!-- REGISTER CARD -->
+        <div class="w-full lg:w-[560px] flex items-center justify-center p-6 lg:p-10">
+
+            <div class="w-full max-w-md">
+
+                <div class="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[34px] shadow-2xl p-8">
+
+                    <!-- LOGO -->
+                    <div class="flex items-center gap-4 mb-8">
+
+                        <img
+                            src="{% static 'images/logo.jpeg' %}"
+                            class="w-14 h-14 rounded-2xl object-cover border border-white/10"
+                        >
+
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">
+                                SmartTravels
+                            </h2>
+
+                            <p class="text-xs tracking-[0.25em] uppercase text-slate-400">
+                                Unified Transport
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- HEADER -->
+                    <h1 class="text-3xl font-bold text-white mb-2">
+                        Create Account ✨
+                    </h1>
+
+                    <p class="text-slate-400 mb-6">
+                        Join thousands of travelers across Kenya.
+                    </p>
+
+                    <!-- ERRORS -->
+                    {% if form.errors %}
+                    <div class="mb-5 bg-red-500/10 border border-red-400/20 text-red-200 rounded-2xl p-4 text-sm">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- FORM -->
+                    <form method="POST"
+                          action="{% url 'register' %}"
+                          class="space-y-4">
+
+                        {% csrf_token %}
+
+                        <!-- NAME -->
+                        <input
+                            type="text"
+                            name="full_name"
+                            placeholder="Full Name"
+                            required
+                            value="{{ form.full_name.value|default_if_none:'' }}"
+                            class="w-full h-14 rounded-2xl bg-white/5 border border-white/10 px-5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                        >
+
+                        <!-- EMAIL -->
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Email Address"
+                            required
+                            value="{{ form.email.value|default_if_none:'' }}"
+                            class="w-full h-14 rounded-2xl bg-white/5 border border-white/10 px-5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                        >
+
+                        <!-- PHONE -->
+                        <input
+                            type="tel"
+                            name="phone"
+                            placeholder="+254 7XX XXX XXX"
+                            required
+                            value="{{ form.phone.value|default_if_none:'' }}"
+                            class="w-full h-14 rounded-2xl bg-white/5 border border-white/10 px-5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                        >
+
+                        <!-- PASSWORD -->
+                        <div class="relative">
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Password"
+                                required
+                                oninput="updateStrength(this.value)"
+                                class="w-full h-14 rounded-2xl bg-white/5 border border-white/10 px-5 pr-14 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                            >
+
+                            <button
+                                type="button"
+                                onclick="togglePassword()"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+
+                                👁️
+
+                            </button>
+
+                        </div>
+
+                        <!-- Strength -->
+                        <div class="flex gap-2">
+                            <div id="seg1" class="h-1 flex-1 rounded bg-white/10"></div>
+                            <div id="seg2" class="h-1 flex-1 rounded bg-white/10"></div>
+                            <div id="seg3" class="h-1 flex-1 rounded bg-white/10"></div>
+                            <div id="seg4" class="h-1 flex-1 rounded bg-white/10"></div>
+                        </div>
+
+                        <p id="strengthLabel"
+                           class="text-xs text-slate-400"></p>
+
+                        <!-- CONFIRM -->
+                        <input
+                            type="password"
+                            name="confirm_password"
+                            placeholder="Confirm Password"
+                            required
+                            class="w-full h-14 rounded-2xl bg-white/5 border border-white/10 px-5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                        >
+
+                        <p class="text-xs text-slate-500 leading-6">
+                            By creating an account you agree to our
+                            Terms and Privacy Policy.
+                        </p>
+
+                        <!-- BUTTON -->
+                        <button
+                            type="submit"
+                            class="w-full h-14 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold transition duration-300 shadow-xl">
+
+                            🚀 Create Account
+
+                        </button>
+
+                    </form>
+
+                    <!-- LOGIN -->
+                    <div class="mt-7 text-center text-sm text-slate-400">
+
+                        Already have an account?
+
+                        <a
+                            href="{% url 'login' %}"
+                            class="text-cyan-400 hover:text-cyan-300 font-semibold">
+
+                            Sign In
+
+                        </a>
+
+                    </div>
+
+                </div>
+
             </div>
-          </div>
+
         </div>
-
-        <!-- Password -->
-        <div class="st-field">
-          <label class="st-label">Password</label>
-          <div class="st-input-wrap">
-            <span class="st-input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            </span>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Create a strong password"
-              class="st-input"
-              oninput="updateStrength(this.value)"
-              required
-            >
-            <button type="button" class="st-eye-btn" onclick="togglePassword()" aria-label="Toggle password visibility">
-              <svg id="eyeIcon1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-              </svg>
-            </button>
-          </div>
-          <!-- Strength indicator -->
-          <div class="st-strength" id="strengthBar">
-            <div class="st-strength-seg" id="seg1"></div>
-            <div class="st-strength-seg" id="seg2"></div>
-            <div class="st-strength-seg" id="seg3"></div>
-            <div class="st-strength-seg" id="seg4"></div>
-          </div>
-          <div class="st-strength-label" id="strengthLabel"></div>
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="st-field">
-          <label class="st-label">Confirm Password</label>
-          <div class="st-input-wrap">
-            <span class="st-input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            </span>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirm_password"
-              placeholder="Re-enter your password"
-              class="st-input"
-              required
-            >
-            <button type="button" class="st-eye-btn" onclick="toggleConfirmPassword()" aria-label="Toggle confirm password visibility">
-              <svg id="eyeIcon2" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Terms note -->
-        <p class="st-terms">
-          By creating an account you agree to SmartTravels' Terms of Service and Privacy Policy.
-        </p>
-
-        <!-- Submit -->
-        <button type="submit" class="st-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-          Create my account
-        </button>
-
-      </form>
-
-      <!-- Divider + login link -->
-      <div class="st-divider">
-        <div class="st-divider-line"></div>
-        <span class="st-divider-text">or</span>
-        <div class="st-divider-line"></div>
-      </div>
-
-      <p class="st-login-link">
-        Already have an account? <a href="{% url 'login' %}">Sign in</a>
-      </p>
 
     </div>
-  </div>
 
 </div>
 
 <script>
-function togglePassword() {
-  const input = document.getElementById("password");
-  input.type = input.type === "password" ? "text" : "password";
+
+function togglePassword(){
+
+    const password=document.getElementById('password');
+
+    password.type =
+    password.type==='password'
+    ? 'text'
+    : 'password';
+
 }
 
-function toggleConfirmPassword() {
-  const input = document.getElementById("confirmPassword");
-  input.type = input.type === "password" ? "text" : "password";
+function updateStrength(val){
+
+    const segs=[
+        document.getElementById('seg1'),
+        document.getElementById('seg2'),
+        document.getElementById('seg3'),
+        document.getElementById('seg4')
+    ];
+
+    const label=document.getElementById('strengthLabel');
+
+    let score=0;
+
+    if(val.length>=8)score++;
+    if(/[A-Z]/.test(val))score++;
+    if(/[0-9]/.test(val))score++;
+    if(/[^A-Za-z0-9]/.test(val))score++;
+
+    const colors=[
+        '#ef4444',
+        '#f59e0b',
+        '#06b6d4',
+        '#22c55e'
+    ];
+
+    segs.forEach((s,i)=>{
+        s.style.background =
+        i<score
+        ? colors[score-1]
+        : 'rgba(255,255,255,.1)';
+    });
+
+    const labels=['','Weak','Fair','Good','Strong'];
+
+    label.innerText=
+    val.length
+    ? labels[score]
+    : '';
 }
 
-function updateStrength(val) {
-  const segs = [document.getElementById('seg1'), document.getElementById('seg2'),
-                document.getElementById('seg3'), document.getElementById('seg4')];
-  const label = document.getElementById('strengthLabel');
-  let score = 0;
-  if (val.length >= 8) score++;
-  if (/[A-Z]/.test(val)) score++;
-  if (/[0-9]/.test(val)) score++;
-  if (/[^A-Za-z0-9]/.test(val)) score++;
-
-  const colors = ['#e24b4a', '#ef9f27', '#c9a84c', '#1d9e75'];
-  const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
-  const labelColors = ['', '#fca5a5', '#fac775', '#e8c97a', '#5dcaa5'];
-
-  segs.forEach((s, i) => {
-    s.style.background = i < score ? colors[score - 1] : 'rgba(255,255,255,0.1)';
-  });
-  label.textContent = val.length ? labels[score] : '';
-  label.style.color = val.length ? labelColors[score] : 'var(--st-muted)';
-}
 </script>
 
 {% endblock %}

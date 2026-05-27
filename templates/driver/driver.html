@@ -32,7 +32,7 @@
                 👨‍✈️ Welcome, {{ driver.name }}
             </h1>
             <p class="text-gray-500 text-sm">
-                {{ driver.get_role_display }} • Live Operations Panel
+                {{ role_display }} • Live Operations Panel
             </p>
         </div>
 
@@ -41,6 +41,93 @@
             Logout
         </a>
 
+    </div>
+
+    <!-- DRIVER PROFILE CARD -->
+    <div class="bg-white p-6 rounded-2xl shadow mb-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- DRIVER DETAILS -->
+            <div>
+                <h2 class="text-lg font-semibold mb-4 text-gray-800">Driver Profile</h2>
+                <div class="space-y-3 text-sm">
+                    {% if credentials.driver_name %}
+                    <div>
+                        <strong>Name:</strong>
+                        <div class="text-gray-700">{{ credentials.driver_name }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if credentials.driver_phone %}
+                    <div>
+                        <strong>Phone (Profile):</strong>
+                        <div class="text-gray-700">{{ credentials.driver_phone }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if credentials.user_first_name or credentials.user_last_name %}
+                    <div>
+                        <strong>Full Name:</strong>
+                        <div class="text-gray-700">{{ credentials.user_first_name }} {{ credentials.user_last_name }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if credentials.user_email %}
+                    <div>
+                        <strong>Email:</strong>
+                        <div class="text-gray-700">{{ credentials.user_email }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if credentials.user_phone %}
+                    <div>
+                        <strong>Phone (Account):</strong>
+                        <div class="text-gray-700">{{ credentials.user_phone }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if credentials.username %}
+                    <div>
+                        <strong>Username:</strong>
+                        <div class="text-gray-700 font-mono text-xs">{{ credentials.username }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- COMPANY DETAILS -->
+            <div>
+                <h2 class="text-lg font-semibold mb-4 text-gray-800">Company</h2>
+                {% if company %}
+                <div class="space-y-2">
+                    <p><strong>Name:</strong> {{ company.name }}</p>
+                    <p><strong>Type:</strong> {{ company.get_transport_type_display }}</p>
+                    {% if company.contact_phone %}
+                    <p><strong>Phone:</strong> {{ company.contact_phone }}</p>
+                    {% endif %}
+                    {% if company.contact_email %}
+                    <p><strong>Email:</strong> {{ company.contact_email }}</p>
+                    {% endif %}
+                </div>
+                {% else %}
+                <p class="text-gray-400">No company assigned</p>
+                {% endif %}
+            </div>
+
+            <!-- COMPANY LOGO -->
+            <div>
+                <h2 class="text-lg font-semibold mb-4 text-gray-800">Logo</h2>
+                {% if company_logo_url %}
+                <div class="flex justify-center">
+                    <img src="{{ company_logo_url }}" alt="{{ company.name }}" 
+                         style="max-width: 200px; max-height: 150px; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                </div>
+                {% else %}
+                <p class="text-gray-400 text-center">No logo available</p>
+                {% endif %}
+            </div>
+
+        </div>
     </div>
 
     <!-- STATUS CARD -->

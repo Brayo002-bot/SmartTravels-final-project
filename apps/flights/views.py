@@ -262,11 +262,19 @@ def add_pilot(request):
                 messages.error(request, 'A user account with that email already exists.')
                 return redirect('add_pilot')
 
+            # Extract first and last name from pilot name
+            name_parts = pilot.name.split(' ', 1)
+            first_name = name_parts[0]
+            last_name = name_parts[1] if len(name_parts) > 1 else ''
+
             user = User.objects.create_user(
                 username=email,
                 email=email,
                 password=password,
-                role='pilot'
+                first_name=first_name,
+                last_name=last_name,
+                role='pilot',
+                company=company
             )
             pilot.user = user
             pilot.save()
