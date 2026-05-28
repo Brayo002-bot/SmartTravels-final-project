@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.conf import settings
 from .models import Payment, MPesaService
 
 logger = logging.getLogger(__name__)
@@ -27,25 +28,46 @@ def checkout(request, booking_reference, booking_type='bus'):
             try:
                 svc = MPesaService()
                 res = svc.stk_push(phone, amount, booking_reference)
+                logger.info(f'📊 STK Push Response: ResponseCode={res.get("ResponseCode")} | {res}')
+                
                 if res.get('ResponseCode') == '0':
                     pay.merchant_ref = res.get('CheckoutRequestID', '')
                     pay.save(update_fields=['merchant_ref'])
-                    messages.success(request, '📱 M-Pesa push sent! Enter your PIN.')
-                    return redirect('payment_pending', payment_id=pay.id)
+                    
+                    # For testing/sandbox: auto-complete payment immediately
+                    if settings.DEBUG:
+                        logger.info(f'🧪 DEBUG MODE: Auto-completing payment for testing...')
+                        pay.mark_completed(code='DEBUG-AUTO-' + booking_reference)
+                        _confirm_booking(booking_reference, booking_type, pay)
+                        logger.info(f'✅ Payment {pay.id} auto-completed for booking {booking_reference}')
+                        messages.success(request, '✅ [DEBUG MODE] Payment auto-completed! Ticket generated.')
+                        return redirect('payment_success', payment_id=pay.id)
+                    else:
+                        # Production: wait for M-Pesa callback
+                        logger.info(f'🌐 Production mode - waiting for M-Pesa callback')
+                        messages.success(request, '📱 M-Pesa push sent! Check your phone and complete payment.')
+                        return redirect('payment_pending', payment_id=pay.id)
                 else:
                     pay.status = 'failed'
                     pay.save(update_fields=['status'])
-                    messages.error(request, f"M-Pesa: {res.get('errorMessage','Please try again.')}")
+                    error_msg = res.get('errorMessage') or res.get('ResponseDescription', 'Please try again.')
+                    logger.warning(f'❌ M-Pesa error: {error_msg} | Full response: {res}')
+                    messages.error(request, f"M-Pesa: {error_msg}")
+                    return render(request, 'payments/checkout.html', {
+                        'booking_reference': booking_reference,
+                        'booking_type': booking_type,
+                        'amount': amount,
+                    })
             except Exception as e:
-                logger.warning(f'M-Pesa STK failed: {e}')
+                logger.exception(f'❌ M-Pesa STK failed: {str(e)} | Phone: {phone} | Amount: {amount}')
                 pay.status = 'failed'
                 pay.save(update_fields=['status'])
-                messages.warning(request, 'M-Pesa unavailable — payment saved as failed.')
-            return render(request, 'payments/checkout.html', {
-                'booking_reference': booking_reference,
-                'booking_type': booking_type,
-                'amount': amount,
-            })
+                messages.warning(request, f'M-Pesa error: {str(e)}')
+                return render(request, 'payments/checkout.html', {
+                    'booking_reference': booking_reference,
+                    'booking_type': booking_type,
+                    'amount': amount,
+                })
         pay.mark_completed()
         messages.success(request, f'✅ Payment for booking {booking_reference} recorded.')
         return redirect('payment_success', payment_id=pay.id)

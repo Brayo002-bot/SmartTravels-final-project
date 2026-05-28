@@ -164,12 +164,10 @@
         }
 
         @media(max-width:768px){
-
             .page-content{
                 padding:20px;
                 padding-top:90px;
             }
-
         }
     </style>
 </head>
@@ -180,513 +178,267 @@
     <!-- SIDEBAR -->
     {% include 'passenger/sidebar.html' %}
 
-    <!-- MAIN -->
+    <!-- MAIN CONTAINER -->
     <main class="flex-1 lg:ml-64">
 
         <div class="page-content">
 
             <!-- TOP HEADER -->
             <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 mb-8">
-
                 <div>
-
                     <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-400/10 border border-amber-300/10 text-amber-200 text-sm mb-5">
                         🎫 Passenger Booking Center
                     </div>
-
                     <h1 class="playfair text-5xl leading-tight mb-3">
                         My <span class="gold-text">Bookings</span>
                     </h1>
-
                     <p class="text-slate-400 text-lg max-w-2xl leading-8">
                         View, manage, track and download tickets for all your
                         SmartTravels transport bookings across buses, trains and flights.
                     </p>
-
                 </div>
 
                 <!-- SEARCH -->
                 <div class="glass rounded-[26px] p-3 flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
-
                     <input type="text"
                            placeholder="Search by booking ID, company or destination..."
                            class="search-box px-5 py-4 rounded-2xl outline-none bg-transparent w-full xl:w-[380px] text-white">
-
                     <button class="gold-btn px-8 py-4 rounded-2xl whitespace-nowrap">
                         Search
                     </button>
-
                 </div>
-
             </div>
 
-            <!-- HERO -->
+            <!-- HERO SUMMARY -->
             <div class="hero glass p-8 lg:p-10 mb-8">
-
                 <div class="grid lg:grid-cols-2 gap-10 items-center">
-
                     <div class="relative z-10">
-
                         <h2 class="playfair text-4xl lg:text-5xl leading-tight mb-5">
                             Seamless journeys.<br>
                             <span class="gold-text">All in one place.</span>
                         </h2>
-
                         <p class="text-slate-300 leading-8 mb-8 max-w-2xl">
                             Access your travel history, upcoming trips, payment receipts,
                             downloadable e-tickets and real-time travel updates from your
                             SmartTravels passenger portal.
                         </p>
-
                         <div class="flex flex-wrap gap-4">
-
                             <button class="gold-btn px-7 py-4 rounded-2xl">
                                 ✈ Book New Trip
                             </button>
-
                             <button class="glass px-7 py-4 rounded-2xl border border-white/10 hover:bg-white/10 transition">
                                 📥 Download All Tickets
                             </button>
-
                         </div>
-
                     </div>
 
-                    <!-- RIGHT -->
+                    <!-- SUMMARY PROGRESS BARS -->
                     <div class="glass rounded-[30px] p-8 relative z-10">
-
                         <div class="text-sm uppercase tracking-[0.2em] text-slate-400 mb-3">
                             Travel Summary
                         </div>
-
                         <div class="text-6xl font-black gold-text mb-4">
                             {{ total_bookings|default:'24' }}
                         </div>
-
                         <div class="text-xl font-semibold mb-8">
                             Total Bookings Made
                         </div>
-
                         <div class="space-y-5">
-
                             <div>
                                 <div class="flex justify-between text-sm text-slate-400 mb-2">
                                     <span>Upcoming Trips</span>
                                     <span>72%</span>
                                 </div>
-
                                 <div class="h-3 bg-white/10 rounded-full overflow-hidden">
                                     <div class="h-full w-[72%] rounded-full bg-gradient-to-r from-amber-400 to-yellow-200"></div>
                                 </div>
                             </div>
-
                             <div>
                                 <div class="flex justify-between text-sm text-slate-400 mb-2">
                                     <span>Completed Trips</span>
                                     <span>58%</span>
                                 </div>
-
                                 <div class="h-3 bg-white/10 rounded-full overflow-hidden">
                                     <div class="h-full w-[58%] rounded-full bg-gradient-to-r from-blue-400 to-cyan-200"></div>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- STATS -->
+            <!-- STAT CARDS -->
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-
+                <!-- Card 1 -->
                 <div class="glass rounded-[28px] p-7">
-
                     <div class="flex justify-between items-start">
-
                         <div>
-                            <div class="text-slate-400 text-sm mb-3">
-                                Total Bookings
-                            </div>
-
-                            <div class="text-4xl font-black">
-                                {{ total_bookings|default:'24' }}
-                            </div>
+                            <div class="text-slate-400 text-sm mb-3">Total Bookings</div>
+                            <div class="text-4xl font-black">{{ total_bookings|default:'24' }}</div>
                         </div>
-
-                        <div class="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-3xl">
-                            🎫
-                        </div>
-
+                        <div class="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-3xl">🎫</div>
                     </div>
-
                 </div>
-
+                <!-- Card 2 -->
                 <div class="glass rounded-[28px] p-7">
-
                     <div class="flex justify-between items-start">
-
                         <div>
-                            <div class="text-slate-400 text-sm mb-3">
-                                Upcoming Trips
-                            </div>
-
-                            <div class="text-4xl font-black">
-                                {{ upcoming_trips|default:'7' }}
-                            </div>
+                            <div class="text-slate-400 text-sm mb-3">Upcoming Trips</div>
+                            <div class="text-4xl font-black">{{ upcoming_trips|default:'7' }}</div>
                         </div>
-
-                        <div class="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center text-3xl">
-                            ✈️
-                        </div>
-
+                        <div class="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center text-3xl">✈️</div>
                     </div>
-
                 </div>
-
+                <!-- Card 3 -->
                 <div class="glass rounded-[28px] p-7">
-
                     <div class="flex justify-between items-start">
-
                         <div>
-                            <div class="text-slate-400 text-sm mb-3">
-                                Completed Trips
-                            </div>
-
-                            <div class="text-4xl font-black">
-                                {{ completed_trips|default:'15' }}
-                            </div>
+                            <div class="text-slate-400 text-sm mb-3">Completed Trips</div>
+                            <div class="text-4xl font-black">{{ completed_trips|default:'15' }}</div>
                         </div>
-
-                        <div class="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center text-3xl">
-                            🚌
-                        </div>
-
+                        <div class="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center text-3xl">🚌</div>
                     </div>
-
                 </div>
-
+                <!-- Card 4 -->
                 <div class="glass rounded-[28px] p-7">
-
                     <div class="flex justify-between items-start">
-
                         <div>
-                            <div class="text-slate-400 text-sm mb-3">
-                                Cancelled Trips
-                            </div>
-
-                            <div class="text-4xl font-black">
-                                2
-                            </div>
+                            <div class="text-slate-400 text-sm mb-3">Cancelled Trips</div>
+                            <div class="text-4xl font-black">2</div>
                         </div>
-
-                        <div class="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center text-3xl">
-                            ❌
-                        </div>
-
+                        <div class="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center text-3xl">❌</div>
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- BOOKINGS -->
+            <!-- DYNAMIC BOOKING CARDS LIST -->
             <div class="space-y-7">
+                {% if bookings %}
+                    {% for booking in bookings %}
+                    <div class="booking-card glass rounded-[32px] p-7">
+                        <div class="flex flex-col 2xl:flex-row 2xl:items-center 2xl:justify-between gap-8">
+                            <div class="flex flex-col lg:flex-row gap-6">
+                                <div class="w-full lg:w-32 h-32 rounded-[24px] overflow-hidden bg-white/10 shrink-0">
+                                    {% if booking.image %}
+                                        <img src="{{ booking.image.url }}" class="w-full h-full object-cover" alt="{{ booking.company_name }}">
+                                    {% else %}
+                                        <img src="{% static 'images/backgroundrl.webp' %}" class="w-full h-full object-cover" alt="Default Journey Image">
+                                    {% endif %}
+                                </div>
 
-                <!-- BOOKING -->
-                <div class="booking-card glass rounded-[32px] p-7">
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-4 mb-4">
+                                        <h2 class="text-3xl font-bold">{{ booking.company_name }}</h2>
+                                        <span class="px-4 py-2 rounded-full text-sm font-bold 
+                                            {% if booking.status == 'Confirmed' %}status-confirmed
+                                            {% elif booking.status == 'Pending' %}status-pending
+                                            {% else %}status-cancelled{% endif %}">
+                                            {{ booking.status }}
+                                        </span>
+                                    </div>
+                                    <div class="text-slate-400 mb-6">Booking ID: #{{ booking.booking_id }}</div>
 
-                    <div class="flex flex-col 2xl:flex-row 2xl:items-center 2xl:justify-between gap-8">
-
-                        <!-- LEFT -->
-                        <div class="flex flex-col lg:flex-row gap-6">
-
-                            <div class="w-full lg:w-32 h-32 rounded-[24px] overflow-hidden bg-white/10 shrink-0">
-                                <img src="{% static 'images/backgroundrl.webp' %}"
-                                     class="w-full h-full object-cover">
+                                    <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                                        <div>
+                                            <div class="text-sm text-slate-500 mb-2">From</div>
+                                            <div class="text-xl font-bold">{{ booking.departure_from }}</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-slate-500 mb-2">To</div>
+                                            <div class="text-xl font-bold">{{ booking.destination_to }}</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-slate-500 mb-2">Departure</div>
+                                            <div class="text-xl font-bold">{{ booking.departure_date|date:"d M Y" }}</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-slate-500 mb-2">
+                                                {% if booking.travel_type == 'Flight' %}Flight{% else %}Seat / Coach{% endif %}
+                                            </div>
+                                            <div class="text-xl font-bold gold-text">{{ booking.seat_or_reference }}</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div>
-
-                                <div class="flex flex-wrap items-center gap-4 mb-4">
-
-                                    <h2 class="text-3xl font-bold">
-                                        Easy Coach
-                                    </h2>
-
-                                    <span class="status-confirmed px-4 py-2 rounded-full text-sm font-bold">
-                                        Confirmed
-                                    </span>
-
-                                </div>
-
-                                <div class="text-slate-400 mb-6">
-                                    Booking ID: #STB-29452
-                                </div>
-
-                                <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            From
-                                        </div>
-
-                                        <div class="text-xl font-bold">
-                                            Nairobi
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            To
-                                        </div>
-
-                                        <div class="text-xl font-bold">
-                                            Mombasa
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            Departure
-                                        </div>
-
-                                        <div class="text-xl font-bold">
-                                            20 May 2026
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            Seat
-                                        </div>
-
-                                        <div class="text-xl font-bold gold-text">
-                                            A12
-                                        </div>
-                                    </div>
-
-                                </div>
-
+                            <!-- ACTIONS CONTAINER -->
+                            <div class="flex flex-col gap-4 min-w-[240px]">
+                                {% if booking.status == 'Confirmed' %}
+                                    <button class="gold-btn action-btn px-6 py-4 rounded-2xl">🎫 View Ticket</button>
+                                    <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">📥 Download Receipt</button>
+                                    <button class="bg-red-500/15 hover:bg-red-500/25 transition text-red-300 action-btn px-6 py-4 rounded-2xl">❌ Cancel Booking</button>
+                                {% elif booking.status == 'Pending' %}
+                                    <button class="gold-btn action-btn px-6 py-4 rounded-2xl">💳 Complete Payment</button>
+                                    <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">👁 View Details</button>
+                                {% else %}
+                                    <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">🔄 Rebook Trip</button>
+                                {% endif %}
                             </div>
-
                         </div>
-
-                        <!-- RIGHT -->
-                        <div class="flex flex-col gap-4 min-w-[240px]">
-
-                            <button class="gold-btn action-btn px-6 py-4 rounded-2xl">
-                                🎫 View Ticket
-                            </button>
-
-                            <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">
-                                📥 Download Receipt
-                            </button>
-
-                            <button class="bg-red-500/15 hover:bg-red-500/25 transition text-red-300 action-btn px-6 py-4 rounded-2xl">
-                                ❌ Cancel Booking
-                            </button>
-
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- FALLBACK PLACEHOLDERS (Your original design items if Context is Empty) -->
+                    <!-- Easy Coach Sample -->
+                    <div class="booking-card glass rounded-[32px] p-7">
+                        <div class="flex flex-col 2xl:flex-row 2xl:items-center 2xl:justify-between gap-8">
+                            <div class="flex flex-col lg:flex-row gap-6">
+                                <div class="w-full lg:w-32 h-32 rounded-[24px] overflow-hidden bg-white/10 shrink-0">
+                                    <img src="{% static 'images/backgroundrl.webp' %}" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-4 mb-4">
+                                        <h2 class="text-3xl font-bold">Easy Coach</h2>
+                                        <span class="status-confirmed px-4 py-2 rounded-full text-sm font-bold">Confirmed</span>
+                                    </div>
+                                    <div class="text-slate-400 mb-6">Booking ID: #STB-29452</div>
+                                    <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                                        <div><div class="text-sm text-slate-500 mb-2">From</div><div class="text-xl font-bold">Nairobi</div></div>
+                                        <div><div class="text-sm text-slate-500 mb-2">To</div><div class="text-xl font-bold">Mombasa</div></div>
+                                        <div><div class="text-sm text-slate-500 mb-2">Departure</div><div class="text-xl font-bold">20 May 2026</div></div>
+                                        <div><div class="text-sm text-slate-500 mb-2">Seat</div><div class="text-xl font-bold gold-text">A12</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-4 min-w-[240px]">
+                                <button class="gold-btn action-btn px-6 py-4 rounded-2xl">🎫 View Ticket</button>
+                                <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">📥 Download Receipt</button>
+                                <button class="bg-red-500/15 hover:bg-red-500/25 transition text-red-300 action-btn px-6 py-4 rounded-2xl">❌ Cancel Booking</button>
+                            </div>
                         </div>
-
                     </div>
 
-                </div>
-
-                <!-- BOOKING -->
-                <div class="booking-card glass rounded-[32px] p-7">
-
-                    <div class="flex flex-col 2xl:flex-row 2xl:items-center 2xl:justify-between gap-8">
-
-                        <!-- LEFT -->
-                        <div class="flex flex-col lg:flex-row gap-6">
-
-                            <div class="w-full lg:w-32 h-32 rounded-[24px] overflow-hidden bg-white/10 shrink-0">
-                                <img src="{% static 'images/backgroundrl.webp' %}"
-                                     class="w-full h-full object-cover">
+                    <!-- Kenya Airways Sample -->
+                    <div class="booking-card glass rounded-[32px] p-7">
+                        <div class="flex flex-col 2xl:flex-row 2xl:items-center 2xl:justify-between gap-8">
+                            <div class="flex flex-col lg:flex-row gap-6">
+                                <div class="w-full lg:w-32 h-32 rounded-[24px] overflow-hidden bg-white/10 shrink-0">
+                                    <img src="{% static 'images/backgroundrl.webp' %}" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-4 mb-4">
+                                        <h2 class="text-3xl font-bold">Kenya Airways</h2>
+                                        <span class="status-pending px-4 py-2 rounded-full text-sm font-bold">Pending</span>
+                                    </div>
+                                    <div class="text-slate-400 mb-6">Booking ID: #STB-84721</div>
+                                    <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                                        <div><div class="text-sm text-slate-500 mb-2">From</div><div class="text-xl font-bold">Nairobi</div></div>
+                                        <div><div class="text-sm text-slate-500 mb-2">To</div><div class="text-xl font-bold">Kisumu</div></div>
+                                        <div><div class="text-sm text-slate-500 mb-2">Departure</div><div class="text-xl font-bold">25 May 2026</div></div>
+                                        <div><div class="text-sm text-slate-500 mb-2">Flight</div><div class="text-xl font-bold gold-text">KQ 624</div></div>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div>
-
-                                <div class="flex flex-wrap items-center gap-4 mb-4">
-
-                                    <h2 class="text-3xl font-bold">
-                                        Kenya Airways
-                                    </h2>
-
-                                    <span class="status-pending px-4 py-2 rounded-full text-sm font-bold">
-                                        Pending
-                                    </span>
-
-                                </div>
-
-                                <div class="text-slate-400 mb-6">
-                                    Booking ID: #STB-84721
-                                </div>
-
-                                <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            From
-                                        </div>
-
-                                        <div class="text-xl font-bold">
-                                            Nairobi
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            To
-                                        </div>
-
-                                        <div class="text-xl font-bold">
-                                            Kisumu
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            Departure
-                                        </div>
-
-                                        <div class="text-xl font-bold">
-                                            25 May 2026
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            Flight
-                                        </div>
-
-                                        <div class="text-xl font-bold gold-text">
-                                            KQ 624
-                                        </div>
-                                    </div>
-
-                                </div>
-
+                            <div class="flex flex-col gap-4 min-w-[240px]">
+                                <button class="gold-btn action-btn px-6 py-4 rounded-2xl">💳 Complete Payment</button>
+                                <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">👁 View Details</button>
                             </div>
-
                         </div>
-
-                        <!-- RIGHT -->
-                        <div class="flex flex-col gap-4 min-w-[240px]">
-
-                            <button class="gold-btn action-btn px-6 py-4 rounded-2xl">
-                                💳 Complete Payment
-                            </button>
-
-                            <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">
-                                👁 View Details
-                            </button>
-
-                        </div>
-
                     </div>
-
-                </div>
-
-                <!-- BOOKING -->
-                <div class="booking-card glass rounded-[32px] p-7">
-
-                    <div class="flex flex-col 2xl:flex-row 2xl:items-center 2xl:justify-between gap-8">
-
-                        <!-- LEFT -->
-                        <div class="flex flex-col lg:flex-row gap-6">
-
-                            <div class="w-full lg:w-32 h-32 rounded-[24px] overflow-hidden bg-white/10 shrink-0">
-                                <img src="{% static 'images/backgroundrl.webp' %}"
-                                     class="w-full h-full object-cover">
-                            </div>
-
-                            <div>
-
-                                <div class="flex flex-wrap items-center gap-4 mb-4">
-
-                                    <h2 class="text-3xl font-bold">
-                                        Madaraka Express
-                                    </h2>
-
-                                    <span class="status-cancelled px-4 py-2 rounded-full text-sm font-bold">
-                                        Cancelled
-                                    </span>
-
-                                </div>
-
-                                <div class="text-slate-400 mb-6">
-                                    Booking ID: #STB-22119
-                                </div>
-
-                                <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            From
-                                        </div>
-
-                                        <div class="text-xl font-bold">
-                                            Nairobi
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            To
-                                        </div>
-
-                                        <div class="text-xl font-bold">
-                                            Mombasa
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            Departure
-                                        </div>
-
-                                        <div class="text-xl font-bold">
-                                            12 April 2026
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="text-sm text-slate-500 mb-2">
-                                            Coach
-                                        </div>
-
-                                        <div class="text-xl font-bold gold-text">
-                                            C3
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <!-- RIGHT -->
-                        <div class="flex flex-col gap-4 min-w-[240px]">
-
-                            <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">
-                                🔄 Rebook Trip
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+                {% endif %}
             </div>
 
         </div>
-
     </main>
 
 </div>

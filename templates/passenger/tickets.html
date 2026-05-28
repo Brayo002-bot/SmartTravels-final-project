@@ -157,112 +157,114 @@ body {
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 
-<div class="page">
+<div class="flex min-h-screen">
 
-  <!-- HEADER -->
-  <div class="page-header">
-    <div class="page-header-left">
-      <div class="page-icon"><i class="fa-solid fa-qrcode"></i></div>
-      <div>
-        <div class="page-title">My Tickets</div>
-        <div class="page-sub">View, download and manage your QR-coded travel tickets</div>
-      </div>
-    </div>
-    <div class="hdr-actions">
-      <a href="{% url 'dashboard' %}" class="btn-outline">
-        <i class="fa-solid fa-house" style="font-size:0.8rem;"></i> Dashboard
-      </a>
-      <a href="{% url 'my_bookings' %}" class="btn-gold">
-        <i class="fa-solid fa-ticket" style="font-size:0.8rem;"></i> My Bookings
-      </a>
-    </div>
-  </div>
+  {% include 'passenger/sidebar.html' %}
 
-  <!-- STATS -->
-  <div class="stats-grid">
+  <main class="flex-1 lg:ml-64 w-full">
+    <div class="page">
 
-    <div class="stat-card c-teal">
-      <div>
-        <div class="stat-label">Total Tickets</div>
-        <div class="stat-value">{{ total_tickets|default:'0' }}</div>
-      </div>
-      <div class="stat-icon teal"><i class="fa-solid fa-ticket"></i></div>
-    </div>
-
-    <div class="stat-card c-green">
-      <div>
-        <div class="stat-label">Confirmed</div>
-        <div class="stat-value">{{ confirmed_tickets|default:'0' }}</div>
-      </div>
-      <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
-    </div>
-
-    <div class="stat-card c-amber">
-      <div>
-        <div class="stat-label">Loyalty Points</div>
-        <div class="stat-value">{{ loyalty_points|default:'0' }}</div>
-      </div>
-      <div class="stat-icon amber"><i class="fa-solid fa-gift"></i></div>
-    </div>
-
-  </div>
-
-  <!-- EMPTY / TICKET CONTENT -->
-  <div class="empty-card">
-
-    <!-- Decorative background text -->
-    <div class="deco-icons">
-      <div class="deco-icon" style="top:8%;left:5%;">✈</div>
-      <div class="deco-icon" style="bottom:8%;right:5%;">🚂</div>
-      <div class="deco-icon" style="top:50%;left:42%;">🚌</div>
-    </div>
-
-    <div style="position:relative;z-index:1;">
-
-      <div class="empty-icon-lg">
-        <i class="fa-solid fa-qrcode"></i>
-      </div>
-
-      <div class="empty-title">No tickets yet</div>
-      <div class="empty-sub">
-        Once you book and pay for your journey, your QR-coded tickets will
-        appear here for download, tracking and boarding verification.
-      </div>
-
-      <!-- FEATURE TILES -->
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon teal"><i class="fa-solid fa-qrcode"></i></div>
-          <div class="feature-title">QR Verification</div>
-          <div class="feature-desc">Tickets are scanned instantly before you board — no printing needed.</div>
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-icon"><i class="fa-solid fa-qrcode"></i></div>
+          <div>
+            <div class="page-title">My Tickets</div>
+            <div class="page-sub">View, download and manage your QR-coded travel tickets</div>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon purple"><i class="fa-solid fa-download"></i></div>
-          <div class="feature-title">Download Tickets</div>
-          <div class="feature-desc">Save PDF tickets directly to your device for offline access.</div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon green"><i class="fa-solid fa-location-dot"></i></div>
-          <div class="feature-title">Smart Tracking</div>
-          <div class="feature-desc">Track your journey and parcel movement in real time.</div>
+        <div class="hdr-actions">
+          <a href="{% url 'dashboard' %}" class="btn-outline">
+            <i class="fa-solid fa-house" style="font-size:0.8rem;"></i> Dashboard
+          </a>
+          <a href="{% url 'my_bookings' %}" class="btn-gold">
+            <i class="fa-solid fa-ticket" style="font-size:0.8rem;"></i> My Bookings
+          </a>
         </div>
       </div>
 
-      <!-- CTA BUTTONS -->
-      <div class="cta-row">
-        <a href="{% url 'dashboard' %}" class="btn-gold">
-          <i class="fa-solid fa-route" style="font-size:0.8rem;"></i> Book a Trip
-        </a>
-        <a href="{% url 'my_bookings' %}" class="btn-outline">
-          <i class="fa-solid fa-clock-rotate-left" style="font-size:0.8rem;"></i> View Bookings
-        </a>
+      <div class="stats-grid">
+
+        <div class="stat-card c-teal">
+          <div>
+            <div class="stat-label">Total Tickets</div>
+            <div class="stat-value">{{ total_tickets|default:'0' }}</div>
+          </div>
+          <div class="stat-icon teal"><i class="fa-solid fa-ticket"></i></div>
+        </div>
+
+        <div class="stat-card c-green">
+          <div>
+            <div class="stat-label">Confirmed</div>
+            <div class="stat-value">{{ confirmed_tickets|default:'0' }}</div>
+          </div>
+          <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+        </div>
+
+        <div class="stat-card c-amber">
+          <div>
+            <div class="stat-label">Loyalty Points</div>
+            <div class="stat-value">{{ loyalty_points|default:'0' }}</div>
+          </div>
+          <div class="stat-icon amber"><i class="fa-solid fa-gift"></i></div>
+        </div>
+
+      </div>
+
+      <div class="empty-card">
+
+        <div class="deco-icons">
+          <div class="deco-icon" style="top:8%;left:5%;">✈</div>
+          <div class="deco-icon" style="bottom:8%;right:5%;">🚂</div>
+          <div class="deco-icon" style="top:50%;left:42%;">🚌</div>
+        </div>
+
+        <div style="position:relative;z-index:1;">
+
+          <div class="empty-icon-lg">
+            <i class="fa-solid fa-qrcode"></i>
+          </div>
+
+          <div class="empty-title">No tickets yet</div>
+          <div class="empty-sub">
+            Once you book and pay for your journey, your QR-coded tickets will
+            appear here for download, tracking and boarding verification.
+          </div>
+
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon teal"><i class="fa-solid fa-qrcode"></i></div>
+              <div class="feature-title">QR Verification</div>
+              <div class="feature-desc">Tickets are scanned instantly before you board — no printing needed.</div>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon purple"><i class="fa-solid fa-download"></i></div>
+              <div class="feature-title">Download Tickets</div>
+              <div class="feature-desc">Save PDF tickets directly to your device for offline access.</div>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon green"><i class="fa-solid fa-location-dot"></i></div>
+              <div class="feature-title">Smart Tracking</div>
+              <div class="feature-desc">Track your journey and parcel movement in real time.</div>
+            </div>
+          </div>
+
+          <div class="cta-row">
+            <a href="{% url 'dashboard' %}" class="btn-gold">
+              <i class="fa-solid fa-route" style="font-size:0.8rem;"></i> Book a Trip
+            </a>
+            <a href="{% url 'my_bookings' %}" class="btn-outline">
+              <i class="fa-solid fa-clock-rotate-left" style="font-size:0.8rem;"></i> View Bookings
+            </a>
+          </div>
+
+        </div>
+
       </div>
 
     </div>
+  </main>
 
-  </div>
-
-</div><!-- /page -->
+</div>
 
 </body>
 </html>

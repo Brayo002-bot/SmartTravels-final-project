@@ -1,398 +1,222 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bus Schedule Management | SmartTravels</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        body{
-            font-family:'Plus Jakarta Sans',sans-serif;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-blue-50">
+<body class="bg-slate-50 text-slate-900 antialiased">
 
 <div class="flex">
 
-    <!-- Sidebar -->
     {% include 'bus_admin/sidebar.html' %}
 
-    <!-- Main Content -->
-    <div class="ml-64 w-full min-h-screen p-8">
+    <div class="ml-64 w-full min-h-screen p-8 lg:p-12">
 
-        <!-- Header -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-
-            <div>
-
-                <div class="flex items-center gap-4">
-
-                    <div class="h-16 w-16 rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-3xl shadow-xl">
-                        📅
-                    </div>
-
-                    <div>
-                        <h1 class="text-4xl font-extrabold text-gray-800">
-                            Schedule Management
-                        </h1>
-
-                        <p class="text-gray-500 mt-2">
-                            Create and manage daily travel schedules for your buses.
-                        </p>
-                    </div>
-
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-6 mb-8 border-b border-slate-200 gap-4">
+            <div class="flex items-center gap-4">
+                <div class="h-12 w-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 shadow-sm">
+                    <i data-lucide="calendar-range" class="w-6 h-6"></i>
                 </div>
-
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Schedule Management</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Create and coordinate daily operational travel routines for fleet buses.</p>
+                </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex gap-4">
-
-                <button class="bg-white px-5 py-3 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition font-semibold text-gray-700">
-                    📊 Analytics
+            <div class="flex items-center gap-3">
+                <button class="inline-flex items-center gap-2 bg-white border border-slate-200 px-4 py-2.5 rounded-xl shadow-sm hover:bg-slate-50 transition text-sm font-medium text-slate-700">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-500"></i> Analytics
                 </button>
-
-                <button class="bg-blue-600 text-white px-5 py-3 rounded-2xl shadow-lg hover:bg-blue-700 transition font-semibold">
-                    ➕ New Schedule
-                </button>
-
+                <a href="#add-schedule-card" class="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-sm hover:bg-blue-700 transition text-sm font-medium">
+                    <i data-lucide="plus" class="w-4 h-4"></i> New Schedule
+                </a>
             </div>
-
         </div>
 
-        <!-- Statistics -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
 
-            <!-- Total Schedules -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-lg border border-white/40 hover:-translate-y-1 transition">
-
-                <div class="flex justify-between items-center">
-
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Total Schedules
-                        </p>
-
-                        <h2 class="text-3xl font-extrabold text-gray-800 mt-2">
-                            {{ schedules|length }}
-                        </h2>
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Schedules</p>
+                        <h2 class="text-3xl font-bold text-slate-900 mt-2 tracking-tight">{{ schedules|length }}</h2>
                     </div>
-
-                    <div class="h-14 w-14 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
-                        🗓️
+                    <div class="p-3 rounded-xl bg-blue-50 text-blue-600">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- Available Buses -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-lg border border-white/40 hover:-translate-y-1 transition">
-
-                <div class="flex justify-between items-center">
-
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Available Buses
-                        </p>
-
-                        <h2 class="text-3xl font-extrabold text-gray-800 mt-2">
-                            {{ buses|length }}
-                        </h2>
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Available Buses</p>
+                        <h2 class="text-3xl font-bold text-slate-900 mt-2 tracking-tight">{{ buses|length }}</h2>
                     </div>
-
-                    <div class="h-14 w-14 rounded-2xl bg-green-100 flex items-center justify-center text-2xl">
-                        🚍
+                    <div class="p-3 rounded-xl bg-emerald-50 text-emerald-600">
+                        <i data-lucide="bus" class="w-5 h-5"></i>
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- Active Routes -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-lg border border-white/40 hover:-translate-y-1 transition">
-
-                <div class="flex justify-between items-center">
-
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Active Routes
-                        </p>
-
-                        <h2 class="text-3xl font-extrabold text-gray-800 mt-2">
-                            {{ buses|length }}
-                        </h2>
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Routes</p>
+                        <h2 class="text-3xl font-bold text-slate-900 mt-2 tracking-tight">{{ buses|length }}</h2>
                     </div>
-
-                    <div class="h-14 w-14 rounded-2xl bg-purple-100 flex items-center justify-center text-2xl">
-                        🛣️
+                    <div class="p-3 rounded-xl bg-purple-50 text-purple-600">
+                        <i data-lucide="milestone" class="w-5 h-5"></i>
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- Status -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-lg border border-white/40 hover:-translate-y-1 transition">
-
-                <div class="flex justify-between items-center">
-
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            System Status
-                        </p>
-
-                        <h2 class="text-xl font-bold text-green-600 mt-2">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">System Status</p>
+                        <div class="inline-flex items-center gap-1.5 mt-3 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                             Operational
-                        </h2>
+                        </div>
                     </div>
-
-                    <div class="h-14 w-14 rounded-2xl bg-yellow-100 flex items-center justify-center text-2xl">
-                        ⚡
+                    <div class="p-3 rounded-xl bg-amber-50 text-amber-600">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
                     </div>
-
                 </div>
-
             </div>
 
         </div>
 
-        <!-- Main Grid -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
 
-            <!-- Add Schedule Form -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/40 p-8 h-fit">
-
-                <div class="flex items-center justify-between mb-6">
-
+            <div id="add-schedule-card" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 scroll-mt-8">
+                <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-800">
-                            Add Schedule
-                        </h2>
-
-                        <p class="text-gray-500 text-sm mt-1">
-                            Create a new travel schedule.
-                        </p>
+                        <h2 class="text-base font-bold text-slate-900">Add Schedule</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Queue a new operation timeframe.</p>
                     </div>
-
-                    <div class="h-14 w-14 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
-                        ➕
+                    <div class="p-2.5 rounded-lg bg-slate-50 text-slate-400">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
                     </div>
-
                 </div>
 
-                <form method="post" class="space-y-5">
-
+                <form method="post" class="space-y-4">
                     {% csrf_token %}
 
-                    <!-- Bus -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Select Bus
-                        </label>
-
-                        <select name="bus"
-                                class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required>
-
-                            <option value="">Select bus</option>
-
+                        <label class="block mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-600">Select Fleet Bus</label>
+                        <select name="bus" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm" required>
+                            <option value="" disabled selected>Select bus vehicle...</option>
                             {% for bus in buses %}
                             <option value="{{ bus.id }}">
                                 {{ bus.bus_number }} ({{ bus.route.from_location }} → {{ bus.route.to_location }})
                             </option>
                             {% endfor %}
-
                         </select>
-
                     </div>
 
-                    <!-- Date -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Travel Date
-                        </label>
-
-                        <input type="date"
-                               name="travel_date"
-                               class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               required>
-
+                        <label class="block mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-600">Travel Date</label>
+                        <input type="date" name="travel_date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm" required>
                     </div>
 
-                    <!-- Time -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Departure Time
-                        </label>
-
-                        <input type="time"
-                               name="travel_time"
-                               class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               required>
-
+                        <label class="block mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-600">Departure Time</label>
+                        <input type="time" name="travel_time" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm" required>
                     </div>
 
-                    <!-- Submit -->
-                    <button type="submit"
-                            class="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold shadow-lg hover:scale-[1.02] transition">
-
-                        Save Schedule
-
+                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-slate-900 text-white mt-2 py-3 rounded-xl text-sm font-medium shadow-sm hover:bg-slate-800 transition">
+                        <i data-lucide="save" class="w-4 h-4"></i> Save Schedule
                     </button>
-
                 </form>
-
             </div>
 
-            <!-- Schedule Table -->
-            <div class="xl:col-span-2 bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/40 overflow-hidden">
+            <div class="xl:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
-                <!-- Table Header -->
-                <div class="p-6 border-b border-gray-100 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-
+                <div class="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-
-                        <h2 class="text-2xl font-bold text-gray-800">
-                            Today's Schedules
-                        </h2>
-
-                        <p class="text-gray-500 text-sm mt-1">
-                            View and manage all available schedules.
-                        </p>
-
+                        <h2 class="text-base font-bold text-slate-900">Today's Schedules</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Comprehensive view of current timeline schedules.</p>
                     </div>
 
-                    <!-- Filter -->
-                    <form method="get" class="flex flex-wrap gap-3 items-center">
-
-                        <label class="text-sm text-gray-600 font-medium">
-                            Filter Date
-                        </label>
-
-                        <input type="date"
-                               name="date"
-                               value="{{ selected_date }}"
-                               class="px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                        <button type="submit"
-                                class="bg-gray-900 text-white px-5 py-3 rounded-2xl hover:bg-black transition font-semibold">
-
+                    <form method="get" class="flex items-center gap-2">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide whitespace-nowrap">Filter Date:</span>
+                        <input type="date" name="date" value="{{ selected_date }}" class="px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-white">
+                        <button type="submit" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-medium transition border border-slate-200">
                             View
-
                         </button>
-
                     </form>
-
                 </div>
 
-                <!-- Table -->
                 <div class="overflow-x-auto">
-
-                    <table class="min-w-full">
-
-                        <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
-
-                            <tr>
-
-                                <th class="px-6 py-4 text-left">
-                                    Time
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Bus
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Route
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Price
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Status
-                                </th>
-
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/70 border-b border-slate-200 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                                <th class="px-6 py-4">Departure Time</th>
+                                <th class="px-6 py-4">Bus Identifier</th>
+                                <th class="px-6 py-4">Transit Route</th>
+                                <th class="px-6 py-4">Fare Cost</th>
+                                <th class="px-6 py-4">Status</th>
                             </tr>
-
                         </thead>
 
-                        <tbody class="divide-y divide-gray-100">
-
+                        <tbody class="divide-y divide-slate-100 text-sm">
                             {% for schedule in schedules %}
-
-                            <tr class="hover:bg-blue-50/40 transition">
-
-                                <td class="px-6 py-5 font-semibold text-gray-700">
-                                    {{ schedule.travel_time }}
+                            <tr class="hover:bg-slate-50/50 transition">
+                                <td class="px-6 py-4.5 font-semibold text-slate-900">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+                                        {{ schedule.travel_time }}
+                                    </div>
                                 </td>
-
-                                <td class="px-6 py-5 text-gray-700">
+                                <td class="px-6 py-4.5 text-slate-600 font-medium">
                                     {{ schedule.bus.bus_number }}
                                 </td>
-
-                                <td class="px-6 py-5 text-gray-700">
-                                    {{ schedule.bus.route.from_location }} → {{ schedule.bus.route.to_location }}
+                                <td class="px-6 py-4.5 text-slate-600">
+                                    <div class="flex items-center gap-1.5 text-slate-700 font-medium">
+                                        <span>{{ schedule.bus.route.from_location }}</span>
+                                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400"></i>
+                                        <span>{{ schedule.bus.route.to_location }}</span>
+                                    </div>
                                 </td>
-
-                                <td class="px-6 py-5 font-bold text-green-600">
-                                    KES {{ schedule.price }}
+                                <td class="px-6 py-4.5">
+                                    <span class="font-semibold text-slate-900">KES {{ schedule.price }}</span>
                                 </td>
-
-                                <td class="px-6 py-5">
-
-                                    <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                                <td class="px-6 py-4.5">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-xs font-medium">
                                         Active
                                     </span>
-
                                 </td>
-
                             </tr>
-
                             {% empty %}
-
                             <tr>
-
-                                <td colspan="5" class="px-6 py-12 text-center">
-
-                                    <div class="flex flex-col items-center">
-
-                                        <div class="text-5xl mb-4">
-                                            📅
+                                <td colspan="5" class="px-6 py-16 text-center">
+                                    <div class="max-w-sm mx-auto flex flex-col items-center">
+                                        <div class="p-4 rounded-full bg-slate-50 text-slate-400 mb-4">
+                                            <i data-lucide="calendar-x" class="w-8 h-8"></i>
                                         </div>
-
-                                        <h3 class="text-xl font-bold text-gray-700">
-                                            No schedules found
-                                        </h3>
-
-                                        <p class="text-gray-500 mt-2">
-                                            No schedules available for the selected date.
-                                        </p>
-
+                                        <h3 class="text-base font-semibold text-slate-900">No active itineraries</h3>
+                                        <p class="text-xs text-slate-400 mt-1">There are no operational records discovered matching your selected parameters.</p>
                                     </div>
-
                                 </td>
-
                             </tr>
-
                             {% endfor %}
-
                         </tbody>
-
                     </table>
-
                 </div>
 
             </div>
@@ -400,8 +224,11 @@
         </div>
 
     </div>
-
 </div>
+
+<script>
+    lucide.createIcons();
+</script>
 
 </body>
 </html>

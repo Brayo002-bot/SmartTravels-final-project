@@ -7,274 +7,190 @@
     <title>Train Schedule Management | SmartTravels</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-cyan-50">
+<body class="bg-gradient-to-br from-slate-100 via-slate-50 to-blue-50/50 text-slate-800 antialiased">
 
 <div class="flex min-h-screen">
 
-    <!-- Sidebar -->
     {% include 'train_admin/sidebar.html' %}
 
-    <!-- Main Content -->
-    <div class="ml-72 w-full p-8">
+    <div class="ml-64 w-full p-8">
 
-        <!-- Header -->
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-
             <div>
-
                 <div class="flex items-center gap-4">
-
-                    <div class="h-16 w-16 rounded-3xl bg-gradient-to-r from-cyan-600 to-blue-600 flex items-center justify-center text-3xl shadow-xl text-white">
-                        🚆
+                    <div class="h-14 w-14 rounded-xl bg-gradient-to-tr from-blue-700 to-cyan-500 flex items-center justify-center shadow-sm text-white shrink-0">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1zM13 16h9m-9 0H3m19 0V9a1 1 0 00-1-1h-8m9 8a1 1 0 01-1 1h-8" />
+                        </svg>
                     </div>
 
                     <div>
-                        <h1 class="text-4xl font-extrabold text-gray-800">
+                        <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">
                             Train Schedule Management
                         </h1>
-
-                        <p class="text-gray-500 mt-1">
-                            Manage daily train schedules and departures.
+                        <p class="text-slate-500 text-sm mt-0.5">
+                            Configure operational departure times and line frequencies.
                         </p>
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- Filter -->
-            <form method="get"
-                  class="bg-white/80 backdrop-blur-lg border border-white/40 shadow-xl rounded-3xl px-5 py-4 flex flex-wrap gap-3 items-center">
-
-                <label class="text-gray-600 font-medium">
+            <form method="get" class="bg-white/80 backdrop-blur-md border border-slate-200/60 shadow-sm rounded-xl px-4 py-3 flex items-center gap-3 flex-wrap lg:flex-nowrap">
+                <label class="text-slate-600 text-sm font-semibold whitespace-nowrap">
                     View Date
                 </label>
-
-                <input type="date"
-                       name="date"
-                       value="{{ selected_date }}"
-                       class="border border-gray-200 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-
-                <button type="submit"
-                        class="bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-6 py-3 rounded-2xl font-semibold hover:scale-105 transition">
-                    View
+                <input type="date" name="date" value="{{ selected_date }}" class="border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition font-medium text-slate-700">
+                <button type="submit" class="bg-slate-950 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold transition shadow-sm">
+                    Filter
                 </button>
-
             </form>
-
         </div>
 
-        <!-- Main Grid -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
 
-            <!-- Add Schedule Form -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-8">
-
+            <div class="bg-white border border-slate-200/60 rounded-xl p-6 shadow-sm">
                 <div class="flex items-center gap-3 mb-6">
-
-                    <div class="h-12 w-12 rounded-2xl bg-cyan-100 flex items-center justify-center text-2xl">
-                        ➕
+                    <div class="h-10 w-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
                     </div>
-
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-800">
-                            Add Schedule
-                        </h2>
-
-                        <p class="text-sm text-gray-500">
-                            Create a new train schedule.
-                        </p>
+                        <h2 class="text-lg font-bold text-slate-900">Add Schedule</h2>
+                        <p class="text-xs text-slate-500">Provision a new departure interval.</p>
                     </div>
-
                 </div>
 
-                <form method="post" class="space-y-5">
-
+                <form method="post" class="space-y-4">
                     {% csrf_token %}
 
-                    <!-- Train -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Select Train
-                        </label>
-
-                        <select name="train"
-                                class="w-full border border-gray-200 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white"
-                                required>
-
-                            <option value="">
-                                Choose train
-                            </option>
-
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Select Active Train</label>
+                        <select name="train" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 bg-white text-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition font-medium text-sm" required>
+                            <option value="" class="text-slate-400">Choose locomotive...</option>
                             {% for train in trains %}
                             <option value="{{ train.id }}">
-                                {{ train.train_number }} ({{ train.route.from_location }} → {{ train.route.to_location }})
+                                {{ train.train_number }} ({{ train.route.from_location }} &rarr; {{ train.route.to_location }})
                             </option>
                             {% endfor %}
-
                         </select>
-
                     </div>
 
-                    <!-- Travel Date -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Travel Date
-                        </label>
-
-                        <input type="date"
-                               name="travel_date"
-                               class="w-full border border-gray-200 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                               required>
-
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Travel Date</label>
+                        <input type="date" name="travel_date" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 bg-white text-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition font-medium text-sm" required>
                     </div>
 
-                    <!-- Travel Time -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Departure Time
-                        </label>
-
-                        <input type="time"
-                               name="travel_time"
-                               class="w-full border border-gray-200 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                               required>
-
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Departure Timestamp</label>
+                        <input type="time" name="travel_time" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 bg-white text-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition font-medium text-sm" required>
                     </div>
 
-                    <!-- Submit -->
-                    <button type="submit"
-                            class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white py-4 rounded-2xl font-bold text-lg hover:scale-[1.02] transition shadow-xl">
-
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold text-sm shadow-sm transition mt-2">
                         Create Schedule
-
                     </button>
-
                 </form>
-
             </div>
 
-            <!-- Schedule Table -->
-            <div class="xl:col-span-2 bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
-
-                <!-- Header -->
-                <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
+            <div class="xl:col-span-2 bg-white border border-slate-200/60 rounded-xl shadow-sm overflow-hidden">
+                
+                <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-50/50">
                     <div>
-
-                        <h2 class="text-2xl font-bold text-gray-800">
+                        <h2 class="text-xl font-bold text-slate-900">
                             Schedules for {{ selected_date }}
                         </h2>
-
-                        <p class="text-sm text-gray-500 mt-1">
-                            View all scheduled train departures.
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            Overview of scheduled asset deployments.
                         </p>
-
                     </div>
-
-                    <div class="bg-cyan-100 text-cyan-700 px-4 py-2 rounded-2xl font-semibold text-sm">
-                        🚉 {{ schedules|length }} Schedule{{ schedules|length|pluralize }}
+                    <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-blue-700 px-3 py-1.5 rounded-lg font-semibold text-xs tracking-wide uppercase self-start sm:self-auto shadow-sm">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 001 1z"/>
+                        </svg>
+                        {{ schedules|length }} Line Operations
                     </div>
-
                 </div>
 
-                <!-- Table -->
                 <div class="overflow-x-auto">
-
-                    <table class="min-w-full">
-
-                        <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
-
-                            <tr>
-                                <th class="px-6 py-4 text-left">Departure Time</th>
-                                <th class="px-6 py-4 text-left">Train</th>
-                                <th class="px-6 py-4 text-left">Route</th>
-                                <th class="px-6 py-4 text-left">Price</th>
+                    <table class="w-full min-w-max border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 text-xs font-bold uppercase tracking-wider">
+                                <th class="px-6 py-3.5 text-left font-semibold">Departure Time</th>
+                                <th class="px-6 py-3.5 text-left font-semibold">Train Asset</th>
+                                <th class="px-6 py-3.5 text-left font-semibold">Assigned Route</th>
+                                <th class="px-6 py-3.5 text-left font-semibold">Base Fare</th>
                             </tr>
-
                         </thead>
-
-                        <tbody class="divide-y divide-gray-100 bg-white">
-
+                        <tbody class="divide-y divide-slate-100 text-sm">
                             {% for schedule in schedules %}
-
-                            <tr class="hover:bg-cyan-50 transition">
-
-                                <td class="px-6 py-5 font-semibold text-gray-700">
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="px-6 py-4 font-bold text-slate-900">
                                     {{ schedule.travel_time }}
                                 </td>
-
-                                <td class="px-6 py-5 text-gray-700">
-                                    <div class="flex items-center gap-3">
-
-                                        <div class="h-10 w-10 rounded-xl bg-cyan-100 flex items-center justify-center text-lg">
-                                            🚆
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="h-7 w-7 rounded-md bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                            </svg>
                                         </div>
-
-                                        <span class="font-semibold">
+                                        <span class="font-semibold text-slate-800">
                                             {{ schedule.train.train_number }}
                                         </span>
-
                                     </div>
                                 </td>
-
-                                <td class="px-6 py-5 text-gray-700 font-medium">
-                                    {{ schedule.train.route.from_location }} → {{ schedule.train.route.to_location }}
+                                <td class="px-6 py-4 text-slate-600 font-medium">
+                                    <div class="flex items-center gap-2">
+                                        <span>{{ schedule.train.route.from_location }}</span>
+                                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                        </svg>
+                                        <span>{{ schedule.train.route.to_location }}</span>
+                                    </div>
                                 </td>
-
-                                <td class="px-6 py-5">
-                                    <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-bold">
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center bg-emerald-50 border border-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md text-xs font-bold tracking-wide">
                                         KES {{ schedule.price }}
                                     </span>
                                 </td>
-
                             </tr>
-
                             {% empty %}
-
                             <tr>
-
                                 <td colspan="4" class="px-6 py-16 text-center">
-
-                                    <div class="flex flex-col items-center justify-center">
-
-                                        <div class="text-6xl mb-4">
-                                            🚉
+                                    <div class="max-w-sm mx-auto flex flex-col items-center justify-center">
+                                        <div class="h-12 w-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mb-3 shadow-inner">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                            </svg>
                                         </div>
-
-                                        <h3 class="text-xl font-bold text-gray-700">
-                                            No Schedules Found
-                                        </h3>
-
-                                        <p class="text-gray-500 mt-2">
-                                            No train schedules available for this date.
+                                        <h3 class="text-sm font-bold text-slate-800">No Rosters Scheduled</h3>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            There are no system runs populated on the query index matching this selected date.
                                         </p>
-
                                     </div>
-
                                 </td>
-
                             </tr>
-
                             {% endfor %}
-
                         </tbody>
-
                     </table>
-
                 </div>
 
             </div>
-
         </div>
 
     </div>
-
 </div>
 
 </body>

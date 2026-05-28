@@ -1,260 +1,205 @@
 {% load static %}
 
-<!-- Mobile Backdrop -->
 <div id="passenger-sidebar-backdrop"
-     class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden lg:hidden z-40 transition-opacity duration-300">
+     class="fixed inset-0 bg-slate-950/40 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden z-40">
 </div>
 
-<!-- Mobile Toggle -->
-<button id="passenger-sidebar-open"
-    class="lg:hidden fixed top-5 left-5 z-50 flex items-center gap-3 rounded-2xl bg-slate-950/95 border border-white/10 px-5 py-3 text-sm font-medium text-white shadow-2xl backdrop-blur-xl hover:bg-slate-900 transition-all duration-300">
-    
-    <span class="text-xl">☰</span>
-    <span>Menu</span>
-</button>
+<header class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-4 flex items-center justify-between z-30 shadow-sm">
+    <div class="flex items-center gap-2">
+        <img src="{% static 'images/logo.jpeg' %}" alt="SmartTravels" class="w-8 h-8 rounded-xl object-cover border border-slate-700">
+        <span class="text-sm font-bold tracking-wide text-white">SmartTravels</span>
+    </div>
+    <button id="passenger-sidebar-open"
+            class="rounded-xl bg-slate-800 border border-slate-700 p-2.5 text-slate-300 hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-cyan-500/40">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+    </button>
+</header>
 
-<!-- Sidebar -->
 <aside id="passenger-sidebar"
-    class="fixed inset-y-0 left-0 z-50 hidden lg:flex flex-col h-screen w-72 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-r border-white/10 backdrop-blur-2xl shadow-2xl overflow-hidden">
+    class="fixed inset-y-0 left-0 z-50 flex flex-col h-screen w-72 bg-slate-950 border-r border-slate-900 shadow-2xl overflow-hidden transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
 
-    <!-- Decorative Glow -->
-    <div class="absolute -top-24 -left-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute bottom-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -top-24 -left-24 w-56 h-56 bg-cyan-500/10 blur-[80px] rounded-full pointer-events-none"></div>
 
-    <!-- Header -->
-    <div class="relative p-6 border-b border-white/10 flex items-center justify-between">
-        
-        <div class="flex items-center gap-4">
-            <div class="relative">
-                <img src="{% static 'images/logo.jpeg' %}"
-                     alt="SmartTravels"
-                     class="w-14 h-14 rounded-3xl object-cover border border-white/10 shadow-lg">
-                
-                <div class="absolute inset-0 rounded-3xl ring-2 ring-amber-400/20"></div>
-            </div>
-
+    <div class="relative px-6 py-5 border-b border-slate-900 flex items-center justify-between">
+        <div class="flex items-center gap-3.5">
+            <img src="{% static 'images/logo.jpeg' %}"
+                 alt="SmartTravels"
+                 class="w-10 h-10 rounded-xl object-cover border border-slate-800 shadow-md">
             <div>
-                <h2 class="text-2xl font-bold text-white tracking-tight">
-                    SmartTravels
-                </h2>
-                <p class="text-[11px] uppercase tracking-[0.3em] text-slate-400">
-                    Passenger Portal
-                </p>
+                <h2 class="text-sm font-bold tracking-wide text-white">SmartTravels</h2>
+                <p class="text-[10px] uppercase tracking-[0.15em] text-cyan-500 font-semibold mt-0.5">Passenger Portal</p>
             </div>
         </div>
 
-        <!-- Close -->
         <button id="passenger-sidebar-close"
-            class="lg:hidden flex items-center justify-center w-10 h-10 rounded-2xl bg-white/5 text-white hover:bg-white/10 transition">
-            ✕
+                class="lg:hidden p-2 rounded-xl border border-slate-800 text-slate-400 hover:bg-slate-900 hover:text-white transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
         </button>
     </div>
 
-    <!-- User Card -->
-    <div class="px-5 pt-5">
-        <div class="rounded-3xl bg-white/5 border border-white/10 p-5 backdrop-blur-xl shadow-lg">
-
-            <div class="flex items-center gap-4">
-                
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-lg font-bold text-slate-950 shadow-lg">
+    <div class="px-4 pt-5 pb-2">
+        <div class="bg-gradient-to-b from-slate-900 to-slate-900/50 border border-slate-900 rounded-2xl p-4 shadow-inner">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-sm font-bold text-white shadow-md ring-2 ring-cyan-500/20">
                     {{ request.user.first_name|first|default:"P" }}
                 </div>
-
-                <div>
-                    <div class="text-base font-semibold text-white">
+                <div class="min-w-0 flex-1">
+                    <div class="text-sm font-semibold text-slate-200 truncate">
                         {{ request.user.get_full_name|default:request.user.username }}
                     </div>
-
-                    <div class="text-xs text-slate-400 mt-1">
+                    <div class="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                         {{ loyalty_tier|default:'Passenger' }} Member
                     </div>
                 </div>
             </div>
 
-            <!-- Loyalty -->
-            <div class="mt-5 rounded-2xl bg-gradient-to-r from-amber-500/10 to-yellow-400/10 border border-amber-400/20 p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-xs uppercase tracking-wider text-amber-200/70">
-                            Loyalty Points
-                        </div>
-                        <div class="text-2xl font-bold text-amber-300 mt-1">
-                            {{ loyalty_points }}
-                        </div>
-                    </div>
-
-                    <div class="text-3xl">
-                        ⭐
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Navigation -->
-    <div class="relative flex-1 px-4 py-6 overflow-y-auto space-y-2">
-
-        <!-- Dashboard -->
-        <a href="{% url 'dashboard' %}"
-           class="group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-medium transition-all duration-300 border
-           {% if active == 'dashboard' %}
-           bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border-amber-400/30 text-amber-300 shadow-lg
-           {% else %}
-           border-transparent text-slate-300 hover:bg-white/5 hover:text-white hover:border-white/10
-           {% endif %}">
-
-            <div class="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition">
-                🏠
-            </div>
-
-            <div>
-                <div>Dashboard</div>
-                <div class="text-xs text-slate-500">Overview & analytics</div>
-            </div>
-        </a>
-
-        <!-- Bookings -->
-        <a href="{% url 'my_bookings' %}"
-           class="group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-medium transition-all duration-300 border
-           {% if active == 'bookings' %}
-           bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border-amber-400/30 text-amber-300 shadow-lg
-           {% else %}
-           border-transparent text-slate-300 hover:bg-white/5 hover:text-white hover:border-white/10
-           {% endif %}">
-
-            <div class="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/5">
-                🎫
-            </div>
-
-            <div>
-                <div>My Bookings</div>
-                <div class="text-xs text-slate-500">Trips & reservations</div>
-            </div>
-        </a>
-
-        <!-- Payments -->
-        <a href="{% url 'payments' %}"
-           class="group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-medium transition-all duration-300 border
-           {% if active == 'payments' %}
-           bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border-amber-400/30 text-amber-300 shadow-lg
-           {% else %}
-           border-transparent text-slate-300 hover:bg-white/5 hover:text-white hover:border-white/10
-           {% endif %}">
-
-            <div class="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/5">
-                💳
-            </div>
-
-            <div>
-                <div>Payments</div>
-                <div class="text-xs text-slate-500">Transaction history</div>
-            </div>
-        </a>
-
-        <!-- Parcels -->
-        <a href="{% url 'track_parcel' %}"
-           class="group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-medium transition-all duration-300 border
-           {% if active == 'track_parcel' %}
-           bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border-amber-400/30 text-amber-300 shadow-lg
-           {% else %}
-           border-transparent text-slate-300 hover:bg-white/5 hover:text-white hover:border-white/10
-           {% endif %}">
-
-            <div class="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/5">
-                📦
-            </div>
-
-            <div>
-                <div>Track Parcel</div>
-                <div class="text-xs text-slate-500">Live GPS tracking</div>
-            </div>
-        </a>
-
-        <!-- Loyalty -->
-        <a href="{% url 'loyalty' %}"
-           class="group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-medium transition-all duration-300 border
-           {% if active == 'loyalty' %}
-           bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border-amber-400/30 text-amber-300 shadow-lg
-           {% else %}
-           border-transparent text-slate-300 hover:bg-white/5 hover:text-white hover:border-white/10
-           {% endif %}">
-
-            <div class="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/5">
-                ⭐
-            </div>
-
-            <div>
-                <div>Loyalty Points</div>
-                <div class="text-xs text-slate-500">Rewards & redemption</div>
-            </div>
-        </a>
-
-        <!-- Support -->
-        <a href="{% url 'support' %}"
-           class="group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-medium transition-all duration-300 border
-           {% if active == 'support' %}
-           bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border-amber-400/30 text-amber-300 shadow-lg
-           {% else %}
-           border-transparent text-slate-300 hover:bg-white/5 hover:text-white hover:border-white/10
-           {% endif %}">
-
-            <div class="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/5">
-                💬
-            </div>
-
-            <div>
-                <div>Support</div>
-                <div class="text-xs text-slate-500">Help & assistance</div>
-            </div>
-        </a>
-
-        <!-- Traffic -->
-        <a href="{% url 'traffic_alerts' %}"
-           class="group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-medium transition-all duration-300 border
-           {% if active == 'traffic' %}
-           bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border-amber-400/30 text-amber-300 shadow-lg
-           {% else %}
-           border-transparent text-slate-300 hover:bg-white/5 hover:text-white hover:border-white/10
-           {% endif %}">
-
-            <div class="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/5">
-                🚦
-            </div>
-
-            <div>
-                <div>Traffic Alerts</div>
-                <div class="text-xs text-slate-500">Road & route updates</div>
-            </div>
-        </a>
-
-    </div>
-
-    <!-- Footer -->
-    <div class="relative p-5 border-t border-white/10">
-        
-        <div class="rounded-3xl bg-gradient-to-r from-red-500/10 to-rose-500/10 border border-red-400/20 p-4">
-            
-            <div class="flex items-center justify-between gap-3">
-                
+            <div class="mt-4 border border-cyan-500/10 bg-cyan-950/30 rounded-xl px-4 py-3 flex items-center justify-between">
                 <div>
-                    <div class="text-sm font-semibold text-white">
-                        Ready to leave?
-                    </div>
-
-                    <div class="text-xs text-slate-400 mt-1">
-                        Securely logout from your account
-                    </div>
+                    <p class="text-[10px] uppercase tracking-wider text-slate-500 font-medium">Loyalty Points</p>
+                    <h3 class="text-base font-bold text-cyan-400 mt-0.5">{{ loyalty_points }}</h3>
                 </div>
-
-                <a href="{% url 'logout' %}"
-                   class="inline-flex items-center justify-center rounded-2xl bg-red-500/15 px-5 py-3 text-sm font-semibold text-red-300 hover:bg-red-500/25 transition">
-                    Logout
-                </a>
+                <div class="p-2 bg-cyan-500/10 rounded-lg text-cyan-400">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499c.172-.435.744-.435.916 0l2.3c1.022.24 1.819 1.038 2.059 2.06l.24 2.3c.045.424.38.758.804.803l2.3.24c1.022.24 1.82 1.039 2.06 2.06l.24 2.3c.045.424-.09 1.089-.475 1.258l-1.885 1.413c-.322.242-.458.665-.335 1.052l.67 2.212c.3.985-.71 1.718-1.537 1.192l-1.92-1.222a1.125 1.125 0 00-1.192 0l-1.92 1.222c-.827.526-1.837-.207-1.537-1.192l.67-2.212a1.125 1.125 0 00-.335-1.052l-1.885-1.413c-.385-.289-.52-.834-.475-1.258l.24-2.3a1.125 1.125 0 00.804-.803l.24-2.3z" />
+                    </svg>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <div class="flex-1 px-3 py-4 overflow-y-auto custom-scrollbar">
+        <p class="text-[10px] uppercase tracking-[0.2em] text-slate-600 px-3 mb-2 font-bold">Menu</p>
+        <div class="space-y-1">
+
+            <a href="{% url 'dashboard' %}"
+               class="group relative flex items-start gap-3 rounded-xl px-4 py-3 text-xs font-medium border transition-all duration-200
+               {% if active == 'dashboard' %}
+               bg-cyan-500/5 border-cyan-500/20 text-cyan-400 before:absolute before:left-0 before:top-3 before:bottom-3 before:w-1 before:bg-cyan-400 before:rounded-r-md
+               {% else %}
+               border-transparent text-slate-400 hover:bg-slate-900/60 hover:text-slate-200
+               {% endif %}">
+                <svg class="w-4 h-4 mt-0.5 shrink-0 transition-colors {% if active == 'dashboard' %}text-cyan-400{% else %}text-slate-500 group-hover:text-slate-300{% endif %}" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
+                </svg>
+                <div>
+                    <div class="font-semibold text-slate-200">Dashboard</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">Overview & analytics</div>
+                </div>
+            </a>
+
+            <a href="{% url 'my_bookings' %}"
+               class="group relative flex items-start gap-3 rounded-xl px-4 py-3 text-xs font-medium border transition-all duration-200
+               {% if active == 'bookings' %}
+               bg-cyan-500/5 border-cyan-500/20 text-cyan-400 before:absolute before:left-0 before:top-3 before:bottom-3 before:w-1 before:bg-cyan-400 before:rounded-r-md
+               {% else %}
+               border-transparent text-slate-400 hover:bg-slate-900/60 hover:text-slate-200
+               {% endif %}">
+                <svg class="w-4 h-4 mt-0.5 shrink-0 transition-colors {% if active == 'bookings' %}text-cyan-400{% else %}text-slate-500 group-hover:text-slate-300{% endif %}" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18M5.25 6h13.5A2.25 2.25 0 0121 8.25v8.25A2.25 2.25 0 0118.75 19H5.25A2.25 2.25 0 013 16.75V8.25A2.25 2.25 0 015.25 6z" />
+                </svg>
+                <div>
+                    <div class="font-semibold text-slate-200">My Bookings</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">Trips & reservations</div>
+                </div>
+            </a>
+
+            <a href="{% url 'payments' %}"
+               class="group relative flex items-start gap-3 rounded-xl px-4 py-3 text-xs font-medium border transition-all duration-200
+               {% if active == 'payments' %}
+               bg-cyan-500/5 border-cyan-500/20 text-cyan-400 before:absolute before:left-0 before:top-3 before:bottom-3 before:w-1 before:bg-cyan-400 before:rounded-r-md
+               {% else %}
+               border-transparent text-slate-400 hover:bg-slate-900/60 hover:text-slate-200
+               {% endif %}">
+                <svg class="w-4 h-4 mt-0.5 shrink-0 transition-colors {% if active == 'payments' %}text-cyan-400{% else %}text-slate-500 group-hover:text-slate-300{% endif %}" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+                </svg>
+                <div>
+                    <div class="font-semibold text-slate-200">Payments</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">Transactions</div>
+                </div>
+            </a>
+
+            <a href="{% url 'track_parcel' %}"
+               class="group relative flex items-start gap-3 rounded-xl px-4 py-3 text-xs font-medium border transition-all duration-200
+               {% if active == 'track_parcel' %}
+               bg-cyan-500/5 border-cyan-500/20 text-cyan-400 before:absolute before:left-0 before:top-3 before:bottom-3 before:w-1 before:bg-cyan-400 before:rounded-r-md
+               {% else %}
+               border-transparent text-slate-400 hover:bg-slate-900/60 hover:text-slate-200
+               {% endif %}">
+                <svg class="w-4 h-4 mt-0.5 shrink-0 transition-colors {% if active == 'track_parcel' %}text-cyan-400{% else %}text-slate-500 group-hover:text-slate-300{% endif %}" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                </svg>
+                <div>
+                    <div class="font-semibold text-slate-200">Parcel Tracking</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">Live parcel status</div>
+                </div>
+            </a>
+
+            <a href="{% url 'loyalty' %}"
+               class="group relative flex items-start gap-3 rounded-xl px-4 py-3 text-xs font-medium border transition-all duration-200
+               {% if active == 'loyalty' %}
+               bg-cyan-500/5 border-cyan-500/20 text-cyan-400 before:absolute before:left-0 before:top-3 before:bottom-3 before:w-1 before:bg-cyan-400 before:rounded-r-md
+               {% else %}
+               border-transparent text-slate-400 hover:bg-slate-900/60 hover:text-slate-200
+               {% endif %}">
+                <svg class="w-4 h-4 mt-0.5 shrink-0 transition-colors {% if active == 'loyalty' %}text-cyan-400{% else %}text-slate-500 group-hover:text-slate-300{% endif %}" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5v-8.25M12 4.5v15m0-15a3 3 0 013 3v3H9v-3a3 3 0 013-3z" />
+                </svg>
+                <div>
+                    <div class="font-semibold text-slate-200">Loyalty Program</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">Rewards & points</div>
+                </div>
+            </a>
+
+            <a href="{% url 'support' %}"
+               class="group relative flex items-start gap-3 rounded-xl px-4 py-3 text-xs font-medium border transition-all duration-200
+               {% if active == 'support' %}
+               bg-cyan-500/5 border-cyan-500/20 text-cyan-400 before:absolute before:left-0 before:top-3 before:bottom-3 before:w-1 before:bg-cyan-400 before:rounded-r-md
+               {% else %}
+               border-transparent text-slate-400 hover:bg-slate-900/60 hover:text-slate-200
+               {% endif %}">
+                <svg class="w-4 h-4 mt-0.5 shrink-0 transition-colors {% if active == 'support' %}text-cyan-400{% else %}text-slate-500 group-hover:text-slate-300{% endif %}" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                    <div class="font-semibold text-slate-200">Support Centre</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">Help & assistance</div>
+                </div>
+            </a>
+
+            <a href="{% url 'traffic_alerts' %}"
+               class="group relative flex items-start gap-3 rounded-xl px-4 py-3 text-xs font-medium border transition-all duration-200
+               {% if active == 'traffic' %}
+               bg-cyan-500/5 border-cyan-500/20 text-cyan-400 before:absolute before:left-0 before:top-3 before:bottom-3 before:w-1 before:bg-cyan-400 before:rounded-r-md
+               {% else %}
+               border-transparent text-slate-400 hover:bg-slate-900/60 hover:text-slate-200
+               {% endif %}">
+                <svg class="w-4 h-4 mt-0.5 shrink-0 transition-colors {% if active == 'traffic' %}text-cyan-400{% else %}text-slate-500 group-hover:text-slate-300{% endif %}" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+                <div>
+                    <div class="font-semibold text-slate-200">Traffic Alerts</div>
+                    <div class="text-[10px] text-slate-500 font-normal mt-0.5">Route updates</div>
+                </div>
+            </a>
 
         </div>
     </div>
 
+    <div class="p-4 border-t border-slate-900 bg-slate-950/60 backdrop-blur-sm">
+        <a href="{% url 'logout' %}"
+           class="w-full flex items-center justify-center gap-2 rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-xs font-semibold text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-all duration-200">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+            </svg>
+            Logout
+        </a>
+    </div>
 </aside>
 
 <script>
@@ -265,15 +210,25 @@
     const backdrop = document.getElementById('passenger-sidebar-backdrop');
 
     function toggleSidebar(open) {
-        if (!sidebar) return;
+        if (!sidebar || !backdrop) return;
 
         if (open) {
-            sidebar.classList.remove('hidden');
-            backdrop.classList.remove('hidden');
+            // Slide sidebar in
+            sidebar.classList.remove('-translate-x-full');
+            
+            // Fade backdrop in
+            backdrop.classList.remove('pointer-events-none');
+            backdrop.classList.add('opacity-100');
+            
             document.body.classList.add('overflow-hidden');
         } else {
-            sidebar.classList.add('hidden');
-            backdrop.classList.add('hidden');
+            // Slide sidebar out
+            sidebar.classList.add('-translate-x-full');
+            
+            // Fade backdrop out
+            backdrop.classList.remove('opacity-100');
+            backdrop.classList.add('pointer-events-none');
+            
             document.body.classList.remove('overflow-hidden');
         }
     }

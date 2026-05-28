@@ -4,3 +4,48 @@ i want the bus admin, flight admin, train admin and technical staff as they book
 in the bus admin, train admin and flight admin, where they book for passengers, i want after entering the passengers details they should be able to search for a vehicle and select the seat for the passenger like in the technical staff dashboard, in the technical staff boarding control, he should be able to select the routes and the vehicles that the company has registered and be able to see the manifest of passengers who have already booked
 most of the data when i press loyalty points are hardcoded and not dynamic, i want them to be dynamic and also the one showing in the sidebar is not dynamic from the database. correct them for me. also the stk push is still working as a simulator, when i press it it just generates the ticket without prompting the user. i want it to prompt the user first then generates the ticket and after that it sends the ticket to the user using email
 i wnated the seat simulation to be modified by the bus admin as he adds the buses, train admin as he adds the trains and flight admin as he adds the flights not the system admin. and in the system admin section in the templates i want it to have a sidebar with all the links
+i think the book and prompt button should not be there, let it be the same as the passengers, where after searching for the available trip you choose seat also and is when you prompt;, im getting this error currently in the terminal when i press the button ; [28/May/2026 07:13:35] "GET /technical-staff/ HTTP/1.1" 200 30861
+[28/May/2026 07:13:38] "GET /technical-staff/booking-assist/ HTTP/1.1" 200 19332
+[28/May/2026 07:13:47] "POST /technical-staff/booking-assist/ HTTP/1.1" 200 22881
+Booking error: Cannot resolve keyword 'vehicle_number' into field. Choices are: available_seats, bookings, bus_number, company, company_id, description, driver, driver_id, id, is_cargo, normal_seats, number_plate, route, route_id, schedules, vip_seats
+Traceback (most recent call last):
+  File "C:\Users\Home\Documents\Brian's Project\smarttravels\apps\technical_staff\views.py", line 185, in tech_booking_assist
+    vehicle = Bus.objects.filter(company=company, vehicle_number=vehicle_name.split(' ')[-1]).first()
+              ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Home\Documents\Brian's Project\smarttravels\venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Home\Documents\Brian's Project\smarttravels\venv\Lib\site-packages\django\db\models\query.py", line 1495, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Home\Documents\Brian's Project\smarttravels\venv\Lib\site-packages\django\db\models\query.py", line 1513, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Home\Documents\Brian's Project\smarttravels\venv\Lib\site-packages\django\db\models\query.py", line 1523, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Home\Documents\Brian's Project\smarttravels\venv\Lib\site-packages\django\db\models\sql\query.py", line 1648, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Home\Documents\Brian's Project\smarttravels\venv\Lib\site-packages\django\db\models\sql\query.py", line 1680, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ~~~~~~~~~~~~~~~~~^
+        child,
+        ^^^^^^
+    ...<7 lines>...
+        update_join_types=update_join_types,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Home\Documents\Brian's Project\smarttravels\venv\Lib\site-packages\django\db\models\sql\query.py", line 1528, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Home\Documents\Brian's Project\smarttravels\venv\Lib\site-packages\django\db\models\sql\query.py", line 1335, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Home\Documents\Brian's Project\smarttravels\venv\Lib\site-packages\django\db\models\sql\query.py", line 1813, in names_to_path
+    raise FieldError(
+    ...<2 lines>...
+    )
+django.core.exceptions.FieldError: Cannot resolve keyword 'vehicle_number' into field. Choices are: available_seats, bookings, bus_number, company, company_id, description, driver, driver_id, id, is_cargo, normal_seats, number_plate, route, route_id, schedules, vip_seats
+[28/May/2026 07:13:58] "POST /technical-staff/booking-assist/ HTTP/1.1" 200 19416

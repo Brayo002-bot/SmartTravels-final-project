@@ -5,126 +5,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Train | SmartTravels</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-cyan-50">
+<body class="bg-slate-50 text-slate-900 font-sans antialiased">
 
 <div class="flex min-h-screen">
 
-    <!-- Sidebar -->
     {% include 'train_admin/sidebar.html' %}
 
-    <!-- Main Content -->
-    <div class="ml-72 w-full p-8">
+    <div class="flex-1 p-8 max-w-7xl mx-auto w-full">
 
-        <!-- Header -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-
-            <div>
-
-                <div class="flex items-center gap-4">
-
-                    <div class="h-16 w-16 rounded-3xl bg-gradient-to-r from-cyan-600 to-blue-600 flex items-center justify-center text-3xl shadow-xl text-white">
-                        🚆
-                    </div>
-
-                    <div>
-                        <h1 class="text-4xl font-extrabold text-gray-800">
-                            Add Train
-                        </h1>
-
-                        <p class="text-gray-500 mt-1">
-                            Manage trains, routes, conductors and seat layouts.
-                        </p>
-                    </div>
-
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-200 pb-6 mb-8 gap-4">
+            <div class="flex items-center gap-4">
+                <div class="h-12 w-12 rounded-xl bg-cyan-600 flex items-center justify-center text-2xl shadow-sm text-white">
+                    🚆
                 </div>
-
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Add Train</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Manage trains, routes, conductors and seat layouts.</p>
+                </div>
             </div>
-
         </div>
 
-        <!-- FORM SECTION -->
-        <div class="bg-white/80 backdrop-blur-lg border border-white/40 shadow-2xl rounded-3xl p-8 mb-10">
-
-            <div class="flex items-center gap-3 mb-8">
-
-                <div class="h-12 w-12 rounded-2xl bg-cyan-100 flex items-center justify-center text-2xl">
+        <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 mb-8">
+            <div class="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+                <div class="h-10 w-10 rounded-xl bg-cyan-50 flex items-center justify-center text-xl text-cyan-600">
                     ➕
                 </div>
-
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Create New Train
-                    </h2>
-
-                    <p class="text-sm text-gray-500">
-                        Add train details and configure seating capacity.
-                    </p>
+                    <h2 class="text-lg font-semibold text-slate-900">Create New Train</h2>
+                    <p class="text-xs text-slate-500">Add train details and configure seating capacity.</p>
                 </div>
-
             </div>
 
             <form method="POST">
-
                 {% csrf_token %}
 
-                <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-                    <!-- LEFT SIDE -->
-                    <div class="space-y-6">
-
-                        <!-- Train Number -->
+                    <div class="space-y-5">
                         <div>
-
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                Train Number
-                            </label>
-
+                            <label class="block mb-1.5 text-sm font-medium text-slate-700">Train Number</label>
                             <input type="text"
                                    name="train_number"
                                    placeholder="e.g. SGR-001"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                   class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 bg-white transition"
                                    required>
-
                         </div>
 
-                        <!-- Route -->
                         <div>
-
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                Select Route
-                            </label>
-
+                            <label class="block mb-1.5 text-sm font-medium text-slate-700">Select Route</label>
                             <select name="route"
-                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                    class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 bg-white transition appearance-none"
                                     required>
-
-                                <option value="">
-                                    Choose Route
-                                </option>
-
+                                <option value="">Choose Route</option>
                                 {% for route in routes %}
-                                <option value="{{ route.id }}">
-                                    {{ route }}
-                                </option>
+                                <option value="{{ route.id }}">{{ route }}</option>
                                 {% endfor %}
-
                             </select>
-
                         </div>
 
-                        <!-- Vehicle Type -->
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                Vehicle Type
-                            </label>
-
+                            <label class="block mb-1.5 text-sm font-medium text-slate-700">Vehicle Type</label>
                             <select id="train-vehicle-type"
                                     name="vehicle_type"
-                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                    class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 bg-white transition"
                                     onchange="updateTrainMode()"
                                     required>
                                 <option value="passenger">Passenger Train</option>
@@ -132,393 +89,238 @@
                             </select>
                         </div>
 
-                        <!-- Conductor -->
                         <div>
-
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                Select Conductor
-                            </label>
-
+                            <label class="block mb-1.5 text-sm font-medium text-slate-700">Select Conductor</label>
                             <select name="conductor"
-                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                    class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 bg-white transition"
                                     required>
-
-                                <option value="">
-                                    Choose Conductor
-                                </option>
-
+                                <option value="">Choose Conductor</option>
                                 {% for conductor in conductors %}
-                                <option value="{{ conductor.id }}">
-                                    {{ conductor.name }}
-                                </option>
+                                <option value="{{ conductor.id }}">{{ conductor.name }}</option>
                                 {% endfor %}
-
                             </select>
-
                         </div>
 
-                        <!-- Description -->
                         <div>
-
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                Train Description
-                            </label>
-
+                            <label class="block mb-1.5 text-sm font-medium text-slate-700">Train Description</label>
                             <textarea name="description"
-                                      rows="5"
+                                      rows="4"
                                       placeholder="Describe the train services, comfort, amenities and features..."
-                                      class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
-
+                                      class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 bg-white transition resize-none"></textarea>
                         </div>
-
                     </div>
 
-                    <!-- RIGHT SIDE -->
                     <div id="train-passenger-config">
-
-                        <div class="bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-100 rounded-3xl p-6">
-
-                            <div class="flex items-center justify-between mb-6">
-
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-800">
-                                        Seat Allocation
-                                    </h3>
-
-                                    <p class="text-sm text-gray-500 mt-1">
-                                        Automatically distribute seats by class.
-                                    </p>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 h-full flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-start justify-between mb-5">
+                                    <div>
+                                        <h3 class="text-base font-semibold text-slate-900">Seat Allocation</h3>
+                                        <p class="text-xs text-slate-500 mt-0.5">Automatically distribute seats by class tiered counts.</p>
+                                    </div>
+                                    <div class="text-3xl text-slate-400">💺</div>
                                 </div>
 
-                                <div class="text-5xl">
-                                    💺
+                                <div class="mb-4">
+                                    <label class="block mb-1.5 text-sm font-medium text-slate-700">Total Capacity</label>
+                                    <input id="train_total"
+                                           type="number"
+                                           value="200"
+                                           min="1"
+                                           max="2000"
+                                           placeholder="e.g. 200"
+                                           oninput="validateTrainTotals()"
+                                           class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 bg-white transition font-medium">
+                                    <p class="text-[11px] text-slate-400 mt-1">Direct counts must equal total capacity sum.</p>
                                 </div>
 
-                            </div>
+                                <div class="grid grid-cols-3 gap-3 mb-4">
+                                    <div>
+                                        <label class="block mb-1 text-xs font-medium text-purple-700">First Class</label>
+                                        <input id="train_first_class_seats"
+                                               type="number"
+                                               name="first_class_seats"
+                                               value="20"
+                                               min="0"
+                                               oninput="updateTrainCapacityAndPreview()"
+                                               class="w-full px-3 py-2 text-sm border border-purple-200 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 bg-white transition"
+                                               required>
+                                    </div>
 
-                            <!-- Total -->
-                            <div class="mb-6">
+                                    <div>
+                                        <label class="block mb-1 text-xs font-medium text-emerald-700">Business</label>
+                                        <input id="train_business_seats"
+                                               type="number"
+                                               name="business_seats"
+                                               value="50"
+                                               min="0"
+                                               oninput="updateTrainCapacityAndPreview()"
+                                               class="w-full px-3 py-2 text-sm border border-emerald-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 bg-white transition"
+                                               required>
+                                    </div>
 
-                                <label class="block mb-2 font-semibold text-gray-700">
-                                    Total Capacity
-                                </label>
+                                    <div>
+                                        <label class="block mb-1 text-xs font-medium text-slate-600">Economy</label>
+                                        <input id="train_economy_seats"
+                                               type="number"
+                                               name="economy_seats"
+                                               value="130"
+                                               min="0"
+                                               oninput="updateTrainCapacityAndPreview()"
+                                               class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-500 bg-white transition"
+                                               required>
+                                    </div>
+                                </div>
 
-                                <input id="train_total"
-                                       type="number"
-                                       value="200"
-                                       min="1"
-                                       max="2000"
-                                       placeholder="e.g. 200"
-                                       oninput="validateTrainTotals()"
-                                       class="w-full p-4 border border-cyan-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
-
-                                <p class="text-sm text-gray-500 mt-2">
-                                    Enter direct seat counts for each class. Total capacity must match the sum.
+                                <p id="train-total-warning" class="hidden text-xs text-red-600 font-medium my-2">
+                                    ⚠️ Seat allocations do not equal your overall dynamic capacity.
                                 </p>
-
                             </div>
 
-                            <!-- First -->
-                            <div class="mb-5">
-
-                                <label class="block mb-2 font-semibold text-gray-700">
-                                    First Class Seats
-                                </label>
-
-                                <input id="train_first_class_seats"
-                                       type="number"
-                                       name="first_class_seats"
-                                       value="20"
-                                       min="0"
-                                       oninput="updateTrainCapacityAndPreview()"
-                                       class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                       required>
-
+                            <div class="pt-4">
+                                <button class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 px-4 rounded-xl font-medium text-sm transition shadow-sm">
+                                    Add Train Structure
+                                </button>
                             </div>
-
-                            <!-- Business -->
-                            <div class="mb-5">
-
-                                <label class="block mb-2 font-semibold text-gray-700">
-                                    Business Class Seats
-                                </label>
-
-                                <input id="train_business_seats"
-                                       type="number"
-                                       name="business_seats"
-                                       value="50"
-                                       min="0"
-                                       oninput="updateTrainCapacityAndPreview()"
-                                       class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       required>
-
-                            </div>
-
-                            <!-- Economy -->
-                            <div class="mb-6">
-
-                                <label class="block mb-2 font-semibold text-gray-700">
-                                    Economy Seats
-                                </label>
-
-                                <input id="train_economy_seats"
-                                       type="number"
-                                       name="economy_seats"
-                                       value="130"
-                                       min="0"
-                                       oninput="updateTrainCapacityAndPreview()"
-                                       class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-500"
-                                       required>
-
-                            </div>
-
-                            <p id="train-total-warning" class="hidden text-sm text-red-600 mt-3">
-                                Seat counts must match total capacity before the preview updates.
-                            </p>
-
-                            <!-- Button -->
-                            <button class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white py-4 rounded-2xl font-bold text-lg hover:scale-[1.02] transition shadow-xl">
-
-                                Add Train
-
-                            </button>
-
                         </div>
-
                     </div>
 
                 </div>
-
             </form>
-
         </div>
 
-        <!-- Seat Simulation -->
-        <div id="train-seat-preview-section" class="bg-white/80 backdrop-blur-lg border border-white/40 shadow-2xl rounded-3xl p-8 mb-10">
-
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-
+        <div id="train-seat-preview-section" class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 border-b border-slate-100 pb-4">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Train Seat Simulation
-                    </h2>
-
-                    <p class="text-sm text-gray-500">
-                        Preview cabin sections and coach seat layouts in a passenger-friendly style.
-                    </p>
+                    <h2 class="text-lg font-semibold text-slate-900">Train Seat Simulation</h2>
+                    <p class="text-xs text-slate-500">Preview layout configurations and customized layout allocations dynamically.</p>
                 </div>
 
-                <div class="flex flex-wrap gap-3 text-sm">
-                    <span class="px-3 py-2 rounded-2xl bg-purple-100 text-purple-700">First Class</span>
-                    <span class="px-3 py-2 rounded-2xl bg-emerald-100 text-emerald-700">Business</span>
-                    <span class="px-3 py-2 rounded-2xl bg-slate-100 text-slate-700">Economy</span>
-                    <span class="px-3 py-2 rounded-2xl bg-red-100 text-red-700">Booked</span>
+                <div class="flex flex-wrap gap-2 text-xs font-medium">
+                    <span class="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 border border-purple-100">First Class</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100">Business</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200">Economy</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-red-50 text-red-700 border border-red-100">Booked</span>
                 </div>
-
             </div>
 
-            <div class="grid gap-6 xl:grid-cols-[300px_1fr]">
+            <div class="grid gap-6 lg:grid-cols-[260px_1fr]">
                 <div class="space-y-4">
-                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Layout Tools</h3>
-                        <p class="text-sm text-slate-600">Drag class zones, aisles and crew markers into the train cabin grid.</p>
-                        <div id="train-seat-palette" class="mt-4 grid gap-2"></div>
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Layout Tools</h3>
+                        <p class="text-xs text-slate-600 mb-3">Drag tools directly onto your layout canvas map below.</p>
+                        <div id="train-seat-palette" class="flex flex-wrap gap-2"></div>
                     </div>
-                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Coach Sections</h3>
-                        <p class="text-sm text-slate-600">Different sections appear by class and are aligned by rows.</p>
-                    </div>
-                    <div id="train-seat-details" class="hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Selected Seat</h3>
-                        <div id="train-seat-details-content" class="text-sm text-slate-700">
-                            Click any seat to review class, row and booking information.
+                    
+                    <div id="train-seat-details" class="hidden rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Selected Seat</h3>
+                        <div id="train-seat-details-content" class="text-xs text-slate-700 space-y-1.5">
+                            Click individual seats to edit attributes or operational details.
                         </div>
                     </div>
                 </div>
-                <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4 overflow-auto">
-                    <div class="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-600">
-                        <span class="rounded-full bg-white px-3 py-1 shadow-sm">Cabin Entrance</span>
-                        <span class="rounded-full bg-white px-3 py-1 shadow-sm">Aisle</span>
-                        <span class="rounded-full bg-white px-3 py-1 shadow-sm">Reserved</span>
+                
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 overflow-auto">
+                    <div class="mb-4 flex flex-wrap items-center gap-2 text-[11px] font-medium text-slate-500">
+                        <span class="rounded-md bg-white px-2 py-1 border border-slate-200">Cabin Entrance</span>
+                        <span class="rounded-md bg-white px-2 py-1 border border-slate-200">Aisle Way</span>
+                        <span class="rounded-md bg-white px-2 py-1 border border-slate-200">Reserved Tier</span>
                     </div>
-                    <div id="train-seat-simulation" class="space-y-3"></div>
+                    <div id="train-seat-simulation" class="space-y-2"></div>
                 </div>
             </div>
-
         </div>
 
-        <!-- Train List -->
-        <div class="bg-white/80 backdrop-blur-lg border border-white/40 shadow-2xl rounded-3xl overflow-hidden mb-10">
-
-            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-
+        <div class="bg-white border border-slate-200 shadow-sm rounded-2xl overflow-hidden mb-8">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-white">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Registered Trains
-                    </h2>
-
-                    <p class="text-sm text-gray-500 mt-1">
-                        Manage and monitor all trains.
-                    </p>
+                    <h2 class="text-lg font-semibold text-slate-900">Registered Fleet</h2>
+                    <p class="text-xs text-slate-500">Monitor overall listings and parameters within system limits.</p>
                 </div>
-
-                <div class="bg-cyan-100 text-cyan-700 px-4 py-2 rounded-2xl font-semibold text-sm">
-                    🚆 {{ trains|length }} Trains
+                <div class="bg-slate-100 text-slate-700 px-3 py-1 rounded-lg font-medium text-xs">
+                    Total: {{ trains|length }} Units
                 </div>
-
             </div>
 
             <div class="overflow-x-auto">
-
-                <table class="min-w-full">
-
-                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
-
+                <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+                    <thead class="bg-slate-50 text-slate-500 text-xs font-medium uppercase tracking-wider">
                         <tr>
-                            <th class="px-6 py-4 text-left">Train</th>
-                            <th class="px-6 py-4 text-left">Route</th>
-                            <th class="px-6 py-4 text-left">Conductor</th>
-                            <th class="px-6 py-4 text-left">Seats</th>
-                            <th class="px-6 py-4 text-left">Actions</th>
+                            <th class="px-6 py-3">Train No.</th>
+                            <th class="px-6 py-3">Route Definition</th>
+                            <th class="px-6 py-3">Conductor assigned</th>
+                            <th class="px-6 py-3">Capacity Split Mapping</th>
+                            <th class="px-6 py-3 text-right">Actions</th>
                         </tr>
-
                     </thead>
-
-                    <tbody class="divide-y divide-gray-100 bg-white">
-
+                    <tbody class="divide-y divide-slate-100 bg-white text-slate-700">
                         {% for train in trains %}
-
-                        <tr class="hover:bg-cyan-50 transition">
-
-                            <td class="px-6 py-5 font-bold text-gray-800">
-                                {{ train.train_number }}
-                            </td>
-
-                            <td class="px-6 py-5 text-gray-700">
-                                {{ train.route }}
-                            </td>
-
-                            <td class="px-6 py-5 text-gray-700">
-                                {{ train.conductor.name }}
-                            </td>
-
-                            <td class="px-6 py-5 text-gray-700">
-                                <span class="bg-gray-100 px-4 py-2 rounded-full text-sm font-semibold">
-                                    {{ train.available_seats }}
-                                    (F:{{ train.first_class_seats }},
-                                    B:{{ train.business_seats }},
-                                    E:{{ train.economy_seats }})
+                        <tr class="hover:bg-slate-50/70 transition">
+                            <td class="px-6 py-4 font-semibold text-slate-900">{{ train.train_number }}</td>
+                            <td class="px-6 py-4 text-slate-600">{{ train.route }}</td>
+                            <td class="px-6 py-4 text-slate-600">{{ train.conductor.name }}</td>
+                            <td class="px-6 py-4">
+                                <span class="text-xs font-medium bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">
+                                    {{ train.available_seats }} Total <span class="text-slate-400 mx-1">|</span> F:{{ train.first_class_seats }} B:{{ train.business_seats }} E:{{ train.economy_seats }}
                                 </span>
                             </td>
-
-                            <td class="px-6 py-5">
-
-                                <div class="flex gap-3">
-
+                            <td class="px-6 py-4 text-right">
+                                <div class="inline-flex gap-2">
                                     <a href="{% url 'train_edit_train' train.id %}"
-                                       class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition text-sm font-semibold">
+                                       class="inline-flex items-center text-xs font-medium bg-white text-slate-700 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition">
                                         ✏️ Edit
                                     </a>
-
                                     <a href="{% url 'train_delete_train' train.id %}"
                                        onclick="return confirm('Delete this train? This action cannot be undone.')"
-                                       class="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition text-sm font-semibold">
+                                       class="inline-flex items-center text-xs font-medium bg-red-50 text-red-600 border border-red-100 px-3 py-1.5 rounded-lg hover:bg-red-100/70 transition">
                                         🗑️ Delete
                                     </a>
-
                                 </div>
-
                             </td>
-
                         </tr>
-
                         {% endfor %}
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
 
-        <!-- Layout History -->
-        <div class="bg-white/80 backdrop-blur-lg border border-white/40 shadow-2xl rounded-3xl p-8">
-
-            <div class="flex items-center gap-3 mb-6">
-
-                <div class="h-12 w-12 rounded-2xl bg-purple-100 flex items-center justify-center text-2xl">
+        <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
+            <div class="flex items-center gap-3 mb-5 border-b border-slate-100 pb-4">
+                <div class="h-10 w-10 rounded-xl bg-purple-50 flex items-center justify-center text-xl text-purple-600">
                     📜
                 </div>
-
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Seat Layout History
-                    </h2>
-
-                    <p class="text-sm text-gray-500">
-                        Previously generated seating configurations.
-                    </p>
+                    <h2 class="text-lg font-semibold text-slate-900">Seat Layout History</h2>
+                    <p class="text-xs text-slate-500">Log overview of previously initialized infrastructure templates.</p>
                 </div>
-
             </div>
 
             {% if seat_layout_histories %}
-
-            <div class="space-y-4">
-
+            <div class="space-y-2">
                 {% for history in seat_layout_histories %}
-
-                <div class="bg-gray-50 border border-gray-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm">
                     <div>
-
-                        <h3 class="font-bold text-gray-800">
-                            {{ history.get_vehicle_type_display }} Layout
-                        </h3>
-
-                        <p class="text-sm text-gray-500 mt-1">
-                            Vehicle ID: {{ history.vehicle_id }} • {{ history.created_at }}
-                        </p>
-
+                        <h3 class="font-medium text-slate-900">{{ history.get_vehicle_type_display }} Configuration</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">ID Ref: {{ history.vehicle_id }} • {{ history.created_at }}</p>
                     </div>
-
-                    <div class="bg-white px-4 py-2 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-700">
-                        F:{{ history.config.first_class_seats|default:0 }},
-                        B:{{ history.config.business_seats|default:0 }},
-                        E:{{ history.config.economy_seats|default:0 }}
+                    <div class="self-start sm:self-center bg-white border border-slate-200 px-3 py-1 rounded-lg text-xs font-medium text-slate-600 shadow-sm">
+                        First Class: <span class="text-purple-600 font-semibold">{{ history.config.first_class_seats|default:0 }}</span> &middot; 
+                        Business: <span class="text-emerald-600 font-semibold">{{ history.config.business_seats|default:0 }}</span> &middot; 
+                        Economy: <span class="text-slate-600 font-semibold">{{ history.config.economy_seats|default:0 }}</span>
                     </div>
-
                 </div>
-
                 {% endfor %}
-
             </div>
-
             {% else %}
-
-            <div class="text-center py-12">
-
-                <div class="text-6xl mb-4">
-                    🚆
-                </div>
-
-                <h3 class="text-xl font-bold text-gray-700">
-                    No Layout History
-                </h3>
-
-                <p class="text-gray-500 mt-2">
-                    Seat layout history will appear here.
-                </p>
-
+            <div class="text-center py-10 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                <div class="text-4xl mb-2">📋</div>
+                <h3 class="text-sm font-semibold text-slate-700">No Layout History Captured</h3>
+                <p class="text-xs text-slate-400 max-w-xs mx-auto mt-1">Seating allocations and historical captures will store structural traces dynamically here.</p>
             </div>
-
             {% endif %}
-
         </div>
 
     </div>
-
 </div>
 
 <script>
@@ -535,8 +337,8 @@ const trainPaletteItems = [
 const trainSeatStatusStyles = {
     available: 'bg-emerald-500',
     booked: 'bg-red-500',
-    reserved: 'bg-yellow-500',
-    blocked: 'bg-slate-500',
+    reserved: 'bg-amber-500',
+    blocked: 'bg-slate-400',
 };
 
 const trainClassStyles = {
@@ -587,7 +389,7 @@ function renderTrainPalette() {
     trainPaletteItems.forEach(item => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = `inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-semibold text-white ${item.style}`;
+        button.className = `inline-flex items-center justify-center rounded-lg px-2.5 py-1.5 text-xs font-medium text-white transition hover:opacity-90 ${item.style}`;
         button.textContent = item.label;
         button.draggable = true;
         button.dataset.palette = JSON.stringify(item);
@@ -657,15 +459,15 @@ function onTrainDrop(event, rowIndex, colIndex) {
 
 function getTrainCellStyle(cell) {
     if (!cell || cell.is_aisle || cell.type === 'aisle') {
-        return 'bg-slate-200';
+        return 'bg-slate-200 text-slate-500';
     }
     if (cell.type === 'crew') {
-        return 'bg-blue-600';
+        return 'bg-blue-600 text-white';
     }
     if (cell.booking_status && trainSeatStatusStyles[cell.booking_status]) {
-        return trainSeatStatusStyles[cell.booking_status];
+        return trainSeatStatusStyles[cell.booking_status] + ' text-white';
     }
-    return trainClassStyles[cell.seat_class] || 'bg-slate-500';
+    return (trainClassStyles[cell.seat_class] || 'bg-slate-400') + ' text-white';
 }
 
 function updateTrainSeatDetails(cell) {
@@ -677,11 +479,11 @@ function updateTrainSeatDetails(cell) {
     }
     details.classList.remove('hidden');
     content.innerHTML = `
-        <div class="space-y-2">
-            <div class="text-sm text-slate-700"><strong>Seat:</strong> ${cell.seat_number}</div>
-            <div class="text-sm text-slate-700"><strong>Class:</strong> ${cell.seat_class}</div>
-            <div class="text-sm text-slate-700"><strong>Coach:</strong> ${cell.section}</div>
-            <div class="text-sm text-slate-700"><strong>Status:</strong> ${cell.booking_status}</div>
+        <div class="space-y-1 text-xs">
+            <div><strong>Seat No:</strong> ${cell.seat_number}</div>
+            <div><strong>Tier Class:</strong> ${cell.seat_class}</div>
+            <div><strong>Coach Car:</strong> ${cell.section}</div>
+            <div><strong>Status:</strong> <span class="capitalize">${cell.booking_status}</span></div>
         </div>
     `;
 }
@@ -691,7 +493,7 @@ function renderTrainSeats(layoutData) {
     container.innerHTML = '';
 
     if (!layoutData || !layoutData.rows || !layoutData.rows.length) {
-        container.innerHTML = '<div class="text-gray-600 text-center py-10">Enter seat counts to preview the train layout.</div>';
+        container.innerHTML = '<div class="text-slate-400 text-center py-6 text-xs">Enter seat counts to preview the layout map matrix.</div>';
         return;
     }
 
@@ -699,39 +501,42 @@ function renderTrainSeats(layoutData) {
 
     layoutData.rows.forEach((row, rowIndex) => {
         const rowEl = document.createElement('div');
-        rowEl.className = 'flex items-center gap-1';
+        rowEl.className = 'flex items-center gap-1.5';
 
         const label = document.createElement('div');
-        label.className = 'w-12 text-xs font-semibold text-slate-500';
+        label.className = 'w-14 text-[11px] font-medium text-slate-400 uppercase tracking-tight';
         label.textContent = `Row ${row.row}`;
         rowEl.appendChild(label);
 
         row.seats.forEach((cell, colIndex) => {
             const seatEl = document.createElement('div');
-            seatEl.classList.add('min-w-[40px]', 'min-h-[40px]', 'rounded-2xl', 'flex', 'items-center', 'justify-center', 'text-[10px]', 'font-bold', 'text-white', 'cursor-pointer', 'transition-all', 'duration-200');
+            seatEl.className = 'w-9 h-9 rounded-lg flex items-center justify-center text-[10px] font-bold cursor-pointer transition-all duration-150 select-none';
             seatEl.dataset.rowIndex = rowIndex;
             seatEl.dataset.colIndex = colIndex;
             seatEl.draggable = true;
+            
             seatEl.addEventListener('dragstart', event => onTrainCellDragStart(event, rowIndex, colIndex));
             seatEl.addEventListener('dragover', onTrainDragOver);
             seatEl.addEventListener('drop', event => onTrainDrop(event, rowIndex, colIndex));
 
             if (cell.is_aisle || cell.type === 'aisle') {
-                seatEl.classList.add('bg-slate-200');
-                seatEl.innerHTML = '<span class="text-[10px] text-slate-500">AISLE</span>';
+                seatEl.classList.add('bg-slate-200', 'text-slate-400', 'text-[8px]', 'tracking-tighter');
+                seatEl.textContent = 'AISLE';
             } else if (cell.is_empty) {
                 seatEl.classList.add('bg-white', 'border', 'border-dashed', 'border-slate-300');
                 seatEl.innerHTML = '';
             } else if (cell.type === 'crew') {
-                seatEl.classList.add(getTrainCellStyle(cell));
-                seatEl.textContent = cell.label;
+                seatEl.className = `w-9 h-9 rounded-lg flex items-center justify-center text-[9px] font-bold text-white cursor-pointer ${getTrainCellStyle(cell)}`;
+                seatEl.textContent = cell.label ? cell.label.substring(0,4) : 'CREW';
                 seatEl.title = cell.label;
             } else {
-                const style = getTrainCellStyle(cell);
-                seatEl.className = `w-10 h-10 rounded-2xl flex items-center justify-center text-[10px] font-bold text-white cursor-pointer transition-all duration-200 ${style}`;
+                const computedStyles = getTrainCellStyle(cell);
+                seatEl.className = `w-9 h-9 rounded-lg flex items-center justify-center text-[10px] font-bold cursor-pointer transition ${computedStyles}`;
+                
                 if (selectedTrainSeat === cell.seat_number) {
-                    seatEl.classList.add('ring-4', 'ring-slate-300');
+                    seatEl.classList.add('ring-2', 'ring-offset-1', 'ring-slate-900');
                 }
+                
                 seatEl.textContent = cell.seat_number;
                 seatEl.title = `${cell.seat_class} • ${cell.booking_status}`;
                 seatEl.onclick = () => {
@@ -763,7 +568,7 @@ function fetchTrainPreview() {
         })
         .catch(() => {
             const container = document.getElementById('train-seat-simulation');
-            container.innerHTML = '<div class="text-red-500 text-center py-10">Unable to load preview.</div>';
+            container.innerHTML = '<div class="text-red-500 text-center py-6 text-xs font-medium">Unable to load engine simulation data mapping preview.</div>';
         });
 }
 
@@ -792,134 +597,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTrainMode();
 });
 </script>
-    const total = parseInt(document.getElementById('train_total').value) || 0;
-    const first = Math.round(total * 0.10);
-    const business = Math.round(total * 0.25);
-    const economy = total - first - business;
-
-    document.getElementById('train_first_class_seats').value = first;
-    document.getElementById('train_business_seats').value = business;
-    document.getElementById('train_economy_seats').value = Math.max(0, economy);
-
-    clearTimeout(window._trainTimer);
-    window._trainTimer = setTimeout(fetchTrainPreview, 350);
-}
-
-function getTrainSeatClass(cell) {
-    if (!cell || cell.is_aisle || cell.is_empty) {
-        return 'bg-transparent';
-    }
-    if (cell.booking_status && trainSeatStatusStyles[cell.booking_status]) {
-        return trainSeatStatusStyles[cell.booking_status];
-    }
-    return trainClassStyles[cell.seat_class] || 'bg-slate-500';
-}
-
-function updateTrainSeatDetails(cell) {
-    const details = document.getElementById('train-seat-details');
-    const content = document.getElementById('train-seat-details-content');
-    if (!cell || cell.is_aisle || cell.is_empty) {
-        details.classList.add('hidden');
-        return;
-    }
-    details.classList.remove('hidden');
-    content.innerHTML = `
-        <div class="space-y-2">
-            <div class="text-sm text-slate-700"><strong>Seat:</strong> ${cell.seat_number}</div>
-            <div class="text-sm text-slate-700"><strong>Class:</strong> ${cell.seat_class}</div>
-            <div class="text-sm text-slate-700"><strong>Coach:</strong> ${cell.section}</div>
-            <div class="text-sm text-slate-700"><strong>Status:</strong> ${cell.booking_status}</div>
-        </div>
-    `;
-}
-
-function renderTrainSeats(layoutData) {
-    const container = document.getElementById('train-seat-simulation');
-    container.innerHTML = '';
-
-    if (!layoutData || !layoutData.rows || !layoutData.rows.length) {
-        container.innerHTML = '<div class="text-gray-600 text-center py-10">Enter seat counts to preview the train layout.</div>';
-        return;
-    }
-
-    layoutData.rows.forEach(row => {
-        const rowEl = document.createElement('div');
-        rowEl.className = 'flex items-center gap-1';
-
-        const label = document.createElement('div');
-        label.className = 'w-12 text-xs font-semibold text-slate-500';
-        label.textContent = `Row ${row.row}`;
-        rowEl.appendChild(label);
-
-        row.seats.forEach(cell => {
-            const seatEl = document.createElement('div');
-            if (cell.is_aisle) {
-                seatEl.className = 'w-8';
-                seatEl.innerHTML = '<span class="text-[10px] text-slate-400">AISLE</span>';
-            } else if (cell.is_empty) {
-                seatEl.className = 'w-10 h-10';
-            } else {
-                const style = getTrainSeatClass(cell);
-                seatEl.className = `w-10 h-10 rounded-2xl flex items-center justify-center text-[10px] font-bold text-white cursor-pointer transition-all duration-200 ${style}`;
-                if (selectedTrainSeat === cell.seat_number) {
-                    seatEl.classList.add('ring-4', 'ring-slate-300');
-                }
-                seatEl.textContent = cell.seat_number;
-                seatEl.title = `${cell.seat_class} • ${cell.booking_status}`;
-                seatEl.onclick = () => {
-                    selectedTrainSeat = cell.seat_number;
-                    updateTrainSeatDetails(cell);
-                    renderTrainSeats(layoutData);
-                };
-            }
-            rowEl.appendChild(seatEl);
-        });
-
-        container.appendChild(rowEl);
-    });
-}
-
-function fetchTrainPreview() {
-    const first = Number(document.getElementById('train_first_class_seats').value) || 0;
-    const business = Number(document.getElementById('train_business_seats').value) || 0;
-    const economy = Number(document.getElementById('train_economy_seats').value) || 0;
-
-    fetch(`${TRAIN_PREVIEW_URL}?first_class_seats=${first}&business_seats=${business}&economy_seats=${economy}`)
-        .then(res => res.json())
-        .then(data => {
-            selectedTrainSeat = null;
-            renderTrainSeats(data);
-            updateTrainSeatDetails(null);
-        })
-        .catch(() => {
-            const container = document.getElementById('train-seat-simulation');
-            container.innerHTML = '<div class="text-red-500 text-center py-10">Unable to load preview.</div>';
-        });
-}
-
-function updateTrainMode() {
-    const mode = document.getElementById('train-vehicle-type').value;
-    const passengerConfig = document.getElementById('train-passenger-config');
-    const previewSection = document.getElementById('train-seat-preview-section');
-
-    if (mode === 'cargo') {
-        passengerConfig.style.display = 'none';
-        previewSection.style.display = 'none';
-        document.getElementById('train_first_class_seats').value = 0;
-        document.getElementById('train_business_seats').value = 0;
-        document.getElementById('train_economy_seats').value = 0;
-        document.getElementById('train_total').value = 0;
-    } else {
-        passengerConfig.style.display = '';
-        previewSection.style.display = '';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    fetchTrainPreview();
-    updateTrainMode();
-});
-</script>
-
 </body>
 </html>

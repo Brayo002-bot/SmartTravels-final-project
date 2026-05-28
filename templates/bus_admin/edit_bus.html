@@ -3,53 +3,84 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Bus</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Bus Profile | SmartTravels</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gradient-to-br from-slate-100 via-slate-50 to-blue-50 min-h-screen text-slate-800 antialiased">
 
 <div class="flex">
+    
+    <!-- SIDEBAR CONTAINER -->
     {% include 'bus_admin/sidebar.html' %}
 
-    <div class="ml-64 w-full p-8">
+    <!-- MAIN CONTENT AREA -->
+    <div class="lg:ml-64 w-full p-6 md:p-10 max-w-5xl mx-auto">
 
-        <h1 class="text-2xl font-bold mb-6">Edit Bus</h1>
+        <!-- HEADER SECTION -->
+        <div class="flex items-center gap-5 mb-10">
+            <div class="h-14 w-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-xl shadow-blue-500/20 text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-slate-900">Edit Bus Profile</h1>
+                <p class="text-slate-500 text-xs md:text-sm mt-0.5">Modify asset assignments, route parameters, and metadata configurations.</p>
+            </div>
+        </div>
 
-        <!-- Form -->
-        <div class="bg-white p-6 rounded-xl shadow mb-10">
-            <form method="POST">
+        <!-- PRIMARY DATA MANAGEMENT CONTAINER -->
+        <div class="glass-card rounded-2xl shadow-xl border border-slate-200/60 overflow-hidden p-6 md:p-8">
+            <form method="POST" class="space-y-6">
                 {% csrf_token %}
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- GRID CONFIGURATION -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                     <!-- Bus Number -->
                     <div>
-                        <label class="block mb-2 font-semibold">Bus Number</label>
-                        <input type="text" name="bus_number" value="{{ bus.bus_number }}" class="w-full p-3 border rounded-lg" required>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Bus Identifier/Number</label>
+                        <input type="text" name="bus_number" value="{{ bus.bus_number }}" required
+                               class="w-full bg-white/50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all">
                     </div>
 
                     <!-- Number Plate -->
                     <div>
-                        <label class="block mb-2 font-semibold">Number Plate <span class="text-gray-500 font-normal text-sm">(optional)</span></label>
-                        <input type="text" name="number_plate" value="{{ bus.number_plate|default:'' }}" class="w-full p-3 border rounded-lg" placeholder="e.g ABC-1234">
+                        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                            License Number Plate <span class="text-slate-400 font-normal lowercase">(optional)</span>
+                        </label>
+                        <input type="text" name="number_plate" value="{{ bus.number_plate|default:'' }}" placeholder="e.g. KCX 123A"
+                               class="w-full bg-white/50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all">
                     </div>
 
-                    <!-- Route -->
+                    <!-- Route Selection -->
                     <div>
-                        <label class="block mb-2 font-semibold">Route</label>
-                        <select name="route" class="w-full p-3 border rounded-lg" required>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Assigned Transit Route</label>
+                        <select name="route" required
+                                class="w-full bg-white/50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all">
                             {% for route in routes %}
                                 <option value="{{ route.id }}" {% if route.id == bus.route.id %}selected{% endif %}>
-                                    {{ route.from_location }} → {{ route.to_location }}
+                                    {{ route.from_location }} &rarr; {{ route.to_location }}
                                 </option>
                             {% endfor %}
                         </select>
                     </div>
 
-                    <!-- Driver -->
+                    <!-- Driver Selection -->
                     <div>
-                        <label class="block mb-2 font-semibold">Driver</label>
-                        <select name="driver" class="w-full p-3 border rounded-lg" required>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Designated Operator / Driver</label>
+                        <select name="driver" required
+                                class="w-full bg-white/50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all">
                             {% for driver in drivers %}
                                 <option value="{{ driver.id }}" {% if driver.id == bus.driver.id %}selected{% endif %}>
                                     {{ driver.name }} ({{ driver.phone }})
@@ -60,25 +91,30 @@
 
                 </div>
 
-                <!-- Description -->
-                <div class="mt-6">
-                    <label class="block mb-2 font-semibold">Description <span class="text-gray-500 font-normal text-sm">(optional, visible to passengers)</span></label>
-                    <textarea name="description" class="w-full p-3 border rounded-lg" rows="4" placeholder="Brief description of the bus (e.g., luxury coach with WiFi, comfortable seats, air-conditioned)">{{ bus.description|default:'' }}</textarea>
+                <!-- Description Field -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                        Public Description <span class="text-slate-400 font-normal lowercase">(optional, visible to passengers)</span>
+                    </label>
+                    <textarea name="description" rows="4" placeholder="Brief description of the vehicle amenities (e.g., Executive Express Coach, Onboard High-Speed Wi-Fi, Climate Controlled, USB Ports)"
+                              class="w-full bg-white/50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all resize-none">{{ bus.description|default:'' }}</textarea>
                 </div>
 
-                <div class="flex gap-4 mt-6">
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold">
-                        Update Bus
+                <!-- FORM CONTROLS/ACTIONS -->
+                <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+                    <button type="submit" 
+                            class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-sm py-3 px-6 rounded-xl shadow-md shadow-blue-500/10 transition transform active:scale-[0.99]">
+                        Update Fleet Unit
                     </button>
-                    <a href="{% url 'add_buses' %}" class="bg-gray-400 text-white px-6 py-3 rounded-lg hover:bg-gray-500 font-semibold">
-                        Cancel
+                    <a href="{% url 'add_buses' %}" 
+                       class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-sm py-3 px-6 rounded-xl transition">
+                        Cancel Modification
                     </a>
                 </div>
             </form>
         </div>
 
     </div>
-
 </div>
 
 </body>

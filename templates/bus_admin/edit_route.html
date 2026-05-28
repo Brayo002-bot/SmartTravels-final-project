@@ -4,121 +4,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Route | SmartTravels</title>
+    <title>Edit Route Management | SmartTravels</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        body{
-            font-family:'Plus Jakarta Sans',sans-serif;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-blue-50">
+<body class="bg-gradient-to-br from-slate-100 via-slate-50 to-blue-50 min-h-screen text-slate-800 antialiased">
 
 <div class="flex">
 
-    <!-- Sidebar -->
+    <!-- SIDEBAR CONTAINER -->
     {% include 'bus_admin/sidebar.html' %}
 
-    <!-- Main Content -->
-    <div class="ml-64 w-full min-h-screen p-8">
+    <!-- MAIN CONTENT AREA -->
+    <div class="lg:ml-64 w-full p-6 md:p-10 max-w-4xl mx-auto">
 
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-
-            <div>
-                <h1 class="text-3xl font-extrabold text-gray-800">
-                    Edit Route
-                </h1>
-
-                <p class="text-gray-500 mt-2">
-                    Modify route details and pricing.
-                </p>
+        <!-- HEADER SECTION -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-10">
+            <div class="flex items-center gap-5">
+                <div class="h-14 w-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-xl shadow-blue-500/20 text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Edit Route</h1>
+                    <p class="text-slate-500 text-xs md:text-sm mt-0.5">Modify route waypoints, target destinations, and base ticketing tariffs.</p>
+                </div>
             </div>
 
-            <a href="{% url 'bus_add_route' %}" class="bg-gray-400 text-white px-6 py-3 rounded-2xl shadow-lg hover:bg-gray-500 transition font-semibold">
-                ← Back to Routes
+            <a href="{% url 'bus_add_route' %}" class="inline-flex items-center justify-center bg-white hover:bg-slate-50 text-slate-600 font-semibold text-sm py-2.5 px-4 rounded-xl shadow-sm border border-slate-200/80 transition duration-150">
+                &larr; Back to Routes
             </a>
-
         </div>
 
-        <!-- Edit Route Form -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/40 p-8 max-w-2xl">
-
-            <form method="POST">
-
+        <!-- PRIMARY EDIT FORM CONTAINER -->
+        <div class="glass-card rounded-2xl shadow-xl border border-slate-200/60 p-6 md:p-8 max-w-2xl">
+            <form method="POST" class="space-y-5">
                 {% csrf_token %}
 
-                <div class="space-y-6">
+                <!-- DEPARTURE FIELD -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                        Departure Location (Origin)
+                    </label>
+                    <input type="text"
+                           name="from_location"
+                           value="{{ route.from_location }}"
+                           placeholder="e.g. Nairobi"
+                           class="w-full bg-white/50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all"
+                           required>
+                </div>
 
-                    <!-- FROM -->
-                    <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-700">
-                            Departure Location
-                        </label>
+                <!-- DESTINATION FIELD -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                        Destination Hub
+                    </label>
+                    <input type="text"
+                           name="to_location"
+                           value="{{ route.to_location }}"
+                           placeholder="e.g. Mombasa"
+                           class="w-full bg-white/50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all"
+                           required>
+                </div>
 
-                        <input type="text"
-                               name="from_location"
-                               value="{{ route.from_location }}"
-                               placeholder="e.g Nairobi"
-                               class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                               required>
-                    </div>
-
-                    <!-- TO -->
-                    <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-700">
-                            Destination
-                        </label>
-
-                        <input type="text"
-                               name="to_location"
-                               value="{{ route.to_location }}"
-                               placeholder="e.g Mombasa"
-                               class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                               required>
-                    </div>
-
-                    <!-- PRICE -->
-                    <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-700">
-                            Ticket Price (KES)
-                        </label>
-
+                <!-- FARE PRICE FIELD -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                        Ticket Price Base Tariff (KES)
+                    </label>
+                    <div class="relative mt-1 rounded-xl shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                            <span class="text-slate-400 text-sm font-medium">KES</span>
+                        </div>
                         <input type="number"
                                name="price"
                                value="{{ route.price|floatformat:2 }}"
                                step="0.01"
                                min="0"
                                placeholder="0.00"
-                               class="w-full p-4 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                               class="w-full bg-white/50 border border-slate-200 rounded-xl pl-14 pr-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all"
                                required>
                     </div>
-
                 </div>
 
-                <div class="mt-8 flex flex-wrap gap-4">
-
-                    <button type="submit" class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:scale-105 transition">
-                        ✓ Update Route
+                <!-- FORM CONTROLS/ACTIONS -->
+                <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+                    <button type="submit" 
+                            class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-sm py-3 px-6 rounded-xl shadow-md shadow-blue-500/10 transition transform active:scale-[0.99]">
+                        Update Route Configuration
                     </button>
-
-                    <a href="{% url 'bus_add_route' %}" class="bg-gray-200 text-gray-700 px-8 py-4 rounded-2xl font-semibold hover:bg-gray-300 transition">
+                    <a href="{% url 'bus_add_route' %}" 
+                       class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-sm py-3 px-6 rounded-xl transition">
                         Cancel
                     </a>
-
                 </div>
 
             </form>
-
         </div>
 
     </div>
-
 </div>
 
 </body>

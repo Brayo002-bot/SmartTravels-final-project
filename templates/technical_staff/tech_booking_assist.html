@@ -94,6 +94,7 @@
                         <input type="text"
                                name="passenger_name"
                                placeholder="Full passenger name"
+                               value="{{ request.POST.passenger_name }}"
                                class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
                                required>
                     </div>
@@ -107,6 +108,21 @@
                         <input type="text"
                                name="phone"
                                placeholder="+254..."
+                               value="{{ request.POST.phone }}"
+                               class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
+                               required>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label class="block mb-2 text-sm font-semibold text-gray-600">
+                            Email Address
+                        </label>
+
+                        <input type="email"
+                               name="passenger_email"
+                               placeholder="passenger@example.com"
+                               value="{{ request.POST.passenger_email }}"
                                class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
                                required>
                     </div>
@@ -119,6 +135,7 @@
 
                         <input type="date"
                                name="travel_date"
+                               value="{{ request.POST.travel_date }}"
                                class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
                                required>
                     </div>
@@ -138,7 +155,7 @@
                             </option>
 
                             {% for route in routes %}
-                            <option value="{{ route.from_location }}">
+                            <option value="{{ route.from_location }}" {% if request.POST.from_location == route.from_location %}selected{% endif %}>
                                 {{ route.from_location }}
                             </option>
                             {% endfor %}
@@ -162,7 +179,7 @@
                             </option>
 
                             {% for route in routes %}
-                            <option value="{{ route.to_location }}">
+                            <option value="{{ route.to_location }}" {% if request.POST.destination == route.to_location %}selected{% endif %}>
                                 {{ route.to_location }}
                             </option>
                             {% endfor %}
@@ -182,101 +199,96 @@
 
                 </button>
 
-            </form>
+                <!-- SEARCH RESULTS - INSIDE FORM -->
+                {% if available_trips %}
 
-            <!-- SEARCH RESULTS -->
-            {% if available_trips %}
+                <div class="mt-10">
 
-            <div class="mt-10">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                        Available Trips
+                    </h2>
 
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                    Available Trips
-                </h2>
+                    <div class="space-y-5">
 
-                <div class="space-y-5">
+                        {% for trip in available_trips %}
 
-                    {% for trip in available_trips %}
+                        <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
 
-                    <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
+                            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
-                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                                <div>
 
-                            <div>
+                                    <div class="flex items-center gap-3 mb-3">
 
-                                <div class="flex items-center gap-3 mb-3">
+                                        <span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-bold">
+                                            {{ trip.transport_type }}
+                                        </span>
 
-                                    <span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-bold">
-                                        {{ trip.transport_type }}
-                                    </span>
+                                        <span class="bg-purple-100 text-purple-700 px-4 py-1 rounded-full text-sm font-bold">
+                                            {{ trip.company }}
+                                        </span>
 
-                                    <span class="bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-sm font-bold">
-                                        {{ trip.available_seats }} Seats Left
-                                    </span>
+                                        <span class="bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-sm font-bold">
+                                            {{ trip.available_seats }} Seats Left
+                                        </span>
+
+                                    </div>
+
+                                    <h3 class="text-2xl font-bold text-gray-800">
+                                        {{ trip.from_location }} → {{ trip.to_location }}
+                                    </h3>
+
+                                    <p class="text-gray-500 mt-2">
+                                        {{ trip.vehicle_name }}
+                                    </p>
+
+                                    <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
+
+                                        <div>
+                                            <p class="text-gray-400 uppercase font-bold">
+                                                Departure Time
+                                            </p>
+
+                                            <p class="font-semibold text-gray-700">
+                                                {{ trip.departure_time }}
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <p class="text-gray-400 uppercase font-bold">
+                                                Price
+                                            </p>
+
+                                            <p class="font-semibold text-emerald-600">
+                                                KES {{ trip.price }}
+                                            </p>
+                                        </div>
+
+                                    </div>
 
                                 </div>
 
-                                <h3 class="text-2xl font-bold text-gray-800">
-                                    {{ trip.from_location }} → {{ trip.to_location }}
-                                </h3>
-
-                                <p class="text-gray-500 mt-2">
-                                    {{ trip.vehicle_name }}
-                                </p>
-
-                                <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
-
-                                    <div>
-                                        <p class="text-gray-400 uppercase font-bold">
-                                            Departure Time
-                                        </p>
-
-                                        <p class="font-semibold text-gray-700">
-                                            {{ trip.departure_time }}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <p class="text-gray-400 uppercase font-bold">
-                                            Price
-                                        </p>
-
-                                        <p class="font-semibold text-emerald-600">
-                                            KES {{ trip.price }}
-                                        </p>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <!-- BOOK BUTTON -->
-                            <div class="flex flex-col gap-3">
-
-                                <button class="bg-gradient-to-r from-emerald-600 to-cyan-500 text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition">
-
-                                    Book Passenger
-
-                                </button>
-
-                                <button class="bg-yellow-100 text-yellow-700 px-8 py-4 rounded-2xl font-bold hover:bg-yellow-200 transition">
-
-                                    Prompt Payment
-
+                                <!-- BOOK PASSENGER BUTTON -->
+                                <button type="submit"
+                                        name="book_passenger"
+                                        value="{{ trip.vehicle_name }}"
+                                        class="whitespace-nowrap bg-gradient-to-r from-emerald-600 to-cyan-500 text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition">
+                                    ✅ Book & Send Prompt
                                 </button>
 
                             </div>
 
                         </div>
 
-                    </div>
+                        {% endfor %}
 
-                    {% endfor %}
+                    </div>
 
                 </div>
 
-            </div>
+                {% endif %}
 
-            {% endif %}
+            </form>
 
         </div>
 

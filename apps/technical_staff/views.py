@@ -141,6 +141,13 @@ def tech_dashboard(request):
 
 @technical_staff_required
 def tech_booking_assist(request):
+    from django.core.mail import send_mail
+    from django.conf import settings as django_settings
+    from apps.payments.models import Payment, MPesaService
+    import uuid
+    import logging
+    
+    logger = logging.getLogger(__name__)
     company = request.user.company
     routes = []
     available_trips = []
@@ -149,9 +156,187 @@ def tech_booking_assist(request):
     query_to = request.POST.get('destination', '').strip() if request.method == 'POST' else request.GET.get('to', '').strip()
     query_date = request.POST.get('travel_date', '').strip() if request.method == 'POST' else request.GET.get('date', '').strip()
 
+    # Handle booking passenger with one-click payment prompt
+    if request.method == 'POST' and 'book_passenger' in request.POST:
+        passenger_name = request.POST.get('passenger_name', '').strip()
+        passenger_phone = request.POST.get('phone', '').strip()
+        passenger_email = request.POST.get('passenger_email', '').strip()
+        vehicle_name = request.POST.get('book_passenger', '').strip()
+        travel_date = request.POST.get('travel_date', '').strip()
+        from_loc = request.POST.get('from_location', '').strip()
+        to_loc = request.POST.get('destination', '').strip()
+
+        logger.info(f'📝 Booking attempt - Name: {passenger_name}, Phone: {passenger_phone}, Email: {passenger_email}, Vehicle: {vehicle_name}')
+
+        if not all([passenger_name, passenger_phone, passenger_email, vehicle_name, travel_date, from_loc, to_loc]):
+            logger.warning(f'❌ Missing booking details: name={bool(passenger_name)}, phone={bool(passenger_phone)}, email={bool(passenger_email)}, vehicle={bool(vehicle_name)}, date={bool(travel_date)}, from={bool(from_loc)}, to={bool(to_loc)}')
+            messages.error(request, '❌ Please fill in all passenger and trip details before booking.')
+        else:
+            try:
+                # Find the vehicle and its schedule
+                vehicle = None
+                schedule = None
+                booking_reference = f'TECH{uuid.uuid4().hex[:8].upper()}'
+                price = 0
+                departure_time = ''
+
+                if company.transport_type == 'bus':
+                    from apps.buses.models import Bus, Booking, Schedule
+                    vehicle = Bus.objects.filter(company=company, vehicle_number=vehicle_name.split(' ')[-1]).first()
+                    if vehicle:
+                        schedule = Schedule.objects.filter(
+                            bus=vehicle, 
+                            travel_date=travel_date,
+                            bus__route__from_location=from_loc,
+                            bus__route__to_location=to_loc
+                        ).first()
+                        if schedule:
+                            price = schedule.price
+                            departure_time = schedule.travel_time or ''
+                            booking = Booking.objects.create(
+                                booking_reference=booking_reference,
+                                passenger_name=passenger_name,
+                                passenger_phone=passenger_phone,
+                                bus=vehicle,
+                                route=vehicle.route,
+                                schedule=schedule,
+                                travel_date=travel_date,
+                                travel_time=departure_time,
+                                seat_number='TBD',  # Will be assigned at terminal
+                                price=price,
+                                status='pending',
+                            )
+
+                elif company.transport_type == 'train':
+                    from apps.trains.models import Train, Booking, Schedule
+                    vehicle = Train.objects.filter(company=company, vehicle_number=vehicle_name.split(' ')[-1]).first()
+                    if vehicle:
+                        schedule = Schedule.objects.filter(
+                            train=vehicle, 
+                            travel_date=travel_date,
+                            train__route__from_location=from_loc,
+                            train__route__to_location=to_loc
+                        ).first()
+                        if schedule:
+                            price = schedule.price
+                            departure_time = schedule.travel_time or ''
+                            booking = Booking.objects.create(
+                                booking_reference=booking_reference,
+                                passenger_name=passenger_name,
+                                passenger_phone=passenger_phone,
+                                train=vehicle,
+                                route=vehicle.route,
+                                schedule=schedule,
+                                travel_date=travel_date,
+                                travel_time=departure_time,
+                                seat_number='TBD',
+                                price=price,
+                                status='pending',
+                            )
+
+                elif company.transport_type == 'flight':
+                    from apps.flights.models import Flight, Booking, Schedule
+                    vehicle = Flight.objects.filter(company=company, vehicle_number=vehicle_name.split(' ')[-1]).first()
+                    if vehicle:
+                        schedule = Schedule.objects.filter(
+                            flight=vehicle, 
+                            travel_date=travel_date,
+                            flight__route__from_location=from_loc,
+                            flight__route__to_location=to_loc
+                        ).first()
+                        if schedule:
+                            price = schedule.price
+                            departure_time = schedule.travel_time or ''
+                            booking = Booking.objects.create(
+                                booking_reference=booking_reference,
+                                passenger_name=passenger_name,
+                                passenger_phone=passenger_phone,
+                                flight=vehicle,
+                                route=vehicle.route,
+                                schedule=schedule,
+                                travel_date=travel_date,
+                                travel_time=departure_time,
+                                seat_number='TBD',
+                                price=price,
+                                status='pending',
+                            )
+
+                if schedule and vehicle:
+                    # Create payment and send M-Pesa prompt
+                    payment = Payment.objects.create(
+                        booking_reference=booking_reference,
+                        booking_type=company.transport_type,
+                        passenger=request.user,  # Technical staff user
+                        amount=price,
+                        method='mpesa',
+                        phone_number=passenger_phone,
+                    )
+
+                    try:
+                        # Send M-Pesa STK push
+                        svc = MPesaService()
+                        res = svc.stk_push(passenger_phone, price, booking_reference)
+                        logger.info(f'📊 STK Push Response: ResponseCode={res.get("ResponseCode")} | {res}')
+
+                        if res.get('ResponseCode') == '0':
+                            payment.merchant_ref = res.get('CheckoutRequestID', '')
+                            payment.save(update_fields=['merchant_ref'])
+
+                            # In debug mode, auto-complete payment
+                            if django_settings.DEBUG:
+                                payment.mark_completed(code='DEBUG-AUTO-' + booking_reference)
+                                booking.status = 'confirmed'
+                                booking.save(update_fields=['status'])
+                                logger.info(f'✅ Auto-completed payment for {booking_reference}')
+
+                                # Send ticket email
+                                try:
+                                    send_mail(
+                                        f'SmartTravels Ticket Confirmed - {booking_reference}',
+                                        (
+                                            f'Hello {passenger_name},\n\n'
+                                            f'Your booking has been confirmed!\n\n'
+                                            f'Booking Reference: {booking_reference}\n'
+                                            f'Route: {from_loc} → {to_loc}\n'
+                                            f'Date: {travel_date}\n'
+                                            f'Time: {departure_time or "TBD"}\n'
+                                            f'Vehicle: {vehicle_name}\n'
+                                            f'Price: KES {price:.2f}\n'
+                                            f'Seat: {booking.seat_number}\n\n'
+                                            f'Safe travels!\n'
+                                            f'SmartTravels Team'
+                                        ),
+                                        django_settings.DEFAULT_FROM_EMAIL,
+                                        [passenger_email],
+                                        fail_silently=True,
+                                    )
+                                    logger.info(f'📧 Ticket email sent to {passenger_email}')
+                                except Exception as e:
+                                    logger.warning(f'Email send failed: {e}')
+
+                                messages.success(
+                                    request,
+                                    f'✅ Booking confirmed! Ticket sent to {passenger_email} | M-Pesa payment auto-completed (DEBUG MODE)'
+                                )
+                            else:
+                                # Production: wait for callback
+                                messages.success(
+                                    request,
+                                    f'📱 M-Pesa payment prompt sent to {passenger_phone}. Ticket will be sent after payment confirmation.'
+                                )
+                    except Exception as e:
+                        logger.exception(f'M-Pesa error: {str(e)}')
+                        messages.warning(request, f'Booking created but M-Pesa prompt failed: {str(e)}')
+                else:
+                    logger.warning(f'Trip not found: vehicle={vehicle_name}, from={from_loc}, to={to_loc}, date={travel_date}')
+                    messages.error(request, 'Could not find the selected trip. Please search again.')
+            except Exception as e:
+                logger.exception(f'Booking error: {str(e)}')
+                messages.error(request, f'Booking failed: {str(e)}')
+
     if company:
         routes = _get_company_routes(company)
-        if request.method == 'POST' and query_from and query_to and query_date:
+        if request.method == 'POST' and 'search_trip' in request.POST and query_from and query_to and query_date:
             if company.transport_type == 'bus':
                 from apps.buses.models import Schedule
                 schedules = Schedule.objects.filter(bus__company=company, travel_date=query_date, bus__is_cargo=False)
@@ -159,6 +344,7 @@ def tech_booking_assist(request):
                     if s.bus.route.from_location == query_from and s.bus.route.to_location == query_to:
                         available_trips.append({
                             'transport_type': 'Bus',
+                            'company': s.bus.company.name,
                             'available_seats': s.bus.available_seats,
                             'from_location': s.bus.route.from_location,
                             'to_location': s.bus.route.to_location,
@@ -173,6 +359,7 @@ def tech_booking_assist(request):
                     if s.train.route.from_location == query_from and s.train.route.to_location == query_to:
                         available_trips.append({
                             'transport_type': 'Train',
+                            'company': s.train.company.name,
                             'available_seats': s.train.available_seats,
                             'from_location': s.train.route.from_location,
                             'to_location': s.train.route.to_location,
@@ -187,6 +374,7 @@ def tech_booking_assist(request):
                     if s.flight.route.from_location == query_from and s.flight.route.to_location == query_to:
                         available_trips.append({
                             'transport_type': 'Flight',
+                            'company': s.flight.company.name,
                             'available_seats': s.flight.available_seats,
                             'from_location': s.flight.route.from_location,
                             'to_location': s.flight.route.to_location,

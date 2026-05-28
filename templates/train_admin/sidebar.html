@@ -1,213 +1,265 @@
 <!-- templates/train_admin/sidebar.html -->
 {% load static %}
 
-<aside class="fixed top-0 left-0 z-50 w-72 min-h-screen bg-gradient-to-b from-slate-950 via-gray-900 to-slate-900 text-white shadow-2xl border-r border-white/10">
+<aside class="fixed top-0 left-0 z-50 w-72 min-h-screen
+bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950
+text-white border-r border-slate-800 shadow-2xl overflow-y-auto">
 
-    <!-- Logo / Brand -->
-    <div class="px-6 py-7 border-b border-white/10">
+    <!-- BRAND -->
+    <div class="px-5 py-5 border-b border-slate-800">
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
 
-            <div class="h-14 w-14 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center text-2xl shadow-lg">
-                🚆
+            <!-- Logo -->
+            <div class="relative flex-shrink-0">
+
+                <div class="absolute inset-0 bg-cyan-500/20 blur-xl rounded-2xl"></div>
+
+                <img src="{% static 'images/logo.jpeg' %}"
+                     alt="SmartTravels"
+                     class="relative w-12 h-12 rounded-2xl object-cover bg-white p-1 border border-slate-700 shadow-lg">
+
             </div>
 
-            <div>
-                <h1 class="text-2xl font-extrabold tracking-wide">
+            <!-- Text -->
+            <div class="min-w-0">
+
+                <h1 class="text-[17px] font-bold tracking-wide text-white">
                     SmartTravels
                 </h1>
 
-                <p class="text-sm text-gray-400 mt-1">
-                    Train Admin Panel
+                <p class="text-[10px] uppercase tracking-[0.18em] text-slate-400 mt-0.5">
+                    Train Administration
                 </p>
+
             </div>
 
         </div>
 
     </div>
 
-    <!-- Navigation -->
-    <nav class="mt-8 px-4">
+    <!-- NAVIGATION -->
+    <nav class="px-4 py-4">
 
-        <p class="text-xs uppercase tracking-widest text-gray-500 px-4 mb-4">
+        <p class="text-[10px]
+        uppercase
+        tracking-[0.25em]
+        text-slate-500
+        px-3 mb-3
+        font-semibold">
+
             Navigation
+
         </p>
 
-        <ul class="space-y-2">
+        <ul class="space-y-1.5">
 
             <!-- Dashboard -->
             <li>
                 <a href="{% url 'train_dashboard' %}"
-                   class="group flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-white/10 transition duration-300">
+                class="flex items-center
+                px-4 py-3
+                rounded-xl
+                text-[13px]
+                font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-2xl group-hover:scale-110 transition">
-                        📊
-                    </span>
-
-                    <span class="font-medium">
-                        Dashboard
-                    </span>
-
+                    Dashboard
                 </a>
             </li>
 
             <!-- Add Train -->
             <li>
                 <a href="{% url 'add_trains' %}"
-                   class="group flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-cyan-500/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3
+                rounded-xl
+                text-[13px]
+                font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-2xl group-hover:scale-110 transition">
-                        🚆
-                    </span>
-
-                    <span class="font-medium">
-                        Add Train
-                    </span>
-
+                    Train Fleet
                 </a>
             </li>
 
             <!-- Add Route -->
             <li>
                 <a href="{% url 'train_add_route' %}"
-                   class="group flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-blue-500/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3
+                rounded-xl
+                text-[13px]
+                font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-2xl group-hover:scale-110 transition">
-                        🛤️
-                    </span>
-
-                    <span class="font-medium">
-                        Add Route
-                    </span>
-
+                    Routes
                 </a>
             </li>
 
-            <!-- Add Conductor -->
+            <!-- Conductors -->
             <li>
                 <a href="{% url 'add_conductor' %}"
-                   class="group flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-emerald-500/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3
+                rounded-xl
+                text-[13px]
+                font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-2xl group-hover:scale-110 transition">
-                        👨‍✈️
-                    </span>
-
-                    <span class="font-medium">
-                        Add Conductor
-                    </span>
-
+                    Conductors
                 </a>
             </li>
 
-            <!-- Cargo Shipments -->
+            <!-- Cargo -->
             <li>
                 <a href="{% url 'train_cargo' %}"
-                   class="group flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-amber-500/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3
+                rounded-xl
+                text-[13px]
+                font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-amber-500/20
+                hover:text-amber-300
+                transition-all duration-300">
 
-                    <span class="text-2xl group-hover:scale-110 transition">
-                        📦
-                    </span>
-
-                    <span class="font-medium">
-                        Cargo Shipments
-                    </span>
-
+                    Cargo Shipments
                 </a>
             </li>
 
-            <!-- Traffic Centre -->
+            <!-- Traffic -->
             <li>
                 <a href="{% url 'train_traffic' %}"
-                   class="group flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-rose-500/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3
+                rounded-xl
+                text-[13px]
+                font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-rose-500/20
+                hover:text-rose-300
+                transition-all duration-300">
 
-                    <span class="text-2xl group-hover:scale-110 transition">
-                        🚦
-                    </span>
-
-                    <span class="font-medium">
-                        Traffic Centre
-                    </span>
-
+                    Traffic Centre
                 </a>
             </li>
 
             <!-- Bookings -->
             <li>
                 <a href="{% url 'train_booking' %}"
-                   class="group flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-yellow-500/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3
+                rounded-xl
+                text-[13px]
+                font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-emerald-500/20
+                hover:text-emerald-300
+                transition-all duration-300">
 
-                    <span class="text-2xl group-hover:scale-110 transition">
-                        🎟️
-                    </span>
-
-                    <span class="font-medium">
-                        Bookings
-                    </span>
-
+                    Bookings
                 </a>
             </li>
 
             <!-- Schedule -->
             <li>
                 <a href="{% url 'train_schedule' %}"
-                   class="group flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-purple-500/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3
+                rounded-xl
+                text-[13px]
+                font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-purple-500/20
+                hover:text-purple-300
+                transition-all duration-300">
 
-                    <span class="text-2xl group-hover:scale-110 transition">
-                        📅
-                    </span>
-
-                    <span class="font-medium">
-                        Schedule
-                    </span>
-
+                    Schedule
                 </a>
             </li>
 
-            <!-- Company Profile -->
+            <!-- Company -->
             <li>
                 <a href="{% url 'train_company_profile' %}"
-                   class="group flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-red-500/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3
+                rounded-xl
+                text-[13px]
+                font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-2xl group-hover:scale-110 transition">
-                        🏢
-                    </span>
-
-                    <span class="font-medium">
-                        Company Profile
-                    </span>
-
+                    Company Profile
                 </a>
             </li>
 
-            <!-- Technical Staff -->
+            <!-- Technical -->
             <li>
                 <a href="{% url 'manage_technical_staff' %}"
-                   class="group flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-red-500/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3
+                rounded-xl
+                text-[13px]
+                font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-2xl group-hover:scale-110 transition">
-                        🛠️
-                    </span>
-
-                    <span class="font-medium">
-                        Technical Staff
-                    </span>
-
+                    Technical Staff
                 </a>
             </li>
 
             <!-- Reports -->
             <li>
                 <a href="{% url 'train_reports' %}"
-                   class="group flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-red-500/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3
+                rounded-xl
+                text-[13px]
+                font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-2xl group-hover:scale-110 transition">
-                        📈
-                    </span>
-
-                    <span class="font-medium">
-                        Reports
-                    </span>
-
+                    Reports
                 </a>
             </li>
 
@@ -215,28 +267,21 @@
 
     </nav>
 
-    <!-- Bottom Card -->
-    <div class="absolute bottom-6 left-4 right-4">
+    <!-- FOOTER -->
+    <div class="px-5 py-4 border-t border-slate-800 mt-4">
 
-        <div class="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl p-5 shadow-2xl">
+        <div class="rounded-2xl
+        bg-slate-900/70
+        border border-slate-800
+        p-4">
 
-            <div class="flex items-center justify-between">
+            <h3 class="text-[12px] font-semibold text-cyan-300">
+                SmartTravels Rail
+            </h3>
 
-                <div>
-                    <p class="text-sm opacity-80">
-                        Train System
-                    </p>
-
-                    <h3 class="text-lg font-bold mt-1">
-                        Operational
-                    </h3>
-                </div>
-
-                <div class="text-4xl">
-                    🚄
-                </div>
-
-            </div>
+            <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+                Railway operations platform for trains, routes, schedules and bookings.
+            </p>
 
         </div>
 

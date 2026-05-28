@@ -9,19 +9,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        ::-webkit-scrollbar{
-            width:8px;
-            height:8px;
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-
-        ::-webkit-scrollbar-thumb{
-            background:#cbd5e1;
-            border-radius:20px;
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 20px;
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-blue-50">
+<body class="bg-gradient-to-br from-slate-100 via-gray-100 to-blue-50 text-slate-800 antialiased min-h-screen">
 
 <div class="flex">
 
@@ -32,401 +31,302 @@
 
         <!-- HEADER -->
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-
             <div>
-
                 <div class="flex items-center gap-4">
-
-                    <div class="h-16 w-16 rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-3xl shadow-xl">
+                    <div class="h-14 w-14 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-2xl shadow-md text-white">
                         🎟️
                     </div>
-
                     <div>
-                        <h1 class="text-4xl font-extrabold text-gray-800">
+                        <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">
                             Train Booking
                         </h1>
-
-                        <p class="text-gray-500 mt-1">
+                        <p class="text-sm text-slate-500 mt-0.5">
                             Manage passenger reservations and train bookings.
                         </p>
                     </div>
-
                 </div>
-
             </div>
 
             <!-- QUICK STATS -->
             <div class="grid grid-cols-2 gap-4">
-
-                <div class="bg-white px-5 py-4 rounded-2xl shadow-lg border border-gray-100 min-w-[150px]">
-                    <p class="text-sm text-gray-500">
+                <div class="bg-white px-5 py-4 rounded-2xl shadow-sm border border-slate-200/60 min-w-[150px]">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                         Total Bookings
                     </p>
-
                     <h3 class="text-2xl font-bold text-blue-600 mt-1">
                         {{ bookings|length }}
                     </h3>
                 </div>
 
-                <div class="bg-white px-5 py-4 rounded-2xl shadow-lg border border-gray-100 min-w-[150px]">
-                    <p class="text-sm text-gray-500">
+                <div class="bg-white px-5 py-4 rounded-2xl shadow-sm border border-slate-200/60 min-w-[150px]">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                         Active Trains
                     </p>
-
                     <h3 class="text-2xl font-bold text-emerald-600 mt-1">
                         {{ trains|length }}
                     </h3>
                 </div>
-
             </div>
-
         </div>
 
         <!-- BOOKING FORM + SUMMARY -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
 
             <!-- BOOKING FORM -->
-            <div class="xl:col-span-2 bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/40 p-8">
-
+            <div class="xl:col-span-2 bg-white/90 backdrop-blur-md rounded-2xl shadow-sm border border-slate-200/60 p-8">
                 <div class="flex items-center justify-between mb-6">
-
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-800">
+                        <h2 class="text-xl font-bold text-slate-900">
                             Add New Booking
                         </h2>
-
-                        <p class="text-gray-500 text-sm mt-1">
+                        <p class="text-slate-500 text-sm mt-0.5">
                             Fill passenger and travel details.
                         </p>
                     </div>
-
-                    <div class="h-14 w-14 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
+                    <div class="h-12 w-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
                         🚆
                     </div>
-
                 </div>
 
                 <form method="POST">
-
                     {% csrf_token %}
 
                     <div class="grid md:grid-cols-2 gap-6">
-
                         <!-- Passenger -->
                         <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">
                                 Passenger Name
                             </label>
-
                             <input type="text"
                                    name="passenger_name"
                                    placeholder="Enter passenger name"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-50/50 transition"
                                    required>
                         </div>
 
                         <!-- Phone -->
                         <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">
                                 Phone Number
                             </label>
-
                             <input type="text"
                                    name="phone"
                                    placeholder="e.g. 0712345678"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-50/50 transition"
                                    required>
                         </div>
 
                         <!-- Route -->
                         <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">
                                 Select Route
                             </label>
-
                             <select name="route"
-                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                    class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-50/50 transition"
                                     required>
-
                                 <option value="">Choose route</option>
-
                                 {% for route in routes %}
-                                <option value="{{ route.id }}">
-                                    {{ route }}
-                                </option>
+                                <option value="{{ route.id }}">{{ route }}</option>
                                 {% endfor %}
-
                             </select>
                         </div>
 
                         <!-- Train -->
                         <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">
                                 Select Train
                             </label>
-
                             <select id="train-select" name="train"
-                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                    class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-50/50 transition"
                                     onchange="loadTrainSeats()"
                                     required>
-
                                 <option value="">Choose train</option>
-
                                 {% for train in trains %}
-                                <option value="{{ train.id }}">
-                                    {{ train.train_number }}
-                                </option>
+                                <option value="{{ train.id }}">{{ train.train_number }}</option>
                                 {% endfor %}
-
                             </select>
                         </div>
 
                         <!-- Travel Date -->
                         <div class="md:col-span-2">
-                            <label class="block mb-2 text-sm font-semibold text-gray-700">
+                            <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">
                                 Travel Date
                             </label>
-
                             <input type="date"
                                    name="travel_date"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-50/50 transition"
                                    required>
                         </div>
-
                     </div>
 
-                    <!-- Seat Selection -->
-                    <div id="seat-section" style="display:none;" class="mb-8">
-                        <h3 class="text-lg font-bold text-gray-700 mb-4">Select Seat</h3>
-                        <div id="seat-grid" class="grid grid-cols-6 gap-2 mb-4"></div>
+                    <!-- Seat Selection Layout -->
+                    <div id="seat-section" style="display:none;" class="mt-8 pt-6 border-t border-slate-100">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-600 mb-4">Select Seat</h3>
+                        <div id="seat-grid" class="flex flex-col gap-4 mb-4"></div>
                         <input type="hidden" id="selected-seat" name="seat_number">
-                        <p id="seat-status" class="text-sm text-gray-600"></p>
+                        <p id="seat-status" class="text-sm font-medium text-blue-600 bg-blue-50 inline-block px-3 py-1.5 rounded-lg empty:hidden"></p>
                     </div>
 
                     <!-- BUTTON -->
-                    <button class="mt-8 w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:scale-[1.01] transition">
-
-                        🎫 Confirm Booking
-
+                    <button class="mt-8 w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-3.5 rounded-xl font-bold shadow-md hover:opacity-95 transform active:scale-[0.99] transition duration-150">
+                        Confirm Reservation
                     </button>
-
                 </form>
-
             </div>
 
             <!-- QUICK INFO -->
             <div class="space-y-6">
 
                 <!-- STATUS -->
-                <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/40 p-6">
-
-                    <h2 class="text-xl font-bold text-gray-800 mb-5">
+                <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-sm border border-slate-200/60 p-6">
+                    <h2 class="text-lg font-bold text-slate-900 mb-4">
                         Booking Summary
                     </h2>
 
-                    <div class="space-y-4">
-
+                    <div class="space-y-3.5 text-sm">
                         <div class="flex items-center justify-between">
-                            <span class="text-gray-600">
-                                Total Routes
-                            </span>
-
-                            <span class="font-bold text-blue-600">
-                                {{ routes|length }}
-                            </span>
+                            <span class="text-slate-500 font-medium">Total Routes</span>
+                            <span class="font-bold text-slate-800">{{ routes|length }}</span>
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <span class="text-gray-600">
-                                Available Trains
-                            </span>
-
-                            <span class="font-bold text-emerald-600">
-                                {{ trains|length }}
-                            </span>
+                            <span class="text-slate-500 font-medium">Available Trains</span>
+                            <span class="font-bold text-slate-800">{{ trains|length }}</span>
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <span class="text-gray-600">
-                                Booking Status
-                            </span>
-
-                            <span class="font-bold text-green-600">
+                            <span class="text-slate-500 font-medium">Booking Status</span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
                                 Active
                             </span>
                         </div>
-
                     </div>
-
                 </div>
 
                 <!-- PERFORMANCE -->
-                <div class="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl shadow-xl p-6 text-white">
-
-                    <h2 class="text-xl font-bold mb-5">
-                        Train Booking Activity
+                <div class="bg-slate-900 rounded-2xl shadow-sm p-6 text-white">
+                    <h2 class="text-lg font-bold mb-4 tracking-tight">
+                        Dashboard Activity
                     </h2>
 
-                    <div class="space-y-5">
-
+                    <div class="space-y-4">
                         <div>
-                            <div class="flex justify-between mb-2">
-                                <span class="text-sm">Bookings</span>
-                                <span class="text-sm">88%</span>
+                            <div class="flex justify-between mb-1.5">
+                                <span class="text-xs text-slate-400 font-medium">Bookings Capacity</span>
+                                <span class="text-xs text-slate-300 font-bold">88%</span>
                             </div>
-
-                            <div class="w-full bg-gray-700 rounded-full h-3">
-                                <div class="bg-green-400 h-3 rounded-full w-[88%]"></div>
+                            <div class="w-full bg-slate-800 rounded-full h-2">
+                                <div class="bg-emerald-400 h-2 rounded-full" style="width: 88%"></div>
                             </div>
                         </div>
 
                         <div>
-                            <div class="flex justify-between mb-2">
-                                <span class="text-sm">Seat Occupancy</span>
-                                <span class="text-sm">73%</span>
+                            <div class="flex justify-between mb-1.5">
+                                <span class="text-xs text-slate-400 font-medium">Seat Occupancy</span>
+                                <span class="text-xs text-slate-300 font-bold">73%</span>
                             </div>
-
-                            <div class="w-full bg-gray-700 rounded-full h-3">
-                                <div class="bg-blue-400 h-3 rounded-full w-[73%]"></div>
+                            <div class="w-full bg-slate-800 rounded-full h-2">
+                                <div class="bg-blue-400 h-2 rounded-full" style="width: 73%"></div>
                             </div>
                         </div>
 
                         <div>
-                            <div class="flex justify-between mb-2">
-                                <span class="text-sm">Customer Satisfaction</span>
-                                <span class="text-sm">95%</span>
+                            <div class="flex justify-between mb-1.5">
+                                <span class="text-xs text-slate-400 font-medium">Customer Satisfaction</span>
+                                <span class="text-xs text-slate-300 font-bold">95%</span>
                             </div>
-
-                            <div class="w-full bg-gray-700 rounded-full h-3">
-                                <div class="bg-yellow-400 h-3 rounded-full w-[95%]"></div>
+                            <div class="w-full bg-slate-800 rounded-full h-2">
+                                <div class="bg-amber-400 h-2 rounded-full" style="width: 95%"></div>
                             </div>
                         </div>
-
                     </div>
-
                 </div>
 
             </div>
-
         </div>
 
         <!-- BOOKINGS TABLE -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/40 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
 
             <!-- TABLE HEADER -->
-            <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
+            <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">
+                    <h2 class="text-xl font-bold text-slate-900">
                         All Train Bookings
                     </h2>
-
-                    <p class="text-gray-500 text-sm mt-1">
+                    <p class="text-slate-500 text-sm mt-0.5">
                         View and monitor all passenger reservations.
                     </p>
                 </div>
 
-                <div class="flex items-center gap-3">
-
+                <div class="flex items-center gap-2">
                     <input type="text"
                            placeholder="Search bookings..."
-                           class="px-4 py-3 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    <button class="bg-blue-600 text-white px-5 py-3 rounded-2xl hover:bg-blue-700 transition font-semibold">
+                           class="px-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-50/50">
+                    <button class="bg-slate-900 text-white text-sm px-4 py-2 rounded-xl hover:bg-slate-800 transition font-semibold shadow-sm">
                         Search
                     </button>
-
                 </div>
-
             </div>
 
             <!-- TABLE -->
             <div class="overflow-x-auto">
-
-                <table class="min-w-full">
-
-                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
-
-                        <tr>
-                            <th class="px-6 py-4 text-left">Passenger</th>
-                            <th class="px-6 py-4 text-left">Phone</th>
-                            <th class="px-6 py-4 text-left">Train</th>
-                            <th class="px-6 py-4 text-left">Route</th>
-                            <th class="px-6 py-4 text-left">Travel Date</th>
-                            <th class="px-6 py-4 text-left">Status</th>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-100">
+                            <th class="px-6 py-3.5">Passenger</th>
+                            <th class="px-6 py-3.5">Phone</th>
+                            <th class="px-6 py-3.5">Train</th>
+                            <th class="px-6 py-3.5">Route</th>
+                            <th class="px-6 py-3.5">Travel Date</th>
+                            <th class="px-6 py-3.5">Status</th>
                         </tr>
-
                     </thead>
-
-                    <tbody class="divide-y divide-gray-100">
-
+                    <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
                         {% for booking in bookings %}
-
-                        <tr class="hover:bg-blue-50/40 transition">
-
-                            <td class="px-6 py-5 font-semibold text-gray-800">
+                        <tr class="hover:bg-slate-50/60 transition duration-150">
+                            <td class="px-6 py-4 font-semibold text-slate-900">
                                 {{ booking.passenger_name }}
                             </td>
-
-                            <td class="px-6 py-5 text-gray-600">
+                            <td class="px-6 py-4 text-slate-500">
                                 {{ booking.phone }}
                             </td>
-
-                            <td class="px-6 py-5 text-gray-700 font-medium">
+                            <td class="px-6 py-4 font-medium text-slate-800">
                                 {{ booking.train.train_number }}
                             </td>
-
-                            <td class="px-6 py-5 text-gray-700">
+                            <td class="px-6 py-4 text-slate-600">
                                 {{ booking.route }}
                             </td>
-
-                            <td class="px-6 py-5 text-gray-700">
+                            <td class="px-6 py-4 text-slate-600">
                                 {{ booking.travel_date }}
                             </td>
-
-                            <td class="px-6 py-5">
-
-                                <span class="px-3 py-1 rounded-full text-xs font-semibold
+                            <td class="px-6 py-4">
+                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold
                                     {% if booking.status == 'confirmed' %}
-                                        bg-green-100 text-green-700
+                                        bg-emerald-50 text-emerald-700
                                     {% elif booking.status == 'pending' %}
-                                        bg-yellow-100 text-yellow-700
+                                        bg-amber-50 text-amber-700
                                     {% else %}
-                                        bg-red-100 text-red-700
+                                        bg-rose-50 text-rose-700
                                     {% endif %}">
-
                                     {{ booking.status|title }}
-
                                 </span>
-
                             </td>
-
                         </tr>
-
                         {% empty %}
-
                         <tr>
-
-                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
-
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium">
                                 No train bookings available.
-
                             </td>
-
                         </tr>
-
                         {% endfor %}
-
                     </tbody>
-
                 </table>
-
             </div>
 
         </div>
 
     </div>
-
 </div>
 
 <script>
@@ -443,6 +343,7 @@ function loadTrainSeats() {
 
     const travelDate = document.querySelector('input[name="travel_date"]').value;
     const url = `{% url 'train_get_available_seats' %}?train_id=${trainId}` + (travelDate ? `&travel_date=${travelDate}` : '');
+    
     fetch(url)
         .then(r => r.json())
         .then(data => {
@@ -450,26 +351,40 @@ function loadTrainSeats() {
             if (data.rows) {
                 data.rows.forEach(row => {
                     const rowWrap = document.createElement('div');
-                    rowWrap.style.marginBottom = '12px';
+                    rowWrap.className = 'bg-slate-50/50 p-4 rounded-xl border border-slate-100';
+                    
                     const rowLabel = document.createElement('div');
                     rowLabel.textContent = `Row ${row.row}`;
-                    rowLabel.className = 'text-sm font-semibold text-gray-700 mb-2';
+                    rowLabel.className = 'text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5';
                     rowWrap.appendChild(rowLabel);
+                    
                     const seatsRow = document.createElement('div');
-                    seatsRow.style.display = 'flex';
-                    seatsRow.style.gap = '8px';
+                    seatsRow.className = 'flex items-center gap-2 flex-wrap';
+                    
                     row.seats.forEach(cell => {
                         const btn = document.createElement('button');
-                        if (cell.is_empty) { btn.className = 'w-12 h-12'; btn.disabled = true; seatsRow.appendChild(btn); return; }
-                        if (cell.is_aisle) { btn.className = 'w-12 h-12'; btn.disabled = true; seatsRow.appendChild(btn); return; }
-                        btn.type = 'button'; btn.textContent = cell.seat_number;
-                        if (cell.booking_status === 'booked') { btn.className = 'p-3 rounded-lg bg-red-500 text-white opacity-60'; btn.disabled = true; }
-                        else { btn.className = 'p-3 rounded-lg bg-slate-600 text-white font-semibold'; btn.addEventListener('click', () => {
-                            document.getElementById('selected-seat').value = cell.seat_number;
-                            document.getElementById('seat-status').textContent = `Seat ${cell.seat_number} selected`;
-                            document.querySelectorAll('#seat-grid button').forEach(b => b.classList.remove('ring-2','ring-yellow-400'));
-                            btn.classList.add('ring-2','ring-yellow-400');
-                        }); }
+                        if (cell.is_empty || cell.is_aisle) { 
+                            btn.className = 'w-11 h-11 pointer-events-none opacity-0'; 
+                            btn.disabled = true; 
+                            seatsRow.appendChild(btn); 
+                            return; 
+                        }
+                        
+                        btn.type = 'button'; 
+                        btn.textContent = cell.seat_number;
+                        
+                        if (cell.booking_status === 'booked') { 
+                            btn.className = 'w-11 h-11 text-xs rounded-lg bg-rose-100 text-rose-700 font-semibold border border-rose-200 cursor-not-allowed opacity-60'; 
+                            btn.disabled = true; 
+                        } else { 
+                            btn.className = 'w-11 h-11 text-xs rounded-lg bg-white border border-slate-200 text-slate-700 font-bold shadow-sm hover:border-blue-500 hover:text-blue-600 transition duration-150 seat-btn'; 
+                            btn.addEventListener('click', () => {
+                                document.getElementById('selected-seat').value = cell.seat_number;
+                                document.getElementById('seat-status').textContent = `Selected Seat: ${cell.seat_number}`;
+                                document.querySelectorAll('#seat-grid .seat-btn').forEach(b => b.classList.remove('ring-2','ring-blue-500','border-blue-500','bg-blue-50','text-blue-600'));
+                                btn.classList.add('ring-2','ring-blue-500','border-blue-500','bg-blue-50','text-blue-600');
+                            }); 
+                        }
                         seatsRow.appendChild(btn);
                     });
                     rowWrap.appendChild(seatsRow);
@@ -477,20 +392,25 @@ function loadTrainSeats() {
                 });
                 seatSection.style.display = 'block';
             } else if (data.available_seats && data.available_seats.length > 0) {
+                // Fallback Grid styling
+                const genericGrid = document.createElement('div');
+                genericGrid.className = 'grid grid-cols-6 sm:grid-cols-8 gap-2';
+                
                 data.available_seats.forEach(seat => {
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.textContent = seat;
-                    btn.className = 'p-3 rounded-lg bg-green-500 text-white hover:bg-green-600 font-semibold';
+                    btn.className = 'p-3 text-xs rounded-lg bg-white border border-slate-200 text-slate-700 font-bold shadow-sm hover:border-blue-500 hover:text-blue-600 transition seat-btn';
                     btn.onclick = (e) => {
                         e.preventDefault();
                         document.getElementById('selected-seat').value = seat;
-                        document.getElementById('seat-status').textContent = `Seat ${seat} selected`;
-                        document.querySelectorAll('#seat-grid button').forEach(b => b.classList.remove('ring-2', 'ring-yellow-400'));
-                        btn.classList.add('ring-2', 'ring-yellow-400');
+                        document.getElementById('seat-status').textContent = `Selected Seat: ${seat}`;
+                        document.querySelectorAll('#seat-grid .seat-btn').forEach(b => b.classList.remove('ring-2','ring-blue-500','border-blue-500','bg-blue-50','text-blue-600'));
+                        btn.classList.add('ring-2','ring-blue-500','border-blue-500','bg-blue-50','text-blue-600');
                     };
-                    seatGrid.appendChild(btn);
+                    genericGrid.appendChild(btn);
                 });
+                seatGrid.appendChild(genericGrid);
                 seatSection.style.display = 'block';
             } else {
                 seatSection.style.display = 'none';
@@ -501,5 +421,4 @@ function loadTrainSeats() {
 }
 </script>
 </body>
-</html>
 </html>

@@ -8,553 +8,426 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Custom scrollbar for an enterprise look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50 min-h-screen">
+<body class="bg-[#f8fafc] text-slate-900 min-h-screen antialiased">
 
 <div class="flex">
 
-    <!-- Sidebar -->
     {% include 'bus_admin/sidebar.html' %}
 
-    <!-- Main Content -->
-    <div class="ml-72 w-full min-h-screen p-8">
+    <div class="ml-72 w-full min-h-screen p-8 lg:p-10">
 
-        <!-- Header -->
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
-
             <div class="flex items-center gap-5">
-
-                <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-4xl shadow-2xl">
-                    🎟️
+                <div class="h-14 w-14 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
                 </div>
-
                 <div>
-                    <h1 class="text-4xl font-extrabold text-gray-800">
-                        Booking Management
-                    </h1>
-
-                    <p class="text-gray-500 mt-2 text-lg">
-                        Create passenger bookings, monitor routes and manage travel operations.
-                    </p>
-                </div>
-
-            </div>
-
-            <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-3xl shadow-xl px-6 py-5">
-                <p class="text-sm text-gray-500">
-                    Booking Status
-                </p>
-
-                <h2 class="text-xl font-bold text-gray-800 mt-1">
-                    System Active
-                </h2>
-
-                <div class="mt-4 flex items-center gap-2 text-sm text-emerald-600 font-semibold">
-                    <span class="h-3 w-3 rounded-full bg-emerald-500"></span>
-                    Live Booking Updates
+                    <h1 class="text-3xl font-bold tracking-tight text-slate-900">Booking Management</h1>
+                    <p class="text-slate-500 mt-1 text-sm">Create passenger bookings, monitor routes and manage travel operations.</p>
                 </div>
             </div>
 
+            <div class="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm min-w-[240px]">
+                <div class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">System Status</p>
+                    <h2 class="text-sm font-semibold text-slate-800 mt-0.5">Live Booking Active</h2>
+                </div>
+            </div>
         </div>
 
-        <!-- Statistics -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-
-            <!-- Total Bookings -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/40">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Total Bookings
-                        </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
-                            {{ bookings|length }}
-                        </h2>
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
-                        🧾
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Available Buses -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/40">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Active Buses
-                        </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
-                            {{ buses|length }}
-                        </h2>
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-cyan-100 flex items-center justify-center text-3xl">
-                        🚌
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Routes -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/40">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Available Routes
-                        </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
-                            {{ routes|length }}
-                        </h2>
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-3xl">
-                        🌍
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Charts -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-
-            <!-- Bar Chart -->
-            <div class="lg:col-span-2 bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-6">
-
-                <div class="flex items-center justify-between mb-6">
-
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800">
-                            Booking Analytics
-                        </h2>
-
-                        <p class="text-gray-500 mt-1">
-                            Passenger booking activity overview.
-                        </p>
-                    </div>
-
-                    <div class="bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-semibold">
-                        📊 Analytics
-                    </div>
-
-                </div>
-
-                <canvas id="bookingChart" height="120"></canvas>
-
-            </div>
-
-            <!-- Pie Chart -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-6">
-
-                <div class="flex items-center justify-between mb-6">
-
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-800">
-                            Seat Usage
-                        </h2>
-
-                        <p class="text-gray-500 text-sm mt-1">
-                            Booking distribution.
-                        </p>
-                    </div>
-
-                    <div class="text-3xl">
-                        🪑
-                    </div>
-
-                </div>
-
-                <canvas id="seatChart"></canvas>
-
-            </div>
-
-        </div>
-
-        <!-- Booking Form -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-8 mb-10">
-
-            <div class="flex items-center justify-between mb-8">
-
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm flex items-center justify-between">
                 <div>
-
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        New Passenger Booking
-                    </h2>
-
-                    <p class="text-gray-500 mt-1">
-                        Fill in passenger and travel details.
-                    </p>
-
+                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Bookings</p>
+                    <h2 class="text-3xl font-bold text-slate-800 mt-2 tracking-tight">{{ bookings|length }}</h2>
                 </div>
-
-                <div class="bg-cyan-100 text-cyan-700 px-4 py-2 rounded-xl font-semibold">
-                    🚍 Smart Booking
+                <div class="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                 </div>
-
             </div>
 
-            <form method="POST">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Active Fleet Buses</p>
+                    <h2 class="text-3xl font-bold text-slate-800 mt-2 tracking-tight">{{ buses|length }}</h2>
+                </div>
+                <div class="h-12 w-12 rounded-xl bg-cyan-50 flex items-center justify-center text-cyan-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1 .4-1 1v10h1c0 1.1.9 2 2 2s2-.9 2-2h4c0 1.1.9 2 2 2s2-.9 2-2h1"/><circle cx="7" cy="17" r="2"/><circle cx="15" cy="17" r="2"/></svg>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Available Routes</p>
+                    <h2 class="text-3xl font-bold text-slate-800 mt-2 tracking-tight">{{ routes|length }}</h2>
+                </div>
+                <div class="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+            <div class="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Booking Analytics</h2>
+                        <p class="text-slate-400 text-xs mt-0.5">Passenger activity overview across operational metrics.</p>
+                    </div>
+                    <span class="bg-slate-100 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-semibold tracking-wide">SYSTEM INSIGHTS</span>
+                </div>
+                <div class="h-[260px] relative">
+                    <canvas id="bookingChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Seat Usage</h2>
+                        <p class="text-slate-400 text-xs mt-0.5">Booking capacity distribution status.</p>
+                    </div>
+                    <div class="text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                    </div>
+                </div>
+                <div class="h-[220px] relative flex items-center justify-center">
+                    <canvas id="seatChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-8 mb-10">
+            <div class="flex items-center justify-between mb-8 pb-5 border-b border-slate-100">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">New Passenger Booking</h2>
+                    <p class="text-slate-400 text-xs mt-1">Process real-time reservation options for upcoming routes.</p>
+                </div>
+                <span class="bg-blue-50 text-blue-700 text-xs px-4 py-2 rounded-xl font-semibold flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Smart Validation
+                </span>
+            </div>
+
+            <form method="POST" class="space-y-6">
                 {% csrf_token %}
-
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                    <!-- Passenger -->
                     <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-600">
-                            Passenger Name
-                        </label>
-
-                        <input type="text"
-                               name="passenger_name"
-                               placeholder="Enter passenger name"
-                               class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none bg-white/70"
-                               required>
+                        <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Passenger Name</label>
+                        <input type="text" name="passenger_name" placeholder="John Doe" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition text-sm" required>
                     </div>
 
-                    <!-- Phone -->
                     <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-600">
-                            Phone Number
-                        </label>
-
-                        <input type="text"
-                               name="phone"
-                               placeholder="+254..."
-                               class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none bg-white/70"
-                               required>
+                        <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Phone Number</label>
+                        <input type="text" name="phone" placeholder="+254 700 000000" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition text-sm" required>
                     </div>
 
-                    <!-- Travel Date -->
                     <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-600">
-                            Travel Date
-                        </label>
-
-                        <input type="date"
-                               name="travel_date"
-                               class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none bg-white/70"
-                               required>
+                        <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Travel Date</label>
+                        <input type="date" name="travel_date" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition text-sm" required>
                     </div>
 
-                    <!-- Route -->
                     <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-600">
-                            Route
-                        </label>
-
-                        <select name="route"
-                                class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none bg-white/70">
-
-                            {% for route in routes %}
-                            <option value="{{ route.id }}">
-                                {{ route.from_location }} → {{ route.to_location }}
-                            </option>
-                            {% endfor %}
-
-                        </select>
+                        <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Route</label>
+                        <div class="relative">
+                            <select name="route" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition text-sm appearance-none">
+                                {% for route in routes %}
+                                <option value="{{ route.id }}">{{ route.from_location }} &rarr; {{ route.to_location }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
 
-                    <!-- Bus -->
                     <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-600">
-                            Bus
-                        </label>
-
-                        <select id="bus-select" name="bus"
-                                class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none bg-white/70"
-                                onchange="loadSeats()">
-
-                            <option value="">Select a bus</option>
+                        <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Assign Fleet Bus</label>
+                        <select id="bus-select" name="bus" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition text-sm" onchange="loadSeats()">
+                            <option value="">Select an active bus fleet</option>
                             {% for bus in buses %}
                                 {% if bus.available_seats > 0 %}
-                                <option value="{{ bus.id }}">
-                                    {{ bus.bus_number }} ({{ bus.available_seats }} seats left)
-                                </option>
+                                <option value="{{ bus.id }}">{{ bus.bus_number }} ({{ bus.available_seats }} seats remaining)</option>
                                 {% endif %}
                             {% endfor %}
-
                         </select>
                     </div>
-
                 </div>
 
-                <!-- Seat Selection -->
-                <div id="seat-section" style="display:none;" class="mb-8">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Select Seat</h3>
-                    <div id="seat-grid" class="grid grid-cols-6 gap-2 mb-4"></div>
+                <div id="seat-section" style="display:none;" class="mt-8 pt-6 border-t border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Interactive Cabin Deck Layout</h3>
+                        
+                        <div class="flex flex-wrap gap-4 text-xs">
+                            <div class="flex items-center gap-1.5 text-slate-500"><span class="w-3 h-3 rounded bg-amber-500"></span> VIP</div>
+                            <div class="flex items-center gap-1.5 text-slate-500"><span class="w-3 h-3 rounded bg-blue-600"></span> Regular</div>
+                            <div class="flex items-center gap-1.5 text-slate-500"><span class="w-3 h-3 rounded bg-slate-200"></span> Booked</div>
+                            <div class="flex items-center gap-1.5 text-slate-500"><span class="w-3 h-3 rounded ring-2 ring-blue-500"></span> Selected</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200/50 inline-block min-w-full md:min-w-[400px]">
+                        <div id="seat-grid" class="flex flex-col gap-3"></div>
+                    </div>
+                    
                     <input type="hidden" id="selected-seat" name="seat_number">
-                    <p id="seat-status" class="text-sm text-gray-600"></p>
+                    <p id="seat-status" class="text-sm text-blue-600 font-semibold mt-3 flex items-center gap-1.5"></p>
                 </div>
 
-                <button class="mt-8 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl font-bold">
-                    Confirm Booking
-                </button>
-
+                <div class="flex justify-end pt-4">
+                    <button type="submit" class="bg-blue-600 text-white px-8 py-3.5 rounded-xl hover:bg-blue-700 transition-all shadow-md shadow-blue-600/10 font-semibold text-sm">
+                        Confirm Passenger Booking
+                    </button>
+                </div>
             </form>
-
-            <script>
-            function formatSeatElement(cell) {
-                if (cell.is_empty) {
-                    const d = document.createElement('div');
-                    d.className = 'w-12 h-12';
-                    return d;
-                }
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.textContent = cell.seat_number || '';
-                btn.className = 'p-3 rounded-lg font-semibold';
-                if (cell.is_aisle) {
-                    btn.style.background = 'transparent';
-                    btn.disabled = true;
-                    return btn;
-                }
-                if (cell.booking_status === 'booked') {
-                    btn.classList.add('bg-red-500','text-white','opacity-60');
-                    btn.disabled = true;
-                    return btn;
-                }
-
-                const classMap = {
-                    'VIP': ['bg-yellow-500','text-black'],
-                    'Normal': ['bg-sky-600','text-white'],
-                };
-                const cls = classMap[cell.seat_class] || ['bg-gray-600','text-white'];
-                btn.classList.add(...cls);
-
-                btn.addEventListener('click', () => {
-                    document.getElementById('selected-seat').value = cell.seat_number;
-                    document.getElementById('seat-status').textContent = `Seat ${cell.seat_number} selected`;
-                    document.querySelectorAll('#seat-grid button').forEach(b => b.classList.remove('ring-2','ring-yellow-400'));
-                    btn.classList.add('ring-2','ring-yellow-400');
-                });
-                return btn;
-            }
-
-            function renderSeatMap(layout) {
-                const seatGrid = document.getElementById('seat-grid');
-                seatGrid.innerHTML = '';
-                layout.rows.forEach(row => {
-                    const rowWrap = document.createElement('div');
-                    rowWrap.style.marginBottom = '12px';
-                    const rowLabel = document.createElement('div');
-                    rowLabel.textContent = `Row ${row.row}`;
-                    rowLabel.className = 'text-sm font-semibold text-gray-700 mb-2';
-                    rowWrap.appendChild(rowLabel);
-                    const seatsRow = document.createElement('div');
-                    seatsRow.style.display = 'flex';
-                    seatsRow.style.gap = '8px';
-                    row.seats.forEach(cell => seatsRow.appendChild(formatSeatElement(cell)));
-                    rowWrap.appendChild(seatsRow);
-                    seatGrid.appendChild(rowWrap);
-                });
-                document.getElementById('seat-section').style.display = 'block';
-            }
-
-            function loadSeats() {
-                const busId = document.getElementById('bus-select').value;
-                const travelDate = document.querySelector('input[name="travel_date"]').value;
-                if (!busId) {
-                    document.getElementById('seat-section').style.display = 'none';
-                    document.getElementById('selected-seat').value = '';
-                    return;
-                }
-                const url = `{% url 'bus_get_available_seats' %}?bus_id=${busId}` + (travelDate ? `&travel_date=${travelDate}` : '');
-                fetch(url)
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data.rows) renderSeatMap(data);
-                        else if (data.available_seats) {
-                            // fallback simple list
-                            const seatGrid = document.getElementById('seat-grid');
-                            seatGrid.innerHTML = '';
-                            data.available_seats.forEach(seat => {
-                                const btn = document.createElement('button');
-                                btn.type = 'button'; btn.textContent = seat;
-                                btn.className = 'p-3 rounded-lg bg-green-500 text-white font-semibold';
-                                btn.addEventListener('click', () => {
-                                    document.getElementById('selected-seat').value = seat;
-                                    document.getElementById('seat-status').textContent = `Seat ${seat} selected`;
-                                    document.querySelectorAll('#seat-grid button').forEach(b => b.classList.remove('ring-2','ring-yellow-400'));
-                                    btn.classList.add('ring-2','ring-yellow-400');
-                                });
-                                seatGrid.appendChild(btn);
-                            });
-                            document.getElementById('seat-section').style.display = data.available_seats.length ? 'block' : 'none';
-                        } else {
-                            document.getElementById('seat-section').style.display = 'none';
-                        }
-                    })
-                    .catch(e => console.error(e));
-            }
-            </script>
-
         </div>
 
-        <!-- Booking Table -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
-
-            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
                 <div>
-
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Recent Bookings
-                    </h2>
-
-                    <p class="text-gray-500 mt-1">
-                        Latest passenger booking activity.
-                    </p>
-
+                    <h2 class="text-lg font-bold text-slate-800">Recent Operational Bookings</h2>
+                    <p class="text-slate-400 text-xs mt-0.5">Real-time ledger audit log of system bookings.</p>
                 </div>
-
-                <div class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl font-semibold">
-                    📋 Records
-                </div>
-
+                <span class="bg-emerald-50 text-emerald-700 text-xs px-3 py-1.5 rounded-lg font-medium tracking-wide">SECURE LOGS</span>
             </div>
 
             <div class="overflow-x-auto">
-
-                <table class="min-w-full">
-
-                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
-
+                <table class="min-w-full divide-y divide-slate-100">
+                    <thead class="bg-slate-50 text-slate-400 text-xs font-bold uppercase tracking-wider">
                         <tr>
-                            <th class="px-6 py-4 text-left">Passenger</th>
-                            <th class="px-6 py-4 text-left">Phone</th>
-                            <th class="px-6 py-4 text-left">Bus</th>
-                            <th class="px-6 py-4 text-left">Route</th>
-                            <th class="px-6 py-4 text-left">Date</th>
+                            <th class="px-6 py-4 text-left font-semibold">Passenger Profile</th>
+                            <th class="px-6 py-4 text-left font-semibold">Contact Info</th>
+                            <th class="px-6 py-4 text-left font-semibold">Fleet Coach</th>
+                            <th class="px-6 py-4 text-left font-semibold">Assigned Route</th>
+                            <th class="px-6 py-4 text-left font-semibold">Departure Date</th>
                         </tr>
-
                     </thead>
-
-                    <tbody class="divide-y divide-gray-100">
-
+                    <tbody class="divide-y divide-slate-100 text-sm">
                         {% for booking in bookings %}
-
-                        <tr class="hover:bg-cyan-50 transition">
-
-                            <td class="px-6 py-4 font-semibold text-gray-800">
+                        <tr class="hover:bg-slate-50/70 transition">
+                            <td class="px-6 py-4 font-semibold text-slate-800">
                                 {{ booking.passenger_name }}
                             </td>
-
-                            <td class="px-6 py-4 text-gray-700">
+                            <td class="px-6 py-4 text-slate-500">
                                 {{ booking.phone }}
                             </td>
-
-                            <td class="px-6 py-4 text-gray-700">
-                                {{ booking.bus.bus_number }}
+                            <td class="px-6 py-4">
+                                <span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md font-mono text-xs font-semibold">
+                                    {{ booking.bus.bus_number }}
+                                </span>
                             </td>
-
-                            <td class="px-6 py-4 text-gray-700">
-                                {{ booking.route.from_location }} → {{ booking.route.to_location }}
+                            <td class="px-6 py-4 text-slate-600 font-medium">
+                                <div class="flex items-center gap-1.5">
+                                    <span>{{ booking.route.from_location }}</span>
+                                    <span class="text-slate-400 font-normal">&rarr;</span>
+                                    <span>{{ booking.route.to_location }}</span>
+                                </div>
                             </td>
-
-                            <td class="px-6 py-4 text-gray-700">
+                            <td class="px-6 py-4 text-slate-500 font-medium">
                                 {{ booking.travel_date }}
                             </td>
-
                         </tr>
-
                         {% empty %}
-
                         <tr>
-
-                            <td colspan="5" class="px-6 py-10 text-center text-gray-500">
-                                No bookings available yet.
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-400">
+                                <div class="max-w-[240px] mx-auto flex flex-col items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-slate-300 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M10 13v4"/><path d="M14 13v4"/></svg>
+                                    <p class="text-sm font-medium">No system bookings recorded.</p>
+                                </div>
                             </td>
-
                         </tr>
-
                         {% endfor %}
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
 
     </div>
-
 </div>
 
-<!-- Charts -->
 <script>
+    function formatSeatElement(cell) {
+        if (cell.is_empty) {
+            const d = document.createElement('div');
+            d.className = 'w-10 h-10'; // spacing matching size matrix
+            return d;
+        }
+        
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = cell.seat_number || '';
+        btn.className = 'w-10 h-10 text-xs font-bold rounded-xl transition-all duration-200 outline-none flex items-center justify-center';
+        
+        if (cell.is_aisle) {
+            btn.style.background = 'transparent';
+            btn.className = 'w-6 h-10 pointer-events-none'; // Slim aisle configuration
+            return btn;
+        }
+        
+        if (cell.booking_status === 'booked') {
+            btn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+            btn.disabled = true;
+            return btn;
+        }
 
-    // Bar Chart
-    const bookingChart = new Chart(
-        document.getElementById('bookingChart'),
-        {
-            type: 'bar',
-            data: {
-                labels: ['Bookings', 'Routes', 'Buses'],
-                datasets: [{
-                    label: 'System Overview',
-                    data: [
-                        {{ bookings|length }},
-                        {{ routes|length }},
-                        {{ buses|length }}
-                    ],
-                    borderRadius: 12
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
+        const classMap = {
+            'VIP': ['bg-amber-500', 'text-white', 'hover:bg-amber-600', 'shadow-sm'],
+            'Normal': ['bg-blue-600', 'text-white', 'hover:bg-blue-700', 'shadow-sm'],
+        };
+        const cls = classMap[cell.seat_class] || ['bg-slate-600', 'text-white'];
+        btn.classList.add(...cls);
+
+        btn.addEventListener('click', () => {
+            document.getElementById('selected-seat').value = cell.seat_number;
+            document.getElementById('seat-status').innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                Assigned Seat ${cell.seat_number} (${cell.seat_class} Class) Selected
+            `;
+            
+            document.querySelectorAll('#seat-grid button').forEach(b => {
+                b.classList.remove('ring-4', 'ring-blue-500/40', 'border', 'border-white');
+            });
+            btn.classList.add('ring-4', 'ring-blue-500/40', 'border', 'border-white');
+        });
+        return btn;
+    }
+
+    function renderSeatMap(layout) {
+        const seatGrid = document.getElementById('seat-grid');
+        seatGrid.innerHTML = '';
+        
+        layout.rows.forEach(row => {
+            const rowWrap = document.createElement('div');
+            rowWrap.className = 'flex items-center gap-3';
+            
+            const rowLabel = document.createElement('div');
+            rowLabel.textContent = `R${row.row}`;
+            rowLabel.className = 'text-[11px] font-bold text-slate-400 w-6 uppercase tracking-wider';
+            rowWrap.appendChild(rowLabel);
+            
+            const seatsRow = document.createElement('div');
+            seatsRow.className = 'flex items-center gap-2';
+            
+            row.seats.forEach(cell => seatsRow.appendChild(formatSeatElement(cell)));
+            rowWrap.appendChild(seatsRow);
+            seatGrid.appendChild(rowWrap);
+        });
+        document.getElementById('seat-section').style.display = 'block';
+    }
+
+    function loadSeats() {
+        const busId = document.getElementById('bus-select').value;
+        const travelDate = document.querySelector('input[name="travel_date"]').value;
+        if (!busId) {
+            document.getElementById('seat-section').style.display = 'none';
+            document.getElementById('selected-seat').value = '';
+            return;
+        }
+        const url = `{% url 'bus_get_available_seats' %}?bus_id=${busId}` + (travelDate ? `&travel_date=${travelDate}` : '');
+        fetch(url)
+            .then(r => r.json())
+            .then(data => {
+                if (data.rows) renderSeatMap(data);
+                else if (data.available_seats) {
+                    const seatGrid = document.getElementById('seat-grid');
+                    seatGrid.innerHTML = '';
+                    const fallbackRow = document.createElement('div');
+                    fallbackRow.className = 'flex flex-wrap gap-2 max-w-md';
+                    
+                    data.available_seats.forEach(seat => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button'; btn.textContent = seat;
+                        btn.className = 'w-10 h-10 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition';
+                        btn.addEventListener('click', () => {
+                            document.getElementById('selected-seat').value = seat;
+                            document.getElementById('seat-status').textContent = `Seat ${seat} Selected`;
+                            document.querySelectorAll('#seat-grid button').forEach(b => b.classList.remove('ring-4', 'ring-blue-500/40'));
+                            btn.classList.add('ring-4', 'ring-blue-500/40');
+                        });
+                        fallbackRow.appendChild(btn);
+                    });
+                    seatGrid.appendChild(fallbackRow);
+                    document.getElementById('seat-section').style.display = data.available_seats.length ? 'block' : 'none';
+                } else {
+                    document.getElementById('seat-section').style.display = 'none';
+                }
+            })
+            .catch(e => console.error(e));
+    }
+</script>
+
+<script>
+    // System Bar Analytics Context
+    const bookingCtx = document.getElementById('bookingChart').getContext('2d');
+    new Chart(bookingCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Bookings', 'Routes', 'Fleet Buses'],
+            datasets: [{
+                data: [{{ bookings|length }}, {{ routes|length }}, {{ buses|length }}],
+                backgroundColor: ['rgba(37, 99, 235, 0.15)', 'rgba(6, 182, 212, 0.15)', 'rgba(16, 185, 129, 0.15)'],
+                borderColor: ['#2563eb', '#06b6d4', '#10b981'],
+                borderWidth: 2,
+                borderRadius: 8,
+                barThickness: 32
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } } },
+                x: { grid: { display: false }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', weight: '600' } } }
+            }
+        }
+    });
+
+    // Capacity Usage Doughnut Chart
+    const seatCtx = document.getElementById('seatChart').getContext('2d');
+    new Chart(seatCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Booked Capacity', 'Available Fleet Capacity'],
+            datasets: [{
+                data: [{{ bookings|length }}, {{ buses|length }}], // Populates fallback representation perfectly
+                backgroundColor: ['#2563eb', '#cbd5e1'],
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { boxWidth: 12, font: { family: 'Plus Jakarta Sans', weight: '500' }, padding: 20 }
                 }
             }
         }
-    );
-
-    // Pie Chart
-    const seatChart = new Chart(
-        document.getElementById('seatChart'),
-        {
-            type: 'doughnut',
-            data: {
-                labels: ['Booked', 'Available'],
-                datasets: [{
-                    data: [
-                        {{ bookings|length }},
-                        {{ buses|length }}
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        }
-    );
-
+    });
 </script>
 
 </body>

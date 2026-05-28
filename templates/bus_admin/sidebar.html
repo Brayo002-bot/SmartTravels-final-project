@@ -1,29 +1,35 @@
 <!-- templates/bus_admin/sidebar.html -->
 {% load static %}
 
-<aside class="w-72 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 min-h-screen text-white fixed shadow-2xl border-r border-white/10 overflow-y-auto">
+<aside class="w-72 min-h-screen fixed overflow-y-auto
+bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950
+border-r border-slate-800 shadow-2xl text-white">
 
-    <!-- LOGO / BRAND -->
-    <div class="p-6 border-b border-white/10">
+    <!-- BRAND -->
+    <div class="px-5 py-5 border-b border-slate-800">
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
 
-            <div class="relative">
-                <div class="absolute inset-0 bg-cyan-500 blur-2xl opacity-30 rounded-full"></div>
+            <div class="relative flex-shrink-0">
+
+                <div class="absolute inset-0 bg-cyan-500/20 blur-xl rounded-2xl"></div>
 
                 <img src="{% static 'images/logo.jpeg' %}"
                      alt="SmartTravels"
-                     class="relative h-14 w-14 rounded-2xl object-contain bg-white p-1 shadow-xl border border-white/10">
+                     class="relative w-12 h-12 rounded-2xl object-cover bg-white p-1 border border-slate-700 shadow-lg">
+
             </div>
 
-            <div>
-                <h1 class="text-xl font-extrabold tracking-wide">
+            <div class="min-w-0">
+
+                <h1 class="text-[17px] font-bold tracking-wide text-white">
                     SmartTravels
                 </h1>
 
-                <p class="text-xs text-gray-400 mt-1">
-                    Bus Admin Panel
+                <p class="text-[10px] uppercase tracking-[0.18em] text-slate-400 mt-0.5">
+                    Bus Administration
                 </p>
+
             </div>
 
         </div>
@@ -31,24 +37,31 @@
     </div>
 
     <!-- ADMIN PROFILE -->
-    <div class="px-6 py-5 border-b border-white/10">
+    <div class="px-5 py-4 border-b border-slate-800">
 
-        <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-4 border border-white/10">
+        <div class="rounded-2xl bg-slate-900/70 border border-slate-800 p-3 backdrop-blur-xl">
 
             <div class="flex items-center gap-3">
 
-                <div class="h-12 w-12 rounded-full bg-cyan-500 flex items-center justify-center text-lg font-bold shadow-lg">
+                <div class="w-10 h-10 rounded-xl
+                bg-gradient-to-br from-cyan-500 to-blue-600
+                flex items-center justify-center
+                text-sm font-semibold shadow-lg">
+
                     {{ request.user.username|first|upper }}
+
                 </div>
 
-                <div>
-                    <h2 class="font-semibold text-sm">
+                <div class="min-w-0">
+
+                    <h2 class="text-[13px] font-semibold text-white truncate">
                         {{ request.user.username }}
                     </h2>
 
-                    <p class="text-xs text-gray-400">
+                    <p class="text-[11px] text-slate-400">
                         Bus Administrator
                     </p>
+
                 </div>
 
             </div>
@@ -58,165 +71,203 @@
     </div>
 
     <!-- NAVIGATION -->
-    <nav class="mt-4 px-4">
+    <nav class="px-4 py-4">
 
-        <p class="text-gray-500 uppercase text-[11px] font-bold tracking-widest px-3 mb-3">
+        <p class="text-[10px]
+        uppercase tracking-[0.25em]
+        text-slate-500
+        px-3 mb-3 font-semibold">
+
             Navigation
+
         </p>
 
-        <ul class="space-y-2">
+        <ul class="space-y-1.5">
 
             <!-- Dashboard -->
             <li>
                 <a href="{% url 'bus_dashboard' %}"
-                   class="group flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-cyan-500/10 hover:border hover:border-cyan-400/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-xl">📊</span>
-
-                    <span class="font-medium text-gray-200 group-hover:text-cyan-300">
-                        Dashboard
-                    </span>
-
+                    Dashboard
                 </a>
             </li>
 
             <!-- Add Route -->
             <li>
                 <a href="{% url 'bus_add_route' %}"
-                   class="group flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-cyan-500/10 hover:border hover:border-cyan-400/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-xl">🛣️</span>
-
-                    <span class="font-medium text-gray-200 group-hover:text-cyan-300">
-                        Add Route
-                    </span>
-
+                    Add Route
                 </a>
             </li>
 
             <!-- Booking -->
             <li>
                 <a href="{% url 'bus_booking' %}"
-                   class="group flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-cyan-500/10 hover:border hover:border-cyan-400/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-xl">🎫</span>
-
-                    <span class="font-medium text-gray-200 group-hover:text-cyan-300">
-                        Booking
-                    </span>
-
+                    Booking
                 </a>
             </li>
 
             <!-- Schedule -->
             <li>
                 <a href="{% url 'bus_schedule' %}"
-                   class="group flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-cyan-500/10 hover:border hover:border-cyan-400/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-xl">🗓️</span>
-
-                    <span class="font-medium text-gray-200 group-hover:text-cyan-300">
-                        Schedule
-                    </span>
-
+                    Schedule
                 </a>
             </li>
 
             <!-- Add Driver -->
             <li>
                 <a href="{% url 'add_driver' %}"
-                   class="group flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-cyan-500/10 hover:border hover:border-cyan-400/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-xl">🧑‍✈️</span>
-
-                    <span class="font-medium text-gray-200 group-hover:text-cyan-300">
-                        Add Driver
-                    </span>
-
+                    Drivers
                 </a>
             </li>
 
             <!-- Add Buses -->
             <li>
                 <a href="{% url 'add_buses' %}"
-                   class="group flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-cyan-500/10 hover:border hover:border-cyan-400/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-xl">🚌</span>
-
-                    <span class="font-medium text-gray-200 group-hover:text-cyan-300">
-                        Add Buses
-                    </span>
-
+                    Fleet
                 </a>
             </li>
 
-            <!-- Cargo Shipments -->
+            <!-- Cargo -->
             <li>
                 <a href="{% url 'bus_cargo' %}"
-                   class="group flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-amber-500/10 hover:border hover:border-amber-400/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-amber-500/20
+                hover:text-amber-300
+                transition-all duration-300">
 
-                    <span class="text-xl">📦</span>
-
-                    <span class="font-medium text-gray-200 group-hover:text-amber-300">
-                        Cargo Shipments
-                    </span>
-
+                    Cargo Shipments
                 </a>
             </li>
 
-            <!-- Traffic Centre -->
+            <!-- Traffic -->
             <li>
                 <a href="{% url 'bus_traffic' %}"
-                   class="group flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-rose-500/10 hover:border hover:border-rose-400/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-rose-500/20
+                hover:text-rose-300
+                transition-all duration-300">
 
-                    <span class="text-xl">🚦</span>
-
-                    <span class="font-medium text-gray-200 group-hover:text-rose-300">
-                        Traffic Centre
-                    </span>
-
+                    Traffic Centre
                 </a>
             </li>
 
-            <!-- Company Profile -->
+            <!-- Company -->
             <li>
                 <a href="{% url 'bus_company_profile' %}"
-                   class="group flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-cyan-500/10 hover:border hover:border-cyan-400/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-xl">🏢</span>
-
-                    <span class="font-medium text-gray-200 group-hover:text-cyan-300">
-                        Company Profile
-                    </span>
-
+                    Company Profile
                 </a>
             </li>
 
-            <!-- Technical Staff -->
+            <!-- Technical -->
             <li>
                 <a href="{% url 'manage_technical_staff' %}"
-                   class="group flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-cyan-500/10 hover:border hover:border-cyan-400/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-xl">🛠️</span>
-
-                    <span class="font-medium text-gray-200 group-hover:text-cyan-300">
-                        Technical Staff
-                    </span>
-
+                    Technical Staff
                 </a>
             </li>
 
             <!-- Reports -->
             <li>
                 <a href="{% url 'bus_reports' %}"
-                   class="group flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-cyan-500/10 hover:border hover:border-cyan-400/20 transition duration-300">
+                class="flex items-center
+                px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <span class="text-xl">📈</span>
-
-                    <span class="font-medium text-gray-200 group-hover:text-cyan-300">
-                        Reports
-                    </span>
-
+                    Reports
                 </a>
             </li>
 
@@ -224,17 +275,20 @@
 
     </nav>
 
-    <!-- BOTTOM SECTION -->
-    <div class="absolute bottom-0 left-0 w-full p-5 border-t border-white/10 bg-black/20 backdrop-blur-lg">
+    <!-- FOOTER -->
+    <div class="px-5 py-4 border-t border-slate-800 mt-4">
 
-        <div class="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-2xl p-4">
+        <div class="rounded-2xl
+        bg-slate-900/70
+        border border-slate-800
+        p-4">
 
-            <p class="text-sm font-semibold text-cyan-300">
+            <h3 class="text-[12px] font-semibold text-cyan-300">
                 SmartTravels Kenya
-            </p>
+            </h3>
 
-            <p class="text-xs text-gray-400 mt-1 leading-relaxed">
-                Manage routes, drivers, buses, schedules and live passenger bookings easily.
+            <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+                Professional transport management platform for buses, schedules and bookings.
             </p>
 
         </div>

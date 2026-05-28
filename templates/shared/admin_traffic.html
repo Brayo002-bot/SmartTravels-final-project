@@ -5,98 +5,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page_title }} | SmartTravels</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .table-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50 min-h-screen">
+
+<body class="bg-gradient-to-br from-slate-100 via-slate-50 to-blue-50 min-h-screen text-slate-800 antialiased">
 
 <div class="flex">
 
     {% include sidebar_template %}
 
-    <div class="ml-72 w-full p-8">
+    <div class="lg:ml-72 w-full p-6 md:p-10 max-w-7xl mx-auto">
 
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
-
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-10">
             <div class="flex items-center gap-5">
-                <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-rose-500 to-pink-500 shadow-2xl flex items-center justify-center text-4xl text-white">
-                    🚦
+                <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-xl shadow-rose-500/20 text-white">
+                    <svg class="w-8 h-8 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 009 11.57M12 11c0-3.517 1.009-6.799 2.753-9.571m3.44 2.04l-.054.09A13.916 13.916 0 0015 11.57M12 11a1 1 0 100-2 1 1 0 000 2zm0 0c2.506 0 4.66 1.694 5.277 4.12l.138.546M12 11a5.014 5.014 0 00-5.277 4.12l-.138.546M11 5.1a1 1 0 112 0v1a1 1 0 01-2 0V5.1z"></path>
+                    </svg>
                 </div>
-
                 <div>
-                    <h1 class="text-4xl font-black text-gray-800">
-                        {{ page_title }}
-                    </h1>
-                    <p class="text-gray-500 mt-2 text-lg">
-                        {{ page_description }}
-                    </p>
+                    <h1 class="text-3xl font-bold tracking-tight text-slate-900">{{ page_title }}</h1>
+                    <p class="text-slate-500 mt-1 text-sm md:text-base">{{ page_description }}</p>
                 </div>
             </div>
 
-            <div class="bg-white/80 backdrop-blur-lg border border-white/50 rounded-3xl p-6 shadow-xl">
-                <p class="text-sm text-gray-500">{{ transport_label }} fleet traffic</p>
-                <h2 class="text-2xl font-bold text-gray-800 mt-2">{{ traffic_status }}</h2>
-                <p class="text-sm text-gray-500 mt-2">Average speed {{ avg_speed|floatformat:0 }} km/h across {{ active_vehicles }} active vehicles</p>
-            </div>
-
-        </div>
-
-        <div class="grid gap-6 lg:grid-cols-3 mb-10">
-            <div class="glass-card rounded-3xl shadow-2xl border border-white/50 p-6 bg-white/80">
-                <p class="text-sm uppercase tracking-[.2em] text-gray-500 font-semibold">Active Vehicles</p>
-                <h2 class="text-4xl font-black text-gray-900 mt-4">{{ active_vehicles }}</h2>
-            </div>
-            <div class="glass-card rounded-3xl shadow-2xl border border-white/50 p-6 bg-white/80">
-                <p class="text-sm uppercase tracking-[.2em] text-gray-500 font-semibold">Average Speed</p>
-                <h2 class="text-4xl font-black text-gray-900 mt-4">{{ avg_speed|floatformat:0 }} km/h</h2>
-            </div>
-            <div class="glass-card rounded-3xl shadow-2xl border border-white/50 p-6 bg-white/80">
-                <p class="text-sm uppercase tracking-[.2em] text-gray-500 font-semibold">Traffic Profile</p>
-                <h2 class="text-4xl font-black text-gray-900 mt-4">{{ traffic_status }}</h2>
+            <div class="glass-card border border-slate-200/60 rounded-2xl shadow-md px-6 py-4 min-w-[240px]">
+                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">{{ transport_label }} fleet traffic</p>
+                <h2 class="text-xl font-bold text-slate-800 mt-0.5">{{ traffic_status }}</h2>
+                <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                    Avg speed: <span class="font-semibold text-slate-700">{{ avg_speed|floatformat:0 }} km/h</span> across 
+                    <span class="font-semibold text-slate-700">{{ active_vehicles }}</span> active units.
+                </p>
             </div>
         </div>
 
-        <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-8 border-b border-slate-200">
-                <div>
-                    <h2 class="text-3xl font-bold text-gray-800">Live GPS Vehicle Feed</h2>
-                    <p class="text-sm text-gray-500 mt-2">Latest reported positions for active {{ transport_label|lower }} vehicles.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+            <div class="glass-card rounded-2xl p-6 shadow-md border border-slate-200/60 hover:-translate-y-0.5 transition duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Active Vehicles</p>
+                        <h2 class="text-3xl font-bold text-slate-800 mt-1">{{ active_vehicles }}</h2>
+                    </div>
+                    <div class="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
                 </div>
             </div>
 
-            <div class="overflow-x-auto p-8">
+            <div class="glass-card rounded-2xl p-6 shadow-md border border-slate-200/60 hover:-translate-y-0.5 transition duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Average Speed</p>
+                        <h2 class="text-3xl font-bold text-slate-800 mt-1">{{ avg_speed|floatformat:0 }} <span class="text-lg font-semibold text-slate-500">km/h</span></h2>
+                    </div>
+                    <div class="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 shadow-md border border-slate-200/60 hover:-translate-y-0.5 transition duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Traffic Profile</p>
+                        <h2 class="text-3xl font-bold text-slate-800 mt-1">{{ traffic_status }}</h2>
+                    </div>
+                    <div class="h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"></path></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-2xl shadow-xl border border-slate-200/60 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-white/40">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Live GPS Vehicle Feed</h2>
+                    <p class="text-slate-500 text-xs mt-0.5">Real-time reported positions for active system {{ transport_label|lower }} assets.</p>
+                </div>
+                <span class="bg-rose-50 text-rose-700 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-full bg-rose-500 animate-ping"></span> Live Tracking
+                </span>
+            </div>
+
+            <div class="overflow-x-auto table-scroll">
                 {% if latest_gps %}
-                <table class="w-full text-left border-separate border-spacing-y-3">
-                    <thead>
+                <table class="min-w-full divide-y divide-slate-100">
+                    <thead class="bg-slate-50/70 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
                         <tr>
-                            <th class="pb-3 text-sm text-gray-500 uppercase">Vehicle</th>
-                            <th class="pb-3 text-sm text-gray-500 uppercase">Driver</th>
-                            <th class="pb-3 text-sm text-gray-500 uppercase">Coordinates</th>
-                            <th class="pb-3 text-sm text-gray-500 uppercase">Speed</th>
-                            <th class="pb-3 text-sm text-gray-500 uppercase">Recorded</th>
+                            <th class="px-6 py-4 text-left">Vehicle Asset</th>
+                            <th class="px-6 py-4 text-left">Assigned Driver</th>
+                            <th class="px-6 py-4 text-left">Geographic Coordinates</th>
+                            <th class="px-6 py-4 text-left">Current Speed</th>
+                            <th class="px-6 py-4 text-left">Telemetry Timestamp</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-slate-100 bg-transparent">
                         {% for point in latest_gps %}
-                        <tr class="border-t border-slate-200 hover:bg-slate-50 transition">
-                            <td class="py-4 text-sm text-gray-700">{{ transport_label }} #{{ point.vehicle_id }}</td>
-                            <td class="py-4 text-sm text-gray-700">{{ point.driver.get_full_name|default:point.driver.username }}</td>
-                            <td class="py-4 text-sm text-gray-700">{{ point.latitude }}, {{ point.longitude }}</td>
-                            <td class="py-4 text-sm text-gray-700">{{ point.speed_kmh }} km/h</td>
-                            <td class="py-4 text-sm text-gray-500">{{ point.recorded_at|date:'M d, Y H:i' }}</td>
+                        <tr class="hover:bg-slate-50/50 transition duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-800">
+                                {{ transport_label }} <span class="text-slate-500 font-normal">#{{ point.vehicle_id }}</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-700">
+                                {{ point.driver.get_full_name|default:point.driver.username }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap font-mono text-xs text-slate-500 tracking-tight">
+                                {{ point.latitude|floatformat:5 }}, {{ point.longitude|floatformat:5 }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center text-sm font-semibold text-slate-800">
+                                    {{ point.speed_kmh }} <span class="text-xs font-normal text-slate-400 ml-1">km/h</span>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-400 font-medium">
+                                {{ point.recorded_at|date:'M d, Y • H:i' }}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
                 {% else %}
-                <div class="rounded-3xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-                    No live GPS data recorded yet for this fleet.
+                <div class="p-16 text-center text-slate-500">
+                    <div class="flex flex-col items-center max-w-sm mx-auto">
+                        <div class="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-800">No live GPS metrics identified</p>
+                        <p class="text-xs text-slate-400 mt-1">There are currently no location profiles or telemetry points recorded for this fleet selection.</p>
+                    </div>
                 </div>
                 {% endif %}
             </div>
         </div>
 
     </div>
-
 </div>
 
 </body>

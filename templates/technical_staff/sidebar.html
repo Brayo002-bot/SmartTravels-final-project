@@ -1,279 +1,237 @@
 <!-- templates/technical_staff/sidebar.html -->
+{% load static %}
 
-<aside class="w-72 min-h-screen fixed overflow-y-auto bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white shadow-2xl border-r border-white/10">
+<aside class="fixed top-0 left-0 z-50 w-72 min-h-screen
+bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950
+text-white border-r border-slate-800 shadow-2xl
+overflow-y-auto flex flex-col">
 
-    <!-- TOP BRAND -->
-    <div class="relative p-7 border-b border-white/10 overflow-hidden">
+    <!-- BRAND -->
+    <div class="px-5 py-5 border-b border-slate-800">
 
-        <!-- Glow -->
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/20 blur-3xl rounded-full"></div>
+        <div class="flex items-center gap-3">
 
-        <div class="relative z-10">
+            <!-- Logo -->
+            <div class="relative flex-shrink-0">
 
-            <div class="flex items-center gap-4">
+                <div class="absolute inset-0 bg-cyan-500/20 blur-xl rounded-2xl"></div>
 
-                <div class="h-16 w-16 rounded-3xl bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center text-3xl shadow-xl">
-                    🛠️
-                </div>
-
-                <div>
-
-                    <h1 class="text-2xl font-extrabold tracking-wide">
-                        Technical Staff
-                    </h1>
-
-                    <p class="text-sm text-slate-400 mt-1">
-                        SmartTravels Operations
-                    </p>
-
-                </div>
+                <img src="{% static 'images/logo.jpeg' %}"
+                     alt="SmartTravels"
+                     class="relative w-12 h-12 rounded-2xl object-cover bg-white p-1 border border-slate-700 shadow-lg">
 
             </div>
 
-        </div>
+            <!-- Text -->
+            <div class="min-w-0">
 
-    </div>
+                <h1 class="text-[17px] font-bold tracking-wide text-white">
+                    SmartTravels
+                </h1>
 
-    <!-- USER PROFILE -->
-    <div class="px-6 py-5 border-b border-white/10">
+                <p class="text-[10px]
+                uppercase
+                tracking-[0.18em]
+                text-slate-400 mt-0.5">
 
-        <div class="flex items-center gap-4 bg-white/5 backdrop-blur-lg rounded-2xl p-4 border border-white/10">
+                    Technical Operations
 
-            <div class="h-14 w-14 rounded-2xl bg-gradient-to-r from-emerald-400 to-cyan-500 flex items-center justify-center text-xl font-bold shadow-lg">
-                {{ user.first_name|default:user.username|slice:":1"|upper }}
-            </div>
-
-            <div>
-
-                <h2 class="font-bold text-lg">
-                    {{ user.first_name|default:user.username }}
-                </h2>
-
-                <p class="text-xs text-slate-400">
-                    Technical Operations Staff
                 </p>
 
-                <div class="flex items-center gap-2 mt-2 text-emerald-400 text-xs font-semibold">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Active Session
-                </div>
-
             </div>
 
         </div>
 
     </div>
 
-    <!-- MENU TITLE -->
-    <div class="px-6 pt-6 pb-3">
-        <p class="text-xs uppercase tracking-[0.2em] text-slate-500 font-bold">
-            Operations Menu
-        </p>
+    <!-- USER CARD -->
+    <div class="px-5 py-4 border-b border-slate-800">
+
+        <div class="rounded-2xl
+        bg-slate-900/70
+        border border-slate-800
+        p-4">
+
+            <p class="text-[10px]
+            uppercase
+            tracking-[0.2em]
+            text-slate-500
+            font-semibold mb-2">
+
+                Logged In
+
+            </p>
+
+            <h2 class="text-[13px]
+            font-semibold
+            text-white truncate">
+
+                {{ user.first_name|default:user.username }}
+
+            </h2>
+
+            <p class="text-[11px]
+            text-cyan-300 mt-2">
+
+                Technical Operations Staff
+
+            </p>
+
+            <!-- Session -->
+            <div class="flex items-center gap-2 mt-3">
+
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+
+                <span class="text-[11px] text-emerald-400 font-medium">
+                    Active Session
+                </span>
+
+            </div>
+
+        </div>
+
     </div>
 
     <!-- NAVIGATION -->
-    <nav class="px-4 pb-28">
+    <div class="flex-1 px-4 py-4 overflow-y-auto">
 
-        <ul class="space-y-2">
+        <p class="text-[10px]
+        uppercase
+        tracking-[0.25em]
+        text-slate-500
+        px-3 mb-3
+        font-semibold">
+
+            Operations Menu
+
+        </p>
+
+        <ul class="space-y-1.5">
 
             <!-- Dashboard -->
             <li>
                 <a href="{% url 'tech_dashboard' %}"
-                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-blue-500/20 transition-all duration-300 border border-transparent hover:border-cyan-400/20">
+                class="flex items-center px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-cyan-500/20
+                hover:text-cyan-300
+                transition-all duration-300">
 
-                    <div class="flex items-center gap-4">
-
-                        <div class="h-11 w-11 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
-                            📊
-                        </div>
-
-                        <div>
-                            <p class="font-semibold">
-                                Dashboard
-                            </p>
-                            <p class="text-xs text-slate-400">
-                                Analytics & overview
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <span class="text-slate-500 group-hover:text-cyan-400 transition">
-                        →
-                    </span>
-
+                    Dashboard
                 </a>
             </li>
 
-            <!-- Booking -->
+            <!-- Booking Assistance -->
             <li>
                 <a href="{% url 'tech_booking_assist' %}"
-                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-cyan-500/20 transition-all duration-300 border border-transparent hover:border-blue-400/20">
+                class="flex items-center px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-blue-500/20
+                hover:text-blue-300
+                transition-all duration-300">
 
-                    <div class="flex items-center gap-4">
-
-                        <div class="h-11 w-11 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
-                            🎫
-                        </div>
-
-                        <div>
-                            <p class="font-semibold">
-                                Booking Assistance
-                            </p>
-                            <p class="text-xs text-slate-400">
-                                Tickets & payments
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <span class="text-slate-500 group-hover:text-blue-400 transition">
-                        →
-                    </span>
-
+                    Booking Assistance
                 </a>
             </li>
 
-            <!-- Parcels -->
+            <!-- Parcel -->
             <li>
                 <a href="{% url 'tech_parcels' %}"
-                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-amber-500/20 hover:to-orange-500/20 transition-all duration-300 border border-transparent hover:border-amber-400/20">
+                class="flex items-center px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-amber-500/20
+                hover:text-amber-300
+                transition-all duration-300">
 
-                    <div class="flex items-center gap-4">
-
-                        <div class="h-11 w-11 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
-                            📦
-                        </div>
-
-                        <div>
-                            <p class="font-semibold">
-                                Parcel Management
-                            </p>
-                            <p class="text-xs text-slate-400">
-                                QR & dispatch handling
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <span class="text-slate-500 group-hover:text-amber-400 transition">
-                        →
-                    </span>
-
+                    Parcel Management
                 </a>
             </li>
 
             <!-- Ticket Scanner -->
             <li>
                 <a href="{% url 'tech_ticket_scanner' %}"
-                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-pink-500/20 transition-all duration-300 border border-transparent hover:border-purple-400/20">
+                class="flex items-center px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-purple-500/20
+                hover:text-purple-300
+                transition-all duration-300">
 
-                    <div class="flex items-center gap-4">
-
-                        <div class="h-11 w-11 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
-                            📷
-                        </div>
-
-                        <div>
-                            <p class="font-semibold">
-                                Ticket Scanner
-                            </p>
-                            <p class="text-xs text-slate-400">
-                                Scan & verify tickets
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <span class="text-slate-500 group-hover:text-purple-400 transition">
-                        →
-                    </span>
-
+                    Ticket Scanner
                 </a>
             </li>
 
             <!-- Boarding -->
             <li>
                 <a href="{% url 'tech_boarding' %}"
-                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-emerald-500/20 hover:to-green-500/20 transition-all duration-300 border border-transparent hover:border-emerald-400/20">
+                class="flex items-center px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-emerald-500/20
+                hover:text-emerald-300
+                transition-all duration-300">
 
-                    <div class="flex items-center gap-4">
-
-                        <div class="h-11 w-11 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
-                            🚌
-                        </div>
-
-                        <div>
-                            <p class="font-semibold">
-                                Boarding Control
-                            </p>
-                            <p class="text-xs text-slate-400">
-                                Passenger check-in
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <span class="text-slate-500 group-hover:text-emerald-400 transition">
-                        →
-                    </span>
-
+                    Boarding Control
                 </a>
             </li>
 
             <!-- Tracking -->
             <li>
                 <a href="{% url 'tech_tracking' %}"
-                   class="group flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-rose-500/20 hover:to-red-500/20 transition-all duration-300 border border-transparent hover:border-rose-400/20">
+                class="flex items-center px-4 py-3 rounded-xl
+                text-[13px] font-medium
+                text-slate-300
+                border border-transparent
+                hover:bg-slate-800/70
+                hover:border-rose-500/20
+                hover:text-rose-300
+                transition-all duration-300">
 
-                    <div class="flex items-center gap-4">
-
-                        <div class="h-11 w-11 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl group-hover:scale-110 transition">
-                            📍
-                        </div>
-
-                        <div>
-                            <p class="font-semibold">
-                                Traffic Centre
-                            </p>
-                            <p class="text-xs text-slate-400">
-                                Live GPS & parcel movement
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <span class="text-slate-500 group-hover:text-rose-400 transition">
-                        →
-                    </span>
-
+                    Traffic Centre
                 </a>
             </li>
 
         </ul>
 
-    </nav>
+    </div>
 
     <!-- FOOTER -->
-    <div class="absolute bottom-0 left-0 w-full p-6 border-t border-white/10 bg-slate-950/90 backdrop-blur-lg">
+    <div class="px-5 py-4 border-t border-slate-800">
 
-        <div class="flex items-center justify-between">
+        <div class="rounded-2xl
+        bg-slate-900/70
+        border border-slate-800
+        p-4">
 
-            <div>
+            <h3 class="text-[12px]
+            font-semibold
+            text-cyan-300">
 
-                <p class="text-sm font-semibold text-white">
-                    SmartTravels
-                </p>
+                SmartTravels Tech
 
-                <p class="text-xs text-slate-400 mt-1">
-                    Technical Operations Suite
-                </p>
+            </h3>
 
-            </div>
+            <p class="text-[11px]
+            text-slate-400
+            mt-2
+            leading-relaxed">
 
-            <div class="h-10 w-10 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
-                ⚡
-            </div>
+                Technical operations suite for bookings, ticket verification, boarding and live transport monitoring.
+
+            </p>
 
         </div>
 

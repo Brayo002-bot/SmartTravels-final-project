@@ -195,223 +195,233 @@ tbody tr:hover { background: var(--glass-h); }
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 
-<div class="page">
+<div class="flex min-h-screen">
 
-  <!-- HEADER -->
-  <div class="page-header">
-    <div class="page-header-left">
-      <div class="page-icon"><i class="fa-solid fa-ticket"></i></div>
-      <div>
-        <div class="page-title">My Bookings</div>
-        <div class="page-sub">All your SmartTravels journeys in one place</div>
-      </div>
-    </div>
-    <div class="hdr-actions">
-      <a href="{% url 'dashboard' %}" class="btn-outline">
-        <i class="fa-solid fa-house" style="font-size:0.8rem;"></i> Dashboard
-      </a>
-      <a href="{% url 'tickets' %}" class="btn-gold">
-        <i class="fa-solid fa-qrcode" style="font-size:0.8rem;"></i> My Tickets
-      </a>
-      <a href="{% url 'logout' %}" class="btn-danger">
-        <i class="fa-solid fa-right-from-bracket" style="font-size:0.8rem;"></i> Logout
-      </a>
-    </div>
-  </div>
+  <!-- SIDEBAR NAVIGATION -->
+  {% include 'passenger/sidebar.html' %}
 
-  <!-- STATS -->
-  <div class="stats-grid">
+  <!-- MAIN WINDOW CONTENT -->
+  <main class="flex-1 lg:ml-64 w-full">
+    <div class="page">
 
-    <div class="stat-card c-teal">
-      <div>
-        <div class="stat-label">Bus Trips</div>
-        <div class="stat-value">{{ bus_bookings|length }}</div>
-      </div>
-      <div class="stat-icon teal"><i class="fa-solid fa-bus"></i></div>
-    </div>
-
-    <div class="stat-card c-purple">
-      <div>
-        <div class="stat-label">Train Trips</div>
-        <div class="stat-value">{{ train_bookings|length }}</div>
-      </div>
-      <div class="stat-icon purple"><i class="fa-solid fa-train"></i></div>
-    </div>
-
-    <div class="stat-card c-pink">
-      <div>
-        <div class="stat-label">Flights</div>
-        <div class="stat-value">{{ flight_bookings|length }}</div>
-      </div>
-      <div class="stat-icon pink"><i class="fa-solid fa-plane"></i></div>
-    </div>
-
-    <div class="stat-card c-amber">
-      <div>
-        <div class="stat-label">Loyalty Points</div>
-        <div class="stat-value">{{ loyalty_points|default:'0' }}</div>
-      </div>
-      <div class="stat-icon amber"><i class="fa-solid fa-gift"></i></div>
-    </div>
-
-  </div>
-
-  <!-- BUS BOOKINGS -->
-  {% if bus_bookings %}
-  <div class="booking-section">
-    <div class="booking-card">
-      <div class="booking-card-header">
-        <div class="bk-icon teal"><i class="fa-solid fa-bus"></i></div>
-        <div>
-          <div class="bk-title">Bus Bookings</div>
-          <div class="bk-sub">Long-distance and shuttle journeys</div>
+      <!-- HEADER -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-icon"><i class="fa-solid fa-ticket"></i></div>
+          <div>
+            <div class="page-title">My Bookings</div>
+            <div class="page-sub">All your SmartTravels journeys in one place</div>
+          </div>
+        </div>
+        <div class="hdr-actions">
+          <a href="{% url 'dashboard' %}" class="btn-outline">
+            <i class="fa-solid fa-house" style="font-size:0.8rem;"></i> Dashboard
+          </a>
+          <a href="{% url 'tickets' %}" class="btn-gold">
+            <i class="fa-solid fa-qrcode" style="font-size:0.8rem;"></i> My Tickets
+          </a>
+          <a href="{% url 'logout' %}" class="btn-danger">
+            <i class="fa-solid fa-right-from-bracket" style="font-size:0.8rem;"></i> Logout
+          </a>
         </div>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Reference</th>
-              <th>Route</th>
-              <th>Date</th>
-              <th>Seat</th>
-              <th>Price</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for b in bus_bookings %}
-            <tr>
-              <td><span class="ref teal">{{ b.booking_reference|default:"—" }}</span></td>
-              <td>{{ b.route.from_location }} → {{ b.route.to_location }}</td>
-              <td>{{ b.travel_date }}</td>
-              <td>{{ b.seat_number|default:"—" }}</td>
-              <td style="font-weight:500;">KES {{ b.price }}</td>
-              <td>
-                <span class="status-badge {% if b.status == 'confirmed' %}confirmed{% elif b.status == 'cancelled' %}cancelled{% else %}pending{% endif %}">
-                  <i class="fa-solid fa-circle" style="font-size:0.45rem;"></i>
-                  {{ b.status|title }}
-                </span>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  {% endif %}
 
-  <!-- TRAIN BOOKINGS -->
-  {% if train_bookings %}
-  <div class="booking-section">
-    <div class="booking-card">
-      <div class="booking-card-header">
-        <div class="bk-icon purple"><i class="fa-solid fa-train"></i></div>
-        <div>
-          <div class="bk-title">Train Bookings</div>
-          <div class="bk-sub">SGR and railway journeys</div>
+      <!-- STATS -->
+      <div class="stats-grid">
+
+        <div class="stat-card c-teal">
+          <div>
+            <div class="stat-label">Bus Trips</div>
+            <div class="stat-value">{{ bus_bookings|length }}</div>
+          </div>
+          <div class="stat-icon teal"><i class="fa-solid fa-bus"></i></div>
+        </div>
+
+        <div class="stat-card c-purple">
+          <div>
+            <div class="stat-label">Train Trips</div>
+            <div class="stat-value">{{ train_bookings|length }}</div>
+          </div>
+          <div class="stat-icon purple"><i class="fa-solid fa-train"></i></div>
+        </div>
+
+        <div class="stat-card c-pink">
+          <div>
+            <div class="stat-label">Flights</div>
+            <div class="stat-value">{{ flight_bookings|length }}</div>
+          </div>
+          <div class="stat-icon pink"><i class="fa-solid fa-plane"></i></div>
+        </div>
+
+        <div class="stat-card c-amber">
+          <div>
+            <div class="stat-label">Loyalty Points</div>
+            <div class="stat-value">{{ loyalty_points|default:'0' }}</div>
+          </div>
+          <div class="stat-icon amber"><i class="fa-solid fa-gift"></i></div>
+        </div>
+
+      </div>
+
+      <!-- BUS BOOKINGS -->
+      {% if bus_bookings %}
+      <div class="booking-section">
+        <div class="booking-card">
+          <div class="booking-card-header">
+            <div class="bk-icon teal"><i class="fa-solid fa-bus"></i></div>
+            <div>
+              <div class="bk-title">Bus Bookings</div>
+              <div class="bk-sub">Long-distance and shuttle journeys</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Route</th>
+                  <th>Date</th>
+                  <th>Seat</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for b in bus_bookings %}
+                <tr>
+                  <td><span class="ref teal">{{ b.booking_reference|default:"—" }}</span></td>
+                  <td>{{ b.route.from_location }} → {{ b.route.to_location }}</td>
+                  <td>{{ b.travel_date }}</td>
+                  <td>{{ b.seat_number|default:"—" }}</td>
+                  <td style="font-weight:500;">KES {{ b.price }}</td>
+                  <td>
+                    <span class="status-badge {% if b.status == 'confirmed' %}confirmed{% elif b.status == 'cancelled' %}cancelled{% else %}pending{% endif %}">
+                      <i class="fa-solid fa-circle" style="font-size:0.45rem;"></i>
+                      {{ b.status|title }}
+                    </span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Reference</th>
-              <th>Route</th>
-              <th>Date</th>
-              <th>Seat</th>
-              <th>Price</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for b in train_bookings %}
-            <tr>
-              <td><span class="ref purple">{{ b.booking_reference|default:"—" }}</span></td>
-              <td>{{ b.route.from_location }} → {{ b.route.to_location }}</td>
-              <td>{{ b.travel_date }}</td>
-              <td>{{ b.seat_number|default:"—" }}</td>
-              <td style="font-weight:500;">KES {{ b.price }}</td>
-              <td>
-                <span class="status-badge {% if b.status == 'confirmed' %}confirmed{% elif b.status == 'cancelled' %}cancelled{% else %}pending{% endif %}">
-                  <i class="fa-solid fa-circle" style="font-size:0.45rem;"></i>
-                  {{ b.status|title }}
-                </span>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  {% endif %}
+      {% endif %}
 
-  <!-- FLIGHT BOOKINGS -->
-  {% if flight_bookings %}
-  <div class="booking-section">
-    <div class="booking-card">
-      <div class="booking-card-header">
-        <div class="bk-icon pink"><i class="fa-solid fa-plane"></i></div>
-        <div>
-          <div class="bk-title">Flight Bookings</div>
-          <div class="bk-sub">Domestic and regional flights</div>
+      <!-- TRAIN BOOKINGS -->
+      {% if train_bookings %}
+      <div class="booking-section">
+        <div class="booking-card">
+          <div class="booking-card-header">
+            <div class="bk-icon purple"><i class="fa-solid fa-train"></i></div>
+            <div>
+              <div class="bk-title">Train Bookings</div>
+              <div class="bk-sub">SGR and railway journeys</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Route</th>
+                  <th>Date</th>
+                  <th>Seat</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for b in train_bookings %}
+                <tr>
+                  <td><span class="ref purple">{{ b.booking_reference|default:"—" }}</span></td>
+                  <td>{{ b.route.from_location }} → {{ b.route.to_location }}</td>
+                  <td>{{ b.travel_date }}</td>
+                  <td>{{ b.seat_number|default:"—" }}</td>
+                  <td style="font-weight:500;">KES {{ b.price }}</td>
+                  <td>
+                    <span class="status-badge {% if b.status == 'confirmed' %}confirmed{% elif b.status == 'cancelled' %}cancelled{% else %}pending{% endif %}">
+                      <i class="fa-solid fa-circle" style="font-size:0.45rem;"></i>
+                      {{ b.status|title }}
+                    </span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Reference</th>
-              <th>Route</th>
-              <th>Date</th>
-              <th>Seat</th>
-              <th>Price</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for b in flight_bookings %}
-            <tr>
-              <td><span class="ref pink">{{ b.booking_reference|default:"—" }}</span></td>
-              <td>{{ b.route.from_location }} → {{ b.route.to_location }}</td>
-              <td>{{ b.travel_date }}</td>
-              <td>{{ b.seat_number|default:"—" }}</td>
-              <td style="font-weight:500;">KES {{ b.price }}</td>
-              <td>
-                <span class="status-badge {% if b.status == 'confirmed' %}confirmed{% elif b.status == 'cancelled' %}cancelled{% else %}pending{% endif %}">
-                  <i class="fa-solid fa-circle" style="font-size:0.45rem;"></i>
-                  {{ b.status|title }}
-                </span>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      {% endif %}
+
+      <!-- FLIGHT BOOKINGS -->
+      {% if flight_bookings %}
+      <div class="booking-section">
+        <div class="booking-card">
+          <div class="booking-card-header">
+            <div class="bk-icon pink"><i class="fa-solid fa-plane"></i></div>
+            <div>
+              <div class="bk-title">Flight Bookings</div>
+              <div class="bk-sub">Domestic and regional flights</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Route</th>
+                  <th>Date</th>
+                  <th>Seat</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for b in flight_bookings %}
+                <tr>
+                  <td><span class="ref pink">{{ b.booking_reference|default:"—" }}</span></td>
+                  <td>{{ b.route.from_location }} → {{ b.route.to_location }}</td>
+                  <td>{{ b.travel_date }}</td>
+                  <td>{{ b.seat_number|default:"—" }}</td>
+                  <td style="font-weight:500;">KES {{ b.price }}</td>
+                  <td>
+                    <span class="status-badge {% if b.status == 'confirmed' %}confirmed{% elif b.status == 'cancelled' %}cancelled{% else %}pending{% endif %}">
+                      <i class="fa-solid fa-circle" style="font-size:0.45rem;"></i>
+                      {{ b.status|title }}
+                    </span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  {% endif %}
+      {% endif %}
 
-  <!-- EMPTY STATE -->
-  {% if not bus_bookings and not train_bookings and not flight_bookings %}
-  <div class="empty-full">
-    <div class="empty-icon-lg"><i class="fa-solid fa-ticket"></i></div>
-    <div class="empty-title">No bookings yet</div>
-    <div class="empty-sub">
-      Start your SmartTravels journey by searching for buses, trains,
-      flights and shuttles across the region.
-    </div>
-    <div class="empty-actions">
-      <a href="{% url 'dashboard' %}" class="btn-gold">
-        <i class="fa-solid fa-route" style="font-size:0.8rem;"></i> Search &amp; Book
-      </a>
-    </div>
-  </div>
-  {% endif %}
+      <!-- EMPTY STATE -->
+      {% if not bus_bookings and not train_bookings and not flight_bookings %}
+      <div class="empty-full">
+        <div class="empty-icon-lg"><i class="fa-solid fa-ticket"></i></div>
+        <div class="empty-title">No bookings yet</div>
+        <div class="empty-sub">
+          Start your SmartTravels journey by searching for buses, trains,
+          flights and shuttles across the region.
+        </div>
+        <div class="empty-actions">
+          <a href="{% url 'dashboard' %}" class="btn-gold">
+            <i class="fa-solid fa-route" style="font-size:0.8rem;"></i> Search &amp; Book
+          </a>
+        </div>
+      </div>
+      {% endif %}
 
-</div><!-- /page -->
+    </div>
+  </main>
+
+</div>
 
 </body>
 </html>

@@ -7,48 +7,72 @@
     <title>Support Center | SmartTravels</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        body{
-            font-family:'DM Sans',sans-serif;
-            background:#071120;
+        :root {
+            --navy: #080d1a;
+            --gold: #c9a84c;
+            --gold-l: #e8c97a;
+            --border: rgba(255,255,255,0.06);
+            --border-h: rgba(255,255,255,0.12);
+            --glass: rgba(255,255,255,0.03);
+            --glass-h: rgba(255,255,255,0.06);
+            --muted: rgba(255,255,255,0.45);
         }
 
-        .playfair{
-            font-family:'Playfair Display',serif;
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--navy);
         }
 
-        .glass{
-            background:rgba(255,255,255,0.05);
-            backdrop-filter:blur(12px);
-            border:1px solid rgba(255,255,255,0.08);
+        .playfair {
+            font-family: 'Playfair Display', serif;
         }
 
-        .gold{
-            color:#d4af37;
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(14px);
+            border: 0.5px solid var(--border);
         }
 
-        .gold-bg{
-            background:#d4af37;
+        .gold {
+            color: var(--gold);
         }
 
-        .support-card:hover{
-            transform:translateY(-4px);
-            transition:0.3s ease;
+        .gold-bg {
+            background: var(--gold);
         }
 
-        .gradient-bg{
+        .support-card {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .support-card:hover {
+            border-color: var(--border-h);
+            background: var(--glass-h);
+            transform: translateY(-3px);
+        }
+
+        .gradient-bg {
             background:
-            radial-gradient(circle at top right, rgba(212,175,55,0.14), transparent 30%),
-            radial-gradient(circle at bottom left, rgba(59,130,246,0.10), transparent 30%),
-            #071120;
+            radial-gradient(circle at top right, rgba(201,168,76,0.08), transparent 35%),
+            radial-gradient(circle at bottom left, rgba(59,130,246,0.05), transparent 35%),
+            #080d1a;
         }
 
-        .scrollbar-hide::-webkit-scrollbar{
-            display:none;
+        /* Smooth Chat UI Updates */
+        #chat-output::-webkit-scrollbar {
+            width: 5px;
+        }
+        #chat-output::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        #chat-output::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 99px;
         }
     </style>
 </head>
@@ -56,410 +80,320 @@
 
 <div class="flex">
 
-    <!-- Sidebar -->
     {% include 'passenger/sidebar.html' %}
 
-    <!-- Main Content -->
-    <main class="flex-1 lg:ml-64 p-6 md:p-10">
+    <main class="flex-1 lg:ml-64 p-6 md:p-10 max-w-[1400px] mx-auto w-full">
 
-        <!-- Header -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
-
+        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 mb-12 border-b border-white/5 pb-8">
             <div>
-                <h1 class="playfair text-4xl font-bold mb-3">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-xs tracking-wider uppercase text-[#c9a84c] font-medium px-2.5 py-1 rounded-md bg-[#c9a84c]/10 border border-[#c9a84c]/20">Help Desk</span>
+                </div>
+                <h1 class="playfair text-4xl font-medium tracking-tight mb-3">
                     Support Center
                 </h1>
-
-                <p class="text-gray-400 max-w-2xl leading-relaxed">
-                    Need help with your bookings, tickets, loyalty points, parcel delivery or account?
+                <p class="text-gray-400 max-w-2xl text-sm md:text-base leading-relaxed font-light">
+                    Need help with your bookings, tickets, loyalty points, parcel delivery or account? 
                     Contact SmartTravels support or directly reach transport companies available on the platform.
                 </p>
             </div>
 
-            <!-- Emergency Support -->
-            <div class="glass rounded-2xl px-6 py-5 max-w-sm">
+            <div class="glass rounded-2xl p-5 w-full xl:max-w-sm border-l-2 border-l-red-500/40 bg-gradient-to-r from-red-500/5 to-transparent">
                 <div class="flex items-center gap-4">
-
-                    <div class="w-14 h-14 rounded-2xl bg-red-500/20 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             class="w-7 h-7 text-red-400"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke="currentColor">
-                            <path stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  stroke-width="2"
-                                  d="M12 8v4m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/>
-                        </svg>
+                    <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20 shrink-0">
+                        <i class="fa-solid fa-headset text-red-400 text-lg"></i>
                     </div>
-
                     <div>
-                        <h3 class="font-semibold text-lg">Emergency Help</h3>
-                        <p class="text-gray-400 text-sm">Available 24/7</p>
-                        <p class="gold font-semibold mt-1">+254 700 123 456</p>
+                        <h3 class="font-medium text-sm text-gray-200 uppercase tracking-wider">Emergency Line</h3>
+                        <p class="text-xs text-gray-400">Available 24/7 Response</p>
+                        <a href="tel:+254700123456" class="gold font-medium text-base tracking-wide block mt-0.5 hover:underline">+254 700 123 456</a>
                     </div>
-
                 </div>
             </div>
-
         </div>
 
-        <!-- Quick Help Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
-
-            <div class="glass rounded-3xl p-6 support-card">
-                <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-5">
-                    ✈️
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-12">
+            <div class="glass rounded-2xl p-6 support-card">
+                <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 mb-5">
+                    <i class="fa-solid fa-plane-departure text-blue-400 text-lg"></i>
                 </div>
-
-                <h3 class="text-lg font-semibold mb-2">
-                    Booking Support
-                </h3>
-
-                <p class="text-gray-400 text-sm leading-relaxed">
-                    Assistance with flights, buses, trains and seat reservations.
+                <h3 class="text-base font-medium mb-1.5 text-gray-100">Booking Support</h3>
+                <p class="text-gray-400 text-xs leading-relaxed font-light">
+                    Assistance with flights, buses, trains and seat reservations tracking.
                 </p>
             </div>
-
-            <div class="glass rounded-3xl p-6 support-card">
-                <div class="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center mb-5">
-                    💳
+            <div class="glass rounded-2xl p-6 support-card">
+                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 mb-5">
+                    <i class="fa-solid fa-credit-card text-emerald-400 text-lg"></i>
                 </div>
-
-                <h3 class="text-lg font-semibold mb-2">
-                    Payment Issues
-                </h3>
-
-                <p class="text-gray-400 text-sm leading-relaxed">
-                    Help with M-Pesa, refunds, failed payments and confirmations.
+                <h3 class="text-base font-medium mb-1.5 text-gray-100">Payment Issues</h3>
+                <p class="text-gray-400 text-xs leading-relaxed font-light">
+                    Help with M-Pesa, refunds, failed payments and transaction confirmations.
                 </p>
             </div>
-
-            <div class="glass rounded-3xl p-6 support-card">
-                <div class="w-14 h-14 rounded-2xl bg-yellow-500/20 flex items-center justify-center mb-5">
-                    🎁
+            <div class="glass rounded-2xl p-6 support-card">
+                <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 mb-5">
+                    <i class="fa-solid fa-gift text-amber-400 text-lg"></i>
                 </div>
-
-                <h3 class="text-lg font-semibold mb-2">
-                    Loyalty Program
-                </h3>
-
-                <p class="text-gray-400 text-sm leading-relaxed">
-                    Redeem travel points and manage your rewards account.
+                <h3 class="text-base font-medium mb-1.5 text-gray-100">Loyalty Program</h3>
+                <p class="text-gray-400 text-xs leading-relaxed font-light">
+                    Redeem your accumulated travel points and manage milestone rewards.
                 </p>
             </div>
-
-            <div class="glass rounded-3xl p-6 support-card">
-                <div class="w-14 h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center mb-5">
-                    📦
+            <div class="glass rounded-2xl p-6 support-card">
+                <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20 mb-5">
+                    <i class="fa-solid fa-box-open text-purple-400 text-lg"></i>
                 </div>
-
-                <h3 class="text-lg font-semibold mb-2">
-                    Parcel Tracking
-                </h3>
-
-                <p class="text-gray-400 text-sm leading-relaxed">
-                    Track parcels and get delivery support from transport companies.
+                <h3 class="text-base font-medium mb-1.5 text-gray-100">Parcel Tracking</h3>
+                <p class="text-gray-400 text-xs leading-relaxed font-light">
+                    Track logistical parcels and get delivery updates from operators.
                 </p>
             </div>
-
         </div>
 
-        <!-- Chatbot Support -->
-        <div class="glass rounded-3xl p-8 mb-12">
+        <div class="glass rounded-2xl p-6 md:p-8 mb-12 border border-white/5">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
                 <div>
-                    <h2 class="playfair text-3xl font-bold">SmartTravels Chatbot</h2>
-                    <p class="text-gray-400 mt-2">Ask a quick question or choose one of the suggested topics below.</p>
+                    <h2 class="playfair text-2xl font-medium flex items-center gap-2.5">
+                        <i class="fa-solid fa-robot text-sm gold"></i> SmartTravels Chatbot
+                    </h2>
+                    <p class="text-gray-400 text-xs mt-1 font-light">Ask a quick question or pick one of our automated suggested shortcuts.</p>
                 </div>
-                <div class="flex gap-3 flex-wrap">
-                    <a href="tel:+254700123456" class="rounded-2xl bg-red-500/15 px-5 py-3 text-sm font-semibold text-red-200 hover:bg-red-500/25 transition">Emergency Call</a>
-                    <button id="clear-chat" class="rounded-2xl bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/20 transition">Reset Chat</button>
+                <div class="flex gap-2.5 flex-wrap">
+                    <a href="tel:+254700123456" class="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-2 text-xs font-medium text-red-300 hover:bg-red-500/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-phone text-[10px]"></i> Emergency Call
+                    </a>
+                    <button id="clear-chat" class="rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-xs font-medium text-gray-200 hover:bg-white/10 transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset Chat
+                    </button>
                 </div>
             </div>
+            
             <div class="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
-                <div class="rounded-3xl bg-slate-900/80 border border-white/10 p-6">
-                    <div id="chat-output" class="min-h-[280px] rounded-3xl bg-slate-950/90 p-5 overflow-y-auto text-sm leading-6 text-slate-300"></div>
-                    <div class="mt-5 flex gap-3 flex-wrap">
-                        <button data-question="How do I book a ticket?" class="chat-option rounded-2xl bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">Book a ticket</button>
-                        <button data-question="How can I track my parcel?" class="chat-option rounded-2xl bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">Track parcel</button>
-                        <button data-question="How do loyalty points work?" class="chat-option rounded-2xl bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">Loyalty points</button>
-                        <button data-question="What payment methods are supported?" class="chat-option rounded-2xl bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">Payment methods</button>
+                <div class="rounded-2xl bg-[#030712]/60 border border-white/5 p-4 md:p-5 flex flex-col justify-between">
+                    <div id="chat-output" class="min-h-[300px] max-h-[300px] rounded-xl bg-[#010409]/90 p-4 overflow-y-auto text-xs space-y-3 border border-white/5">
+                        <div class="bg-white/5 border border-white/5 p-3.5 rounded-xl text-gray-300 max-w-[85%]">
+                            <strong class="block text-gray-400 text-[10px] uppercase tracking-wider mb-1"><i class="fa-solid fa-robot gold"></i> Chatbot</strong>
+                            Hello! Select one of the quick questions below to see how I can help with your journey today.
+                        </div>
+                    </div>
+                    <div class="mt-4 flex gap-2 flex-wrap">
+                        <button data-question="How do I book a ticket?" class="chat-option rounded-xl bg-white/5 border border-white/5 px-3 py-2 text-xs text-gray-200 hover:bg-white/10 transition text-left font-light">How do I book a ticket?</button>
+                        <button data-question="How can I track my parcel?" class="chat-option rounded-xl bg-white/5 border border-white/5 px-3 py-2 text-xs text-gray-200 hover:bg-white/10 transition text-left font-light">Track parcel</button>
+                        <button data-question="How do loyalty points work?" class="chat-option rounded-xl bg-white/5 border border-white/5 px-3 py-2 text-xs text-gray-200 hover:bg-white/10 transition text-left font-light">Loyalty points</button>
+                        <button data-question="What payment methods are supported?" class="chat-option rounded-xl bg-white/5 border border-white/5 px-3 py-2 text-xs text-gray-200 hover:bg-white/10 transition text-left font-light">Payment methods</button>
                     </div>
                 </div>
-                <div class="rounded-3xl bg-slate-900/80 border border-white/10 p-6">
-                    <h3 class="text-xl font-semibold mb-4">Chatbot Answers</h3>
-                    <div class="space-y-4 text-sm text-slate-300">
-                        <p><span class="text-amber-300">Q:</span> How do I contact support?</p>
-                        <p><span class="text-slate-400">A:</span> Use the emergency button or reach out to our support team via the contact cards below.</p>
-                        <p><span class="text-amber-300">Q:</span> How do I redeem points?</p>
-                        <p><span class="text-slate-400">A:</span> Open Loyalty and choose a reward to redeem your travel points.</p>
-                        <p><span class="text-amber-300">Q:</span> Where do I see traffic alerts?</p>
-                        <p><span class="text-slate-400">A:</span> Go to Traffic Alerts from the sidebar to see the latest route warnings.</p>
+
+                <div class="rounded-2xl bg-[#030712]/60 border border-white/5 p-5">
+                    <h3 class="text-sm font-medium uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-xs gold"></i> Common Quick Answers
+                    </h3>
+                    <div class="space-y-4 text-xs">
+                        <div class="border-b border-white/5 pb-3">
+                            <p class="text-gray-400 font-light"><span class="gold font-medium">Q:</span> How do I contact support?</p>
+                            <p class="text-gray-300 mt-1 font-light pl-4">Use the emergency button dashboard links or dial the card lines below.</p>
+                        </div>
+                        <div class="border-b border-white/5 pb-3">
+                            <p class="text-gray-400 font-light"><span class="gold font-medium">Q:</span> How do I redeem points?</p>
+                            <p class="text-gray-300 mt-1 font-light pl-4">Open Loyalty from your user hub and swap travel points for coupons.</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 font-light"><span class="gold font-medium">Q:</span> Where are my safety updates?</p>
+                            <p class="text-gray-300 mt-1 font-light pl-4">Go to Traffic Alerts tab to review real-time active dispatch warnings.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- System Admin Contacts -->
         <div class="mb-12">
-
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h2 class="playfair text-3xl font-bold">
-                        SmartTravels Administrators
-                    </h2>
-
-                    <p class="text-gray-400 mt-2">
-                        Reach the platform support team directly.
-                    </p>
-                </div>
+            <div class="mb-6">
+                <h2 class="playfair text-2xl font-medium">Platform Managers</h2>
+                <p class="text-gray-400 text-xs mt-1 font-light">Reach out to core system operations for escalated account or operational issues.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                 {% for admin in admins %}
-                <div class="glass rounded-3xl p-6 support-card">
-
-                    <div class="flex items-center gap-4 mb-5">
-
-                        <div class="w-16 h-16 rounded-2xl bg-yellow-500/20 flex items-center justify-center text-2xl">
-                            👨‍💼
+                <div class="glass rounded-2xl p-5 flex flex-col justify-between support-card">
+                    <div>
+                        <div class="flex items-center gap-3.5 mb-5">
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 text-lg">
+                                <i class="fa-solid fa-user-shield text-amber-400 text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-base text-gray-100">{{ admin.full_name }}</h3>
+                                <p class="text-xs text-gray-400 font-light">System Administrator</p>
+                            </div>
                         </div>
 
-                        <div>
-                            <h3 class="font-semibold text-lg">
-                                {{ admin.full_name }}
-                            </h3>
-
-                            <p class="text-sm text-gray-400">
-                                System Administrator
-                            </p>
+                        <div class="space-y-2.5 text-xs text-gray-300 pl-1">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-regular fa-envelope text-gray-500 w-4"></i>
+                                <span class="font-light">{{ admin.email }}</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-phone-flip text-gray-500 w-4"></i>
+                                <span class="font-light text-gray-400">{{ admin.phone }}</span>
+                            </div>
                         </div>
-
                     </div>
 
-                    <div class="space-y-4 text-sm">
-
-                        <div class="flex items-center gap-3">
-                            <span class="text-gray-500">📧</span>
-                            <span>{{ admin.email }}</span>
-                        </div>
-
-                        <div class="flex items-center gap-3">
-                            <span class="text-gray-500">📞</span>
-                            <span>{{ admin.phone }}</span>
-                        </div>
-
-                    </div>
-
-                    <button class="mt-6 w-full gold-bg text-black font-semibold py-3 rounded-xl hover:opacity-90 transition">
+                    <a href="mailto:{{ admin.email }}" class="mt-6 block text-center gold-bg text-black font-medium py-2.5 rounded-xl hover:opacity-90 transition text-xs tracking-wide">
                         Contact Admin
-                    </button>
-
+                    </a>
                 </div>
                 {% empty %}
-                <div class="glass rounded-3xl p-8 text-gray-400">
-                    No administrators available at the moment.
+                <div class="glass rounded-2xl p-6 text-gray-400 text-xs font-light col-span-full text-center py-10">
+                    <i class="fa-solid fa-users-slash text-xl block mb-2 opacity-40"></i> No administrators are registered on this node profile at the moment.
                 </div>
                 {% endfor %}
-
             </div>
-
         </div>
 
-        <!-- Transport Companies -->
         <div>
-
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h2 class="playfair text-3xl font-bold">
-                        Transport Companies
-                    </h2>
-
-                    <p class="text-gray-400 mt-2">
-                        Contact companies directly for route, luggage, parcel or travel inquiries.
-                    </p>
-                </div>
+            <div class="mb-6">
+                <h2 class="playfair text-2xl font-medium">Transport Providers</h2>
+                <p class="text-gray-400 text-xs mt-1 font-light">Connect with logistical customer service hubs regarding operational route schedules or active luggage questions.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                 {% for company in companies %}
-                <div class="glass rounded-3xl overflow-hidden support-card">
-
-                    <!-- Company Image -->
-                    <div class="h-44 overflow-hidden bg-gray-800">
+                <div class="glass rounded-2xl overflow-hidden flex flex-col support-card">
+                    <div class="h-32 overflow-hidden bg-slate-950/60 relative border-b border-white/5">
                         {% if company.logo_image %}
-                        <img src="{{ company.logo_image.url }}"
-                             alt="{{ company.name }}"
-                             class="w-full h-full object-cover">
+                        <img src="{{ company.logo_image.url }}" alt="{{ company.name }}" class="w-full h-full object-cover opacity-80">
                         {% else %}
-                        <div class="w-full h-full flex items-center justify-center text-5xl">
-                            🚍
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-950">
+                            <i class="fa-solid fa-bus text-4xl opacity-15 text-white"></i>
                         </div>
                         {% endif %}
+                        <span class="absolute top-3 right-3 bg-slate-900/90 text-[#c9a84c] border border-white/10 text-[10px] uppercase font-medium tracking-wide px-2.5 py-1 rounded-md">
+                            {{ company.get_transport_type_display }}
+                        </span>
                     </div>
 
-                    <!-- Company Info -->
-                    <div class="p-6">
-
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-xl font-semibold">
+                    <div class="p-5 flex flex-col justify-between flex-1">
+                        <div>
+                            <h3 class="text-base font-medium text-gray-100 mb-2">
                                 {{ company.name }}
                             </h3>
+                            <p class="text-gray-400 text-xs leading-relaxed mb-4 font-light min-h-[36px]">
+                                {{ company.description|truncatewords:15 }}
+                            </p>
 
-                            <span class="bg-yellow-500/20 text-yellow-300 text-xs px-3 py-1 rounded-full">
-                                {{ company.get_transport_type_display }}
-                            </span>
+                            <div class="space-y-2 text-xs text-gray-300 border-t border-white/5 pt-3">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-regular fa-envelope text-gray-500 w-4 shrink-0"></i>
+                                    <span class="truncate font-light">{{ company.contact_email }}</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-phone text-gray-500 w-4 shrink-0"></i>
+                                    <span class="font-light text-gray-400">{{ company.contact_phone }}</span>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <i class="fa-solid fa-location-dot text-gray-500 w-4 shrink-0 mt-0.5"></i>
+                                    <span class="text-gray-400 font-light truncate">{{ company.address }}</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <p class="text-gray-400 text-sm leading-relaxed mb-5">
-                            {{ company.description|truncatewords:20 }}
-                        </p>
-
-                        <div class="space-y-3 text-sm">
-
-                            <div class="flex items-center gap-3">
-                                <span class="text-gray-500">📧</span>
-                                <span>{{ company.contact_email }}</span>
-                            </div>
-
-                            <div class="flex items-center gap-3">
-                                <span class="text-gray-500">📞</span>
-                                <span>{{ company.contact_phone }}</span>
-                            </div>
-
-                            <div class="flex items-start gap-3">
-                                <span class="text-gray-500">📍</span>
-                                <span class="text-gray-300">
-                                    {{ company.address }}
-                                </span>
-                            </div>
-
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3 mt-6">
-
-                            <button class="bg-yellow-500 text-black font-semibold py-3 rounded-xl hover:opacity-90 transition">
-                                Contact
-                            </button>
-
-                            <button class="bg-white/10 border border-white/10 py-3 rounded-xl hover:bg-white/20 transition">
+                        <div class="grid grid-cols-2 gap-2.5 mt-5">
+                            <a href="tel:{{ company.contact_phone }}" class="bg-[#c9a84c] text-black font-medium py-2 rounded-xl hover:opacity-90 transition text-center text-xs">
+                                Call Hub
+                            </a>
+                            <a href="{% url 'dashboard' %}" class="bg-white/5 border border-white/10 text-gray-200 py-2 rounded-xl hover:bg-white/10 transition text-center text-xs font-light">
                                 View Routes
-                            </button>
-
+                            </a>
                         </div>
-
                     </div>
-
                 </div>
                 {% empty %}
-                <div class="glass rounded-3xl p-8 text-gray-400">
-                    No transport companies available.
+                <div class="glass rounded-2xl p-6 text-gray-400 text-xs font-light col-span-full text-center py-10">
+                    <i class="fa-solid fa-bus-slash text-xl block mb-2 opacity-40"></i> No external fleet carrier companies are linked currently.
                 </div>
                 {% endfor %}
-
             </div>
-
         </div>
 
-        <!-- FAQ Section -->
         <div class="mt-14">
-
-            <div class="glass rounded-3xl p-8">
-
-                <h2 class="playfair text-3xl font-bold mb-8">
-                    Frequently Asked Questions
-                </h2>
-
-                <div class="space-y-6">
-
-                    <div class="border-b border-white/10 pb-5">
-                        <h3 class="font-semibold mb-2">
-                            How do I redeem loyalty points?
-                        </h3>
-
-                        <p class="text-gray-400 text-sm leading-relaxed">
-                            Visit the Loyalty page and choose an available travel reward.
-                            Points can be redeemed for bus, train or flight discounts.
+            <div class="glass rounded-2xl p-6 md:p-8">
+                <h2 class="playfair text-2xl font-medium mb-6">Frequently Asked Questions</h2>
+                
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-x-8 gap-y-5">
+                    <div class="border-b border-white/5 pb-4">
+                        <h3 class="font-medium text-sm text-gray-200 mb-1.5">How do I redeem loyalty points?</h3>
+                        <p class="text-gray-400 text-xs leading-relaxed font-light">
+                            Visit your personal Loyalty page and select a travel reward ticket perk tier. Points apply instant system price write-offs at the checkout point.
                         </p>
                     </div>
-
-                    <div class="border-b border-white/10 pb-5">
-                        <h3 class="font-semibold mb-2">
-                            How do I cancel my booking?
-                        </h3>
-
-                        <p class="text-gray-400 text-sm leading-relaxed">
-                            Go to My Bookings and select the ticket you wish to cancel.
-                            Refund policies vary depending on the transport company.
+                    <div class="border-b border-white/5 pb-4">
+                        <h3 class="font-medium text-sm text-gray-200 mb-1.5">How do I cancel my active booking?</h3>
+                        <p class="text-gray-400 text-xs leading-relaxed font-light">
+                            Open My Bookings panel, open up your details receipt element and opt for cancellation procedures. Terms apply by unique line operators.
                         </p>
                     </div>
-
-                    <div class="border-b border-white/10 pb-5">
-                        <h3 class="font-semibold mb-2">
-                            What payment methods are supported?
-                        </h3>
-
-                        <p class="text-gray-400 text-sm leading-relaxed">
-                            SmartTravels supports M-Pesa, debit cards, credit cards and mobile banking.
+                    <div class="border-b border-white/5 xl:border-0 pb-4 xl:pb-0">
+                        <h3 class="font-medium text-sm text-gray-200 mb-1.5">What payment methods are supported?</h3>
+                        <p class="text-gray-400 text-xs leading-relaxed font-light">
+                            SmartTravels connects with integrated M-Pesa channels, direct banking card rails, credit portals, and digital points balances perfectly.
                         </p>
                     </div>
-
                     <div>
-                        <h3 class="font-semibold mb-2">
-                            Can I send parcels through SmartTravels?
-                        </h3>
-
-                        <p class="text-gray-400 text-sm leading-relaxed">
-                            Yes. Select the parcel delivery option and choose your preferred transport company.
+                        <h3 class="font-medium text-sm text-gray-200 mb-1.5">Can I send parcels through SmartTravels?</h3>
+                        <p class="text-gray-400 text-xs leading-relaxed font-light">
+                            Yes. Use the explicit package delivery dashboard module to create structural drops, select a cargo provider vehicle, and generate tracking stamps.
                         </p>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
     </main>
-
 </div>
 
-    <script>
-        const responses = {
-            'How do I book a ticket?': 'Use the passenger dashboard search to locate buses, trains, or flights. Select your route, date and complete the booking flow with payment.',
-            'How can I track my parcel?': 'Visit Track Parcel from the sidebar. Your parcel status will show live updates and current transit location.',
-            'How do loyalty points work?': 'Earn points on every booking. Redeem them on the Loyalty page for travel perks.',
-            'What payment methods are supported?': 'SmartTravels supports M-Pesa, cards, cash and loyalty point redemptions where available.',
-        };
+<script>
+    const responses = {
+        'How do I book a ticket?': 'Use the passenger dashboard search to locate buses, trains, or flights. Select your route, date and complete the booking flow with payment.',
+        'How can I track my parcel?': 'Visit Track Parcel from the sidebar. Your parcel status will show live updates and current transit location.',
+        'How do loyalty points work?': 'Earn points on every booking. Redeem them on the Loyalty page for travel perks.',
+        'What payment methods are supported?': 'SmartTravels supports M-Pesa, cards, cash and loyalty point redemptions where available.',
+    };
 
-        const output = document.getElementById('chat-output');
-        const options = document.querySelectorAll('.chat-option');
-        const clearButton = document.getElementById('clear-chat');
+    const output = document.getElementById('chat-output');
+    const options = document.querySelectorAll('.chat-option');
+    const clearButton = document.getElementById('clear-chat');
 
-        function addMessage(role, message) {
-            const wrapper = document.createElement('div');
-            wrapper.className = role === 'user' ? 'bg-white/10 border border-slate-800 p-4 rounded-3xl text-slate-100' : 'bg-slate-800 border border-slate-700 p-4 rounded-3xl text-slate-300';
-            wrapper.innerHTML = `<strong class="block mb-2">${role === 'user' ? 'You' : 'Chatbot'}</strong><div>${message}</div>`;
-            output.appendChild(wrapper);
-            output.scrollTop = output.scrollHeight;
+    function addMessage(role, message) {
+        const wrapper = document.createElement('div');
+        if(role === 'user') {
+            wrapper.className = 'bg-[#c9a84c]/10 border border-[#c9a84c]/20 p-3.5 rounded-xl text-gray-200 ml-auto max-w-[85%]';
+            wrapper.innerHTML = `<strong class="block text-[#c9a84c] text-[10px] uppercase tracking-wider mb-1"><i class="fa-solid fa-user"></i> You</strong><div>${message}</div>`;
+        } else {
+            wrapper.className = 'bg-white/5 border border-white/5 p-3.5 rounded-xl text-gray-300 max-w-[85%]';
+            wrapper.innerHTML = `<strong class="block text-gray-400 text-[10px] uppercase tracking-wider mb-1"><i class="fa-solid fa-robot gold"></i> Chatbot</strong><div>${message}</div>`;
         }
+        output.appendChild(wrapper);
+        output.scrollTop = output.scrollHeight;
+    }
 
-        options.forEach(button => {
-            button.addEventListener('click', () => {
-                const question = button.dataset.question;
-                addMessage('user', question);
-                setTimeout(() => {
-                    addMessage('bot', responses[question] || 'I am here to help. Please check the sidebar sections for more information.');
-                }, 250);
-            });
+    options.forEach(button => {
+        button.addEventListener('click', () => {
+            const question = button.dataset.question;
+            addMessage('user', question);
+            setTimeout(() => {
+                addMessage('bot', responses[question] || 'I am here to help. Please check the sidebar sections for more information.');
+            }, 250);
         });
+    });
 
-        clearButton.addEventListener('click', () => {
-            output.innerHTML = '';
-        });
-    </script>
+    clearButton.addEventListener('click', () => {
+        output.innerHTML = `
+            <div class="bg-white/5 border border-white/5 p-3.5 rounded-xl text-gray-300 max-w-[85%]">
+                <strong class="block text-gray-400 text-[10px] uppercase tracking-wider mb-1"><i class="fa-solid fa-robot gold"></i> Chatbot</strong>
+                Hello! Select one of the quick questions below to see how I can help with your journey today.
+            </div>`;
+    });
+</script>
 </body>
 </html>

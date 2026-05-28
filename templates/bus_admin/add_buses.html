@@ -9,592 +9,425 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        .glass-card{
-            background: rgba(255,255,255,0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.70);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
-        .scrollbar-hide::-webkit-scrollbar{
-            display:none;
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50 min-h-screen">
+<body class="bg-gradient-to-br from-slate-100 via-slate-50 to-blue-50 min-h-screen text-slate-800 antialiased">
 
 <div class="flex">
 
     {% include 'bus_admin/sidebar.html' %}
 
-    <!-- MAIN CONTENT -->
     <div class="ml-72 w-full p-8">
 
-        <!-- PAGE HEADER -->
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
-
             <div class="flex items-center gap-5">
-
-                <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-500 shadow-2xl flex items-center justify-center text-4xl text-white">
+                <div class="h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 shadow-lg shadow-blue-500/20 flex items-center justify-center text-3xl text-white">
                     🚌
                 </div>
-
                 <div>
-                    <h1 class="text-4xl font-black text-gray-800">
+                    <h1 class="text-3xl font-bold tracking-tight text-slate-900">
                         Bus Fleet Management
                     </h1>
-
-                    <p class="text-gray-500 mt-2 text-lg">
-                        Add buses, simulate seat layouts and manage your transport fleet.
+                    <p class="text-slate-500 mt-1 text-sm">
+                        Add buses, simulate seat layouts, and manage your transport fleet.
                     </p>
                 </div>
-
             </div>
 
-            <div class="glass-card border border-white/50 shadow-xl rounded-3xl px-6 py-5">
-                <p class="text-sm text-gray-500">
+            <div class="glass-card border border-white bg-white/60 shadow-sm rounded-2xl px-5 py-4 min-w-[220px]">
+                <p class="text-xs font-medium uppercase tracking-wider text-slate-400">
                     Fleet Status
                 </p>
-
-                <h2 class="text-2xl font-bold text-gray-800 mt-1">
+                <h2 class="text-xl font-semibold text-slate-800 mt-0.5">
                     Operational
                 </h2>
-
-                <div class="flex items-center gap-2 mt-3 text-emerald-600 font-semibold text-sm">
-                    <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div class="flex items-center gap-1.5 mt-2 text-emerald-600 font-medium text-xs">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     Live Monitoring Enabled
                 </div>
             </div>
-
         </div>
 
-        <!-- TOP STATS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Total Buses
-                        </p>
-
-                        <h2 class="text-4xl font-black text-gray-800 mt-2">
-                            {{ buses|length }}
-                        </h2>
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
-                        🚍
-                    </div>
+            <div class="glass-card rounded-2xl p-6 shadow-sm border border-white bg-white/60 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                        Total Buses
+                    </p>
+                    <h2 class="text-3xl font-bold text-slate-800 mt-1">
+                        {{ buses|length }}
+                    </h2>
+                </div>
+                <div class="h-12 w-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-2xl">
+                    🚍
                 </div>
             </div>
 
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Routes Available
-                        </p>
-
-                        <h2 class="text-4xl font-black text-gray-800 mt-2">
-                            {{ routes|length }}
-                        </h2>
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-cyan-100 flex items-center justify-center text-3xl">
-                        🌍
-                    </div>
+            <div class="glass-card rounded-2xl p-6 shadow-sm border border-white bg-white/60 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                        Routes Available
+                    </p>
+                    <h2 class="text-3xl font-bold text-slate-800 mt-1">
+                        {{ routes|length }}
+                    </h2>
+                </div>
+                <div class="h-12 w-12 rounded-xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-2xl">
+                    🌍
                 </div>
             </div>
 
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Drivers
-                        </p>
-
-                        <h2 class="text-4xl font-black text-gray-800 mt-2">
-                            {{ drivers|length }}
-                        </h2>
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-3xl">
-                        👨‍✈️
-                    </div>
+            <div class="glass-card rounded-2xl p-6 shadow-sm border border-white bg-white/60 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                        Drivers
+                    </p>
+                    <h2 class="text-3xl font-bold text-slate-800 mt-1">
+                        {{ drivers|length }}
+                    </h2>
+                </div>
+                <div class="h-12 w-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-2xl">
+                    👨‍✈️
                 </div>
             </div>
-
         </div>
 
-        <!-- ADD BUS SECTION -->
-        <div class="glass-card rounded-3xl shadow-2xl border border-white/40 overflow-hidden mb-10">
-
-            <div class="p-8 border-b border-gray-100">
-
-                <div class="flex items-center justify-between flex-wrap gap-4">
-
-                    <div>
-                        <h2 class="text-3xl font-black text-gray-800">
-                            Add New Bus
-                        </h2>
-
-                        <p class="text-gray-500 mt-2">
-                            Configure your bus details, seating and assignments.
-                        </p>
-                    </div>
-
-                    <div class="bg-blue-100 text-blue-700 px-5 py-3 rounded-2xl font-semibold">
-                        🚀 Fleet Expansion
-                    </div>
-
+        <div class="glass-card rounded-2xl shadow-sm border border-white bg-white/60 overflow-hidden mb-10">
+            <div class="p-6 border-b border-slate-100 bg-white/40 flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">
+                        Add New Bus
+                    </h2>
+                    <p class="text-slate-500 text-xs mt-0.5">
+                        Configure your bus details, seating arrangements, and driver assignments.
+                    </p>
                 </div>
-
+                <div class="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-xl text-xs font-semibold border border-blue-100">
+                    🚀 Fleet Expansion
+                </div>
             </div>
 
-            <div class="p-8">
-
+            <div class="p-6">
                 <form method="POST">
                     {% csrf_token %}
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-
-                        <!-- Bus Number -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
+                            <label class="block mb-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                 Bus Number
                             </label>
-
-                            <input type="text"
-                                   name="bus_number"
-                                   class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                   placeholder="e.g. ST-101"
-                                   required>
+                            <input type="text" name="bus_number" placeholder="e.g. ST-101" required
+                                   class="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/80 transition">
                         </div>
 
-                        <!-- Number Plate -->
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
+                            <label class="block mb-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                 Number Plate
                             </label>
-
-                            <input type="text"
-                                   name="number_plate"
-                                   class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500"
-                                   placeholder="e.g. KDA 123A">
+                            <input type="text" name="number_plate" placeholder="e.g. KDA 123A"
+                                   class="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/80 transition">
                         </div>
 
-                        <!-- Route -->
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
+                            <label class="block mb-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                 Route
                             </label>
-
-                            <select name="route"
-                                    class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500"
-                                    required>
-
+                            <select name="route" required
+                                    class="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/80 transition">
                                 {% for route in routes %}
                                     <option value="{{ route.id }}">
                                         {{ route.from_location }} → {{ route.to_location }}
                                     </option>
                                 {% endfor %}
-
                             </select>
                         </div>
 
-                        <!-- Vehicle Type -->
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
+                            <label class="block mb-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                 Vehicle Type
                             </label>
-
-                            <select id="bus-vehicle-type"
-                                    name="vehicle_type"
-                                    class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500"
-                                    onchange="updateBusMode()"
-                                    required>
+                            <select id="bus-vehicle-type" name="vehicle_type" onchange="updateBusMode()" required
+                                    class="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/80 transition">
                                 <option value="passenger">Passenger Bus</option>
                                 <option value="cargo">Cargo Truck</option>
                             </select>
                         </div>
 
-                        <!-- Driver -->
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
+                            <label class="block mb-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                 Driver
                             </label>
-
-                            <select name="driver"
-                                    class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500"
-                                    required>
-
+                            <select name="driver" required
+                                    class="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/80 transition">
                                 {% for driver in drivers %}
                                     <option value="{{ driver.id }}">
                                         {{ driver.name }} ({{ driver.phone }})
                                     </option>
                                 {% endfor %}
-
                             </select>
                         </div>
 
-                        <div id="bus-passenger-config">
-                            <!-- Total Passengers -->
+                        <div class="md:col-span-2 xl:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-5" id="bus-passenger-config">
                             <div>
-                                <label class="block mb-2 font-semibold text-gray-700">
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                     Total Capacity
                                 </label>
-
-                                <input id="total_passengers"
-                                       type="number"
-                                       name="total_passengers"
-                                       value="40"
-                                       min="1"
-                                       max="300"
-                                       oninput="validateBusTotals()"
-                                       class="w-full p-4 rounded-2xl border border-blue-300 focus:ring-2 focus:ring-blue-500">
-
-                                <p class="text-xs text-gray-500 mt-2">
-                                    Enter direct seat counts for each class. Total capacity must match the sum.
-                                </p>
+                                <input id="total_passengers" type="number" name="total_passengers" value="40" min="1" max="300" oninput="validateBusTotals()"
+                                       class="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/80 transition">
                             </div>
 
-                            <!-- VIP Seats -->
                             <div>
-                                <label class="block mb-2 font-semibold text-gray-700">
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                     VIP Seats
                                 </label>
-
-                                <input id="vip_seats"
-                                       type="number"
-                                       name="vip_seats"
-                                       value="6"
-                                       min="0"
-                                       oninput="updateBusCapacityAndPreview()"
-                                       class="w-full p-4 rounded-2xl border border-gray-200">
+                                <input id="vip_seats" type="number" name="vip_seats" value="6" min="0" oninput="updateBusCapacityAndPreview()"
+                                       class="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/80 transition">
                             </div>
 
-                            <!-- Normal Seats -->
                             <div>
-                                <label class="block mb-2 font-semibold text-gray-700">
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                     Normal Seats
                                 </label>
-
-                                <input id="normal_seats"
-                                       type="number"
-                                       name="normal_seats"
-                                       value="34"
-                                       min="0"
-                                       oninput="updateBusCapacityAndPreview()"
-                                       class="w-full p-4 rounded-2xl border border-gray-200">
-                            </div>
-
-                            <div id="bus-total-warning" class="hidden text-sm text-red-600 mt-4">
-                                Seat counts must match total capacity before the preview can update.
+                                <input id="normal_seats" type="number" name="normal_seats" value="34" min="0" oninput="updateBusCapacityAndPreview()"
+                                       class="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/80 transition">
                             </div>
                         </div>
-
                     </div>
 
-                    <!-- DESCRIPTION -->
-                    <div class="mt-8">
-                        <label class="block mb-2 font-semibold text-gray-700">
+                    <div id="bus-total-warning" class="hidden text-xs font-medium text-rose-500 mt-3">
+                        ⚠️ Seat counts must match total capacity before the preview can update.
+                    </div>
+
+                    <div class="mt-5">
+                        <label class="block mb-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             Bus Description
                         </label>
-
-                        <textarea name="description"
-                                  rows="5"
-                                  class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500"
-                                  placeholder="Luxury coach with WiFi, USB charging ports, recliner seats, air conditioning..."></textarea>
+                        <textarea name="description" rows="3" placeholder="Luxury coach with WiFi, USB charging ports, recliner seats, air conditioning..."
+                                  class="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white/80 transition resize-none"></textarea>
                     </div>
 
-                    <button class="mt-8 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 transition text-white px-8 py-4 rounded-2xl font-bold shadow-lg">
-                        ➕ Add Bus
-                    </button>
-
+                    <div class="mt-6 flex justify-end">
+                        <button class="bg-blue-600 hover:bg-blue-700 active:transform active:scale-[0.98] transition text-white px-5 py-3 rounded-xl text-sm font-semibold shadow-sm shadow-blue-500/10">
+                            ➕ Add Bus to Fleet
+                        </button>
+                    </div>
                 </form>
-
             </div>
-
         </div>
 
-        <!-- SEAT PREVIEW -->
-        <div id="bus-seat-preview-section" class="glass-card rounded-3xl shadow-2xl border border-white/40 p-8 mb-10">
-
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-
+        <div id="bus-seat-preview-section" class="glass-card rounded-2xl shadow-sm border border-white bg-white/60 p-6 mb-10">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 pb-5 border-b border-slate-100">
                 <div>
-                    <h2 class="text-2xl font-black text-gray-800">
+                    <h2 class="text-xl font-bold text-slate-800">
                         Bus Seat Simulation
                     </h2>
-
-                    <p class="text-gray-500 mt-1">
-                        Preview a realistic coach cabin with seat classes, aisle layout and true vehicle styling.
+                    <p class="text-slate-500 text-xs mt-0.5">
+                        Preview a realistic coach cabin layout with seat classes, dynamic custom sections, and configurations.
                     </p>
                 </div>
 
-                <div class="flex flex-wrap gap-3 text-sm">
-                    <div class="flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl">
-                        <span class="h-3 w-3 rounded-full bg-emerald-600"></span>
-                        Available
+                <div class="flex flex-wrap gap-2 text-xs font-medium">
+                    <div class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-100">
+                        <span class="h-2 w-2 rounded-full bg-emerald-500"></span> Available
                     </div>
-                    <div class="flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-xl">
-                        <span class="h-3 w-3 rounded-full bg-red-600"></span>
-                        Booked
+                    <div class="flex items-center gap-1.5 bg-rose-50 text-rose-700 px-3 py-1.5 rounded-lg border border-rose-100">
+                        <span class="h-2 w-2 rounded-full bg-rose-500"></span> Booked
                     </div>
-                    <div class="flex items-center gap-2 bg-yellow-100 text-yellow-700 px-4 py-2 rounded-xl">
-                        <span class="h-3 w-3 rounded-full bg-yellow-500"></span>
-                        VIP
+                    <div class="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-lg border border-amber-100">
+                        <span class="h-2 w-2 rounded-full bg-amber-500"></span> VIP
                     </div>
-                    <div class="flex items-center gap-2 bg-slate-100 text-slate-700 px-4 py-2 rounded-xl">
-                        <span class="h-3 w-3 rounded-full bg-slate-500"></span>
-                        Blocked
+                    <div class="flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200">
+                        <span class="h-2 w-2 rounded-full bg-slate-500"></span> Blocked
                     </div>
                 </div>
-
             </div>
 
-            <div class="grid gap-6 xl:grid-cols-[320px_1fr]">
-
+            <div class="grid gap-6 xl:grid-cols-[280px_1fr]">
                 <div class="space-y-4">
-
-                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-                                <h3 class="font-semibold text-gray-800 mb-3">Layout Tools</h3>
-                                <p class="text-sm text-gray-600">
-                                    Drag seat types, aisle sections, driver and door markers into the coach grid.
-                                </p>
-                                <div id="bus-seat-palette" class="mt-4 grid gap-2"></div>
-                            </div>
-
-                            <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-                                <h3 class="font-semibold text-gray-800 mb-3">Coach Overview</h3>
-                                <p class="text-sm text-gray-600">
-                                    Seats are arranged in rows with aisles and class zones. Click any seat to inspect its details.
-                                </p>
-                            </div>
-
-                            <div id="bus-seat-details" class="hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-3">Selected Seat</h3>
-                                <p class="text-sm text-slate-600" id="bus-seat-details-content">
-                                    Click a seat to reveal seat number, class and status.
-                                </p>
-                            </div>
-                        <span class="rounded-full bg-white px-3 py-1 shadow-sm">Driver Front</span>
-                        <span class="rounded-full bg-white px-3 py-1 shadow-sm">Door</span>
-                        <span class="rounded-full bg-white px-3 py-1 shadow-sm">Aisle</span>
+                    <div class="rounded-xl border border-slate-200/60 bg-white/50 p-4 shadow-sm">
+                        <h3 class="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Layout Tools</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-3">
+                            Drag seat types, aisle modules, and marker utilities directly into the matrix layout.
+                        </p>
+                        <div id="bus-seat-palette" class="flex flex-wrap gap-1.5"></div>
                     </div>
-                    <div id="bus-seat-simulation" class="space-y-3"></div>
+
+                    <div class="rounded-xl border border-slate-200/60 bg-white/50 p-4 shadow-sm">
+                        <h3 class="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Coach Cabin</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Interchange or realign segments smoothly. Click individual active entities to modify structural properties.
+                        </p>
+                    </div>
+
+                    <div id="bus-seat-details" class="hidden rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <h3 class="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Selected Segment</h3>
+                        <p class="text-xs text-slate-400" id="bus-seat-details-content">
+                            Interact with an asset layout placeholder.
+                        </p>
+                    </div>
                 </div>
 
+                <div class="border border-slate-200 bg-slate-50/50 rounded-xl p-6 flex flex-col items-center justify-center overflow-x-auto min-h-[240px]">
+                    <div class="flex items-center gap-3 mb-6 text-xs text-slate-400 font-medium">
+                        <span class="rounded-lg bg-white px-2.5 py-1.5 shadow-sm border border-slate-100">⚙️ Front Dashboard</span>
+                        <span class="rounded-lg bg-white px-2.5 py-1.5 shadow-sm border border-slate-100">🚪 Main Passenger Gate</span>
+                        <span class="rounded-lg bg-white px-2.5 py-1.5 shadow-sm border border-slate-100">🛣️ Center Aisle</span>
+                    </div>
+                    <div id="bus-seat-simulation" class="space-y-2.5 min-w-max"></div>
+                </div>
             </div>
-
         </div>
 
-        <!-- BUS LIST -->
-        <div class="glass-card rounded-3xl shadow-2xl border border-white/40 overflow-hidden mb-10">
-
-            <div class="p-8 border-b border-gray-100 flex items-center justify-between">
-
+        <div class="glass-card rounded-2xl shadow-sm border border-white bg-white/60 overflow-hidden mb-10">
+            <div class="p-6 border-b border-slate-100 bg-white/40 flex items-center justify-between">
                 <div>
-                    <h2 class="text-3xl font-black text-gray-800">
+                    <h2 class="text-xl font-bold text-slate-800">
                         Available Buses
                     </h2>
-
-                    <p class="text-gray-500 mt-2">
-                        Manage your registered transport fleet.
+                    <p class="text-slate-500 text-xs mt-0.5">
+                        Overview, monitor status indicators, and update registered fleet modules.
                     </p>
                 </div>
-
-                <div class="bg-emerald-100 text-emerald-700 px-5 py-3 rounded-2xl font-semibold">
+                <div class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-semibold border border-emerald-100">
                     🟢 Active Fleet
                 </div>
-
             </div>
 
             <div class="overflow-x-auto">
-
-                <table class="min-w-full">
-
-                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
-
+                <table class="min-w-full text-sm text-left">
+                    <thead class="bg-slate-50 border-b border-slate-100 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                         <tr>
-                            <th class="px-6 py-5 text-left">Bus</th>
-                            <th class="px-6 py-5 text-left">Route</th>
-                            <th class="px-6 py-5 text-left">Driver</th>
-                            <th class="px-6 py-5 text-left">Seats</th>
-                            <th class="px-6 py-5 text-left">Actions</th>
+                            <th class="px-6 py-4">Bus Details</th>
+                            <th class="px-6 py-4">Route Info</th>
+                            <th class="px-6 py-4">Assigned Driver</th>
+                            <th class="px-6 py-4">Seat Config</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
                         </tr>
-
                     </thead>
-
-                    <tbody class="divide-y divide-gray-100">
-
+                    <tbody class="divide-y divide-slate-100 bg-white/30">
                         {% for bus in buses %}
-
-                        <tr class="hover:bg-cyan-50 transition">
-
-                            <td class="px-6 py-5 font-bold text-gray-800">
+                        <tr class="hover:bg-slate-50/80 transition">
+                            <td class="px-6 py-4 font-semibold text-slate-900">
                                 {{ bus.bus_number }}
                             </td>
-
-                            <td class="px-6 py-5 text-gray-700">
+                            <td class="px-6 py-4 text-slate-600 font-medium">
                                 {{ bus.route.from_location }} → {{ bus.route.to_location }}
                             </td>
-
-                            <td class="px-6 py-5 text-gray-700">
+                            <td class="px-6 py-4 text-slate-600">
                                 {{ bus.driver.name }}
                             </td>
-
-                            <td class="px-6 py-5">
-                                <div class="flex flex-wrap gap-2">
-
-                                    <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            <td class="px-6 py-4">
+                                <div class="flex gap-1.5">
+                                    <span class="bg-purple-50 text-purple-700 px-2.5 py-1 rounded-lg text-xs font-medium border border-purple-100">
                                         VIP: {{ bus.vip_seats }}
                                     </span>
-
-                                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                    <span class="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg text-xs font-medium border border-blue-100">
                                         Normal: {{ bus.normal_seats }}
                                     </span>
-
                                 </div>
                             </td>
-
-                            <td class="px-6 py-5">
-
-                                <div class="flex gap-3">
-
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex gap-2 justify-end">
                                     <a href="{% url 'bus_edit_bus' bus.id %}"
-                                       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold">
+                                       class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
                                         ✏️ Edit
                                     </a>
-
-                                    <a href="{% url 'bus_delete_bus' bus.id %}"
-                                       onclick="return confirm('Delete this bus?')"
-                                       class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-sm font-semibold">
+                                    <a href="{% url 'bus_delete_bus' bus.id %}" onclick="return confirm('Delete this bus?')"
+                                       class="bg-rose-50 border border-rose-100 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
                                         🗑 Delete
                                     </a>
-
                                 </div>
-
                             </td>
-
                         </tr>
-
                         {% empty %}
-
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
-                                No buses added yet.
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-400 text-sm">
+                                🏜️ No buses added to the system directory yet.
                             </td>
                         </tr>
-
                         {% endfor %}
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
 
-        <!-- HISTORY -->
-        <div class="glass-card rounded-3xl shadow-2xl border border-white/40 p-8">
-
-            <div class="flex items-center justify-between mb-6">
-
+        <div class="glass-card rounded-2xl shadow-sm border border-white bg-white/60 p-6">
+            <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-100">
                 <div>
-                    <h2 class="text-3xl font-black text-gray-800">
+                    <h2 class="text-xl font-bold text-slate-800">
                         Seat Layout History
                     </h2>
-
-                    <p class="text-gray-500 mt-2">
-                        Previously generated seating configurations.
+                    <p class="text-slate-500 text-xs mt-0.5">
+                        Audit dynamic system history arrays for previous layouts.
                     </p>
                 </div>
-
-                <div class="bg-purple-100 text-purple-700 px-5 py-3 rounded-2xl font-semibold">
-                    📜 History
+                <div class="bg-purple-50 text-purple-700 px-3 py-1.5 rounded-xl text-xs font-semibold border border-purple-100">
+                    📜 Layout Log
                 </div>
-
             </div>
 
             {% if seat_layout_histories %}
-
-            <div class="space-y-4">
-
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {% for history in seat_layout_histories %}
-
-                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition">
-
-                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-
-                        <div>
-
-                            <h3 class="font-bold text-gray-800 text-lg">
-                                {{ history.get_vehicle_type_display }} Layout
-                            </h3>
-
-                            <p class="text-gray-500 mt-1">
-                                Vehicle ID: {{ history.vehicle_id }}
-                            </p>
-
-                            <p class="text-gray-400 text-sm mt-1">
-                                {{ history.created_at }}
-                            </p>
-
-                        </div>
-
-                        <div class="flex gap-3 flex-wrap">
-
-                            <span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-xl text-sm font-semibold">
-                                VIP: {{ history.config.vip_seats|default:0 }}
-                            </span>
-
-                            <span class="bg-blue-100 text-blue-700 px-4 py-2 rounded-xl text-sm font-semibold">
-                                Normal: {{ history.config.normal_seats|default:0 }}
-                            </span>
-
-                        </div>
-
+                <div class="bg-white/80 rounded-xl border border-slate-200/70 p-4 shadow-sm hover:shadow-md hover:border-slate-300 transition flex items-center justify-between">
+                    <div>
+                        <h3 class="font-semibold text-slate-800 text-sm">
+                            {{ history.get_vehicle_type_display }} Configuration
+                        </h3>
+                        <p class="text-slate-400 text-xs mt-0.5">
+                            ID Ref: <span class="text-slate-600 font-mono text-[11px]">{{ history.vehicle_id }}</span>
+                        </p>
+                        <p class="text-slate-400 text-[11px] mt-1">
+                            {{ history.created_at }}
+                        </p>
                     </div>
 
+                    <div class="flex flex-col gap-1 text-right">
+                        <span class="bg-purple-50 text-purple-700 px-2 py-0.5 rounded-md text-xs font-medium border border-purple-100/60">
+                            VIP: {{ history.config.vip_seats|default:0 }}
+                        </span>
+                        <span class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md text-xs font-medium border border-blue-100/60">
+                            Std: {{ history.config.normal_seats|default:0 }}
+                        </span>
+                    </div>
                 </div>
-
                 {% endfor %}
-
             </div>
-
             {% else %}
-
-            <div class="text-center py-12 text-gray-500">
-                No seat layout history available yet.
+            <div class="text-center py-10 text-slate-400 text-sm">
+                No historic layout adjustments processed yet.
             </div>
-
             {% endif %}
-
         </div>
 
     </div>
-
 </div>
 
 <script>
 const BUS_PREVIEW_URL = '{% url "bus_seat_preview" %}';
 
 const busPaletteItems = [
-    {type: 'seat', seat_class: 'VIP', label: 'VIP Seat', style: 'bg-purple-600'},
-    {type: 'seat', seat_class: 'Normal', label: 'Normal Seat', style: 'bg-sky-600'},
-    {type: 'aisle', label: 'Aisle', style: 'bg-slate-400'},
-    {type: 'driver', label: 'Driver', style: 'bg-blue-600'},
-    {type: 'door', label: 'Door', style: 'bg-amber-500'},
+    {type: 'seat', seat_class: 'VIP', label: '💺 VIP Seat', style: 'bg-purple-600 hover:bg-purple-700'},
+    {type: 'seat', seat_class: 'Normal', label: '💺 Regular', style: 'bg-sky-600 hover:bg-sky-700'},
+    {type: 'aisle', label: '🛣️ Aisle Space', style: 'bg-slate-400 hover:bg-slate-500'},
+    {type: 'driver', label: '👨‍✈️ Driver Cab', style: 'bg-blue-600 hover:bg-blue-700'},
+    {type: 'door', label: '🚪 Main Door', style: 'bg-amber-500 hover:bg-amber-600'},
 ];
 
 const busSeatStatusStyles = {
-    available: 'bg-emerald-500',
-    booked: 'bg-red-500',
-    reserved: 'bg-yellow-500',
-    blocked: 'bg-slate-500',
+    available: 'bg-emerald-500 ring-2 ring-emerald-100',
+    booked: 'bg-rose-500 ring-2 ring-rose-100',
+    reserved: 'bg-amber-500 ring-2 ring-amber-100',
+    blocked: 'bg-slate-400 ring-2 ring-slate-100',
 };
 
 const busClassStyles = {
@@ -628,7 +461,6 @@ function validateBusTotals() {
 }
 
 function updateBusCapacityAndPreview() {
-    const total = Number(document.getElementById('total_passengers').value) || 0;
     const counts = getBusCounts();
     const sum = counts.vip_seats + counts.normal_seats;
     document.getElementById('total_passengers').value = sum;
@@ -645,7 +477,7 @@ function renderBusPalette() {
     busPaletteItems.forEach(item => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = `inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-semibold text-white ${item.style}`;
+        button.className = `inline-flex items-center justify-center rounded-lg px-3 py-2 text-xs font-semibold text-white shadow-sm transition active:scale-95 cursor-grab ${item.style}`;
         button.textContent = item.label;
         button.draggable = true;
         button.dataset.palette = JSON.stringify(item);
@@ -715,18 +547,18 @@ function onBusDrop(event, rowIndex, colIndex) {
 
 function getBusCellStyle(cell) {
     if (!cell || cell.is_aisle || cell.type === 'aisle') {
-        return 'bg-slate-200';
+        return 'bg-slate-200/70 text-slate-400 border border-slate-300/40';
     }
     if (cell.type === 'driver') {
-        return 'bg-blue-600';
+        return 'bg-blue-600 shadow-sm shadow-blue-500/20';
     }
     if (cell.type === 'door') {
-        return 'bg-amber-500';
+        return 'bg-amber-500 shadow-sm shadow-amber-500/20';
     }
     if (cell.booking_status && busSeatStatusStyles[cell.booking_status]) {
         return busSeatStatusStyles[cell.booking_status];
     }
-    return busClassStyles[cell.seat_class] || 'bg-slate-500';
+    return busClassStyles[cell.seat_class] || 'bg-slate-400';
 }
 
 function updateBusSeatDetails(cell) {
@@ -738,11 +570,11 @@ function updateBusSeatDetails(cell) {
     }
     details.classList.remove('hidden');
     content.innerHTML = `
-        <div class="space-y-2 text-sm text-slate-700">
-            <div><strong>Seat:</strong> ${cell.seat_number}</div>
-            <div><strong>Class:</strong> ${cell.seat_class}</div>
-            <div><strong>Status:</strong> ${cell.booking_status}</div>
-            <div><strong>Zone:</strong> ${cell.section}</div>
+        <div class="space-y-1.5 text-xs text-slate-600 font-medium">
+            <div class="flex justify-between border-b border-slate-50 pb-1"><span>Seat Unit:</span> <span class="font-bold text-slate-800">${cell.seat_number}</span></div>
+            <div class="flex justify-between border-b border-slate-50 pb-1"><span>Class Category:</span> <span class="text-slate-800">${cell.seat_class}</span></div>
+            <div class="flex justify-between border-b border-slate-50 pb-1"><span>Status Flags:</span> <span class="text-slate-800 uppercase tracking-tight text-[11px] font-bold">${cell.booking_status}</span></div>
+            <div class="flex justify-between"><span>Section Area:</span> <span class="text-slate-500">${cell.section}</span></div>
         </div>
     `;
 }
@@ -753,8 +585,8 @@ function renderBusSeats(layoutData) {
 
     if (!layoutData || !layoutData.rows || !layoutData.rows.length) {
         container.innerHTML = `
-            <div class="text-gray-500 text-center py-10">
-                Enter seat counts to preview layout.
+            <div class="text-slate-400 text-xs py-6 font-medium text-center">
+                Assign numeric parameters to render matrix map layout preview grids.
             </div>
         `;
         return;
@@ -764,16 +596,16 @@ function renderBusSeats(layoutData) {
 
     layoutData.rows.forEach((row, rowIndex) => {
         const rowEl = document.createElement('div');
-        rowEl.className = 'flex items-center gap-2';
+        rowEl.className = 'flex items-center gap-2.5';
 
         const label = document.createElement('div');
-        label.className = 'w-10 text-xs font-semibold text-slate-600';
-        label.textContent = `Row ${row.row}`;
+        label.className = 'w-12 text-[11px] font-bold uppercase tracking-wider text-slate-400';
+        label.textContent = `R-${row.row}`;
         rowEl.appendChild(label);
 
         row.seats.forEach((cell, colIndex) => {
             const seatEl = document.createElement('div');
-            seatEl.classList.add('min-w-[40px]', 'min-h-[40px]', 'rounded-2xl', 'flex', 'items-center', 'justify-center', 'text-[10px]', 'font-bold', 'text-white', 'cursor-pointer', 'transition-all', 'duration-200');
+            seatEl.className = 'w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-bold text-white cursor-pointer transition-all duration-150 select-none shadow-sm';
             seatEl.dataset.rowIndex = rowIndex;
             seatEl.dataset.colIndex = colIndex;
             seatEl.draggable = true;
@@ -782,20 +614,20 @@ function renderBusSeats(layoutData) {
             seatEl.addEventListener('drop', event => onBusDrop(event, rowIndex, colIndex));
 
             if (cell.is_aisle || cell.type === 'aisle') {
-                seatEl.classList.add('bg-slate-200');
-                seatEl.innerHTML = '<span class="text-[10px] text-slate-500">AISLE</span>';
+                seatEl.className = `w-10 h-10 rounded-lg flex items-center justify-center text-[9px] font-black tracking-tighter cursor-move ${getBusCellStyle(cell)}`;
+                seatEl.innerHTML = '<span>AISLE</span>';
             } else if (cell.is_empty) {
-                seatEl.classList.add('bg-white', 'border', 'border-dashed', 'border-slate-300');
+                seatEl.className = 'w-10 h-10 rounded-xl bg-white border-2 border-dashed border-slate-200 transition-colors hover:border-slate-300';
                 seatEl.innerHTML = '';
             } else if (cell.type === 'driver' || cell.type === 'door') {
-                seatEl.classList.add(getBusCellStyle(cell));
-                seatEl.textContent = cell.label;
+                seatEl.className = `w-10 h-10 rounded-xl flex items-center justify-center text-[9px] font-extrabold uppercase tracking-tight text-white cursor-move ${getBusCellStyle(cell)}`;
+                seatEl.textContent = cell.label.split(' ')[1] || cell.label;
                 seatEl.title = cell.label;
             } else {
                 const style = getBusCellStyle(cell);
-                seatEl.className = `w-10 h-10 rounded-2xl flex items-center justify-center text-[10px] font-bold text-white cursor-pointer transition-all duration-200 ${style}`;
+                seatEl.className = `w-10 h-10 rounded-xl flex items-center justify-center text-[11px] font-bold text-white cursor-pointer hover:scale-105 active:scale-95 transition-all ${style}`;
                 if (selectedBusSeat === cell.seat_number) {
-                    seatEl.classList.add('ring-4', 'ring-slate-300');
+                    seatEl.classList.add('ring-4', 'ring-blue-500/30', 'border', 'border-blue-500');
                 }
                 seatEl.textContent = cell.seat_number;
                 seatEl.title = `${cell.seat_class} • ${cell.booking_status}`;
@@ -819,45 +651,31 @@ function fetchBusPreview() {
 
     const counts = getBusCounts();
     fetch(`${BUS_PREVIEW_URL}?vip_seats=${counts.vip_seats}&normal_seats=${counts.normal_seats}`)
-        .then(res => res.json())
-        .then(data => {
-            selectedBusSeat = null;
-            renderBusSeats(data);
-            updateBusSeatDetails(null);
-        })
-        .catch(() => {
-            document.getElementById('bus-seat-simulation').innerHTML = `
-                <div class="text-red-500 text-center py-10">
-                    Unable to load preview.
-                </div>
-            `;
-        });
+        .then(response => response.json())
+        .then(data => renderBusSeats(data))
+        .catch(err => console.error("Error generating visual seat simulation framework rows:", err));
 }
 
 function updateBusMode() {
-    const mode = document.getElementById('bus-vehicle-type').value;
-    const passengerConfig = document.getElementById('bus-passenger-config');
+    const type = document.getElementById('bus-vehicle-type').value;
+    const configSection = document.getElementById('bus-passenger-config');
     const previewSection = document.getElementById('bus-seat-preview-section');
 
-    if (mode === 'cargo') {
-        passengerConfig.style.display = 'none';
-        previewSection.style.display = 'none';
-        document.getElementById('vip_seats').value = 0;
-        document.getElementById('normal_seats').value = 0;
-        document.getElementById('total_passengers').value = 0;
+    if (type === 'cargo') {
+        configSection.classList.add('opacity-40', 'pointer-events-none');
+        previewSection.classList.add('hidden');
     } else {
-        passengerConfig.style.display = '';
-        previewSection.style.display = '';
+        configSection.classList.remove('opacity-40', 'pointer-events-none');
+        previewSection.classList.remove('hidden');
+        fetchBusPreview();
     }
 }
 
+// Initial script execution pipelines
 document.addEventListener('DOMContentLoaded', () => {
     renderBusPalette();
-    validateBusTotals();
     fetchBusPreview();
-    updateBusMode();
 });
 </script>
-
 </body>
 </html>
