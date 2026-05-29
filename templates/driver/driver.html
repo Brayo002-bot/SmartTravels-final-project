@@ -3,256 +3,337 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driver Dashboard | SmartTravels</title>
 
+    <!-- Tailwind CSS Engine Engine Engine -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- LEAFLET MAP (FREE UBER-LIKE MAP) -->
+    <!-- Leaflet GIS Engine Map System -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
         #map {
-            height: 420px;
-            border-radius: 16px;
-            z-index: 1;
+            height: 440px;
+            width: 100%;
+            z-index: 10;
+        }
+        /* Custom map styling to match the clean theme */
+        .leaflet-container {
+            font-family: ui-sans-serif, system-ui, sans-serif !important;
+            background: #f8fafc !important;
+        }
+        .leaflet-bar {
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05) !important;
+            border-radius: 8px !important;
+            overflow: hidden;
+        }
+        .leaflet-bar a {
+            border-bottom: 1px solid #e2e8f0 !important;
+            background-color: #ffffff !important;
+            color: #475569 !important;
+        }
+        .leaflet-bar a:hover {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+        /* Pulsing dot for live vehicle GPS position */
+        .gps-pulse-icon {
+            background: #3b82f6;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            animation: pulse 1.8s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
         }
     </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-slate-50 min-h-screen text-slate-800 antialiased selection:bg-blue-500/10 selection:text-blue-600">
 
-<div class="max-w-6xl mx-auto p-6">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
-    <!-- HEADER -->
-    <div class="flex justify-between items-center mb-6">
-
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800">
-                👨‍✈️ Welcome, {{ driver.name }}
-            </h1>
-            <p class="text-gray-500 text-sm">
-                {{ role_display }} • Live Operations Panel
-            </p>
+    <!-- MASTER BAR DASHBOARD HEADER SECTION -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight">
+                    Welcome back, {{ driver.name }}
+                </h1>
+                <p class="text-slate-500 text-xs font-medium flex items-center gap-1.5 mt-0.5">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    {{ role_display }} &bull; Live Control Terminal
+                </p>
+            </div>
         </div>
 
         <a href="{% url 'logout' %}"
-           class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
-            Logout
+           class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:border-red-200 text-slate-700 hover:text-red-600 px-4 h-11 rounded-xl text-sm font-semibold transition-all duration-150 shadow-sm hover:shadow-red-500/5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Logout Terminal
         </a>
-
     </div>
 
-    <!-- DRIVER PROFILE CARD -->
-    <div class="bg-white p-6 rounded-2xl shadow mb-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- MAIN DASHBOARD ARCHITECTURE SPLIT VIEW Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- TELEMETRY INFRASTRUCTURE LEFT BLOCKS (2 Columns wide) -->
+        <div class="lg:col-span-2 space-y-8">
             
-            <!-- DRIVER DETAILS -->
-            <div>
-                <h2 class="text-lg font-semibold mb-4 text-gray-800">Driver Profile</h2>
-                <div class="space-y-3 text-sm">
-                    {% if credentials.driver_name %}
-                    <div>
-                        <strong>Name:</strong>
-                        <div class="text-gray-700">{{ credentials.driver_name }}</div>
+            <!-- LIVE POSITION TRACKING GEOLOCATION MAP CONTAINER CARD -->
+            <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z"/>
+                        </svg>
+                        <h2 class="font-bold text-slate-900 text-sm tracking-tight">Live Geolocation Tracking Node</h2>
                     </div>
-                    {% endif %}
-                    
-                    {% if credentials.driver_phone %}
-                    <div>
-                        <strong>Phone (Profile):</strong>
-                        <div class="text-gray-700">{{ credentials.driver_phone }}</div>
+                    <div class="text-[11px] font-mono font-medium text-slate-500 bg-white border border-slate-200 px-2.5 py-1 rounded-md shadow-sm">
+                        LAT: <span id="lat" class="text-slate-800 font-semibold">-</span> &bull; LNG: <span id="lng" class="text-slate-800 font-semibold">-</span>
                     </div>
-                    {% endif %}
-                    
-                    {% if credentials.user_first_name or credentials.user_last_name %}
-                    <div>
-                        <strong>Full Name:</strong>
-                        <div class="text-gray-700">{{ credentials.user_first_name }} {{ credentials.user_last_name }}</div>
-                    </div>
-                    {% endif %}
-                    
-                    {% if credentials.user_email %}
-                    <div>
-                        <strong>Email:</strong>
-                        <div class="text-gray-700">{{ credentials.user_email }}</div>
-                    </div>
-                    {% endif %}
-                    
-                    {% if credentials.user_phone %}
-                    <div>
-                        <strong>Phone (Account):</strong>
-                        <div class="text-gray-700">{{ credentials.user_phone }}</div>
-                    </div>
-                    {% endif %}
-                    
-                    {% if credentials.username %}
-                    <div>
-                        <strong>Username:</strong>
-                        <div class="text-gray-700 font-mono text-xs">{{ credentials.username }}</div>
-                    </div>
-                    {% endif %}
+                </div>
+                <div class="p-4 bg-white">
+                    <div id="map" class="border border-slate-200/60 rounded-xl overflow-hidden shadow-inner"></div>
                 </div>
             </div>
 
-            <!-- COMPANY DETAILS -->
-            <div>
-                <h2 class="text-lg font-semibold mb-4 text-gray-800">Company</h2>
-                {% if company %}
-                <div class="space-y-2">
-                    <p><strong>Name:</strong> {{ company.name }}</p>
-                    <p><strong>Type:</strong> {{ company.get_transport_type_display }}</p>
-                    {% if company.contact_phone %}
-                    <p><strong>Phone:</strong> {{ company.contact_phone }}</p>
-                    {% endif %}
-                    {% if company.contact_email %}
-                    <p><strong>Email:</strong> {{ company.contact_email }}</p>
-                    {% endif %}
+            <!-- CORE SYSTEM DISPATCH PASSENGER MANIFEST ARCHITECTURE CARD -->
+            <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-2 bg-slate-50/50">
+                    <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <h2 class="font-bold text-slate-900 text-sm tracking-tight">Active Passenger Manifest Directory</h2>
                 </div>
-                {% else %}
-                <p class="text-gray-400">No company assigned</p>
-                {% endif %}
-            </div>
-
-            <!-- COMPANY LOGO -->
-            <div>
-                <h2 class="text-lg font-semibold mb-4 text-gray-800">Logo</h2>
-                {% if company_logo_url %}
-                <div class="flex justify-center">
-                    <img src="{{ company_logo_url }}" alt="{{ company.name }}" 
-                         style="max-width: 200px; max-height: 150px; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse whitespace-nowrap">
+                        <thead>
+                            <tr class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                                <th class="py-3 px-6">Passenger Details</th>
+                                <th class="py-3 px-6">Assigned Seat</th>
+                                <th class="py-3 px-6">Secure Phone Matrix</th>
+                                <th class="py-3 px-6">Manifest Status</th>
+                                <th class="py-3 px-6 text-right">Operational Logic Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
+                        {% for p in passengers %}
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div class="font-semibold text-slate-900">{{ p.name }}</div>
+                                </td>
+                                <td class="py-4 px-6 font-mono text-xs text-slate-500">
+                                    <span class="bg-slate-100 border border-slate-200/60 px-2 py-1 rounded-md text-slate-700 font-semibold">
+                                        {{ p.seat }}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-slate-600 font-mono text-xs">{{ p.phone }}</td>
+                                <td class="py-4 px-6">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/40">
+                                        <span class="w-1 h-1 rounded-full bg-emerald-500"></span>
+                                        Onboard
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-right">
+                                    <button class="text-xs font-bold text-red-600 hover:text-red-700 border border-red-200 hover:border-red-300 bg-red-50/30 hover:bg-red-50 px-3 py-1.5 rounded-lg transition"
+                                            onclick="stopPassengerTracking({{ p.id }})">
+                                        Halt Tracking
+                                    </button>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="py-12 px-6 text-center text-sm text-slate-400 font-normal">
+                                    No tracked personnel assigned to manifest records.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                {% else %}
-                <p class="text-gray-400 text-center">No logo available</p>
-                {% endif %}
             </div>
 
         </div>
-    </div>
 
-    <!-- STATUS CARD -->
-    <div class="bg-white p-5 rounded-2xl shadow mb-6 text-center">
-        <h2 class="text-lg font-semibold">Journey Status</h2>
-        <p id="status" class="text-red-600 font-bold text-xl mt-2">Not Started</p>
-    </div>
-
-    <!-- MAP + DETAILS GRID -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-
-        <!-- LIVE MAP -->
-        <div class="lg:col-span-2 bg-white p-4 rounded-2xl shadow">
-            <h2 class="font-semibold mb-3">📍 Live GPS Tracking</h2>
-            <div id="map"></div>
-
-            <div class="mt-3 text-sm text-gray-600">
-                Latitude: <span id="lat">-</span> |
-                Longitude: <span id="lng">-</span>
+        <!-- OPERATIONS SYSTEMS MANAGEMENT COMMAND SLATE RIGHT SIDEBAR (1 Column wide) -->
+        <div class="space-y-8">
+            
+            <!-- MASTER LIVE TRACKING RUNTIME DATA CARD STATUS HUB -->
+            <div id="statusCard" class="bg-white border border-red-100 p-6 rounded-2xl shadow-sm text-center space-y-3 transition-all duration-300 bg-gradient-to-b from-red-50/20 to-transparent">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">Journey State Protocol</span>
+                <p id="status" class="text-red-600 font-black text-2xl tracking-tight transition-all">Not Started</p>
             </div>
-        </div>
 
-        <!-- TRIP INFO -->
-        <div class="bg-white p-5 rounded-2xl shadow">
-            <h2 class="font-semibold mb-3">🚌 Current Trip</h2>
-
-            {% if trip %}
-                <div class="space-y-2 text-sm">
-                    <p><b>Route:</b> {{ trip.route }}</p>
-                    <p><b>Vehicle:</b> {{ trip.bus }}</p>
-                    <p><b>Departure:</b> {{ trip.departure_time }}</p>
-                    <p><b>Seats:</b> {{ trip.booked_seats }}</p>
+            <!-- TRIP MATRIX TELEMETRY FLIGHT DATA METRICS CONTROL FRAME CARD -->
+            <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                    <h2 class="font-bold text-slate-900 text-sm tracking-tight">Active Voyage Assignment</h2>
                 </div>
-            {% else %}
-                <p class="text-gray-400">No trip assigned</p>
-            {% endif %}
+                <div class="p-6 space-y-6">
+                    {% if trip %}
+                        <div class="grid grid-cols-1 gap-4 text-xs font-semibold text-slate-500">
+                            <div class="bg-slate-50 border border-slate-200/60 p-3.5 rounded-xl space-y-1">
+                                <span class="text-[10px] uppercase tracking-wider text-slate-400">Assigned Asset Route</span>
+                                <p class="text-slate-900 font-bold text-sm">{{ trip.route }}</p>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200/60 p-3.5 rounded-xl space-y-1">
+                                <span class="text-[10px] uppercase tracking-wider text-slate-400">Logistics Fleet Unit</span>
+                                <p class="text-slate-900 font-bold text-sm">{{ trip.bus }}</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-slate-50 border border-slate-200/60 p-3.5 rounded-xl space-y-1">
+                                    <span class="text-[10px] uppercase tracking-wider text-slate-400">Scheduled Lockout</span>
+                                    <p class="text-slate-900 font-bold text-xs">{{ trip.departure_time }}</p>
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200/60 p-3.5 rounded-xl space-y-1">
+                                    <span class="text-[10px] uppercase tracking-wider text-slate-400">Manifest Load</span>
+                                    <p class="text-slate-900 font-bold text-sm">{{ trip.booked_seats }} Seats</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-6">
+                            <p class="text-sm text-slate-400">No active assignment pipeline allocated.</p>
+                        </div>
+                    {% endif %}
 
-            <!-- CONTROLS -->
-            <div class="mt-5 space-y-3">
+                    <!-- ACTUATOR DISPATCH SYSTEM INTERACTIVE OPERATIONS ACTION ARRAYS -->
+                    <div class="space-y-3 pt-2">
+                        <button onclick="startJourney()"
+                                class="w-full h-11 inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl transition-all shadow-sm hover:shadow-emerald-600/10 active:scale-[0.99]">
+                            Start Journey
+                        </button>
 
-                <button onclick="startJourney()"
-                        class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
-                    Start Journey
-                </button>
+                        <button onclick="endJourney()"
+                                class="w-full h-11 inline-flex items-center justify-center bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all shadow-sm active:scale-[0.99]">
+                            Terminate Journey
+                        </button>
 
-                <button onclick="endJourney()"
-                        class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">
-                    End Journey
-                </button>
-
-                <button onclick="startTracking()"
-                        class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
-                    Start GPS Tracking
-                </button>
-
+                        <button onclick="startTracking()"
+                                class="w-full h-11 inline-flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition-all shadow-sm hover:shadow-blue-600/10 active:scale-[0.99]">
+                            Stream Realtime GPS Feed
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
 
-    </div>
+            <!-- DRIVER METRIC PROFILE INFORMATION COMPACT CREDENTIAL SHEET MODULE -->
+            <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                    <h2 class="font-bold text-slate-900 text-sm tracking-tight">Operator Profiles & Carrier Nodes</h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <!-- Operator Attributes Matrix Stack -->
+                    <div class="space-y-4">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Identity Assertions</h3>
+                        <div class="grid grid-cols-1 gap-2.5 text-xs font-medium">
+                            {% if credentials.driver_name %}
+                            <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                                <span class="text-slate-500">Callsign Identifier</span>
+                                <span class="text-slate-900 font-semibold">{{ credentials.driver_name }}</span>
+                            </div>
+                            {% endif %}
+                            {% if credentials.driver_phone %}
+                            <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                                <span class="text-slate-500">Telemetry Gateway</span>
+                                <span class="text-slate-900 font-mono">{{ credentials.driver_phone }}</span>
+                            </div>
+                            {% endif %}
+                            {% if credentials.user_email %}
+                            <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                                <span class="text-slate-500">Encrypted Email Address</span>
+                                <span class="text-slate-900 font-mono">{{ credentials.user_email }}</span>
+                            </div>
+                            {% endif %}
+                            {% if credentials.username %}
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-slate-500">System Namespace Token</span>
+                                <span class="text-slate-600 bg-slate-100 font-mono text-[11px] px-2 py-0.5 rounded border border-slate-200/60">{{ credentials.username }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
 
-    <!-- PASSENGER MANIFEST -->
-    <div class="bg-white p-5 rounded-2xl shadow mb-6">
+                    <!-- Carrier Entity Segment Infrastructure Layer -->
+                    <div class="space-y-4 pt-2">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Assigned Carrier Unit</h3>
+                        {% if company %}
+                            <div class="flex items-center gap-4 bg-slate-50 border border-slate-200/60 p-4 rounded-xl">
+                                {% if company_logo_url %}
+                                    <img src="{{ company_logo_url }}" alt="{{ company.name }} Vector Asset" 
+                                         class="w-12 h-12 rounded-lg object-contain bg-white p-1 border border-slate-200/60 shadow-sm shrink-0">
+                                {% endif %}
+                                <div class="space-y-0.5 min-w-0">
+                                    <p class="text-sm font-bold text-slate-900 truncate">{{ company.name }}</p>
+                                    <p class="text-[10px] font-semibold text-blue-600 uppercase tracking-wide">{{ company.get_transport_type_display }} Operations</p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p class="text-xs text-slate-400 italic">No enterprise carrier route nodes linked.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-        <h2 class="font-semibold mb-4">👥 Passenger Manifest</h2>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="p-3 text-left">Name</th>
-                        <th class="p-3 text-left">Seat</th>
-                        <th class="p-3 text-left">Phone</th>
-                        <th class="p-3 text-left">Status</th>
-                        <th class="p-3 text-left">GPS</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                {% for p in passengers %}
-                    <tr class="border-t">
-                        <td class="p-3">{{ p.name }}</td>
-                        <td class="p-3">{{ p.seat }}</td>
-                        <td class="p-3">{{ p.phone }}</td>
-
-                        <td class="p-3">
-                            <span class="px-2 py-1 rounded text-xs bg-green-100 text-green-700">
-                                Onboard
-                            </span>
-                        </td>
-
-                        <td class="p-3">
-                            <button class="text-blue-600 text-sm"
-                                    onclick="stopPassengerTracking({{ p.id }})">
-                                Stop Tracking
-                            </button>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-
-            </table>
         </div>
 
     </div>
 
 </div>
 
-<!-- SCRIPT -->
+<!-- SCRIPT OPERATIONS CLIENT APPLICATION RUNTIME CONTROLLER -->
 <script>
 
-// MAP INIT
-let map = L.map('map').setView([-1.286389, 36.817223], 13); // Nairobi default
+// MAP INITIALIZATION SCHEMATICS
+let map = L.map('map', {
+    zoomControl: false // Remove standard controls to build clean custom system layout below
+}).setView([-1.286389, 36.817223], 13); // Nairobi default core position coords
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap'
+// Custom zoom layout injector
+L.control.zoom({ position: 'topright' }).addTo(map);
+
+// Premium minimal vector map skin overlay injection (CartoDB Positron variant)
+L.tileLayer('https://images.smarttravels.co.ke/tiles/clean/{z}/{x}/{y}.png', {
+    // Local assets proxy fallback configuration
+    fallbackUrl: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; CartoDB &copy; OpenStreetMap'
 }).addTo(map);
+
+// Layer logic asset assignment
+let mapTileLayer = map._layers[Object.keys(map._layers)[0]];
+if (mapTileLayer) {
+    mapTileLayer.on('tileerror', function() {
+        this.setUrl('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png');
+    });
+}
 
 let marker = null;
 let watchId = null;
 
-// START JOURNEY
+// ACTION MODULE PROCEDURAL: START VOYAGE INITIALIZER
 function startJourney() {
-    document.getElementById("status").innerText = "In Progress";
-    document.getElementById("status").className = "text-green-600 font-bold text-xl";
+    const statusText = document.getElementById("status");
+    const statusCard = document.getElementById("statusCard");
+    
+    statusText.innerText = "In Progress";
+    statusText.className = "text-emerald-600 font-black text-2xl tracking-tight";
+    
+    statusCard.className = "bg-white border border-emerald-100 p-6 rounded-2xl shadow-sm text-center space-y-3 transition-all duration-300 bg-gradient-to-b from-emerald-50/20 to-transparent";
 
     fetch('/start-journey/', {
         method: 'POST',
@@ -260,10 +341,15 @@ function startJourney() {
     });
 }
 
-// END JOURNEY
+// ACTION MODULE PROCEDURAL: TERMINATE VOYAGE PROTOCOL
 function endJourney() {
-    document.getElementById("status").innerText = "Completed";
-    document.getElementById("status").className = "text-gray-600 font-bold text-xl";
+    const statusText = document.getElementById("status");
+    const statusCard = document.getElementById("statusCard");
+    
+    statusText.innerText = "Completed";
+    statusText.className = "text-slate-600 font-black text-2xl tracking-tight";
+    
+    statusCard.className = "bg-white border border-slate-200 p-6 rounded-2xl shadow-sm text-center space-y-3 transition-all duration-300 bg-gradient-to-b from-slate-50/20 to-transparent";
 
     if (watchId) navigator.geolocation.clearWatch(watchId);
 
@@ -273,32 +359,36 @@ function endJourney() {
     });
 }
 
-// GPS TRACKING
+// SYSTEM TELEMETRY STREAM DATA INTERFACE ENGINE
 function startTracking() {
-
     if (!navigator.geolocation) {
-        alert("Geolocation not supported");
+        alert("System Architecture Notice: Geolocation context pipeline unavailable on asset.");
         return;
     }
 
     watchId = navigator.geolocation.watchPosition(position => {
-
         let lat = position.coords.latitude;
         let lng = position.coords.longitude;
 
-        document.getElementById("lat").innerText = lat;
-        document.getElementById("lng").innerText = lng;
+        document.getElementById("lat").innerText = lat.toFixed(6);
+        document.getElementById("lng").innerText = lng.toFixed(6);
 
-        // UPDATE MAP
+        // LEAFLET RE-RENDER LAYER INTERACTION CONFIG
         if (!marker) {
-            marker = L.marker([lat, lng]).addTo(map);
+            // Deploy specialized radar pulse dot for high performance canvas look
+            let livePulseIcon = L.divIcon({
+                className: 'gps-pulse-icon',
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+            marker = L.marker([lat, lng], {icon: livePulseIcon}).addTo(map);
         } else {
             marker.setLatLng([lat, lng]);
         }
 
         map.setView([lat, lng], 15);
 
-        // SEND TO BACKEND (UNCHANGED)
+        // STREAM EVENT BACKEND TRANSACTION FLOW (Preserved logic layers)
         fetch('/update-location/', {
             method: 'POST',
             headers: {
@@ -307,22 +397,25 @@ function startTracking() {
             },
             body: JSON.stringify({ latitude: lat, longitude: lng })
         });
-
+    }, error => {
+        console.error("Telemetry link exception error code registered:", error);
+    }, {
+        enableHighAccuracy: true,
+        maximumAge: 30000,
+        timeout: 27000
     });
-
 }
 
-// STOP INDIVIDUAL PASSENGER GPS
+// ACTION PIPELINE CONTEXT HALT TRACKING LINK
 function stopPassengerTracking(passengerId) {
     fetch(`/stop-passenger-tracking/${passengerId}/`, {
         method: 'POST',
         headers: {'X-CSRFToken': getCSRFToken()}
     });
-
-    alert("Passenger tracking stopped");
+    alert("Manifest isolation confirmed: Personnel node tracking suspended.");
 }
 
-// CSRF
+// SECURITY MODULE: CSRF HEADER PARSER ENGINE
 function getCSRFToken() {
     let cookieValue = null;
     document.cookie.split(';').forEach(cookie => {

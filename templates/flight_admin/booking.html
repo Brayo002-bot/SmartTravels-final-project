@@ -7,448 +7,209 @@
     <title>Flight Bookings | SmartTravels</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body{
+        body {
             font-family: 'Inter', sans-serif;
         }
-
-        .glass-card{
-            background: rgba(255,255,255,0.82);
-            backdrop-filter: blur(14px);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50">
+<body class="bg-slate-50/50 text-slate-900 min-h-screen antialiased">
 
 <div class="flex">
 
     {% include 'flight_admin/sidebar.html' %}
 
-    <!-- MAIN CONTENT -->
-    <div class="ml-72 w-full min-h-screen p-8">
+    <div class="ml-72 w-full min-h-screen p-8 max-w-7xl mx-auto">
 
-        <!-- HEADER -->
-        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 mb-10">
-
-            <div class="flex items-center gap-5">
-
-                <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-400 flex items-center justify-center text-4xl shadow-2xl">
-                    🎫
-                </div>
-
-                <div>
-
-                    <h1 class="text-4xl font-extrabold text-gray-800">
-                        Flight Bookings
-                    </h1>
-
-                    <p class="text-gray-500 mt-2 text-lg">
-                        Manage passenger bookings, reservations and flight schedules.
-                    </p>
-
-                </div>
-
-            </div>
-
-            <!-- STATUS -->
-            <div class="glass-card border border-white/40 rounded-3xl shadow-xl px-6 py-5">
-
-                <p class="text-sm text-gray-500">
-                    Booking Status
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8 pb-6 border-b border-slate-200/60">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
+                    <span class="text-xl">🎫</span> Flight Bookings
+                </h1>
+                <p class="text-sm text-slate-500 mt-1">
+                    Manage passenger bookings, reservations and flight schedules efficiently.
                 </p>
-
-                <h2 class="text-xl font-bold text-gray-800 mt-1">
-                    Active Reservations
-                </h2>
-
-                <div class="mt-4 flex items-center gap-2 text-sm text-emerald-600 font-semibold">
-                    <span class="h-3 w-3 rounded-full bg-emerald-500"></span>
-                    Live Updates
-                </div>
-
             </div>
 
+            <div class="glass-card border border-slate-200/80 rounded-2xl shadow-sm px-4 py-3 flex items-center gap-4 self-start md:self-auto">
+                <div>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">System Status</p>
+                    <h2 class="text-sm font-semibold text-slate-800 mt-0.5">Active Reservations</h2>
+                </div>
+                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-emerald-50 text-emerald-700 font-medium border border-emerald-200/50">
+                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Live
+                </div>
+            </div>
         </div>
 
-        <!-- ANALYTICS CARDS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-
-            <!-- TOTAL BOOKINGS -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-gray-500 text-sm font-medium">
-                            Total Bookings
-                        </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
-                            {{ bookings|length }}
-                        </h2>
-
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-sky-100 flex items-center justify-center text-3xl">
-                        🎟️
-                    </div>
-
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+            <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200/60 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Bookings</p>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-1">{{ bookings|length }}</h2>
                 </div>
-
+                <div class="h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-lg">
+                    🎟️
+                </div>
             </div>
 
-            <!-- AVAILABLE FLIGHTS -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-gray-500 text-sm font-medium">
-                            Available Flights
-                        </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
-                            {{ flights|length }}
-                        </h2>
-
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-cyan-100 flex items-center justify-center text-3xl">
-                        ✈️
-                    </div>
-
+            <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200/60 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Available Flights</p>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-1">{{ flights|length }}</h2>
                 </div>
-
+                <div class="h-10 w-10 rounded-xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-lg">
+                    ✈️
+                </div>
             </div>
 
-            <!-- ROUTES -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-gray-500 text-sm font-medium">
-                            Flight Routes
-                        </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
-                            {{ routes|length }}
-                        </h2>
-
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-3xl">
-                        🌍
-                    </div>
-
+            <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200/60 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Flight Routes</p>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-1">{{ routes|length }}</h2>
                 </div>
-
+                <div class="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-lg">
+                    🌍
+                </div>
             </div>
-
         </div>
 
-        <!-- MAIN GRID -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
-            <!-- BOOKING FORM -->
-            <div class="glass-card rounded-3xl shadow-2xl border border-white/40 p-8">
-
-                <div class="mb-6">
-
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Add Booking
-                    </h2>
-
-                    <p class="text-gray-500 mt-2">
-                        Create a new passenger reservation.
-                    </p>
-
+            <div class="glass-card rounded-2xl shadow-sm border border-slate-200/80 p-6 lg:col-span-1">
+                <div class="mb-5">
+                    <h2 class="text-lg font-bold text-slate-900">Add Booking</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Create a new passenger reservation record.</p>
                 </div>
 
-                <form method="POST" class="space-y-5">
-
+                <form method="POST" class="space-y-4">
                     {% csrf_token %}
 
-                    <!-- PASSENGER -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Passenger Name
-                        </label>
-
-                        <input type="text"
-                               name="passenger_name"
-                               placeholder="Enter passenger name"
-                               class="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none"
-                               required>
-
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Passenger Name</label>
+                        <input type="text" name="passenger_name" placeholder="e.g., Jane Doe"
+                               class="w-full text-sm border border-slate-200 rounded-xl py-2 px-3.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition outline-none bg-white/50" required>
                     </div>
 
-                    <!-- PHONE -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Phone Number
-                        </label>
-
-                        <input type="text"
-                               name="phone"
-                               placeholder="Enter phone number"
-                               class="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none"
-                               required>
-
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Phone Number</label>
+                        <input type="text" name="phone" placeholder="e.g., +1 234 567 890"
+                               class="w-full text-sm border border-slate-200 rounded-xl py-2 px-3.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition outline-none bg-white/50" required>
                     </div>
 
-                    <!-- ROUTE -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Route
-                        </label>
-
-                        <select name="route"
-                                class="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none"
-                                required>
-
-                            <option value="">
-                                Select Route
-                            </option>
-
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Route</label>
+                        <select name="route" class="w-full text-sm border border-slate-200 rounded-xl py-2 px-3.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition outline-none bg-white/50" required>
+                            <option value="">Select Route</option>
                             {% for route in routes %}
-                            <option value="{{ route.id }}">
-                                {{ route }}
-                            </option>
+                            <option value="{{ route.id }}">{{ route }}</option>
                             {% endfor %}
-
                         </select>
-
                     </div>
 
-                    <!-- FLIGHT -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Flight
-                        </label>
-
-                        <select id="flight-select" name="flight"
-                                class="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none"
-                                onchange="loadFlightSeats()"
-                                required>
-
-                            <option value="">
-                                Select Flight
-                            </option>
-
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Flight</label>
+                        <select id="flight-select" name="flight" onchange="loadFlightSeats()"
+                                class="w-full text-sm border border-slate-200 rounded-xl py-2 px-3.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition outline-none bg-white/50" required>
+                            <option value="">Select Flight</option>
                             {% for flight in flights %}
-                            <option value="{{ flight.id }}">
-                                {{ flight.flight_number }}
-                            </option>
+                            <option value="{{ flight.id }}">{{ flight.flight_number }}</option>
                             {% endfor %}
-
                         </select>
-
                     </div>
 
-                    <!-- DATE -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Travel Date
-                        </label>
-
-                        <input type="date"
-                               name="travel_date"
-                               class="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none"
-                               required>
-
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Travel Date</label>
+                        <input type="date" name="travel_date"
+                               class="w-full text-sm border border-slate-200 rounded-xl py-2 px-3.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition outline-none bg-white/50" required>
                     </div>
 
-                    <!-- Seat Selection -->
-                    <div id="seat-section" style="display:none;">
-                        <h3 class="text-sm font-semibold text-gray-700 mb-2">Select Seat</h3>
-                        <div id="seat-grid" class="grid grid-cols-6 gap-2 mb-4"></div>
+                    <div id="seat-section" class="pt-2 border-t border-slate-200/60" style="display:none;">
+                        <h3 class="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Select Seat</h3>
+                        <div id="seat-grid" class="space-y-3 max-h-60 overflow-y-auto pr-1"></div>
                         <input type="hidden" id="selected-seat" name="seat_number">
-                        <p id="seat-status" class="text-sm text-gray-600"></p>
+                        <p id="seat-status" class="text-xs font-medium text-blue-600 mt-2"></p>
                     </div>
 
-                    <!-- BUTTON -->
-                    <button type="submit"
-                            class="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-4 rounded-2xl font-bold hover:scale-[1.02] transition shadow-lg">
-
-                        Add Booking
-
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-semibold transition shadow-sm shadow-blue-200 mt-2">
+                        Complete Booking
                     </button>
-
                 </form>
-
             </div>
 
-            <!-- BOOKINGS TABLE -->
-            <div class="xl:col-span-2 glass-card rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
-
-                <!-- TABLE HEADER -->
-                <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
+            <div class="lg:col-span-2 glass-card rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+                <div class="p-5 border-b border-slate-200/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white/30">
                     <div>
-
-                        <h2 class="text-2xl font-bold text-gray-800">
-                            Passenger Bookings
-                        </h2>
-
-                        <p class="text-gray-500 mt-1">
-                            Monitor all airline reservations and travel records.
-                        </p>
-
+                        <h2 class="text-lg font-bold text-slate-900">Passenger Bookings</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Real-time status tracking of all live airline reservations.</p>
                     </div>
-
-                    <div class="bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-semibold">
-                        ✈️ Live Reservations
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs bg-blue-50/80 text-blue-700 font-semibold border border-blue-100 self-start sm:self-auto">
+                        ✈️ Live Roster
                     </div>
-
                 </div>
 
-                <!-- TABLE -->
                 <div class="overflow-x-auto">
-
-                    <table class="min-w-full">
-
-                        <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
-
+                    <table class="min-w-full divide-y divide-slate-200/60">
+                        <thead class="bg-slate-50/70 text-slate-500 text-[11px] font-semibold uppercase tracking-wider">
                             <tr>
-
-                                <th class="px-6 py-4 text-left">
-                                    Passenger
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Phone
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Flight
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Route
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Travel Date
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Status
-                                </th>
-
+                                <th class="px-5 py-3.5 text-left">Passenger</th>
+                                <th class="px-5 py-3.5 text-left">Contact info</th>
+                                <th class="px-5 py-3.5 text-left">Flight</th>
+                                <th class="px-5 py-3.5 text-left">Route</th>
+                                <th class="px-5 py-3.5 text-left">Date</th>
+                                <th class="px-5 py-3.5 text-left">Status</th>
                             </tr>
-
                         </thead>
-
-                        <tbody class="divide-y divide-gray-100">
-
+                        <tbody class="divide-y divide-slate-100 bg-white/20">
                             {% for booking in bookings %}
-
-                            <tr class="hover:bg-cyan-50 transition">
-
-                                <!-- PASSENGER -->
-                                <td class="px-6 py-5 font-semibold text-gray-800">
-                                    {{ booking.passenger_name }}
-                                </td>
-
-                                <!-- PHONE -->
-                                <td class="px-6 py-5 text-gray-700">
-                                    {{ booking.phone }}
-                                </td>
-
-                                <!-- FLIGHT -->
-                                <td class="px-6 py-5">
-
-                                    <span class="bg-sky-100 text-sky-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            <tr class="hover:bg-slate-50/50 transition">
+                                <td class="px-5 py-4 text-sm font-semibold text-slate-800">{{ booking.passenger_name }}</td>
+                                <td class="px-5 py-4 text-sm text-slate-600">{{ booking.phone }}</td>
+                                <td class="px-5 py-4 text-sm">
+                                    <span class="bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-md text-xs font-medium">
                                         {{ booking.flight.flight_number }}
                                     </span>
-
                                 </td>
-
-                                <!-- ROUTE -->
-                                <td class="px-6 py-5 text-gray-700">
-                                    {{ booking.route }}
-                                </td>
-
-                                <!-- DATE -->
-                                <td class="px-6 py-5 text-gray-700">
-                                    {{ booking.travel_date }}
-                                </td>
-
-                                <!-- STATUS -->
-                                <td class="px-6 py-5">
-
-                                    <span class="px-3 py-1 rounded-full text-sm font-semibold
-
-                                        {% if booking.status == 'confirmed' %}
-                                            bg-emerald-100 text-emerald-700
-
-                                        {% elif booking.status == 'pending' %}
-                                            bg-yellow-100 text-yellow-700
-
-                                        {% else %}
-                                            bg-red-100 text-red-700
-                                        {% endif %}
-                                    ">
-
+                                <td class="px-5 py-4 text-sm text-slate-600">{{ booking.route }}</td>
+                                <td class="px-5 py-4 text-sm text-slate-600 whitespace-nowrap">{{ booking.travel_date }}</td>
+                                <td class="px-5 py-4 text-sm">
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide inline-block
+                                        {% if booking.status == 'confirmed' %} bg-emerald-50 text-emerald-700 border border-emerald-200/40
+                                        {% elif booking.status == 'pending' %} bg-amber-50 text-amber-700 border border-amber-200/40
+                                        {% else %} bg-rose-50 text-rose-700 border border-rose-200/40 {% endif %}">
                                         {{ booking.status|title }}
-
                                     </span>
-
                                 </td>
-
                             </tr>
-
                             {% empty %}
-
                             <tr>
-
-                                <td colspan="6" class="px-6 py-16 text-center">
-
-                                    <div class="flex flex-col items-center justify-center">
-
-                                        <div class="text-6xl mb-4">
-                                            🛫
-                                        </div>
-
-                                        <h3 class="text-2xl font-bold text-gray-700">
-                                            No Bookings Yet
-                                        </h3>
-
-                                        <p class="text-gray-500 mt-2">
-                                            Passenger bookings will appear here once reservations are created.
-                                        </p>
-
+                                <td colspan="6" class="px-5 py-16 text-center">
+                                    <div class="flex flex-col items-center justify-center max-w-xs mx-auto">
+                                        <div class="text-4xl mb-3 opacity-80">🛫</div>
+                                        <h3 class="text-sm font-bold text-slate-800">No active records</h3>
+                                        <p class="text-xs text-slate-400 mt-1">Passenger bookings will populate here once reservations are logged into the terminal.</p>
                                     </div>
-
                                 </td>
-
                             </tr>
-
                             {% endfor %}
-
                         </tbody>
-
                     </table>
-
                 </div>
-
             </div>
 
         </div>
-
     </div>
-
 </div>
 
 <script>
@@ -463,6 +224,7 @@ function loadFlightSeats() {
     }
     const travelDate = document.querySelector('input[name="travel_date"]').value;
     const url = `{% url 'flight_get_available_seats' %}?flight_id=${flightId}` + (travelDate ? `&travel_date=${travelDate}` : '');
+    
     fetch(url)
         .then(r => r.json())
         .then(data => {
@@ -470,26 +232,42 @@ function loadFlightSeats() {
             if (data.rows) {
                 data.rows.forEach(row => {
                     const rowWrap = document.createElement('div');
-                    rowWrap.style.marginBottom = '12px';
+                    rowWrap.className = 'bg-slate-50/60 p-2.5 rounded-xl border border-slate-200/40';
+                    
                     const rowLabel = document.createElement('div');
                     rowLabel.textContent = `Row ${row.row}`;
-                    rowLabel.className = 'text-sm font-semibold text-gray-700 mb-2';
+                    rowLabel.className = 'text-xs font-semibold text-slate-500 mb-2 tracking-wider uppercase';
                     rowWrap.appendChild(rowLabel);
+                    
                     const seatsRow = document.createElement('div');
-                    seatsRow.style.display = 'flex';
-                    seatsRow.style.gap = '8px';
+                    seatsRow.className = 'flex flex-wrap gap-2';
+                    
                     row.seats.forEach(cell => {
                         const btn = document.createElement('button');
-                        if (cell.is_empty) { btn.className = 'w-12 h-12'; btn.disabled = true; seatsRow.appendChild(btn); return; }
-                        if (cell.is_aisle) { btn.className = 'w-12 h-12'; btn.disabled = true; seatsRow.appendChild(btn); return; }
-                        btn.type = 'button'; btn.textContent = cell.seat_number;
-                        if (cell.booking_status === 'booked') { btn.className = 'p-3 rounded-lg bg-red-500 text-white opacity-60'; btn.disabled = true; }
-                        else { btn.className = 'p-3 rounded-lg bg-slate-600 text-white font-semibold'; btn.addEventListener('click', () => {
-                            document.getElementById('selected-seat').value = cell.seat_number;
-                            document.getElementById('seat-status').textContent = `Seat ${cell.seat_number} selected`;
-                            document.querySelectorAll('#seat-grid button').forEach(b => b.classList.remove('ring-2','ring-yellow-400'));
-                            btn.classList.add('ring-2','ring-yellow-400');
-                        }); }
+                        if (cell.is_empty || cell.is_aisle) { 
+                            btn.className = 'w-9 h-9 opacity-0 pointer-events-none'; 
+                            seatsRow.appendChild(btn); 
+                            return; 
+                        }
+                        btn.type = 'button'; 
+                        btn.textContent = cell.seat_number;
+                        
+                        if (cell.booking_status === 'booked') { 
+                            btn.className = 'w-9 h-9 text-xs rounded-lg bg-rose-50 text-rose-400 border border-rose-100 cursor-not-allowed font-medium'; 
+                            btn.disabled = true; 
+                        } else { 
+                            btn.className = 'w-9 h-9 text-xs rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition duration-150 seat-btn'; 
+                            btn.addEventListener('click', () => {
+                                document.getElementById('selected-seat').value = cell.seat_number;
+                                document.getElementById('seat-status').textContent = `Selected: Seat ${cell.seat_number}`;
+                                document.querySelectorAll('.seat-btn').forEach(b => {
+                                    b.classList.remove('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+                                    b.classList.add('bg-slate-100', 'text-slate-700');
+                                });
+                                btn.classList.remove('bg-slate-100', 'text-slate-700');
+                                btn.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+                            }); 
+                        }
                         seatsRow.appendChild(btn);
                     });
                     rowWrap.appendChild(seatsRow);
@@ -497,13 +275,27 @@ function loadFlightSeats() {
                 });
                 seatSection.style.display = 'block';
             } else if (data.available_seats && data.available_seats.length > 0) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex flex-wrap gap-2';
                 data.available_seats.forEach(seat => {
                     const btn = document.createElement('button');
-                    btn.type = 'button'; btn.textContent = seat;
-                    btn.className = 'p-3 rounded-lg bg-green-500 text-white hover:bg-green-600 font-semibold';
-                    btn.onclick = (e) => { e.preventDefault(); document.getElementById('selected-seat').value = seat; document.getElementById('seat-status').textContent = `Seat ${seat} selected`; document.querySelectorAll('#seat-grid button').forEach(b => b.classList.remove('ring-2','ring-yellow-400')); btn.classList.add('ring-2','ring-yellow-400'); };
-                    seatGrid.appendChild(btn);
+                    btn.type = 'button'; 
+                    btn.textContent = seat;
+                    btn.className = 'px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition seat-btn';
+                    btn.onclick = (e) => { 
+                        e.preventDefault(); 
+                        document.getElementById('selected-seat').value = seat; 
+                        document.getElementById('seat-status').textContent = `Selected: Seat ${seat}`; 
+                        document.querySelectorAll('.seat-btn').forEach(b => {
+                            b.classList.remove('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+                            b.classList.add('bg-slate-100', 'text-slate-700');
+                        });
+                        btn.classList.remove('bg-slate-100', 'text-slate-700');
+                        btn.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+                    };
+                    wrapper.appendChild(btn);
                 });
+                seatGrid.appendChild(wrapper);
                 seatSection.style.display = 'block';
             } else {
                 seatSection.style.display = 'none';

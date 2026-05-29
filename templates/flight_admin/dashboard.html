@@ -5,451 +5,368 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flight Admin Dashboard | SmartTravels</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons Library -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50">
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased">
 
 <div class="flex">
 
     {% include 'flight_admin/sidebar.html' %}
 
-    <!-- Main Content -->
-    <div class="ml-72 min-h-screen w-full p-8">
+    <!-- Main Content Area -->
+    <div class="ml-72 min-h-screen w-full p-8 lg:p-12">
 
         <!-- Header -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 pb-6 border-b border-slate-200 mb-8">
+            
+            <div class="flex items-start gap-4">
+                <div class="h-12 w-12 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-100 flex-shrink-0">
+                    <i data-lucide="plane" class="w-6 h-6 animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+                        Flight Admin Dashboard
+                    </h1>
+                    <p class="text-sm text-slate-500 mt-1 max-w-xl">
+                        Manage airline schedules, pilot rosters, dispatch routes, active tracking systems, and passenger manifests.
+                    </p>
 
-            <div>
-
-                <div class="flex items-center gap-5">
-
-                    <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-sky-500 to-cyan-400 flex items-center justify-center text-4xl shadow-2xl">
-                        ✈️
+                    <!-- Company Badge -->
+                    {% if user.company %}
+                    <div class="mt-3 inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                        <i data-lucide="building" class="w-3.5 h-3.5"></i>
+                        {{ user.company.name }}
                     </div>
-
-                    <div>
-
-                        <h1 class="text-4xl font-extrabold text-gray-800">
-                            Flight Admin Dashboard
-                        </h1>
-
-                        <p class="text-gray-500 mt-2 text-lg">
-                            Manage flights, pilots, routes, schedules and bookings.
-                        </p>
-
+                    {% else %}
+                    <div class="mt-3 inline-flex items-center gap-2 bg-rose-50 border border-rose-200 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                        <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+                        No Company Assigned
                     </div>
-
+                    {% endif %}
                 </div>
-
-                {% if user.company %}
-                <div class="mt-5 inline-flex items-center gap-3 bg-sky-100 text-sky-700 px-5 py-3 rounded-2xl font-semibold shadow-sm">
-                    🏢 {{ user.company.name }}
-                </div>
-                {% else %}
-                <div class="mt-5 inline-flex items-center gap-3 bg-red-100 text-red-700 px-5 py-3 rounded-2xl font-semibold shadow-sm">
-                    ⚠️ No Company Assigned
-                </div>
-                {% endif %}
-
             </div>
 
-            <!-- User Card -->
-            <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-3xl shadow-xl px-6 py-5">
-
-                <p class="text-sm text-gray-500">
+            <!-- User Panel Card -->
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm px-5 py-4 min-w-[220px]">
+                <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">
                     Welcome Back
                 </p>
-
-                <h2 class="text-xl font-bold text-gray-800 mt-1">
+                <h2 class="text-sm font-bold text-slate-800 mt-1">
                     {{ user.get_full_name|default:user.username }}
                 </h2>
-
-                <div class="mt-4 flex items-center gap-2 text-sm text-emerald-600 font-semibold">
-                    <span class="h-3 w-3 rounded-full bg-emerald-500"></span>
-                    System Active
+                <div class="mt-2.5 flex items-center gap-2 text-xs text-emerald-600 font-medium bg-emerald-50 px-2.5 py-1 rounded-md w-fit border border-emerald-100">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    System Online
                 </div>
-
             </div>
 
         </div>
 
-        <!-- Quick Actions -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 mb-10">
+        <!-- Quick Command Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-8">
 
             <!-- Add Flight -->
             <a href="{% url 'add_flights' %}"
-               class="group bg-gradient-to-r from-sky-600 to-cyan-500 rounded-3xl p-6 shadow-2xl text-white hover:scale-[1.02] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-sm opacity-80">
-                            Flight Management
-                        </p>
-
-                        <h2 class="text-2xl font-bold mt-2">
-                            Add Flight
-                        </h2>
-
-                        <p class="mt-3 text-sm opacity-90">
-                            Register and manage flights.
-                        </p>
-
+               class="group bg-white border border-slate-200 rounded-xl p-5 hover:border-blue-500 hover:shadow-md transition-all duration-200 flex flex-col justify-between">
+                <div>
+                    <div class="h-10 w-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-200">
+                        <i data-lucide="plane-takeoff" class="w-5 h-5"></i>
                     </div>
-
-                    <div class="text-6xl group-hover:scale-110 transition">
-                        🛫
-                    </div>
-
+                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400 mt-4">
+                        Flight Management
+                    </p>
+                    <h2 class="text-base font-bold text-slate-800 mt-1 group-hover:text-blue-600 transition-colors">
+                        Add Flight
+                    </h2>
+                    <p class="mt-1 text-xs text-slate-500">
+                        Register and route new scheduling systems.
+                    </p>
                 </div>
-
+                <div class="mt-4 flex items-center text-xs font-bold text-blue-600 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Dispatch Flight <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </div>
             </a>
 
             <!-- Add Route -->
             <a href="{% url 'flight_add_route' %}"
-               class="group bg-gradient-to-r from-blue-600 to-indigo-500 rounded-3xl p-6 shadow-2xl text-white hover:scale-[1.02] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-sm opacity-80">
-                            Route Management
-                        </p>
-
-                        <h2 class="text-2xl font-bold mt-2">
-                            Add Route
-                        </h2>
-
-                        <p class="mt-3 text-sm opacity-90">
-                            Create flight destinations.
-                        </p>
-
+               class="group bg-white border border-slate-200 rounded-xl p-5 hover:border-indigo-500 hover:shadow-md transition-all duration-200 flex flex-col justify-between">
+                <div>
+                    <div class="h-10 w-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all duration-200">
+                        <i data-lucide="globe" class="w-5 h-5"></i>
                     </div>
-
-                    <div class="text-6xl group-hover:scale-110 transition">
-                        🌍
-                    </div>
-
+                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400 mt-4">
+                        Route Management
+                    </p>
+                    <h2 class="text-base font-bold text-slate-800 mt-1 group-hover:text-indigo-600 transition-colors">
+                        Add Route
+                    </h2>
+                    <p class="mt-1 text-xs text-slate-500">
+                        Map coordinate targets and destination portals.
+                    </p>
                 </div>
-
+                <div class="mt-4 flex items-center text-xs font-bold text-indigo-600 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Configure Route <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </div>
             </a>
 
             <!-- Add Pilot -->
             <a href="{% url 'add_pilot' %}"
-               class="group bg-gradient-to-r from-emerald-600 to-green-500 rounded-3xl p-6 shadow-2xl text-white hover:scale-[1.02] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-sm opacity-80">
-                            Pilot Management
-                        </p>
-
-                        <h2 class="text-2xl font-bold mt-2">
-                            Add Pilot
-                        </h2>
-
-                        <p class="mt-3 text-sm opacity-90">
-                            Register and manage pilots.
-                        </p>
-
+               class="group bg-white border border-slate-200 rounded-xl p-5 hover:border-emerald-500 hover:shadow-md transition-all duration-200 flex flex-col justify-between">
+                <div>
+                    <div class="h-10 w-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200">
+                        <i data-lucide="user-check" class="w-5 h-5"></i>
                     </div>
-
-                    <div class="text-6xl group-hover:scale-110 transition">
-                        👨‍✈️
-                    </div>
-
+                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400 mt-4">
+                        Roster System
+                    </p>
+                    <h2 class="text-base font-bold text-slate-800 mt-1 group-hover:text-emerald-600 transition-colors">
+                        Add Pilot
+                    </h2>
+                    <p class="mt-1 text-xs text-slate-500">
+                        Log certified aviators and scheduling status.
+                    </p>
                 </div>
-
+                <div class="mt-4 flex items-center text-xs font-bold text-emerald-600 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Register Crew <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </div>
             </a>
 
             <!-- Add Cargo -->
             <a href="{% url 'flight_cargo' %}"
-               class="group bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl p-6 shadow-2xl text-white hover:scale-[1.02] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-sm opacity-80">
-                            Parcel Management
-                        </p>
-
-                        <h2 class="text-2xl font-bold mt-2">
-                            Add Cargo
-                        </h2>
-
-                        <p class="mt-3 text-sm opacity-90">
-                            Create and track parcel shipments.
-                        </p>
-
+               class="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-500 hover:shadow-md transition-all duration-200 flex flex-col justify-between">
+                <div>
+                    <div class="h-10 w-10 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all duration-200">
+                        <i data-lucide="package" class="w-5 h-5"></i>
                     </div>
-
-                    <div class="text-6xl group-hover:scale-110 transition">
-                        📦
-                    </div>
-
+                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400 mt-4">
+                        Freight Logistics
+                    </p>
+                    <h2 class="text-base font-bold text-slate-800 mt-1 group-hover:text-amber-600 transition-colors">
+                        Add Cargo
+                    </h2>
+                    <p class="mt-1 text-xs text-slate-500">
+                        Process high-priority parcel manifests.
+                    </p>
                 </div>
-
+                <div class="mt-4 flex items-center text-xs font-bold text-amber-600 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    File Manifest <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </div>
             </a>
 
             <!-- Traffic Centre -->
             <a href="{% url 'flight_traffic' %}"
-               class="group bg-gradient-to-r from-rose-500 to-pink-500 rounded-3xl p-6 shadow-2xl text-white hover:scale-[1.02] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-sm opacity-80">
-                            Traffic Monitoring
-                        </p>
-
-                        <h2 class="text-2xl font-bold mt-2">
-                            Traffic Centre
-                        </h2>
-
-                        <p class="mt-3 text-sm opacity-90">
-                            Monitor flight GPS activity.
-                        </p>
-
+               class="group bg-white border border-slate-200 rounded-xl p-5 hover:border-rose-500 hover:shadow-md transition-all duration-200 flex flex-col justify-between">
+                <div>
+                    <div class="h-10 w-10 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-all duration-200">
+                        <i data-lucide="activity" class="w-5 h-5"></i>
                     </div>
-
-                    <div class="text-6xl group-hover:scale-110 transition">
-                        🚦
-                    </div>
-
+                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400 mt-4">
+                        Telemetry Systems
+                    </p>
+                    <h2 class="text-base font-bold text-slate-800 mt-1 group-hover:text-rose-600 transition-colors">
+                        Traffic Centre
+                    </h2>
+                    <p class="mt-1 text-xs text-slate-500">
+                        Audit active aviation coordinates and GPS logs.
+                    </p>
                 </div>
-
+                <div class="mt-4 flex items-center text-xs font-bold text-rose-600 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Check Traffic <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </div>
             </a>
 
         </div>
 
-        <!-- Statistics -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
 
             <!-- Routes -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
-
+            <div class="bg-white rounded-xl p-5 border border-slate-200 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200">
                 <div class="flex items-center justify-between">
-
                     <div>
-
-                        <p class="text-gray-500 text-sm font-medium">
+                        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">
                             Total Routes
                         </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                        <h2 class="text-3xl font-extrabold text-slate-900 mt-2">
                             {{ total_routes }}
                         </h2>
-
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
-                        🌍
+                    <div class="h-12 w-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i data-lucide="map" class="w-5 h-5"></i>
                     </div>
-
                 </div>
-
             </div>
 
             <!-- Flights -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
-
+            <div class="bg-white rounded-xl p-5 border border-slate-200 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200">
                 <div class="flex items-center justify-between">
-
                     <div>
-
-                        <p class="text-gray-500 text-sm font-medium">
+                        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">
                             Total Flights
                         </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                        <h2 class="text-3xl font-extrabold text-slate-900 mt-2">
                             {{ total_flights }}
                         </h2>
-
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-cyan-100 flex items-center justify-center text-3xl">
-                        ✈️
+                    <div class="h-12 w-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                        <i data-lucide="plane" class="w-5 h-5"></i>
                     </div>
-
                 </div>
-
             </div>
 
             <!-- Bookings -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
-
+            <div class="bg-white rounded-xl p-5 border border-slate-200 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200">
                 <div class="flex items-center justify-between">
-
                     <div>
-
-                        <p class="text-gray-500 text-sm font-medium">
+                        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">
                             Today's Bookings
                         </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                        <h2 class="text-3xl font-extrabold text-slate-900 mt-2">
                             {{ todays_bookings }}
                         </h2>
-
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-3xl">
-                        🎫
+                    <div class="h-12 w-12 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <i data-lucide="ticket" class="w-5 h-5"></i>
                     </div>
-
                 </div>
-
             </div>
 
             <!-- Schedules -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
-
+            <div class="bg-white rounded-xl p-5 border border-slate-200 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200">
                 <div class="flex items-center justify-between">
-
                     <div>
-
-                        <p class="text-gray-500 text-sm font-medium">
+                        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">
                             Today's Schedules
                         </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                        <h2 class="text-3xl font-extrabold text-slate-900 mt-2">
                             {{ todays_schedules }}
                         </h2>
-
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-yellow-100 flex items-center justify-center text-3xl">
-                        📅
+                    <div class="h-12 w-12 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
                     </div>
-
                 </div>
-
             </div>
 
         </div>
 
         <!-- Overview Section -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
-            <!-- Recent Activity -->
-            <div class="xl:col-span-2 bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
-
-                <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-
+            <!-- Operational Activity Summary -->
+            <div class="xl:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex items-center justify-between">
                     <div>
-
-                        <h2 class="text-2xl font-bold text-gray-800">
+                        <h2 class="text-lg font-bold text-slate-900">
                             Flight Operations
                         </h2>
-
-                        <p class="text-gray-500 mt-1">
-                            Quick operational summary.
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            Real-time airline dispatcher activity monitor status.
                         </p>
-
                     </div>
-
-                    <div class="bg-sky-100 text-sky-700 px-4 py-2 rounded-xl font-semibold">
-                        Live System
+                    <div class="bg-blue-50 border border-blue-200 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1">
+                        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Live System
                     </div>
-
                 </div>
 
-                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                    <div class="bg-gradient-to-r from-sky-500 to-cyan-500 rounded-2xl p-6 text-white shadow-lg">
-                        <div class="text-4xl mb-3">🛫</div>
-
-                        <h3 class="text-2xl font-bold">
-                            Flight Operations
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50/50">
+                    
+                    <div class="bg-white border border-slate-200 rounded-xl p-5 hover:shadow-sm transition">
+                        <div class="h-8 w-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center mb-4">
+                            <i data-lucide="plane" class="w-4 h-4"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900">
+                            Active Flights
                         </h3>
-
-                        <p class="mt-2 text-sm opacity-90">
-                            Monitor active flights and manage airline schedules.
+                        <p class="mt-1 text-xs text-slate-500 leading-relaxed">
+                            Monitor running airpaths, active vectors, and scheduled arrival corridors instantly.
                         </p>
                     </div>
 
-                    <div class="bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl p-6 text-white shadow-lg">
-                        <div class="text-4xl mb-3">👨‍✈️</div>
-
-                        <h3 class="text-2xl font-bold">
-                            Pilot Activity
+                    <div class="bg-white border border-slate-200 rounded-xl p-5 hover:shadow-sm transition">
+                        <div class="h-8 w-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center mb-4">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900">
+                            Pilot Operations
                         </h3>
-
-                        <p class="mt-2 text-sm opacity-90">
-                            Track pilot assignments and availability.
+                        <p class="mt-1 text-xs text-slate-500 leading-relaxed">
+                            Verify active cockpit pilot rosters, log-hours, and availability queues securely.
                         </p>
                     </div>
 
                 </div>
-
             </div>
 
-            <!-- Performance -->
-            <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl shadow-2xl p-6 text-white">
+            <!-- Performance Indicators -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-sm p-6 text-white flex flex-col justify-between">
+                <div>
+                    <h2 class="text-lg font-bold">
+                        Network Performance
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">
+                        Core metrics monitored against weekly targets.
+                    </p>
+                </div>
 
-                <h2 class="text-2xl font-bold mb-6">
-                    Performance
-                </h2>
-
-                <div class="space-y-6">
+                <div class="space-y-5 my-6">
 
                     <!-- Bookings -->
                     <div>
-
-                        <div class="flex justify-between mb-2 text-sm">
-                            <span>Bookings</span>
-                            <span>88%</span>
+                        <div class="flex justify-between mb-1.5 text-xs">
+                            <span class="text-slate-300 font-medium">Manifest Capacity Filled</span>
+                            <span class="font-mono text-emerald-400 font-bold">88%</span>
                         </div>
-
-                        <div class="w-full bg-slate-700 rounded-full h-3">
-                            <div class="bg-emerald-400 h-3 rounded-full w-[88%]"></div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div class="bg-emerald-500 h-2 rounded-full" style="width: 88%"></div>
                         </div>
-
                     </div>
 
                     <!-- Flight Usage -->
                     <div>
-
-                        <div class="flex justify-between mb-2 text-sm">
-                            <span>Fleet Usage</span>
-                            <span>74%</span>
+                        <div class="flex justify-between mb-1.5 text-xs">
+                            <span class="text-slate-300 font-medium">Fleet Usage Ratio</span>
+                            <span class="font-mono text-sky-400 font-bold">74%</span>
                         </div>
-
-                        <div class="w-full bg-slate-700 rounded-full h-3">
-                            <div class="bg-sky-400 h-3 rounded-full w-[74%]"></div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div class="bg-sky-500 h-2 rounded-full" style="width: 74%"></div>
                         </div>
-
                     </div>
 
                     <!-- Customer Satisfaction -->
                     <div>
-
-                        <div class="flex justify-between mb-2 text-sm">
-                            <span>Passenger Satisfaction</span>
-                            <span>95%</span>
+                        <div class="flex justify-between mb-1.5 text-xs">
+                            <span class="text-slate-300 font-medium">Passenger Satisfaction Index</span>
+                            <span class="font-mono text-amber-400 font-bold">95%</span>
                         </div>
-
-                        <div class="w-full bg-slate-700 rounded-full h-3">
-                            <div class="bg-yellow-400 h-3 rounded-full w-[95%]"></div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div class="bg-amber-500 h-2 rounded-full" style="width: 95%"></div>
                         </div>
-
                     </div>
 
                 </div>
 
+                <div class="pt-4 border-t border-slate-800 text-[11px] text-slate-500 flex items-center justify-between">
+                    <span>Target Audit Lock</span>
+                    <span class="font-mono">PASS_SYS_V2</span>
+                </div>
             </div>
 
         </div>
 
     </div>
-
 </div>
+
+<script>
+    // Initialize Lucide SVG Icons replacement
+    lucide.createIcons();
+</script>
 
 </body>
 </html>

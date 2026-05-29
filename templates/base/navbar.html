@@ -1,230 +1,167 @@
 {% load static %}
 
-<!-- NAVBAR -->
+<!-- ===== SYSTEM FIXED NAVIGATION CONSOLE ===== -->
 <header class="fixed top-0 left-0 w-full z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-5">
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 pt-5">
+        <!-- Main Glass Panel Wrapper -->
+        <div class="backdrop-blur-xl bg-slate-900/60 border border-slate-800/60 shadow-2xl rounded-2xl sm:rounded-3xl px-4 sm:px-6 py-3.5 flex items-center justify-between transition-all duration-300">
 
-        <!-- Glass Navbar -->
-        <div class="backdrop-blur-2xl bg-white/10 border border-white/10 shadow-2xl rounded-3xl px-6 py-4 flex items-center justify-between">
-
-            <!-- LOGO -->
-            <a href="/" class="flex items-center gap-4 group">
-
-                <div class="relative flex items-center justify-center">
-
-                     <img src="{% static 'images/logo.jpeg' %}"
-                         alt="SmartTravels Logo"
-                     class="h-14 w-14 rounded-xl object-contain bg-white p-1 border border-white/20 shadow-xl group-hover:scale-110 transition duration-300">
-
-                        <!-- Glow -->
-                 <div class="absolute inset-0 bg-cyan-400/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
-
-</div>
-
-                <div class="hidden sm:block">
-
-                    <h1 class="text-2xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-                        SmartTravels
-                    </h1>
-
-                    <p class="text-xs text-gray-300 tracking-widest uppercase">
-                        Smart Travel Ecosystem
-                    </p>
-
+            <!-- BRAND LOGO IDENTITY -->
+            <a href="/" class="flex items-center gap-3.5 group">
+                <div class="relative flex items-center justify-center shrink-0">
+                    <img src="{% static 'images/logo.jpeg' %}" 
+                         alt="SmartTravels Logo" 
+                         class="h-11 w-11 sm:h-12 sm:w-12 rounded-xl object-cover border border-slate-700/40 bg-slate-950 p-0.5 shadow-lg group-hover:scale-105 transition duration-300">
+                    <!-- Tech Glow Mesh -->
+                    <div class="absolute inset-0 bg-cyan-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
                 </div>
 
+                <div class="hidden sm:block">
+                    <h1 class="text-xl font-extrabold tracking-tight text-white leading-none bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent group-hover:from-cyan-400 group-hover:to-blue-400 transition-all duration-300">
+                        SmartTravels
+                    </h1>
+                    <p class="text-[9px] text-slate-500 tracking-widest uppercase font-bold mt-1">
+                        Unified Transport Hub
+                    </p>
+                </div>
             </a>
 
-            <!-- DESKTOP NAV -->
-            <nav class="hidden lg:flex items-center gap-8">
-
-                <a href="{% url 'homepage' %}#about"
-                   class="relative text-gray-200 hover:text-cyan-400 transition duration-300 font-medium group">
-
+            <!-- DESKTOP ROUTING INDEX -->
+            <nav class="hidden lg:flex items-center gap-7">
+                <a href="{% url 'homepage' %}#about" class="relative text-slate-400 hover:text-white transition duration-200 text-sm font-medium py-1 group">
                     About
-
-                    <span class="absolute left-0 -bottom-2 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
-
+                    <span class="absolute left-0 bottom-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
                 </a>
-
-                <a href="{% url 'homepage' %}#services"
-                   class="relative text-gray-200 hover:text-cyan-400 transition duration-300 font-medium group">
-
+                <a href="{% url 'homepage' %}#services" class="relative text-slate-400 hover:text-white transition duration-200 text-sm font-medium py-1 group">
                     Services
-
-                    <span class="absolute left-0 -bottom-2 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
-
+                    <span class="absolute left-0 bottom-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
                 </a>
-
-                <a href="{% url 'homepage' %}#routes"
-                   class="relative text-gray-200 hover:text-cyan-400 transition duration-300 font-medium group">
-
+                <a href="{% url 'homepage' %}#routes" class="relative text-slate-400 hover:text-white transition duration-200 text-sm font-medium py-1 group">
                     Routes
-
-                    <span class="absolute left-0 -bottom-2 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
-
+                    <span class="absolute left-0 bottom-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
                 </a>
-
-                <a href="{% url 'homepage' %}#testimonials"
-                   class="relative text-gray-200 hover:text-cyan-400 transition duration-300 font-medium group">
-
+                <a href="{% url 'homepage' %}#testimonials" class="relative text-slate-400 hover:text-white transition duration-200 text-sm font-medium py-1 group">
                     Testimonials
-
-                    <span class="absolute left-0 -bottom-2 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
-
+                    <span class="absolute left-0 bottom-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
                 </a>
-
-                <a href="#contact"
-                   class="relative text-gray-200 hover:text-cyan-400 transition duration-300 font-medium group">
-
+                <a href="#contact" class="relative text-slate-400 hover:text-white transition duration-200 text-sm font-medium py-1 group">
                     Contact
-
-                    <span class="absolute left-0 -bottom-2 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
-
+                    <span class="absolute left-0 bottom-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
                 </a>
-
             </nav>
 
-            <!-- RIGHT SIDE -->
+            <!-- RIGHT CONTROL ROW ACTIONS -->
             <div class="hidden lg:flex items-center gap-4">
-
-                <!-- Notification -->
-                <button class="w-12 h-12 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-xl flex items-center justify-center hover:scale-110 transition duration-300 hover:bg-cyan-500/20">
-
-                    <i class="fa-solid fa-bell text-white"></i>
-
+                
+                <!-- Notification Bell Utility -->
+                <button aria-label="Notifications" class="w-10 h-10 rounded-xl bg-slate-950/60 border border-slate-800/80 text-slate-400 hover:text-white hover:border-slate-700 flex items-center justify-center hover:scale-105 transition duration-200">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
                 </button>
 
                 {% if request.user.is_authenticated %}
-
-                <!-- Dashboard -->
-                <a href="{% url 'dashboard' %}"
-                   class="px-6 py-3 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-xl text-white hover:bg-white/20 transition duration-300 font-semibold">
-
+                <!-- Dashboard Control -->
+                <a href="{% url 'dashboard' %}" class="h-10 px-5 rounded-xl border border-slate-800 bg-slate-950/40 text-slate-200 text-xs font-bold hover:bg-slate-900 flex items-center transition">
                     Dashboard
                 </a>
-
-                <!-- Logout -->
-                <a href="{% url 'logout' %}"
-                   class="px-6 py-3 rounded-2xl bg-gradient-to-r from-red-500 to-pink-600 text-white font-semibold hover:scale-105 transition duration-300 shadow-xl">
-
-                    Logout
+                <!-- Termination Trigger -->
+                <a href="{% url 'logout' %}" class="h-10 px-5 rounded-xl bg-red-500/10 hover:bg-red-500 border border-red-500/20 text-red-400 hover:text-slate-950 text-xs font-bold flex items-center transition shadow-lg shadow-red-500/5">
+                    Log Out
                 </a>
-
                 {% else %}
-
-                <!-- Login -->
-                <a href="{% url 'login' %}"
-                   class="px-6 py-3 rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 transition duration-300 font-semibold">
-
-                    Login
+                <!-- Access Gateway -->
+                <a href="{% url 'login' %}" class="h-10 px-5 rounded-xl border border-slate-800 bg-slate-950/40 text-slate-200 text-xs font-bold hover:bg-slate-900 flex items-center transition">
+                    Sign In
                 </a>
-
-                <!-- Register -->
-                <a href="{% url 'register' %}"
-                   class="px-6 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white font-semibold hover:scale-105 transition duration-300 shadow-2xl animate-gradient">
-
-                    Register
+                <!-- Client Allocation -->
+                <a href="{% url 'register' %}" class="h-10 px-5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold flex items-center transition shadow-lg shadow-cyan-500/10">
+                    Create Account
                 </a>
-
                 {% endif %}
 
             </div>
 
-            <!-- MOBILE BUTTON -->
-            <button id="menuBtn"
-                    class="lg:hidden w-12 h-12 rounded-2xl bg-white/10 border border-white/10 text-white flex items-center justify-center backdrop-blur-xl hover:bg-white/20 transition duration-300">
-
-                <i class="fa-solid fa-bars text-xl"></i>
-
+            <!-- RESPONSIVE MOBILE DISPATCH TRIGGER -->
+            <button id="menuBtn" aria-label="Toggle Navigation Menu"
+                    class="lg:hidden w-10 h-10 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition">
+                <svg id="menuIconClosed" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <svg id="menuIconOpen" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
             </button>
 
         </div>
 
-        <!-- MOBILE MENU -->
-        <div id="mobileMenu"
-             class="hidden lg:hidden mt-4 backdrop-blur-2xl bg-white/10 border border-white/10 rounded-3xl p-6 shadow-2xl">
+        <!-- ===== MOBILE EXTENSION DRAWER CONTAINER ===== -->
+        <div id="mobileMenu" 
+             class="hidden lg:hidden mt-2.5 backdrop-blur-xl bg-slate-900/90 border border-slate-800/80 rounded-2xl p-5 shadow-2xl transition duration-300">
+            <div class="flex flex-col gap-4">
 
-            <div class="flex flex-col gap-5">
+                <!-- Navigation List Links -->
+                <nav class="flex flex-col gap-3 text-sm font-medium text-slate-400 px-1">
+                    <a href="{% url 'homepage' %}#about" class="hover:text-white transition">About Platform</a>
+                    <a href="{% url 'homepage' %}#services" class="hover:text-white transition">Services Ecosystem</a>
+                    <a href="{% url 'homepage' %}#routes" class="hover:text-white transition">Transit Routes</a>
+                    <a href="{% url 'homepage' %}#testimonials" class="hover:text-white transition">User Reviews</a>
+                    <a href="#contact" class="hover:text-white transition">Administrative Help</a>
+                </nav>
 
-                <a href="{% url 'homepage' %}#about"
-                   class="text-gray-200 hover:text-cyan-400 transition duration-300 font-medium">
-                    About
-                </a>
-
-                <a href="{% url 'homepage' %}#services"
-                   class="text-gray-200 hover:text-cyan-400 transition duration-300 font-medium">
-                    Services
-                </a>
-
-                <a href="{% url 'homepage' %}#routes"
-                   class="text-gray-200 hover:text-cyan-400 transition duration-300 font-medium">
-                    Routes
-                </a>
-
-                <a href="{% url 'homepage' %}#testimonials"
-                   class="text-gray-200 hover:text-cyan-400 transition duration-300 font-medium">
-                    Testimonials
-                </a>
-
-                <a href="#contact"
-                   class="text-gray-200 hover:text-cyan-400 transition duration-300 font-medium">
-                    Contact
-                </a>
-
-                <div class="border-t border-white/10 pt-5 flex flex-col gap-4">
-
+                <!-- Auth Action Dispatches Divider -->
+                <div class="border-t border-slate-800/80 pt-4 mt-1 flex flex-col sm:flex-row gap-2.5 text-xs">
                     {% if request.user.is_authenticated %}
-
-                    <a href="{% url 'dashboard' %}"
-                       class="w-full text-center px-5 py-3 rounded-2xl bg-white/10 border border-white/10 text-white">
-
-                        Dashboard
+                    <a href="{% url 'dashboard' %}" class="w-full text-center h-10 rounded-xl border border-slate-800 bg-slate-950/60 text-white flex items-center justify-center font-bold">
+                        Dashboard Panel
                     </a>
-
-                    <a href="{% url 'logout' %}"
-                       class="w-full text-center px-5 py-3 rounded-2xl bg-gradient-to-r from-red-500 to-pink-600 text-white">
-
-                        Logout
+                    <a href="{% url 'logout' %}" class="w-full text-center h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center font-bold border border-red-500/20">
+                        Secure Sign Out
                     </a>
-
                     {% else %}
-
-                    <a href="{% url 'login' %}"
-                       class="w-full text-center px-5 py-3 rounded-2xl border border-white/10 bg-white/10 text-white">
-
-                        Login
+                    <a href="{% url 'login' %}" class="w-full text-center h-10 rounded-xl border border-slate-800 bg-slate-950/60 text-white flex items-center justify-center font-bold">
+                        Sign In
                     </a>
-
-                    <a href="{% url 'register' %}"
-                       class="w-full text-center px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white font-semibold">
-
-                        Register
+                    <a href="{% url 'register' %}" class="w-full text-center h-10 rounded-xl bg-cyan-500 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-cyan-500/5">
+                        Register Account
                     </a>
-
                     {% endif %}
-
                 </div>
 
             </div>
-
         </div>
 
     </div>
-
 </header>
 
-<!-- MOBILE MENU SCRIPT -->
+<!-- ===== INTERACTIVE CONSOLE UTILITIES ===== -->
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const menuBtn = document.getElementById("menuBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
+        const iconClosed = document.getElementById("menuIconClosed");
+        const iconOpen = document.getElementById("menuIconOpen");
 
-    const menuBtn = document.getElementById("menuBtn");
-    const mobileMenu = document.getElementById("mobileMenu");
+        menuBtn.addEventListener("click", () => {
+            const isHidden = mobileMenu.classList.toggle("hidden");
+            if (isHidden) {
+                iconClosed.classList.remove("hidden");
+                iconOpen.classList.add("hidden");
+            } else {
+                iconClosed.classList.add("hidden");
+                iconOpen.classList.remove("hidden");
+            }
+        });
 
-    menuBtn.addEventListener("click", () => {
-
-        mobileMenu.classList.toggle("hidden");
-
+        // Close on escape anchor click routing event triggers
+        const mobileLinks = mobileMenu.querySelectorAll('nav a, div a');
+        mobileLinks.forEach(link => {
+            link.addEventListener("click", () => {
+                mobileMenu.classList.add("hidden");
+                iconClosed.classList.remove("hidden");
+                iconOpen.classList.add("hidden");
+            });
+        });
     });
-
 </script>

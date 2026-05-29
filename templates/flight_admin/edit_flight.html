@@ -1,55 +1,145 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Edit Flight</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Flight • {{ flight.flight_number }}</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-slate-50 text-slate-900 antialiased">
+
 <div class="flex">
+    
     {% include 'flight_admin/sidebar.html' %}
-    <div class="ml-64 p-8 w-full">
-        <h1 class="text-2xl font-bold mb-6">Edit Flight</h1>
-        <div class="bg-white p-6 rounded-xl shadow mb-10">
-            <form method="POST" class="space-y-6">
-                {% csrf_token %}
-                <div class="grid md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block mb-2 font-semibold">Flight Number</label>
-                        <input type="text" name="flight_number" value="{{ flight.flight_number }}" class="w-full p-3 border rounded-lg" required>
-                    </div>
-                    <div>
-                        <label class="block mb-2 font-semibold">Route</label>
-                        <select name="route" class="w-full p-3 border rounded-lg" required>
-                            {% for route in routes %}
-                                <option value="{{ route.id }}" {% if route.id == flight.route.id %}selected{% endif %}>
-                                    {{ route.from_location }} → {{ route.to_location }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block mb-2 font-semibold">Pilot</label>
-                        <select name="pilot" class="w-full p-3 border rounded-lg" required>
-                            {% for pilot in pilots %}
-                                <option value="{{ pilot.id }}" {% if pilot.id == flight.pilot.id %}selected{% endif %}>
-                                    {{ pilot.name }} ({{ pilot.phone }})
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="block mb-2 font-semibold">Description <span class="text-gray-500 text-sm">(optional, visible to passengers)</span></label>
-                    <textarea name="description" class="w-full p-3 border rounded-lg" rows="4" placeholder="Brief description of the flight">{{ flight.description|default:'' }}</textarea>
-                </div>
-                <div class="flex gap-4">
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold">Update Flight</button>
-                    <a href="{% url 'add_flights' %}" class="bg-gray-400 text-white px-6 py-3 rounded-lg hover:bg-gray-500 font-semibold">Cancel</a>
-                </div>
-            </form>
+
+    <div class="ml-72 min-h-screen w-full p-8 lg:p-12">
+        
+        <div class="flex flex-col gap-2 pb-6 mb-8 border-b border-slate-200">
+            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <span>Flight Operations</span>
+                <svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                </svg>
+                <span class="text-slate-600">Manifest Editor</span>
+            </div>
+            <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+                Edit Flight: <span class="font-mono text-blue-600 font-semibold">{{ flight.flight_number }}</span>
+            </h1>
+            <p class="text-sm text-slate-500">
+                Modify schedules, adjust routes, or reassign core logistical crew for active system manifests.
+            </p>
         </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden max-w-5xl">
+            
+            <div class="p-6 border-b border-slate-200 bg-slate-50/50">
+                <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Operational Parameters</h2>
+            </div>
+
+            <form method="POST" class="p-6 lg:p-8 space-y-6">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            Flight Number
+                        </label>
+                        <input type="text" 
+                               name="flight_number" 
+                               value="{{ flight.flight_number }}" 
+                               class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-medium text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition" 
+                               required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            Assigned Route
+                        </label>
+                        <div class="relative">
+                            <select name="route" 
+                                    class="w-full bg-white border border-slate-200 rounded-lg pl-4 pr-10 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition appearance-none cursor-pointer" 
+                                    required>
+                                {% for route in routes %}
+                                    <option value="{{ route.id }}" {% if route.id == flight.route.id %}selected{% endif %}>
+                                        {{ route.from_location }} &rarr; {{ route.to_location }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            Command Pilot
+                        </label>
+                        <div class="relative">
+                            <select name="pilot" 
+                                    class="w-full bg-white border border-slate-200 rounded-lg pl-4 pr-10 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition appearance-none cursor-pointer" 
+                                    required>
+                                {% for pilot in pilots %}
+                                    <option value="{{ pilot.id }}" {% if pilot.id == flight.pilot.id %}selected{% endif %}>
+                                        {{ pilot.name }} &bull; ({{ pilot.phone }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                            Passenger Notice / Manifest Narrative
+                        </label>
+                        <span class="text-[11px] text-slate-400 font-medium lowercase">Optional public context</span>
+                    </div>
+                    <textarea name="description" 
+                              rows="5" 
+                              placeholder="Provide updates regarding standard flight stopovers, layout updates, or terminal guidelines..." 
+                              class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition resize-none">{{ flight.description|default:'' }}</textarea>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-end gap-3">
+                    <a href="{% url 'add_flights' %}" 
+                       class="w-full sm:w-auto text-center bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-sm font-medium px-5 py-2.5 rounded-lg shadow-sm transition">
+                        Discard Changes
+                    </a>
+                    <button type="submit" 
+                            class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-6 py-2.5 rounded-lg shadow-sm transition">
+                        Update Core Manifest
+                    </button>
+                </div>
+
+            </form>
+            
+        </div>
+
     </div>
 </div>
+
 </body>
 </html>

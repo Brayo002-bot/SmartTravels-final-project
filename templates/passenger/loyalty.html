@@ -1,566 +1,381 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartTravels Loyalty</title>
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        :root{
-            --bg:#070b17;
-            --card:rgba(255,255,255,0.06);
-            --border:rgba(255,255,255,0.08);
-            --gold:#d4af57;
-            --gold-light:#f5dc95;
-            --text:#ffffff;
-            --muted:rgba(255,255,255,0.6);
+        :root {
+            --bg: #0b0f19;
+            --card: rgba(30, 41, 59, 0.4);
+            --border: rgba(255, 255, 255, 0.05);
+            --gold: #d4af57;
+            --gold-light: #f5dc95;
         }
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 45%),
+                radial-gradient(circle at 20% 50%, rgba(212, 175, 87, 0.05), transparent 40%);
+            color: #f8fafc;
+            min-height: 100vh;
         }
 
-        body{
-            background:
-                radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 30%),
-                radial-gradient(circle at bottom left, rgba(212,175,87,0.12), transparent 30%),
-                var(--bg);
-            color:var(--text);
-            font-family:'Inter', sans-serif;
-            min-height:100vh;
-            overflow-x:hidden;
+        /* Subtle Grid Overlay */
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.005) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.005) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        body::before{
-            content:"";
-            position:fixed;
-            inset:0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size:40px 40px;
-            pointer-events:none;
-            z-index:0;
+        .glass-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
-        .page-content{
-            position:relative;
-            z-index:2;
-            width:100%;
-            max-width:1400px;
-            margin:auto;
-            padding:30px;
+        .hero-card {
+            background: linear-gradient(135deg, rgba(212, 175, 87, 0.08) 0%, rgba(59, 130, 246, 0.03) 100%), rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(212, 175, 87, 0.15);
         }
 
-        .glass-card{
-            background:rgba(255,255,255,0.05);
-            border:1px solid rgba(255,255,255,0.08);
-            backdrop-filter:blur(18px);
+        .gold-gradient {
+            background: linear-gradient(135deg, #d4af57 0%, #f5dc95 100%);
         }
 
-        .hero{
-            position:relative;
-            overflow:hidden;
-            border-radius:32px;
-            background:
-                linear-gradient(135deg, rgba(212,175,87,0.15), rgba(59,130,246,0.1)),
-                rgba(255,255,255,0.05);
-            border:1px solid rgba(255,255,255,0.08);
+        .gold-text-gradient {
+            background: linear-gradient(135deg, #e5c068 0%, #fbeeb8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .hero::before{
-            content:"";
-            position:absolute;
-            width:320px;
-            height:320px;
-            border-radius:50%;
-            background:rgba(212,175,87,0.12);
-            top:-100px;
-            right:-100px;
-            filter:blur(30px);
+        /* Smooth interactive element transitions */
+        .interactive-item {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .reward-card,
-        .history-item,
-        .stat-card{
-            transition:.25s ease;
-        }
-
-        .reward-card:hover,
-        .history-item:hover,
-        .stat-card:hover{
-            transform:translateY(-3px);
-            background:rgba(255,255,255,0.07);
-        }
-
-        .gold-gradient{
-            background:linear-gradient(to right,var(--gold),var(--gold-light));
-        }
-
-        .gold-text{
-            color:var(--gold-light);
-        }
-
-        .muted{
-            color:var(--muted);
-        }
-
-        @media(max-width:768px){
-            .page-content{
-                padding:20px;
-                padding-top:90px;
-            }
+        .interactive-item:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(30, 41, 59, 0.6);
         }
     </style>
 </head>
-<body>
+<body class="font-sans antialiased">
 
-<div class="flex min-h-screen">
+<div class="grid-bg"></div>
+
+<div class="flex relative z-10 min-h-screen">
 
     <!-- SIDEBAR -->
     {% include 'passenger/sidebar.html' %}
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 lg:ml-64">
-
-        <div class="page-content">
+    <main class="flex-1 lg:ml-64 w-full">
+        <div class="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
 
             <!-- TOPBAR -->
-            <div class="flex flex-col lg:flex-row justify-between gap-5 mb-8">
-
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-white/5">
                 <div class="flex items-center gap-4">
                     <img src="{% static 'images/logo.jpeg' %}"
-                         class="w-16 h-16 rounded-3xl object-cover border border-white/10"
+                         class="w-14 h-14 rounded-2xl object-cover ring-1 ring-white/10 shadow-xl"
                          alt="SmartTravels">
-
                     <div>
-                        <h1 class="text-3xl font-bold"
-                            style="font-family:'Playfair Display', serif;">
+                        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight font-serif">
                             SmartTravels
                         </h1>
-
-                        <p class="text-sm uppercase tracking-[0.25em] text-slate-400 mt-1">
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 mt-0.5">
                             Passenger Loyalty Program
                         </p>
                     </div>
                 </div>
 
-                <div class="flex flex-wrap gap-3">
-
+                <div class="flex items-center gap-3 w-full sm:w-auto">
                     <a href="{% url 'dashboard' %}"
-                       class="px-5 py-3 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition font-medium">
-                        ← Back Dashboard
+                       class="flex-1 sm:flex-none text-center px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white transition-all">
+                       &larr; Dashboard
                     </a>
-
-                    <button class="gold-gradient px-6 py-3 rounded-2xl text-slate-900 font-bold hover:scale-[1.02] transition">
-                        ✈ Redeem Travel
+                    <button class="flex-1 sm:flex-none gold-gradient px-5 py-2.5 rounded-xl text-sm font-bold text-slate-900 shadow-lg shadow-amber-500/10 hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] transition-all">
+                        Redeem Travel
                     </button>
-
                 </div>
-
             </div>
 
-            <!-- HERO -->
-            <div class="hero p-8 lg:p-12 mb-8">
-
-                <div class="grid lg:grid-cols-2 gap-10 items-center">
-
-                    <!-- LEFT -->
-                    <div class="relative z-10">
-
-                        <h2 class="text-4xl lg:text-6xl leading-tight font-bold mb-5"
-                            style="font-family:'Playfair Display', serif;">
-
-                            Travel more.<br>
-                            Earn <span class="gold-text">more rewards.</span>
-
+            <!-- HERO SECTIONS MATRIX -->
+            <div class="grid lg:grid-cols-3 gap-6">
+                
+                <!-- LEFT/MIDDLE: PROMO HERO -->
+                <div class="hero-card lg:col-span-2 rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="max-w-xl space-y-4 relative z-10">
+                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight font-serif leading-[1.15]">
+                            Travel more. <br>
+                            Earn <span class="gold-text-gradient font-medium italic">more rewards.</span>
                         </h2>
-
-                        <p class="text-slate-300 leading-8 max-w-2xl mb-8">
-                            Every booking on SmartTravels earns you loyalty points.
-                            Redeem your points for discounted bus tickets, train rides,
-                            flight offers and premium travel experiences across Kenya
-                            and East Africa.
+                        <p class="text-sm sm:text-base text-slate-400 leading-relaxed">
+                            Every booking on SmartTravels earns you premium loyalty currency. Redeem your collected balance for free tickets, cabin upgrades, and high-tier travel perks across East Africa.
                         </p>
-
-                        <div class="flex flex-wrap gap-4">
-
-                            <button class="gold-gradient px-7 py-4 rounded-2xl text-slate-900 font-bold hover:scale-[1.02] transition">
-                                🎁 Redeem My Points
-                            </button>
-
-                            <button class="px-7 py-4 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition font-semibold">
-                                View Rewards
-                            </button>
-
-                        </div>
-
                     </div>
 
-                    <!-- RIGHT -->
-                    <div class="glass-card rounded-[30px] p-8 relative z-10">
+                    <div class="flex flex-wrap gap-3 mt-8 relative z-10">
+                        <button class="gold-gradient px-6 py-3 rounded-xl text-sm font-bold text-slate-900 hover:opacity-95 shadow-md transition-all">
+                            Redeem My Points
+                        </button>
+                        <button class="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-sm font-semibold text-slate-200 hover:bg-white/10 transition-all">
+                            View Rewards Catalog
+                        </button>
+                    </div>
+                </div>
 
-                        <div class="uppercase tracking-[0.2em] text-xs text-slate-400 mb-3">
-                            Available Loyalty Points
-                        </div>
-
-                        <div class="text-6xl font-black gold-text mb-4">
-                            {{ loyalty_points|default:"0" }}
-                        </div>
-
-                        <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-amber-400/10 text-amber-200 border border-amber-300/10 mb-6">
-                            👑 {{ loyalty_badge|default:'Silver Traveller' }}
-                        </div>
-
-                        <div class="space-y-3">
-
-                            <div class="flex justify-between text-sm text-slate-400">
-                                <span>Progress to Platinum</span>
-                                <span>{{ loyalty_progress|default:'0' }}%</span>
+                <!-- RIGHT: LOYALTY STATUS CARD -->
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between shadow-xl relative overflow-hidden">
+                    <div class="space-y-6">
+                        <div>
+                            <span class="block text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">
+                                Available Loyalty Points
+                            </span>
+                            <div class="text-5xl font-extrabold tracking-tight text-white font-sans">
+                                {{ loyalty_points|default:"0" }} <span class="text-xs font-semibold text-amber-300 tracking-normal">PTS</span>
                             </div>
-
-                            <div class="h-3 rounded-full bg-white/10 overflow-hidden">
-                                <div class="h-full rounded-full gold-gradient" style="width: {{ loyalty_progress|default:'0' }}%;"></div>
-                            </div>
-
                         </div>
-
-                        <div class="grid grid-cols-2 gap-4 mt-8">
-
-                            <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
-                                <div class="text-sm text-slate-400 mb-1">
-                                    Next Reward
-                                </div>
-
-                                <div class="font-bold text-lg">
-                                    {{ next_reward|default:'Free Bus Ticket' }}
-                                </div>
-                            </div>
-
-                            <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
-                                <div class="text-sm text-slate-400 mb-1">
-                                    Points Needed
-                                </div>
-
-                                <div class="font-bold text-lg gold-text">
-                                    {{ points_to_next_tier|default:'0' }} pts
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- STATS -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-
-                <div class="stat-card glass-card rounded-[28px] p-6">
-                    <div class="w-14 h-14 rounded-2xl bg-amber-400/10 flex items-center justify-center text-2xl mb-5">
-                        🏆
-                    </div>
-
-                    <div class="text-slate-400 mb-2">
-                        Lifetime Points
-                    </div>
-
-                    <div class="text-4xl font-black">
-                        {{ lifetime_points|default:'0' }}
-                    </div>
-                </div>
-
-                <div class="stat-card glass-card rounded-[28px] p-6">
-                    <div class="w-14 h-14 rounded-2xl bg-blue-400/10 flex items-center justify-center text-2xl mb-5">
-                        🎫
-                    </div>
-
-                    <div class="text-slate-400 mb-2">
-                        Trips Completed
-                    </div>
-
-                    <div class="text-4xl font-black">
-                        {{ trips_completed|default:'0' }}
-                    </div>
-                </div>
-
-                <div class="stat-card glass-card rounded-[28px] p-6">
-                    <div class="w-14 h-14 rounded-2xl bg-green-400/10 flex items-center justify-center text-2xl mb-5">
-                        💰
-                    </div>
-
-                    <div class="text-slate-400 mb-2">
-                        Savings Earned
-                    </div>
-
-                    <div class="text-4xl font-black">
-                        {{ savings_earned|default:'KES 0' }}
-                    </div>
-                </div>
-
-                <div class="stat-card glass-card rounded-[28px] p-6">
-                    <div class="w-14 h-14 rounded-2xl bg-red-400/10 flex items-center justify-center text-2xl mb-5">
-                        ⭐
-                    </div>
-
-                    <div class="text-slate-400 mb-2">
-                        Current Tier
-                    </div>
-
-                    <div class="text-4xl font-black gold-text">
-                        {{ current_tier|default:'Silver' }}
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- MAIN GRID -->
-            <div class="grid xl:grid-cols-2 gap-8">
-
-                <!-- REWARDS -->
-                <div class="glass-card rounded-[30px] p-8">
-
-                    <div class="flex items-center justify-between mb-8">
 
                         <div>
-                            <h3 class="text-2xl font-bold mb-2">
-                                Redeem Rewards
-                            </h3>
-
-                            <p class="text-slate-400">
-                                Use your points for travel discounts & perks
-                            </p>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-300 ring-1 ring-amber-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                {{ loyalty_badge|default:'Silver Traveller' }}
+                            </span>
                         </div>
 
+                        <!-- Progress Section -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-medium text-slate-400">
+                                <span>Progress to Platinum Tier</span>
+                                <span class="text-slate-200 font-semibold">{{ loyalty_progress|default:'0' }}%</span>
+                            </div>
+                            <div class="h-2 rounded-full bg-slate-800 overflow-hidden ring-1 ring-white/5">
+                                <div class="h-full rounded-full gold-gradient transition-all duration-500" style="width: {{ loyalty_progress|default:'0' }}%;"></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="space-y-5">
-
-                        <!-- CARD -->
-                        <div class="reward-card rounded-[24px] bg-white/5 border border-white/10 p-5 flex flex-col md:flex-row justify-between gap-5">
-
-                            <div class="flex gap-4">
-
-                                <div class="w-16 h-16 rounded-2xl bg-amber-400/10 flex items-center justify-center text-3xl">
-                                    🚌
-                                </div>
-
-                                <div>
-                                    <h4 class="font-bold text-lg mb-2">
-                                        Free Bus Ticket
-                                    </h4>
-
-                                    <p class="text-slate-400 leading-7">
-                                        Redeem for one-way economy bus travel within Kenya.
-                                    </p>
-                                </div>
-
-                            </div>
-
-                            <div class="flex flex-col items-start md:items-end gap-3">
-
-                                <div class="text-xl font-black gold-text">
-                                    5,000 pts
-                                </div>
-
-                                <button class="gold-gradient px-5 py-3 rounded-xl text-slate-900 font-bold">
-                                    Redeem
-                                </button>
-
-                            </div>
-
+                    <!-- Mini Meta Stats -->
+                    <div class="grid grid-cols-2 gap-3 mt-6 pt-4 border-t border-white/5">
+                        <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                            <span class="block text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-0.5">Next Tier Reward</span>
+                            <span class="text-xs font-bold text-slate-200 truncate block">{{ next_reward|default:'Free Bus Ticket' }}</span>
                         </div>
-
-                        <!-- CARD -->
-                        <div class="reward-card rounded-[24px] bg-white/5 border border-white/10 p-5 flex flex-col md:flex-row justify-between gap-5">
-
-                            <div class="flex gap-4">
-
-                                <div class="w-16 h-16 rounded-2xl bg-blue-400/10 flex items-center justify-center text-3xl">
-                                    🚆
-                                </div>
-
-                                <div>
-                                    <h4 class="font-bold text-lg mb-2">
-                                        Train Upgrade
-                                    </h4>
-
-                                    <p class="text-slate-400 leading-7">
-                                        Upgrade your SGR seat to first class experience.
-                                    </p>
-                                </div>
-
-                            </div>
-
-                            <div class="flex flex-col items-start md:items-end gap-3">
-
-                                <div class="text-xl font-black gold-text">
-                                    3,500 pts
-                                </div>
-
-                                <button class="gold-gradient px-5 py-3 rounded-xl text-slate-900 font-bold">
-                                    Redeem
-                                </button>
-
-                            </div>
-
+                        <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                            <span class="block text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-0.5">Points Needed</span>
+                            <span class="text-xs font-bold text-amber-300 block">{{ points_to_next_tier|default:'0' }} pts</span>
                         </div>
-
-                        <!-- CARD -->
-                        <div class="reward-card rounded-[24px] bg-white/5 border border-white/10 p-5 flex flex-col md:flex-row justify-between gap-5">
-
-                            <div class="flex gap-4">
-
-                                <div class="w-16 h-16 rounded-2xl bg-purple-400/10 flex items-center justify-center text-3xl">
-                                    ✈️
-                                </div>
-
-                                <div>
-                                    <h4 class="font-bold text-lg mb-2">
-                                        Flight Discount
-                                    </h4>
-
-                                    <p class="text-slate-400 leading-7">
-                                        Get KES 3,000 off your next domestic flight booking.
-                                    </p>
-                                </div>
-
-                            </div>
-
-                            <div class="flex flex-col items-start md:items-end gap-3">
-
-                                <div class="text-xl font-black gold-text">
-                                    8,000 pts
-                                </div>
-
-                                <button class="gold-gradient px-5 py-3 rounded-xl text-slate-900 font-bold">
-                                    Redeem
-                                </button>
-
-                            </div>
-
-                        </div>
-
                     </div>
-
                 </div>
 
-                <!-- HISTORY -->
-                <div class="glass-card rounded-[30px] p-8">
+            </div>
 
-                    <div class="mb-8">
+            <!-- CORE STATS BLOCK -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- CARD 1 -->
+                <div class="glass-card rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/10 flex items-center justify-center text-xl shadow-inner border border-amber-500/10">
+                        🏆
+                    </div>
+                    <div>
+                        <span class="block text-xs font-medium text-slate-400">Lifetime Points</span>
+                        <span class="text-xl sm:text-2xl font-bold tracking-tight text-slate-100">{{ lifetime_points|default:'0' }}</span>
+                    </div>
+                </div>
 
-                        <h3 class="text-2xl font-bold mb-2">
-                            Points History
-                        </h3>
+                <!-- CARD 2 -->
+                <div class="glass-card rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+                    <div class="w-11 h-11 rounded-xl bg-blue-500/10 flex items-center justify-center text-xl shadow-inner border border-blue-500/10">
+                        🎫
+                    </div>
+                    <div>
+                        <span class="block text-xs font-medium text-slate-400">Trips Completed</span>
+                        <span class="text-xl sm:text-2xl font-bold tracking-tight text-slate-100">{{ trips_completed|default:'0' }}</span>
+                    </div>
+                </div>
 
-                        <p class="text-slate-400">
-                            Track your earned and redeemed loyalty points
-                        </p>
+                <!-- CARD 3 -->
+                <div class="glass-card rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500/10 flex items-center justify-center text-xl shadow-inner border border-emerald-500/10">
+                        💰
+                    </div>
+                    <div>
+                        <span class="block text-xs font-medium text-slate-400">Savings Earned</span>
+                        <span class="text-xl sm:text-2xl font-bold tracking-tight text-slate-100">{{ savings_earned|default:'KES 0' }}</span>
+                    </div>
+                </div>
 
+                <!-- CARD 4 -->
+                <div class="glass-card rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+                    <div class="w-11 h-11 rounded-xl bg-indigo-500/10 flex items-center justify-center text-xl shadow-inner border border-indigo-500/10">
+                        ✨
+                    </div>
+                    <div>
+                        <span class="block text-xs font-medium text-slate-400">Current Tier</span>
+                        <span class="text-xl sm:text-2xl font-bold tracking-tight text-amber-300">{{ current_tier|default:'Silver' }}</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TWO-COLUMN WORKSPACE GRID -->
+            <div class="grid xl:grid-cols-2 gap-8">
+
+                <!-- REWARDS REDEMPTION PANEL -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-100 tracking-tight">Redeem Rewards</h3>
+                        <p class="text-xs text-slate-400">Instantly swap accumulated miles for valid transit vouchers</p>
                     </div>
 
-                    <div class="space-y-5">
-
-                        <!-- ITEM -->
-                        <div class="history-item rounded-[22px] bg-white/5 border border-white/10 p-5 flex justify-between flex-wrap gap-4">
-
-                            <div class="flex gap-4">
-
-                                <div class="w-14 h-14 rounded-2xl bg-blue-400/10 flex items-center justify-center text-2xl">
+                    <div class="space-y-3">
+                        <!-- ITEM 1 -->
+                        <div class="interactive-item rounded-2xl bg-slate-900/40 border border-white/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex gap-3.5 items-start">
+                                <div class="w-12 h-12 rounded-xl bg-slate-800 flex-shrink-0 flex items-center justify-center text-2xl border border-white/5">
                                     🚌
                                 </div>
-
                                 <div>
-                                    <div class="font-semibold text-lg mb-1">
-                                        Nairobi → Kisumu Bus Booking
-                                    </div>
-
-                                    <div class="text-slate-400 text-sm">
-                                        12 May 2026
-                                    </div>
+                                    <h4 class="font-semibold text-sm text-slate-200">Free Bus Ticket</h4>
+                                    <p class="text-xs text-slate-400 mt-0.5 leading-relaxed">Redeem for one-way economy bus travel within Kenya.</p>
                                 </div>
-
                             </div>
-
-                            <div class="text-green-300 text-xl font-black">
-                                +1,200 pts
+                            <div class="flex sm:flex-col justify-between sm:justify-center items-center sm:items-end gap-2 pt-2 sm:pt-0 border-t sm:border-0 border-white/5">
+                                <span class="text-sm font-extrabold text-amber-300">5,000 <span class="text-[10px] text-slate-400 font-normal">PTS</span></span>
+                                <button class="gold-gradient px-4 py-2 rounded-lg text-xs font-bold text-slate-900 shadow hover:opacity-95">Redeem</button>
                             </div>
-
                         </div>
 
-                        <!-- ITEM -->
-                        <div class="history-item rounded-[22px] bg-white/5 border border-white/10 p-5 flex justify-between flex-wrap gap-4">
+                        <!-- ITEM 2 -->
+                        <div class="interactive-item rounded-2xl bg-slate-900/40 border border-white/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex gap-3.5 items-start">
+                                <div class="w-12 h-12 rounded-xl bg-slate-800 flex-shrink-0 flex items-center justify-center text-2xl border border-white/5">
+                                    🚆
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-sm text-slate-200">Train Upgrade</h4>
+                                    <p class="text-xs text-slate-400 mt-0.5 leading-relaxed">Upgrade your SGR seat to premium first class experience.</p>
+                                </div>
+                            </div>
+                            <div class="flex sm:flex-col justify-between sm:justify-center items-center sm:items-end gap-2 pt-2 sm:pt-0 border-t sm:border-0 border-white/5">
+                                <span class="text-sm font-extrabold text-amber-300">3,500 <span class="text-[10px] text-slate-400 font-normal">PTS</span></span>
+                                <button class="gold-gradient px-4 py-2 rounded-lg text-xs font-bold text-slate-900 shadow hover:opacity-95">Redeem</button>
+                            </div>
+                        </div>
 
-                            <div class="flex gap-4">
-
-                                <div class="w-14 h-14 rounded-2xl bg-purple-400/10 flex items-center justify-center text-2xl">
+                        <!-- ITEM 3 -->
+                        <div class="interactive-item rounded-2xl bg-slate-900/40 border border-white/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex gap-3.5 items-start">
+                                <div class="w-12 h-12 rounded-xl bg-slate-800 flex-shrink-0 flex items-center justify-center text-2xl border border-white/5">
                                     ✈️
                                 </div>
-
                                 <div>
-                                    <div class="font-semibold text-lg mb-1">
-                                        Flight Reward Redemption
-                                    </div>
-
-                                    <div class="text-slate-400 text-sm">
-                                        08 May 2026
-                                    </div>
+                                    <h4 class="font-semibold text-sm text-slate-200">Flight Discount</h4>
+                                    <p class="text-xs text-slate-400 mt-0.5 leading-relaxed">Get KES 3,000 off your next domestic flight booking.</p>
                                 </div>
-
                             </div>
-
-                            <div class="text-red-300 text-xl font-black">
-                                -8,000 pts
+                            <div class="flex sm:flex-col justify-between sm:justify-center items-center sm:items-end gap-2 pt-2 sm:pt-0 border-t sm:border-0 border-white/5">
+                                <span class="text-sm font-extrabold text-amber-300">8,000 <span class="text-[10px] text-slate-400 font-normal">PTS</span></span>
+                                <button class="gold-gradient px-4 py-2 rounded-lg text-xs font-bold text-slate-900 shadow hover:opacity-95">Redeem</button>
                             </div>
-
                         </div>
+                    </div>
+                </div>
 
-                        <!-- ITEM -->
-                        <div class="history-item rounded-[22px] bg-white/5 border border-white/10 p-5 flex justify-between flex-wrap gap-4">
-
-                            <div class="flex gap-4">
-
-                                <div class="w-14 h-14 rounded-2xl bg-amber-400/10 flex items-center justify-center text-2xl">
-                                    🎁
-                                </div>
-
-                                <div>
-                                    <div class="font-semibold text-lg mb-1">
-                                        VIP Lounge Redemption
-                                    </div>
-
-                                    <div class="text-slate-400 text-sm">
-                                        28 Apr 2026
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="text-red-300 text-xl font-black">
-                                -12,000 pts
-                            </div>
-
-                        </div>
-
+                <!-- AUDIT LEDGER / HISTORY LIST -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-100 tracking-tight">Points Ledger</h3>
+                        <p class="text-xs text-slate-400">Statement history of earned and claimed accounts balances</p>
                     </div>
 
+                    <div class="space-y-3">
+                        <!-- LEDGER ITEM 1 -->
+                        <div class="interactive-item rounded-2xl bg-slate-900/40 border border-white/5 p-4 flex items-center justify-between gap-4">
+                            <div class="flex gap-3.5 items-center truncate">
+                                <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 text-lg flex-shrink-0 flex items-center justify-center border border-blue-500/10">
+                                    🚌
+                                </div>
+                                <div class="truncate">
+                                    <h4 class="font-medium text-sm text-slate-200 truncate">Nairobi &rarr; Kisumu Bus Booking</h4>
+                                    <span class="block text-[11px] text-slate-500 font-medium mt-0.5">12 May 2026</span>
+                                </div>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <span class="text-sm font-bold text-emerald-400 font-sans">+1,200 pts</span>
+                            </div>
+                        </div>
+
+                        <!-- LEDGER ITEM 2 -->
+                        <div class="interactive-item rounded-2xl bg-slate-900/40 border border-white/5 p-4 flex items-center justify-between gap-4">
+                            <div class="flex gap-3.5 items-center truncate">
+                                <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 text-lg flex-shrink-0 flex items-center justify-center border border-rose-500/10">
+                                    ✈️
+                                </div>
+                                <div class="truncate">
+                                    <h4 class="font-medium text-sm text-slate-200 truncate">Flight Reward Redemption</h4>
+                                    <span class="block text-[11px] text-slate-500 font-medium mt-0.5">08 May 2026</span>
+                                </div>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <span class="text-sm font-bold text-rose-400 font-sans">-8,000 pts</span>
+                            </div>
+                        </div>
+
+                        <!-- LEDGER ITEM 3 -->
+                        <div class="interactive-item rounded-2xl bg-slate-900/40 border border-white/5 p-4 flex items-center justify-between gap-4">
+                            <div class="flex gap-3.5 items-center truncate">
+                                <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 text-lg flex-shrink-0 flex items-center justify-center border border-rose-500/10">
+                                    🎁
+                                </div>
+                                <div class="truncate">
+                                    <h4 class="font-medium text-sm text-slate-200 truncate">VIP Lounge Access Claim</h4>
+                                    <span class="block text-[11px] text-slate-500 font-medium mt-0.5">28 Apr 2026</span>
+                                </div>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <span class="text-sm font-bold text-rose-400 font-sans">-12,000 pts</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
 
         </div>
-
     </main>
 
 </div>

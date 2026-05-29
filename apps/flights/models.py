@@ -6,6 +6,9 @@ class Route(models.Model):
     from_location = models.CharField(max_length=255)
     to_location = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Price per ticket for this route")
+    first_class_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, null=True, help_text="Price for first class seats on this route")
+    business_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, null=True, help_text="Price for business class seats on this route")
+    economy_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, null=True, help_text="Price for economy class seats on this route")
     company = models.ForeignKey(
         'systemadmin.Company',
         on_delete=models.CASCADE,

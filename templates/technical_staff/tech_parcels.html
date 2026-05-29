@@ -5,744 +5,350 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parcel Management | SmartTravels</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-card { border: 1px solid #e2e8f0 !important; box-shadow: none !important; margin: 0 !important; padding: 0 !important; }
+        }
+    </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50 min-h-screen">
+<body class="bg-slate-50 text-slate-900 min-h-screen antialiased">
 
 <div class="flex">
 
-{% include 'technical_staff/sidebar.html' %}
-
-<!-- MAIN -->
-<div class="ml-72 w-full min-h-screen p-8">
-
-    <!-- HEADER -->
-    <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 mb-10">
-
-        <div class="flex items-center gap-5">
-
-            <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-emerald-500 to-cyan-500 flex items-center justify-center text-4xl shadow-2xl">
-                📦
-            </div>
-
-            <div>
-
-                <h1 class="text-4xl font-extrabold text-gray-800">
-                    Parcel Ticket System
-                </h1>
-
-                <p class="text-gray-500 mt-2 text-lg">
-                    Register parcels, collect payments and generate smart QR parcel tickets.
-                </p>
-
-            </div>
-
-        </div>
-
-        <!-- STATUS -->
-        <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-3xl shadow-xl px-6 py-5">
-
-            <p class="text-sm text-gray-500">
-                Parcel Monitoring
-            </p>
-
-            <h2 class="text-xl font-bold text-gray-800 mt-1">
-                Tracking System Active
-            </h2>
-
-            <div class="mt-4 flex items-center gap-2 text-sm text-emerald-600 font-semibold">
-                <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                QR Tracking Enabled
-            </div>
-
-        </div>
-
+    <div class="no-print">
+        {% include 'technical_staff/sidebar.html' %}
     </div>
 
-    <!-- CONTENT -->
-    <div class="grid grid-cols-1 2xl:grid-cols-2 gap-8">
-
-        <!-- LEFT -->
-        <div class="space-y-8">
-
-            <!-- FORM -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-8">
-
-                <div class="mb-8">
-
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Register Parcel
-                    </h2>
-
-                    <p class="text-gray-500 mt-1">
-                        Enter parcel details, assign transport and prompt payment before generating QR ticket.
-                    </p>
-
-                </div>
-
-                <form method="POST">
-
-                    {% csrf_token %}
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                        <!-- SENDER -->
-                        <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Sender Name
-                            </label>
-
-                            <input type="text"
-                                   name="sender_name"
-                                   placeholder="Full sender name"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none"
-                                   required>
-                        </div>
-
-                        <!-- RECEIVER -->
-                        <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Receiver Name
-                            </label>
-
-                            <input type="text"
-                                   name="receiver_name"
-                                   placeholder="Full receiver name"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none"
-                                   required>
-                        </div>
-
-                        <!-- SENDER PHONE -->
-                        <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Sender Phone
-                            </label>
-
-                            <input type="text"
-                                   id="senderPhone"
-                                   name="phone"
-                                   placeholder="+254..."
-                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none"
-                                   required>
-                        </div>
-
-                        <!-- PAYMENT NUMBER -->
-                        <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Payment Number
-                            </label>
-
-                            <input type="text"
-                                   id="paymentPhone"
-                                   name="payment_phone"
-                                   placeholder="Optional different M-Pesa number"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none">
-                        </div>
-
-                        <!-- COMPANY -->
-                        <div class="md:col-span-2">
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Company Handling Parcel
-                            </label>
-
-                            <input type="text"
-                                   value="{{ user.company.name }}"
-                                   name="company"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl bg-gray-100 text-gray-700 font-semibold"
-                                   readonly>
-                        </div>
-
-                        <!-- TRANSPORT SELECTION -->
-                        <div class="md:col-span-2">
-
-                            <label class="block mb-4 text-sm font-semibold text-gray-600">
-                                Select Parcel Transport
-                            </label>
-
-                            <div class="grid md:grid-cols-2 gap-6">
-
-                                <!-- BUS -->
-                                <label class="relative cursor-pointer">
-
-                                    <input type="radio"
-                                           name="transport_choice"
-                                           value="bus"
-                                           class="peer hidden">
-
-                                    <div class="border-2 border-gray-200 rounded-3xl p-6 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 transition-all">
-
-                                        <div class="flex items-center justify-between mb-4">
-
-                                            <div class="h-14 w-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-2xl shadow-lg">
-                                                🚌
-                                            </div>
-
-                                            <span class="text-sm font-bold text-emerald-600 hidden peer-checked:block">
-                                                SELECTED
-                                            </span>
-
-                                        </div>
-
-                                        <h3 class="text-xl font-bold text-gray-800">
-                                            Bus Delivery
-                                        </h3>
-
-                                        <p class="text-gray-500 mt-2 text-sm">
-                                            Assign parcel to a passenger or transport bus.
-                                        </p>
-
-                                        <div class="mt-5">
-
-                                            <select name="bus"
-                                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none">
-
-                                                <option value="">
-                                                    Select Bus
-                                                </option>
-
-                                                {% for bus in buses %}
-                                                <option value="{{ bus.id }}">
-                                                    {{ bus.bus_number }} —
-                                                    {{ bus.route.from_location }} → {{ bus.route.to_location }}
-                                                </option>
-                                                {% endfor %}
-
-                                            </select>
-
-                                        </div>
-
-                                    </div>
-
-                                </label>
-
-                                <!-- TRUCK -->
-                                <label class="relative cursor-pointer">
-
-                                    <input type="radio"
-                                           name="transport_choice"
-                                           value="truck"
-                                           class="peer hidden">
-
-                                    <div class="border-2 border-gray-200 rounded-3xl p-6 peer-checked:border-cyan-500 peer-checked:bg-cyan-50 transition-all">
-
-                                        <div class="flex items-center justify-between mb-4">
-
-                                            <div class="h-14 w-14 rounded-2xl bg-cyan-500 text-white flex items-center justify-center text-2xl shadow-lg">
-                                                🚚
-                                            </div>
-
-                                            <span class="text-sm font-bold text-cyan-600 hidden peer-checked:block">
-                                                SELECTED
-                                            </span>
-
-                                        </div>
-
-                                        <h3 class="text-xl font-bold text-gray-800">
-                                            Delivery Truck
-                                        </h3>
-
-                                        <p class="text-gray-500 mt-2 text-sm">
-                                            Assign parcel to a logistics or delivery truck.
-                                        </p>
-
-                                        <div class="mt-5">
-
-                                            <select name="truck"
-                                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-cyan-500 outline-none">
-
-                                                <option value="">
-                                                    Select Truck
-                                                </option>
-
-                                                {% for truck in trucks %}
-                                                <option value="{{ truck.id }}">
-                                                    {{ truck.truck_number }} —
-                                                    {{ truck.driver_name }}
-                                                </option>
-                                                {% endfor %}
-
-                                            </select>
-
-                                        </div>
-
-                                    </div>
-
-                                </label>
-
-                            </div>
-
-                        </div>
-
-                        <!-- PICKUP -->
-                        <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Pickup Location
-                            </label>
-
-                            <input type="text"
-                                   name="pickup_location"
-                                   placeholder="Pickup station / terminal"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none"
-                                   required>
-                        </div>
-
-                        <!-- DESTINATION -->
-                        <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Destination
-                            </label>
-
-                            <input type="text"
-                                   name="destination"
-                                   placeholder="Parcel destination"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none"
-                                   required>
-                        </div>
-
-                        <!-- ROUTE -->
-                        <div class="md:col-span-2">
-
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Route
-                            </label>
-
-                            <select name="route"
-                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none">
-
-                                {% for route in routes %}
-                                <option value="{{ route.id }}">
-                                    {{ route.from_location }} → {{ route.to_location }}
-                                </option>
-                                {% endfor %}
-
-                            </select>
-
-                        </div>
-
-                        <!-- PARCEL TYPE -->
-                        <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Parcel Type
-                            </label>
-
-                            <select name="parcel_type"
-                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none">
-
-                                <option value="Documents">Documents</option>
-                                <option value="Electronics">Electronics</option>
-                                <option value="Food">Food Package</option>
-                                <option value="Fragile">Fragile Goods</option>
-                                <option value="Clothes">Clothes</option>
-                                <option value="Other">Other</option>
-
-                            </select>
-                        </div>
-
-                        <!-- WEIGHT -->
-                        <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Weight (KG)
-                            </label>
-
-                            <input type="number"
-                                   step="0.1"
-                                   name="weight"
-                                   placeholder="e.g 3.5"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none">
-                        </div>
-
-                        <!-- AMOUNT -->
-                        <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Parcel Fee (KES)
-                            </label>
-
-                            <input type="number"
-                                   name="amount"
-                                   id="amountInput"
-                                   placeholder="Enter parcel amount"
-                                   class="w-full p-4 border border-gray-200 rounded-2xl bg-emerald-50 text-emerald-700 font-bold focus:ring-2 focus:ring-emerald-500 outline-none"
-                                   required>
-                        </div>
-
-                        <!-- PAYMENT STATUS -->
-                        <div>
-                            <label class="block mb-2 text-sm font-semibold text-gray-600">
-                                Payment Status
-                            </label>
-
-                            <select name="payment_status"
-                                    class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none">
-
-                                <option value="Paid">
-                                    ✅ Paid
-                                </option>
-
-                                <option value="Pending">
-                                    ⏳ Pending
-                                </option>
-
-                            </select>
-                        </div>
-
-                    </div>
-
-                    <!-- DESCRIPTION -->
-                    <div class="mt-6">
-
-                        <label class="block mb-2 text-sm font-semibold text-gray-600">
-                            Parcel Description
-                        </label>
-
-                        <textarea name="description"
-                                  rows="4"
-                                  placeholder="Describe parcel contents..."
-                                  class="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
-
-                    </div>
-
-                    <!-- PAYMENT PROMPT -->
-                    <div class="mt-8 rounded-3xl bg-gradient-to-r from-emerald-50 to-cyan-50 border border-emerald-200 p-6">
-
-                        <div class="flex items-start gap-4">
-
-                            <div class="h-14 w-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-2xl shadow-lg">
-                                💳
-                            </div>
-
-                            <div class="flex-1">
-
-                                <h2 class="text-xl font-bold text-gray-800">
-                                    M-Pesa Payment Prompt
-                                </h2>
-
-                                <p class="text-gray-600 mt-1">
-                                    Send payment request before generating parcel QR ticket.
-                                </p>
-
-                                <div class="mt-4 grid md:grid-cols-2 gap-4">
-
-                                    <button type="button"
-                                            onclick="promptSameNumber()"
-                                            class="bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-2xl font-semibold transition">
-
-                                        Prompt Sender Number
-                                    </button>
-
-                                    <button type="button"
-                                            onclick="promptAlternativeNumber()"
-                                            class="bg-cyan-600 hover:bg-cyan-700 text-white py-3 rounded-2xl font-semibold transition">
-
-                                        Prompt Different Number
-                                    </button>
-
-                                </div>
-
-                                <div class="mt-4 bg-white rounded-2xl p-4 border border-gray-100">
-
-                                    <p class="text-sm text-gray-500">
-                                        Current Prompt Number
-                                    </p>
-
-                                    <h3 id="activePromptNumber"
-                                        class="text-lg font-bold text-gray-800 mt-1">
-                                        Not Prompted Yet
-                                    </h3>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <!-- SUBMIT -->
-                    <button class="mt-8 w-full bg-gradient-to-r from-emerald-600 to-cyan-500 text-white py-4 rounded-2xl font-bold hover:scale-[1.01] transition-all duration-300 shadow-xl">
-
-                        🎟️ Generate Parcel Ticket & QR Code
-
-                    </button>
-
-                </form>
-
-            </div>
-
-        </div>
-
-        <!-- RIGHT -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-8">
-
-            <div class="flex items-center justify-between mb-8">
-
-                <div>
-
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Digital Parcel Ticket
-                    </h2>
-
-                    <p class="text-gray-500 mt-1">
-                        Printable QR parcel ticket with live tracking.
-                    </p>
-
-                </div>
-
-                <div class="text-5xl">
-                    🎟️
-                </div>
-
-            </div>
-
-            {% if parcel_qr %}
-
-            <div class="rounded-3xl overflow-hidden border border-dashed border-emerald-300 shadow-xl bg-gradient-to-br from-white to-emerald-50">
-
-                <!-- TOP -->
-                <div class="bg-gradient-to-r from-emerald-600 to-cyan-500 p-6 text-white">
-
-                    <div class="flex items-center justify-between">
-
-                        <div>
-
-                            <h2 class="text-2xl font-extrabold">
-                                PARCEL TICKET
-                            </h2>
-
-                            <p class="text-emerald-100 mt-1">
-                                SmartTravels Logistics
-                            </p>
-
-                        </div>
-
-                        <div class="bg-white/20 backdrop-blur-lg px-4 py-2 rounded-2xl text-sm font-bold">
-                            {{ tracking_id }}
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- BODY -->
-                <div class="p-8">
-
-                    <div class="grid md:grid-cols-2 gap-8">
-
-                        <!-- DETAILS -->
-                        <div class="space-y-4">
-
-                            <div>
-                                <p class="text-xs uppercase text-gray-400 font-bold">Sender</p>
-                                <h3 class="font-bold text-lg text-gray-800">{{ sender_name }}</h3>
-                            </div>
-
-                            <div>
-                                <p class="text-xs uppercase text-gray-400 font-bold">Receiver</p>
-                                <h3 class="font-bold text-lg text-gray-800">{{ receiver_name }}</h3>
-                            </div>
-
-                            <div>
-                                <p class="text-xs uppercase text-gray-400 font-bold">
-                                    Assigned Transport
-                                </p>
-
-                                <h3 class="font-semibold text-gray-700">
-                                    {% if selected_bus %}
-                                        🚌 {{ selected_bus }}
-                                    {% elif selected_truck %}
-                                        🚚 {{ selected_truck }}
-                                    {% endif %}
-                                </h3>
-                            </div>
-
-                            <div>
-                                <p class="text-xs uppercase text-gray-400 font-bold">Route</p>
-                                <h3 class="font-semibold text-gray-700">{{ selected_route }}</h3>
-                            </div>
-
-                            <div>
-                                <p class="text-xs uppercase text-gray-400 font-bold">
-                                    Pickup → Destination
-                                </p>
-
-                                <h3 class="font-semibold text-gray-700">
-                                    {{ pickup_location }} → {{ destination }}
-                                </h3>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-
-                                <div>
-                                    <p class="text-xs uppercase text-gray-400 font-bold">
-                                        Parcel Type
-                                    </p>
-
-                                    <h3 class="font-semibold text-gray-700">
-                                        {{ parcel_type }}
-                                    </h3>
-                                </div>
-
-                                <div>
-                                    <p class="text-xs uppercase text-gray-400 font-bold">
-                                        Weight
-                                    </p>
-
-                                    <h3 class="font-semibold text-gray-700">
-                                        {{ weight }} KG
-                                    </h3>
-                                </div>
-
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-
-                                <div>
-                                    <p class="text-xs uppercase text-gray-400 font-bold">
-                                        Amount
-                                    </p>
-
-                                    <h3 class="font-bold text-emerald-600">
-                                        KES {{ amount }}
-                                    </h3>
-                                </div>
-
-                                <div>
-                                    <p class="text-xs uppercase text-gray-400 font-bold">
-                                        Payment
-                                    </p>
-
-                                    <h3 class="font-semibold text-gray-700">
-                                        {{ payment_status }}
-                                    </h3>
-                                </div>
-
-                            </div>
-
-                            <div>
-                                <p class="text-xs uppercase text-gray-400 font-bold">
-                                    Company Handling
-                                </p>
-
-                                <h3 class="font-semibold text-gray-700">
-                                    {{ company_name }}
-                                </h3>
-                            </div>
-
-                        </div>
-
-                        <!-- QR -->
-                        <div class="flex flex-col items-center justify-center">
-
-                            <div class="bg-white p-4 rounded-3xl shadow-xl border border-gray-100">
-
-                                <img src="{{ parcel_qr.url }}"
-                                     class="w-64 h-64 object-contain">
-
-                            </div>
-
-                            <p class="mt-4 text-sm text-center text-gray-500">
-                                Scan QR code to update parcel location and delivery status.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- FOOTER -->
-                <div class="bg-gray-50 border-t border-gray-100 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-                    <div>
-
-                        <p class="text-sm font-semibold text-gray-700">
-                            Tracking ID:
-                            <span class="text-emerald-600">
-                                {{ tracking_id }}
-                            </span>
-                        </p>
-
-                        <p class="text-xs text-gray-500 mt-1">
-                            Attach QR securely to the parcel for live scanning and tracking.
-                        </p>
-
-                    </div>
-
-                    <button onclick="window.print()"
-                            class="bg-gradient-to-r from-emerald-600 to-cyan-500 text-white px-6 py-3 rounded-2xl font-semibold shadow-lg hover:scale-105 transition">
-
-                        🖨️ Print Ticket
-
-                    </button>
-
-                </div>
-
-            </div>
-
-            {% else %}
-
-            <!-- EMPTY -->
-            <div class="h-full flex flex-col items-center justify-center text-center py-20">
-
-                <div class="h-32 w-32 rounded-full bg-emerald-100 flex items-center justify-center text-6xl mb-6">
+    <div class="ml-72 w-full min-h-screen p-8 print:m-0 print:p-0">
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 pb-6 border-b border-slate-200 no-print">
+            <div class="flex items-center gap-4">
+                <div class="h-12 w-12 rounded-xl bg-emerald-600 flex items-center justify-center text-xl text-white shadow-sm">
                     📦
                 </div>
-
-                <h2 class="text-2xl font-bold text-gray-700">
-                    No Parcel Ticket Generated
-                </h2>
-
-                <p class="text-gray-500 mt-3 max-w-md">
-                    Register a parcel and confirm payment to generate a printable QR parcel ticket.
-                </p>
-
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Parcel Ticket System</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Register shipments, collect M-Pesa payments, and dispatch smart tracking labels.</p>
+                </div>
             </div>
 
-            {% endif %}
-
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm px-4 py-3 flex items-center gap-4">
+                <div>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Tracking Engine</p>
+                    <h2 class="text-sm font-semibold text-slate-700 mt-0.5">Systems Operational</h2>
+                </div>
+                <div class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg text-xs font-medium">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    QR Active
+                </div>
+            </div>
         </div>
 
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+
+            <div class="xl:col-span-7 space-y-6 no-print">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                    <div class="mb-6">
+                        <h2 class="text-lg font-bold text-slate-800">New Parcel Registration</h2>
+                        <p class="text-sm text-slate-500 mt-1">Complete the manifest info below to construct the live routing token.</p>
+                    </div>
+
+                    <form method="POST" class="space-y-6">
+                        {% csrf_token %}
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Sender Full Name</label>
+                                <input type="text" name="sender_name" placeholder="Elisha Matangi" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
+                            </div>
+
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Receiver Full Name</label>
+                                <input type="text" name="receiver_name" placeholder="Brian Odhiambo" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
+                            </div>
+
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Sender Phone Number</label>
+                                <input type="text" id="senderPhone" name="phone" placeholder="e.g., +254712345678" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
+                            </div>
+
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Handling Carrier Company</label>
+                                <input type="text" value="{{ user.company.name }}" name="company" class="w-full px-3 py-2.5 bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-500 font-medium cursor-not-allowed" readonly>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-100 pt-6 space-y-4">
+                            <h3 class="text-sm font-bold text-slate-700 mb-2">Routing & Fleet Assignment</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Origin Departure Station</label>
+                                    <input type="text" name="pickup_location" placeholder="e.g., Nairobi Terminal" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:bg-white focus:border-emerald-500 transition outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Final Destination Terminal</label>
+                                    <input type="text" name="destination" placeholder="e.g., Mombasa Hub" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:bg-white focus:border-emerald-500 transition outline-none" required>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Assigned Trunk Route Path</label>
+                                <select name="route" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:bg-white focus:border-emerald-500 transition outline-none">
+                                    {% for route in routes %}
+                                    <option value="{{ route.id }}">{{ route.from_location }} &rarr; {{ route.to_location }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block mb-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">Active Fleet Allocation</label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <label class="relative block cursor-pointer group">
+                                        <input type="radio" name="transport_choice" value="bus" class="peer hidden" checked>
+                                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl group-hover:bg-slate-100 peer-checked:border-emerald-600 peer-checked:bg-emerald-50/50 transition">
+                                            <div class="flex items-center gap-3">
+                                                <span class="text-xl">🚌</span>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-slate-800">Bus Line Courier</p>
+                                                    <p class="text-xs text-slate-400">Routes standard passenger luggage units</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <select name="bus" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-md text-xs focus:border-emerald-500 outline-none">
+                                                    <option value="">Choose Available Bus</option>
+                                                    {% for bus in buses %}
+                                                    <option value="{{ bus.id }}">{{ bus.bus_number }} ({{ bus.route.from_location }} - {{ bus.route.to_location }})</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <label class="relative block cursor-pointer group">
+                                        <input type="radio" name="transport_choice" value="truck" class="peer hidden">
+                                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl group-hover:bg-slate-100 peer-checked:border-emerald-600 peer-checked:bg-emerald-50/50 transition">
+                                            <div class="flex items-center gap-3">
+                                                <span class="text-xl">🚚</span>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-slate-800">Heavy Carrier Truck</p>
+                                                    <p class="text-xs text-slate-400">Dedicated heavy freight logistics pipelines</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <select name="truck" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-md text-xs focus:border-emerald-500 outline-none">
+                                                    <option value="">Choose Logistics Truck</option>
+                                                    {% for truck in trucks %}
+                                                    <option value="{{ truck.id }}">{{ truck.truck_number }} &mdash; {{ truck.driver_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-100 pt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Classification</label>
+                                <select name="parcel_type" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none">
+                                    <option value="Documents">📄 Documents</option>
+                                    <option value="Electronics">⚡ Electronics</option>
+                                    <option value="Food">🍎 Food Material</option>
+                                    <option value="Fragile">💎 Fragile Cargo</option>
+                                    <option value="Clothes">👕 Apparel / Clothes</option>
+                                    <option value="Other">📦 Miscellaneous</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Dead Weight (KG)</label>
+                                <input type="number" step="0.1" name="weight" placeholder="0.0" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Agreed Fare (KES)</label>
+                                <input type="number" id="amountInput" name="amount" placeholder="0" class="w-full px-3 py-2.5 bg-emerald-50/50 border border-emerald-200 rounded-lg text-sm font-semibold text-emerald-800 placeholder-emerald-400 focus:bg-white focus:border-emerald-500 outline-none" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Content Manifest Description</label>
+                            <textarea name="description" rows="3" placeholder="Identify declarations or exceptional handling handling metadata..." class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none"></textarea>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm">⚡</span>
+                                    <h4 class="text-sm font-bold text-slate-700">M-Pesa STK Push Gateway</h4>
+                                </div>
+                                <select name="payment_status" class="px-2 py-1 bg-white border border-slate-200 rounded-md text-xs font-medium text-slate-600 outline-none">
+                                    <option value="Paid">Instant Clear (Paid)</option>
+                                    <option value="Pending">On Delivery (Pending)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <button type="button" onclick="promptSameNumber()" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2 px-4 rounded-lg text-xs font-medium transition shadow-sm">
+                                    Bill Primary Sender Phone
+                                </button>
+                                <div class="flex gap-2">
+                                    <input type="text" id="paymentPhone" placeholder="Alternative Phone" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:border-slate-400">
+                                    <button type="button" onclick="promptAlternativeNumber()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 rounded-lg text-xs font-medium transition">
+                                        Bill Alt
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bg-white px-3 py-2 rounded-lg border border-slate-100 flex justify-between items-center text-xs">
+                                <span class="text-slate-400">Current API Billing Payload Reference Target:</span>
+                                <span id="activePromptNumber" class="font-mono font-bold text-slate-700">None Scheduled</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-3 px-4 rounded-lg shadow-sm transition">
+                            Process Waybill &amp; Encrypt Trackable QR Code
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="xl:col-span-5 print:w-full">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 print-card">
+                    <div class="mb-6 flex justify-between items-center no-print">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800">Print Preview Console</h2>
+                            <p class="text-sm text-slate-500 mt-1">Live structural presentation of generated tracking payload tags.</p>
+                        </div>
+                        <span class="text-2xl text-slate-300">📄</span>
+                    </div>
+
+                    {% if parcel_qr %}
+                    <div class="border border-slate-300 rounded-xl overflow-hidden bg-white shadow-sm">
+                        <div class="bg-slate-900 p-4 text-white flex justify-between items-center">
+                            <div>
+                                <p class="text-[10px] uppercase font-bold tracking-widest text-slate-400">Logistics Token Receipt</p>
+                                <h3 class="text-base font-bold tracking-tight">SmartTravels Cargo</h3>
+                            </div>
+                            <div class="bg-slate-800 px-2.5 py-1 rounded border border-slate-700 text-xs font-mono tracking-wider">
+                                {{ tracking_id }}
+                            </div>
+                        </div>
+
+                        <div class="p-6 space-y-4 text-xs">
+                            <div class="grid grid-cols-2 gap-4 border-b border-slate-100 pb-4">
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Consignor (Sender)</p>
+                                    <p class="font-bold text-slate-800 text-sm">{{ sender_name }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Consignee (Receiver)</p>
+                                    <p class="font-bold text-slate-800 text-sm">{{ receiver_name }}</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 border-b border-slate-100 pb-4">
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Assigned Transit Unit</p>
+                                    <p class="font-medium text-slate-700">
+                                        {% if selected_bus %} 🚌 {{ selected_bus }}
+                                        {% elif selected_truck %} 🚚 {{ selected_truck }}
+                                        {% else %} Fleet Unassigned
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Assigned Line Route</p>
+                                    <p class="font-medium text-slate-700">{{ selected_route }}</p>
+                                </div>
+                            </div>
+
+                            <div class="border-b border-slate-100 pb-4">
+                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Transit Vector Trajectory</p>
+                                <p class="font-medium text-slate-700">{{ pickup_location }} &rarr; {{ destination }}</p>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 border-b border-slate-100 pb-4">
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Class Type</p>
+                                    <p class="font-medium text-slate-700">{{ parcel_type }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Mass</p>
+                                    <p class="font-medium text-slate-700">{{ weight }} KG</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Valuation Fee</p>
+                                    <p class="font-bold text-emerald-700">KES {{ amount }}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col items-center justify-center pt-2">
+                                <div class="bg-white p-2 border border-slate-200 rounded-lg shadow-sm">
+                                    <img src="{{ parcel_qr.url }}" class="w-40 h-40 object-contain mx-auto" alt="Parcel Tracking Matrix Token">
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-3 text-center max-w-xs">Scan matrix identifier code over hub checkpoints to log tracking timelines.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 border-t border-slate-100 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 no-print">
+                            <div class="text-xs">
+                                <p class="font-medium text-slate-700">Token ID: <span class="font-mono text-emerald-600">{{ tracking_id }}</span></p>
+                                <p class="text-[11px] text-slate-400 mt-0.5">Secure sticker label element to physical package cargo.</p>
+                            </div>
+                            <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition">
+                                Dispatch Print
+                            </button>
+                        </div>
+                    </div>
+
+                    {% else %}
+                    <div class="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                        <div class="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center text-2xl text-slate-400 mb-4">
+                            📥
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-700">No Waybill Records Found</h3>
+                        <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Fill the registration form database queries to compile metadata properties into printable barcodes.</p>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
     </div>
-
-</div>
-
 </div>
 
 <script>
-
 function promptSameNumber() {
-
     const senderPhone = document.getElementById('senderPhone').value;
     const amount = document.getElementById('amountInput').value;
 
     if (!senderPhone || !amount) {
-        alert('Enter sender phone and parcel amount first.');
+        alert('Validation Exception: Primary Sender Phone and Agreed Fare value inputs must be completed first.');
         return;
     }
-
     document.getElementById('activePromptNumber').innerText = senderPhone;
-
-    alert(`M-Pesa payment prompt sent to ${senderPhone} for KES ${amount}`);
-
+    alert(`STK Push Sequence Triggered: Requesting KES ${amount} collection from subscriber destination endpoint: ${senderPhone}`);
 }
 
 function promptAlternativeNumber() {
-
     const altPhone = document.getElementById('paymentPhone').value;
     const amount = document.getElementById('amountInput').value;
 
     if (!altPhone || !amount) {
-        alert('Enter payment phone number and amount first.');
+        alert('Validation Exception: Alternative Billing field entries and Agreed Fare values must be configured first.');
         return;
     }
-
     document.getElementById('activePromptNumber').innerText = altPhone;
-
-    alert(`M-Pesa payment prompt sent to ${altPhone} for KES ${amount}`);
-
+    alert(`STK Push Alternate Sequence Triggered: Requesting KES ${amount} collection from client destination endpoint: ${altPhone}`);
 }
-
 </script>
 
 </body>

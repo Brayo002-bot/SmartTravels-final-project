@@ -8,598 +8,408 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        .glass-card{
-            background: rgba(255,255,255,0.82);
-            backdrop-filter: blur(14px);
+        body {
+            font-family: 'Inter', sans-serif;
         }
 
-        .fade-up{
-            animation: fadeUp .5s ease;
+        .fade-up {
+            animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes fadeUp{
-            from{
-                opacity:0;
-                transform: translateY(18px);
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
             }
-            to{
-                opacity:1;
+            to {
+                opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        .seat-hover:hover{
-            transform: scale(1.08);
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50">
+<body class="bg-slate-50 text-slate-900 antialiased">
 
 <div class="flex">
 
     {% include 'flight_admin/sidebar.html' %}
 
-    <!-- MAIN CONTENT -->
-    <div class="ml-72 w-full min-h-screen p-8 fade-up">
+    <div class="ml-72 w-full min-h-screen p-8 lg:p-12 fade-up">
 
-        <!-- HEADER -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-
-            <div class="flex items-center gap-5">
-
-                <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-sky-500 to-cyan-400 flex items-center justify-center text-4xl shadow-2xl">
-                    ✈️
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 pb-6 mb-8 border-b border-slate-200">
+            <div>
+                <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                    <span>Flight Operations</span>
+                    <svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    <span class="text-slate-600">Creation Terminal</span>
                 </div>
-
-                <div>
-                    <h1 class="text-4xl font-extrabold text-gray-800">
-                        Flight Management
-                    </h1>
-
-                    <p class="text-gray-500 mt-2 text-lg">
-                        Create flights, manage seat classes and preview cabin layouts.
-                    </p>
-                </div>
-
-            </div>
-
-            <div class="glass-card rounded-3xl shadow-xl border border-white/40 px-6 py-5">
-                <p class="text-sm text-gray-500">
-                    System Status
+                <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+                    Flight Management
+                </h1>
+                <p class="text-sm text-slate-500 mt-1">
+                    Create new flight schedules, allocate pilot responsibilities, and map out responsive cabin matrices.
                 </p>
+            </div>
 
-                <h2 class="text-xl font-bold text-gray-800 mt-1">
-                    Flight Operations Active
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm px-5 py-4 min-w-[240px]">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    System Operations
+                </p>
+                <h2 class="text-sm font-bold text-slate-800 mt-0.5">
+                    Subsystem Active
                 </h2>
-
-                <div class="mt-4 flex items-center gap-2 text-sm text-emerald-600 font-semibold">
-                    <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Live Cabin Simulation
+                <div class="mt-3 flex items-center gap-2 text-xs text-emerald-600 font-medium">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Live Cabin Simulator Ready
                 </div>
             </div>
-
         </div>
 
-        <!-- QUICK STATS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Total Flights
-                        </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
-                            {{ flights|length }}
-                        </h2>
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-sky-100 flex items-center justify-center text-3xl">
-                        🛫
-                    </div>
-
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Active Flights</p>
+                    <h2 class="text-3xl font-bold text-slate-900 tracking-tight mt-1">{{ flights|length }}</h2>
                 </div>
-
-            </div>
-
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Total Pilots
-                        </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
-                            {{ pilots|length }}
-                        </h2>
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-3xl">
-                        👨‍✈️
-                    </div>
-
+                <div class="h-12 w-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-semibold">
+                    🛫
                 </div>
-
             </div>
-
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Available Routes
-                        </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
-                            {{ routes|length }}
-                        </h2>
-                    </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-cyan-100 flex items-center justify-center text-3xl">
-                        🌍
-                    </div>
-
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Certified Crew Pilots</p>
+                    <h2 class="text-3xl font-bold text-slate-900 tracking-tight mt-1">{{ pilots|length }}</h2>
                 </div>
-
+                <div class="h-12 w-12 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-semibold">
+                    👨‍✈️
+                </div>
             </div>
-
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Configured Routes</p>
+                    <h2 class="text-3xl font-bold text-slate-900 tracking-tight mt-1">{{ routes|length }}</h2>
+                </div>
+                <div class="h-12 w-12 rounded-lg bg-cyan-50 text-cyan-600 flex items-center justify-center text-xl font-semibold">
+                    🌍
+                </div>
+            </div>
         </div>
 
-        <!-- FORM + PREVIEW -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10 items-start">
 
-            <!-- ADD FLIGHT FORM -->
-            <div class="xl:col-span-2 glass-card rounded-3xl shadow-2xl border border-white/40 p-8">
-
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Add New Flight
-                    </h2>
-
-                    <p class="text-gray-500 mt-1">
-                        Configure flight details, pilot assignments and cabin seating.
-                    </p>
+            <div class="xl:col-span-2 bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-slate-200 bg-slate-50/50">
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Operational Manifest Configuration</h2>
                 </div>
 
-                <form method="POST">
+                <form method="POST" class="p-6 lg:p-8 space-y-6">
                     {% csrf_token %}
 
                     <div class="grid md:grid-cols-2 gap-6">
-
-                        <!-- Flight Number -->
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                                 Flight Number
                             </label>
-
-                            <input type="text"
-                                   name="flight_number"
-                                   placeholder="e.g. KQ101"
-                                   class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
-                                   required>
+                            <input type="text" name="flight_number" placeholder="e.g. KQ101"
+                                   class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-medium text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition" required>
                         </div>
 
-                        <!-- Route -->
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                Route
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                                Assigned Route
                             </label>
-
-                            <select name="route"
-                                    class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
-                                    required>
-
-                                <option value="">
-                                    Select Route
-                                </option>
-
-                                {% for route in routes %}
-                                <option value="{{ route.id }}">
-                                    {{ route }}
-                                </option>
-                                {% endfor %}
-
-                            </select>
+                            <div class="relative">
+                                <select name="route" class="w-full bg-white border border-slate-200 rounded-lg pl-4 pr-10 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition appearance-none cursor-pointer" required>
+                                    <option value="">Select Route</option>
+                                    {% for route in routes %}
+                                    <option value="{{ route.id }}">{{ route }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Pilot -->
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                Pilot
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                                Command Pilot
                             </label>
-
-                            <select name="pilot"
-                                    class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
-                                    required>
-
-                                <option value="">
-                                    Select Pilot
-                                </option>
-
-                                {% for pilot in pilots %}
-                                <option value="{{ pilot.id }}">
-                                    {{ pilot.name }}
-                                </option>
-                                {% endfor %}
-
-                            </select>
+                            <div class="relative">
+                                <select name="pilot" class="w-full bg-white border border-slate-200 rounded-lg pl-4 pr-10 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition appearance-none cursor-pointer" required>
+                                    <option value="">Select Pilot</option>
+                                    {% for pilot in pilots %}
+                                    <option value="{{ pilot.id }}">{{ pilot.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Vehicle Type -->
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                Vehicle Type
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                                Vehicle Logistics Profile
                             </label>
-
-                            <select id="flight-vehicle-type"
-                                    name="vehicle_type"
-                                    class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"
-                                    onchange="updateFlightMode()"
-                                    required>
-                                <option value="passenger">Passenger Flight</option>
-                                <option value="cargo">Cargo Flight</option>
-                            </select>
+                            <div class="relative">
+                                <select id="flight-vehicle-type" name="vehicle_type" onchange="updateFlightMode()"
+                                        class="w-full bg-white border border-slate-200 rounded-lg pl-4 pr-10 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition appearance-none cursor-pointer" required>
+                                    <option value="passenger">Passenger Variant</option>
+                                    <option value="cargo">Freight / Cargo Variant</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
 
-                    <div id="flight-passenger-config">
-                        <!-- Total Capacity -->
+                    <div id="flight-passenger-config" class="space-y-6 pt-2">
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700">
-                                Total Capacity
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                                Aggregated Core Capacity
                             </label>
-
-                            <input id="flight_total"
-                                   type="number"
-                                   value="150"
-                                   min="1"
-                                   max="1000"
-                                   oninput="validateFlightTotals()"
-                                   class="w-full p-4 rounded-2xl border border-sky-300 focus:ring-2 focus:ring-sky-500 outline-none">
-
-                            <p class="text-xs text-gray-500 mt-2">
-                                Enter the actual seat counts per cabin section. Total capacity must match the sum.
+                            <input id="flight_total" type="number" value="150" min="1" max="1000" oninput="validateFlightTotals()"
+                                   class="w-full md:w-1/2 bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition">
+                            <p class="text-xs text-slate-400 mt-2 font-medium">
+                                Sum totals across class distributions must balance exactly with this total metrics variable.
                             </p>
                         </div>
 
-                        <!-- SEAT CLASSES -->
-                        <div class="grid md:grid-cols-3 gap-6 mt-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                                <label class="block text-xs font-bold text-purple-700 uppercase tracking-wider mb-2">
+                                    First Class Section
+                                </label>
+                                <input id="flight_first_class_seats" type="number" name="first_class_seats" value="20" min="0" oninput="updateFlightCapacityAndPreview()"
+                                       class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:border-purple-400 outline-none transition">
+                            </div>
 
-                        <div class="bg-purple-50 rounded-2xl p-5 border border-purple-100">
-                            <label class="block mb-2 font-semibold text-purple-700">
-                                First Class
-                            </label>
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                                <label class="block text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">
+                                    Business Section
+                                </label>
+                                <input id="flight_business_seats" type="number" name="business_seats" value="30" min="0" oninput="updateFlightCapacityAndPreview()"
+                                       class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:border-emerald-400 outline-none transition">
+                            </div>
 
-                            <input id="flight_first_class_seats"
-                                   type="number"
-                                   name="first_class_seats"
-                                   value="20"
-                                   min="0"
-                                   oninput="updateFlightCapacityAndPreview()"
-                                   class="w-full p-3 rounded-xl border border-purple-200">
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                                <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                                    Economy Section
+                                </label>
+                                <input id="flight_economy_seats" type="number" name="economy_seats" value="100" min="0" oninput="updateFlightCapacityAndPreview()"
+                                       class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:border-slate-400 outline-none transition">
+                            </div>
                         </div>
-
-                        <div class="bg-emerald-50 rounded-2xl p-5 border border-emerald-100">
-                            <label class="block mb-2 font-semibold text-emerald-700">
-                                Business Class
-                            </label>
-
-                            <input id="flight_business_seats"
-                                   type="number"
-                                   name="business_seats"
-                                   value="30"
-                                   min="0"
-                                   oninput="updateFlightCapacityAndPreview()"
-                                   class="w-full p-3 rounded-xl border border-emerald-200">
-                        </div>
-
-                        <div class="bg-slate-100 rounded-2xl p-5 border border-slate-200">
-                            <label class="block mb-2 font-semibold text-slate-700">
-                                Economy Class
-                            </label>
-
-                            <input id="flight_economy_seats"
-                                   type="number"
-                                   name="economy_seats"
-                                   value="100"
-                                   min="0"
-                                   oninput="updateFlightCapacityAndPreview()"
-                                   class="w-full p-3 rounded-xl border border-slate-300">
-                        </div>
-
-                    </div>
-                    <p id="flight-total-warning" class="hidden text-sm text-red-600 mt-4">
-                        Seat counts must match total capacity before the preview updates.
-                    </p>
-
-                    </div>
-                </div>
-
-                    <!-- DESCRIPTION -->
-                    <div class="mt-8">
-
-                        <label class="block mb-2 font-semibold text-gray-700">
-                            Flight Description
-                        </label>
-
-                        <textarea name="description"
-                                  rows="4"
-                                  placeholder="Modern aircraft with WiFi, premium meals, entertainment and luxury seating..."
-                                  class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-sky-400 outline-none"></textarea>
-
-                    </div>
-
-                    <!-- BUTTON -->
-                    <button class="mt-8 bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-700 hover:to-cyan-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-xl transition hover:scale-[1.02]">
-                        ✈️ Add Flight
-                    </button>
-
-                </form>
-
-            </div>
-
-            <!-- SEAT PREVIEW -->
-            <div id="flight-seat-preview-section" class="glass-card rounded-3xl shadow-2xl border border-white/40 p-6">
-
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
-
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800">
-                            Cabin Simulation
-                        </h2>
-
-                        <p class="text-gray-500 text-sm mt-1">
-                            Visualize airline seating with class zones, aisle spaces and row labels.
+                        
+                        <p id="flight-total-warning" class="hidden text-xs text-rose-600 font-semibold mt-2 flex items-center gap-1.5">
+                            ⚠️ Class distribution counts do not align with overall defined payload capabilities.
                         </p>
                     </div>
 
-                    <div class="text-4xl">
-                        🪑
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            Public Route Matrix Notes
+                        </label>
+                        <textarea name="description" rows="4" placeholder="e.g. Twin-engine layout, premium localized catering matrices, high-fidelity digital infrastructure available..."
+                                  class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition resize-none"></textarea>
                     </div>
 
-                </div>
-
-                <div class="grid gap-6 xl:grid-cols-[280px_1fr]">
-
-                    <div class="space-y-4">
-                        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Layout Tools</h3>
-                            <p class="text-sm text-slate-600">Drag cabin sections, aisles and pilot/cockpit markers into the flight layout.</p>
-                            <div id="flight-seat-palette" class="mt-4 grid gap-2"></div>
-                        </div>
-                        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Legend</h3>
-                            <div class="grid gap-3 text-sm text-slate-700">
-                                <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-purple-600"></span>First Class</div>
-                                <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-emerald-600"></span>Business</div>
-                                <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-slate-600"></span>Economy</div>
-                                <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-red-600"></span>Booked</div>
-                                <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-yellow-500"></span>Reserved</div>
-                            </div>
-                        </div>
-                        <div id="flight-seat-details" class="hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Selected Seat</h3>
-                            <div id="flight-seat-details-content" class="text-sm text-slate-700">
-                                Click a seat to see seat number, class, status and section.
-                            </div>
-                        </div>
+                    <div class="pt-4 border-t border-slate-100 flex justify-end">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-6 py-3 rounded-lg shadow-sm transition">
+                            Register Core System Flight
+                        </button>
                     </div>
-
-                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4 overflow-auto">
-                        <div class="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-600">
-                            <span class="rounded-full bg-white px-3 py-1 shadow-sm">Cockpit</span>
-                            <span class="rounded-full bg-white px-3 py-1 shadow-sm">Aisle</span>
-                            <span class="rounded-full bg-white px-3 py-1 shadow-sm">Lavatory</span>
-                        </div>
-                        <div id="flight-seat-simulation" class="space-y-3"></div>
-                    </div>
-
-                </div>
-
+                </form>
             </div>
 
-        </div>
-
-        <!-- FLIGHTS TABLE -->
-        <div class="glass-card rounded-3xl shadow-2xl border border-white/40 overflow-hidden mb-10">
-
-            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-
+            <div id="flight-seat-preview-section" class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 space-y-6">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Flight Fleet
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">
+                        Cabin Layout Simulation
                     </h2>
-
-                    <p class="text-gray-500 mt-1">
-                        All active registered flights.
+                    <p class="text-xs text-slate-400 mt-1 font-medium">
+                        Live render tool visualizing active tier spacing elements and internal layout nodes.
                     </p>
                 </div>
 
-                <div class="bg-sky-100 text-sky-700 px-4 py-2 rounded-xl font-semibold">
-                    ✈️ Active Fleet
+                <div class="space-y-4">
+                    <div class="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5">Dynamic Node Anchors</h3>
+                        <div id="flight-seat-palette" class="flex flex-wrap gap-1.5"></div>
+                    </div>
+
+                    <div class="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Node Indicator Keys</h3>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 font-medium">
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-purple-600"></span>First Class</div>
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-emerald-600"></span>Business</div>
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-slate-600"></span>Economy</div>
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-red-500"></span>Booked</div>
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-yellow-500"></span>Reserved</div>
+                        </div>
+                    </div>
+
+                    <div id="flight-seat-details" class="hidden rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Selected Node Metric</h3>
+                        <div id="flight-seat-details-content" class="text-xs text-slate-600 space-y-1"></div>
+                    </div>
                 </div>
 
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 overflow-auto max-h-[400px]">
+                    <div class="mb-4 flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span class="rounded bg-white border border-slate-200 px-2 py-0.5 shadow-sm">Cockpit Area</span>
+                        <span class="rounded bg-white border border-slate-200 px-2 py-0.5 shadow-sm">Aisle Marker</span>
+                    </div>
+                    <div id="flight-seat-simulation" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden mb-10">
+            <div class="p-6 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">
+                        Registered System Fleet
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1 font-medium">
+                        Overview data for active transport units allocated within current operational cycle.
+                    </p>
+                </div>
+                <div class="inline-flex self-start sm:self-auto bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
+                    Active Active Fleet Profile
+                </div>
             </div>
 
             <div class="overflow-x-auto">
-
-                <table class="min-w-full">
-
-                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
-
+                <table class="min-w-full divide-y divide-slate-200 text-sm">
+                    <thead class="bg-slate-50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                         <tr>
-                            <th class="px-6 py-4 text-left">Flight</th>
-                            <th class="px-6 py-4 text-left">Route</th>
-                            <th class="px-6 py-4 text-left">Pilot</th>
-                            <th class="px-6 py-4 text-left">Seats</th>
-                            <th class="px-6 py-4 text-left">Actions</th>
+                            <th class="px-6 py-3.5 text-left">Flight Node</th>
+                            <th class="px-6 py-3.5 text-left">Assigned Route</th>
+                            <th class="px-6 py-3.5 text-left">Command Pilot</th>
+                            <th class="px-6 py-3.5 text-left">Payload Matrix</th>
+                            <th class="px-6 py-3.5 text-right">Actions</th>
                         </tr>
-
                     </thead>
-
-                    <tbody class="divide-y divide-gray-100">
-
+                    <tbody class="divide-y divide-slate-100 bg-white text-slate-700">
                         {% for flight in flights %}
-
-                        <tr class="hover:bg-sky-50 transition">
-
-                            <td class="px-6 py-4 font-semibold text-gray-800">
+                        <tr class="hover:bg-slate-50/80 transition">
+                            <td class="px-6 py-4 font-mono font-bold text-blue-600">
                                 {{ flight.flight_number }}
                             </td>
-
-                            <td class="px-6 py-4 text-gray-700">
+                            <td class="px-6 py-4 font-medium">
                                 {{ flight.route }}
                             </td>
-
-                            <td class="px-6 py-4 text-gray-700">
+                            <td class="px-6 py-4 text-slate-500">
                                 {{ flight.pilot }}
                             </td>
-
                             <td class="px-6 py-4">
-                                <span class="bg-sky-100 text-sky-700 px-3 py-1 rounded-full text-sm font-semibold">
-                                    {{ flight.available_seats }} Seats
+                                <span class="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded text-xs font-medium">
+                                    {{ flight.available_seats }} Available Units
                                 </span>
                             </td>
-
-                            <td class="px-6 py-4 flex flex-wrap gap-2">
+                            <td class="px-6 py-4 text-right flex justify-end gap-2">
                                 <a href="{% url 'flight_edit_flight' flight.id %}"
-                                   class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
+                                   class="inline-flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-md text-xs font-medium shadow-sm transition">
                                     ✏️ Edit
                                 </a>
                                 <a href="{% url 'flight_delete_flight' flight.id %}"
-                                   class="bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-red-700 transition"
-                                   onclick="return confirm('Delete this flight? This action cannot be undone.')">
+                                   class="inline-flex items-center gap-1 bg-white hover:bg-rose-50 border border-slate-200 text-rose-600 px-3 py-1.5 rounded-md text-xs font-medium shadow-sm transition"
+                                    Orcallback="return confirm('Delete this flight? This action cannot be undone.')">
                                     🗑️ Delete
                                 </a>
                             </td>
-
                         </tr>
-
                         {% empty %}
-
                         <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-gray-500">
-                                No flights available.
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium bg-slate-50/30">
+                                No operational metrics flight data profiles currently loaded in server manifest records.
                             </td>
                         </tr>
-
                         {% endfor %}
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
 
-        <!-- HISTORY -->
-        <div class="glass-card rounded-3xl shadow-2xl border border-white/40 p-8">
-
-            <div class="flex items-center justify-between mb-6">
-
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-200 bg-slate-50/50 flex items-center justify-between">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Seat Layout History
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">
+                        Historical Layout Snapshots
                     </h2>
-
-                    <p class="text-gray-500 mt-1">
-                        Previously generated flight cabin layouts.
+                    <p class="text-xs text-slate-400 mt-1 font-medium">
+                        Archived structural configuration definitions for framework validation processes.
                     </p>
                 </div>
-
-                <div class="text-4xl">
-                    📚
-                </div>
-
+                <div class="text-xl">📚</div>
             </div>
 
-            {% if seat_layout_histories %}
-
-            <div class="space-y-4">
-
-                {% for history in seat_layout_histories %}
-
-                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-lg transition">
-
-                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-
+            <div class="p-6">
+                {% if seat_layout_histories %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for history in seat_layout_histories %}
+                    <div class="bg-white rounded-xl border border-slate-200 p-4 flex flex-col justify-between hover:border-slate-300 transition shadow-sm">
                         <div>
-
-                            <div class="font-bold text-lg text-gray-800">
-                                {{ history.get_vehicle_type_display }} Layout
+                            <div class="font-bold text-sm text-slate-800">
+                                {{ history.get_vehicle_type_display }} Structural Matrix
                             </div>
-
-                            <div class="text-sm text-gray-500 mt-1">
-                                Vehicle ID: {{ history.vehicle_id }} • {{ history.created_at }}
+                            <div class="text-[11px] font-medium text-slate-400 mt-1">
+                                Transport Node ID: <span class="font-mono">{{ history.vehicle_id }}</span> &bull; {{ history.created_at }}
                             </div>
-
                         </div>
 
-                        <div class="flex flex-wrap gap-3 text-sm font-semibold">
-
-                            <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
+                        <div class="flex items-center gap-2 text-[10px] font-bold uppercase mt-4">
+                            <span class="bg-purple-50 text-purple-700 border border-purple-100 px-2 py-0.5 rounded">
                                 F: {{ history.config.first_class_seats|default:0 }}
                             </span>
-
-                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">
+                            <span class="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded">
                                 B: {{ history.config.business_seats|default:0 }}
                             </span>
-
-                            <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full">
+                            <span class="bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded">
                                 E: {{ history.config.economy_seats|default:0 }}
                             </span>
-
                         </div>
-
                     </div>
-
+                    {% endfor %}
                 </div>
-
-                {% endfor %}
-
+                {% else %}
+                <div class="text-center py-10 text-xs font-medium text-slate-400">
+                    No historic structural snapshot metrics archived within this interface module.
+                </div>
+                {% endif %}
             </div>
-
-            {% else %}
-
-            <div class="text-center py-12 text-gray-500">
-                No seat layout history available yet.
-            </div>
-
-            {% endif %}
-
         </div>
 
     </div>
-
 </div>
 
 <script>
-
 const FLIGHT_PREVIEW_URL = '{% url "flight_seat_preview" %}';
 
 const flightPaletteItems = [
     {type: 'seat', seat_class: 'First Class', label: 'First Class', style: 'bg-purple-600'},
     {type: 'seat', seat_class: 'Business', label: 'Business', style: 'bg-emerald-600'},
     {type: 'seat', seat_class: 'Economy', label: 'Economy', style: 'bg-slate-600'},
-    {type: 'aisle', label: 'Aisle', style: 'bg-slate-400'},
-    {type: 'cockpit', label: 'Cockpit', style: 'bg-sky-600'},
+    {type: 'aisle', label: 'Aisle', style: 'bg-slate-300'},
+    {type: 'cockpit', label: 'Cockpit', style: 'bg-blue-600'},
 ];
 
 const flightSeatStatusStyles = {
     available: 'bg-emerald-500',
     booked: 'bg-red-500',
     reserved: 'bg-yellow-500',
-    blocked: 'bg-slate-500',
+    blocked: 'bg-slate-400',
 };
 
 const flightClassStyles = {
@@ -650,7 +460,7 @@ function renderFlightPalette() {
     flightPaletteItems.forEach(item => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = `inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-semibold text-white ${item.style}`;
+        button.className = `inline-flex items-center justify-center rounded-md px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition shadow-sm cursor-grab active:cursor-grabbing ${item.style}`;
         button.textContent = item.label;
         button.draggable = true;
         button.dataset.palette = JSON.stringify(item);
@@ -720,15 +530,15 @@ function onFlightDrop(event, rowIndex, colIndex) {
 
 function getFlightCellStyle(cell) {
     if (!cell || cell.is_aisle || cell.type === 'aisle') {
-        return 'bg-slate-200';
+        return 'bg-slate-200 text-slate-400';
     }
     if (cell.type === 'cockpit') {
-        return 'bg-sky-600';
+        return 'bg-blue-600 text-white';
     }
     if (cell.booking_status && flightSeatStatusStyles[cell.booking_status]) {
-        return flightSeatStatusStyles[cell.booking_status];
+        return flightSeatStatusStyles[cell.booking_status] + " text-white";
     }
-    return flightClassStyles[cell.seat_class] || 'bg-slate-500';
+    return (flightClassStyles[cell.seat_class] || 'bg-slate-400') + " text-white";
 }
 
 function updateFlightSeatDetails(cell) {
@@ -740,24 +550,23 @@ function updateFlightSeatDetails(cell) {
     }
     details.classList.remove('hidden');
     content.innerHTML = `
-        <div class="space-y-2 text-sm text-slate-700">
-            <div><strong>Seat:</strong> ${cell.seat_number}</div>
-            <div><strong>Class:</strong> ${cell.seat_class}</div>
-            <div><strong>Status:</strong> ${cell.booking_status}</div>
-            <div><strong>Section:</strong> ${cell.section}</div>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-1">
+            <div><strong>Seat Node:</strong> <span class="font-mono">${cell.seat_number}</span></div>
+            <div><strong>Service Class:</strong> ${cell.seat_class}</div>
+            <div><strong>Status Index:</strong> ${cell.booking_status}</div>
+            <div><strong>Zone Location:</strong> ${cell.section}</div>
         </div>
     `;
 }
 
 function renderFlightSeats(layoutData) {
-
     const container = document.getElementById('flight-seat-simulation');
     container.innerHTML = '';
 
     if (!layoutData || !layoutData.rows || !layoutData.rows.length) {
         container.innerHTML = `
-            <div class="text-gray-500 text-center py-10">
-                Enter seat counts to preview the cabin layout.
+            <div class="text-slate-400 text-center py-8 text-xs font-medium">
+                Adjust input variables to display dynamic simulation structures.
             </div>
         `;
         return;
@@ -767,16 +576,16 @@ function renderFlightSeats(layoutData) {
 
     layoutData.rows.forEach((row, rowIndex) => {
         const rowEl = document.createElement('div');
-        rowEl.className = 'flex items-center gap-1';
+        rowEl.className = 'flex items-center gap-1.5';
 
         const label = document.createElement('div');
-        label.className = 'w-10 text-xs font-semibold text-slate-500';
+        label.className = 'w-8 text-[11px] font-mono font-bold text-slate-400';
         label.textContent = row.row;
         rowEl.appendChild(label);
 
         row.seats.forEach((cell, colIndex) => {
             const seatEl = document.createElement('div');
-            seatEl.classList.add('min-w-[40px]', 'min-h-[40px]', 'rounded-2xl', 'flex', 'items-center', 'justify-center', 'text-[10px]', 'font-bold', 'text-white', 'cursor-pointer', 'transition-all', 'duration-200');
+            seatEl.className = 'w-9 h-9 rounded-md flex items-center justify-center text-[9px] font-bold cursor-pointer transition-all border border-transparent select-none';
             seatEl.dataset.rowIndex = rowIndex;
             seatEl.dataset.colIndex = colIndex;
             seatEl.draggable = true;
@@ -785,20 +594,20 @@ function renderFlightSeats(layoutData) {
             seatEl.addEventListener('drop', event => onFlightDrop(event, rowIndex, colIndex));
 
             if (cell.is_aisle || cell.type === 'aisle') {
-                seatEl.classList.add('bg-slate-200');
-                seatEl.innerHTML = '<span class="text-[10px] text-slate-500">AISLE</span>';
+                seatEl.classList.add('bg-slate-200', 'text-slate-400', 'text-[8px]');
+                seatEl.textContent = 'AISLE';
             } else if (cell.is_empty) {
-                seatEl.classList.add('bg-white', 'border', 'border-dashed', 'border-slate-300');
+                seatEl.classList.add('bg-white', 'border-dashed', 'border-slate-300');
                 seatEl.innerHTML = '';
             } else if (cell.type === 'cockpit') {
-                seatEl.classList.add(getFlightCellStyle(cell));
+                seatEl.className = `px-2 h-9 rounded-md flex items-center justify-center text-[9px] font-bold transition-all ${getFlightCellStyle(cell)}`;
                 seatEl.textContent = cell.label;
                 seatEl.title = cell.label;
             } else {
                 const style = getFlightCellStyle(cell);
-                seatEl.className = `w-10 h-10 rounded-2xl flex items-center justify-center text-[10px] font-bold text-white cursor-pointer transition-all duration-200 ${style}`;
+                seatEl.className = `w-9 h-9 rounded-md flex items-center justify-center text-[9px] font-mono font-bold cursor-pointer transition-all shadow-sm ${style}`;
                 if (selectedFlightSeat === cell.seat_number) {
-                    seatEl.classList.add('ring-4', 'ring-slate-300');
+                    seatEl.classList.add('ring-2', 'ring-offset-1', 'ring-slate-800');
                 }
                 seatEl.textContent = cell.seat_number;
                 seatEl.title = `${cell.seat_class} • ${cell.booking_status}`;
@@ -816,54 +625,11 @@ function renderFlightSeats(layoutData) {
     });
 }
 
-function fetchFlightPreview() {
-    if (!validateFlightTotals()) {
-        return;
-    }
-
-    const counts = getFlightCounts();
-    fetch(`${FLIGHT_PREVIEW_URL}?first_class_seats=${counts.first_class_seats}&business_seats=${counts.business_seats}&economy_seats=${counts.economy_seats}`)
-        .then(res => res.json())
-        .then(data => {
-            selectedFlightSeat = null;
-            renderFlightSeats(data);
-            updateFlightSeatDetails(null);
-        })
-        .catch(() => {
-            const container = document.getElementById('flight-seat-simulation');
-            container.innerHTML = `
-                <div class="text-red-500 text-center py-10">
-                    Unable to load preview.
-                </div>
-            `;
-        });
-}
-
-function updateFlightMode() {
-    const mode = document.getElementById('flight-vehicle-type').value;
-    const passengerConfig = document.getElementById('flight-passenger-config');
-    const previewSection = document.getElementById('flight-seat-preview-section');
-
-    if (mode === 'cargo') {
-        passengerConfig.style.display = 'none';
-        previewSection.style.display = 'none';
-        document.getElementById('flight_first_class_seats').value = 0;
-        document.getElementById('flight_business_seats').value = 0;
-        document.getElementById('flight_economy_seats').value = 0;
-        document.getElementById('flight_total').value = 0;
-    } else {
-        passengerConfig.style.display = '';
-        previewSection.style.display = '';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
+// Initial Call to fire on load configurations
+window.addEventListener('DOMContentLoaded', () => {
     renderFlightPalette();
-    validateFlightTotals();
-    fetchFlightPreview();
-    updateFlightMode();
+    updateFlightCapacityAndPreview();
 });
-
 </script>
 
 </body>

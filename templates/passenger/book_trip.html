@@ -309,6 +309,7 @@ body {
       <form method="post">
         {% csrf_token %}
         <input type="hidden" name="selected_seat" id="selected-seat-input">
+        <input type="hidden" name="selected_seat_class" id="selected-seat-class-input" value="Normal">
 
         <div class="form-group">
           <label class="form-label">Passenger Name</label>
@@ -357,6 +358,7 @@ function changePax(delta) {
   selectedSeats = [];
   document.querySelectorAll('#seat-map button').forEach(b => b.classList.remove('ring-4','ring-white'));
   document.getElementById('selected-seat-input').value = '';
+  document.getElementById('selected-seat-class-input').value = 'Normal';
   updateSelectedDisplay();
   updatePayBtn();
 }
@@ -367,7 +369,7 @@ function updateSelectedDisplay() {
   if (selectedSeats.length === 0) {
     d.innerHTML = '<span style="font-size:0.82rem;color:var(--muted);">None selected</span>';
   } else {
-    d.innerHTML = selectedSeats.map(s => `<span class="seat-chip">${s}</span>`).join('');
+    d.innerHTML = selectedSeats.map(s => `<span class="seat-chip">${s.number}</span>`).join('');
   }
 }
 
@@ -422,7 +424,7 @@ function formatSeatElement(cell) {
   btn.style.color = c.color;
 
   btn.addEventListener('click', () => {
-    const idx = selectedSeats.indexOf(cell.seat_number);
+    const idx = selectedSeats.findIndex(s => s.number === cell.seat_number);
     if (idx > -1) {
       selectedSeats.splice(idx, 1);
       btn.style.outline = 'none';
@@ -430,14 +432,15 @@ function formatSeatElement(cell) {
       if (selectedSeats.length >= paxNeeded) {
         const old = selectedSeats.shift();
         document.querySelectorAll('#seat-map button').forEach(b => {
-          if (b.textContent.trim() === old) b.style.outline = 'none';
+          if (b.textContent.trim() === old.number) b.style.outline = 'none';
         });
       }
-      selectedSeats.push(cell.seat_number);
+      selectedSeats.push({ number: cell.seat_number, class: cell.seat_class });
       btn.style.outline = '2px solid #2dd4bf';
       btn.style.outlineOffset = '2px';
     }
-    selectedSeatInput.value = selectedSeats[0] || '';
+    selectedSeatInput.value = selectedSeats[0]?.number || '';
+    document.getElementById('selected-seat-class-input').value = selectedSeats[0]?.class || 'Normal';
     updateSelectedDisplay();
     updatePayBtn();
   });

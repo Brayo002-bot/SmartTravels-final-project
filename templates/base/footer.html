@@ -1,299 +1,168 @@
 {% load static %}
 
-<!-- FOOTER -->
-<footer id="contact"
-        class="relative overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 border-t border-white/10">
+<!-- ==========================================================
+     UNIFIED SYSTEM FOOTER TERMINAL
+     ========================================================== -->
+<footer id="contact" class="relative overflow-hidden bg-slate-950 border-t border-slate-900/80">
 
-    <!-- Glow Effects -->
-    <div class="absolute top-0 left-0 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl"></div>
+    <!-- Ambient Grid and Light Fields -->
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-25"></div>
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[140px] pointer-events-none"></div>
 
-    <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
 
-    <div class="relative z-10 max-w-7xl mx-auto px-6 py-20">
+        <!-- CORE DIRECTORY MATRIX GRID -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 pb-16 border-b border-slate-900">
 
-        <!-- TOP -->
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
-
-            <!-- BRAND -->
-            <div>
-
+            <!-- BRAND PANEL ARCHITECTURE (4-Cols) -->
+            <div class="lg:col-span-4 space-y-6">
                 <div class="flex items-center gap-4">
-
                     <img src="{% static 'images/logo.jpeg' %}"
-                         class="w-16 h-16 rounded-2xl object-cover border border-white/10 shadow-2xl">
-
+                         class="w-14 h-14 rounded-xl object-cover border border-slate-800 shadow-xl"
+                         alt="SmartTravels Logo Core">
                     <div>
-
-                        <h2 class="text-3xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-                            SmartTravels
+                        <h2 class="text-2xl font-black tracking-tight text-white">
+                            Smart<span class="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Travels</span>
                         </h2>
-
-                        <p class="text-gray-400 text-sm tracking-widest uppercase">
-                            Smart Travel Ecosystem
+                        <p class="text-[10px] font-bold text-slate-500 tracking-widest uppercase mt-0.5">
+                            Unified Logistics Node
                         </p>
-
                     </div>
-
                 </div>
 
-                <p class="text-gray-400 leading-relaxed mt-6">
-                    Kenya’s unified transport and parcel platform connecting
-                    buses, SGR trains, flights and smart logistics into one intelligent ecosystem.
+                <p class="text-slate-400 text-sm leading-relaxed max-w-sm">
+                    Kenya’s unified transport and parcel platform connecting buses, SGR trains, domestic flights, and smart logistics into one intelligent ecosystem.
                 </p>
 
-                <!-- Social Icons -->
-                <div class="flex items-center gap-4 mt-8">
-
-                    <a href="#"
-                       class="w-12 h-12 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center hover:scale-110 hover:bg-blue-600 transition duration-300 shadow-xl">
-
-                        <i class="fab fa-facebook-f text-white"></i>
-
+                <!-- Clean Vector Social Arrays -->
+                <div class="flex items-center gap-3 pt-2">
+                    <a href="#" class="w-10 h-10 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 hover:border-blue-500 transition-all duration-200" aria-label="Facebook Link">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2c4.477-2 10-2 10c4.991 0 9.103 3.657 9.875 8.438v.562h-3.437V13.5h3.437v7.246c-.772.781-4.884 1.438-9.875 1.438-5.523 0-10-4.477-10-10S6.477 2 12 2c5.131 0 9.356 3.864 9.941 8.828H18v2.672h3.941c-.027.234-.055.47-.055.704a9.96 9.96 0 0 1-.41 2.825H18V21.5h3.472A9.97 9.97 0 0 0 22 12z"/></svg>
                     </a>
-
-                    <a href="#"
-                       class="w-12 h-12 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center hover:scale-110 hover:bg-pink-600 transition duration-300 shadow-xl">
-
-                        <i class="fab fa-instagram text-white"></i>
-
+                    <a href="#" class="w-10 h-10 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-pink-600 hover:border-pink-500 transition-all duration-200" aria-label="Instagram Link">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
                     </a>
-
-                    <a href="#"
-                       class="w-12 h-12 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center hover:scale-110 hover:bg-black transition duration-300 shadow-xl">
-
-                        <i class="fab fa-x-twitter text-white"></i>
-
+                    <a href="#" class="w-10 h-10 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-900 hover:border-slate-700 transition-all duration-200" aria-label="X Twitter Link">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.6.75zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633z"/></svg>
                     </a>
-
-                    <a href="#"
-                       class="w-12 h-12 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center hover:scale-110 hover:bg-green-500 transition duration-300 shadow-xl">
-
-                        <i class="fab fa-whatsapp text-white"></i>
-
+                    <a href="#" class="w-10 h-10 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-emerald-600 hover:border-emerald-500 transition-all duration-200" aria-label="Whatsapp Link">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397 0 11.973 0c3.184.001 6.177 1.242 8.426 3.496 2.248 2.254 3.487 5.251 3.486 8.438-.003 6.625-5.34 11.973-11.914 11.973-2.005-.001-3.973-.505-5.722-1.46L0 24zm6.57-4.117c1.64.974 3.24 1.486 4.793 1.487 5.489 0 9.954-4.467 9.957-9.96.002-2.661-1.032-5.163-2.91-7.045C16.53 2.484 14.017 1.447 11.97 1.447c-5.492 0-9.959 4.468-9.961 9.963-.001 1.704.475 3.371 1.376 4.832l-.988 3.606 3.66-.96z"/></svg>
                     </a>
-
                 </div>
-
             </div>
 
-            <!-- QUICK LINKS -->
-            <div>
-
-                <h3 class="text-xl font-bold text-white mb-8">
+            <!-- INDEX PLATFORM NAVIGATION LINKS (2-Cols) -->
+            <div class="lg:col-span-2 lg:pl-4">
+                <h3 class="text-sm font-bold tracking-wider text-slate-200 uppercase mb-6">
                     Quick Links
                 </h3>
-
-                <div class="flex flex-col gap-4">
-
-                    <a href="#about"
-                       class="text-gray-400 hover:text-cyan-400 transition duration-300">
-                        About Us
-                    </a>
-
-                    <a href="#services"
-                       class="text-gray-400 hover:text-cyan-400 transition duration-300">
-                        Services
-                    </a>
-
-                    <a href="#routes"
-                       class="text-gray-400 hover:text-cyan-400 transition duration-300">
-                        Popular Routes
-                    </a>
-
-                    <a href="#testimonials"
-                       class="text-gray-400 hover:text-cyan-400 transition duration-300">
-                        Testimonials
-                    </a>
-
-                    <a href="#contact"
-                       class="text-gray-400 hover:text-cyan-400 transition duration-300">
-                        Contact Us
-                    </a>
-
-                </div>
-
+                <ul class="space-y-3.5 text-sm">
+                    <li><a href="#about" class="text-slate-400 hover:text-cyan-400 transition">About Us</a></li>
+                    <li><a href="#services" class="text-slate-400 hover:text-cyan-400 transition">Services</a></li>
+                    <li><a href="#routes" class="text-slate-400 hover:text-cyan-400 transition">Popular Routes</a></li>
+                    <li><a href="#testimonials" class="text-slate-400 hover:text-cyan-400 transition">Testimonials</a></li>
+                    <li><a href="#contact" class="text-slate-400 hover:text-cyan-400 transition">Contact Us</a></li>
+                </ul>
             </div>
 
-            <!-- SERVICES -->
-            <div>
-
-                <h3 class="text-xl font-bold text-white mb-8">
-                    Services
+            <!-- CORE UTILITY SERVICES INDEX (2-Cols) -->
+            <div class="lg:col-span-2">
+                <h3 class="text-sm font-bold tracking-wider text-slate-200 uppercase mb-6">
+                    Capabilities
                 </h3>
-
-                <div class="flex flex-col gap-4">
-
-                    <p
-                       class="text-gray-400 hover:text-cyan-400 transition duration-300">
-                        Bus Booking
-                    </p>
-
-                    <p
-                       class="text-gray-400 hover:text-cyan-400 transition duration-300">
-                        SGR Booking
-                    </p>
-
-                    <p
-                       class="text-gray-400 hover:text-cyan-400 transition duration-300">
-                        Domestic Flights
-                    </p>
-
-                    <p
-                       class="text-gray-400 hover:text-cyan-400 transition duration-300">
-                        Parcel Delivery
-                    </p>
-
-                    <p
-                       class="text-gray-400 hover:text-cyan-400 transition duration-300">
-                        GPS Tracking
-                    </p>
-
-                </div>
-
+                <ul class="space-y-3.5 text-sm">
+                    <li><span class="text-slate-400 hover:text-cyan-400 transition cursor-default">Bus Booking</span></li>
+                    <li><span class="text-slate-400 hover:text-cyan-400 transition cursor-default">SGR Booking</span></li>
+                    <li><span class="text-slate-400 hover:text-cyan-400 transition cursor-default">Domestic Flights</span></li>
+                    <li><span class="text-slate-400 hover:text-cyan-400 transition cursor-default">Parcel Delivery</span></li>
+                    <li><span class="text-slate-400 hover:text-cyan-400 transition cursor-default">GPS Tracking</span></li>
+                </ul>
             </div>
 
-            <!-- CONTACT -->
-            <div>
-
-                <h3 class="text-xl font-bold text-white mb-8">
+            <!-- CONTACT METRIC SYSTEMS HUD (4-Cols) -->
+            <div class="lg:col-span-4 space-y-5">
+                <h3 class="text-sm font-bold tracking-wider text-slate-200 uppercase mb-6">
                     Contact Info
                 </h3>
-
-                <div class="space-y-5">
-
-                    <div class="flex items-start gap-4">
-
-                        <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 flex items-center justify-center">
-
-                            <i class="fa-solid fa-location-dot text-cyan-400"></i>
-
+                
+                <div class="space-y-4 text-sm">
+                    <!-- Location Anchor -->
+                    <div class="flex items-center gap-3.5 group">
+                        <div class="w-9 h-9 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-cyan-400 group-hover:border-cyan-500/30 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         </div>
-
                         <div>
-
-                            <p class="text-white font-semibold">
-                                Location
-                            </p>
-
-                            <p class="text-gray-400">
-                                Juja, Kenya
-                            </p>
-
+                            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Headquarters</p>
+                            <p class="text-slate-300 font-medium mt-0.5">Juja, Kenya</p>
                         </div>
-
                     </div>
 
-                    <div class="flex items-start gap-4">
-
-                        <div class="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center">
-
-                            <i class="fa-solid fa-phone text-purple-400"></i>
-
+                    <!-- Hotline Anchor -->
+                    <div class="flex items-center gap-3.5 group">
+                        <div class="w-9 h-9 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-purple-400 group-hover:border-purple-500/30 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                         </div>
-
                         <div>
-
-                            <p class="text-white font-semibold">
-                                Phone
-                            </p>
-
-                            <p class="text-gray-400">
-                                +254 714 300 672
-                            </p>
-
+                            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Support Matrix</p>
+                            <p class="text-slate-300 font-medium mt-0.5">+254 714 300 672</p>
                         </div>
-
                     </div>
 
-                    <div class="flex items-start gap-4">
-
-                        <div class="w-12 h-12 rounded-2xl bg-green-500/20 flex items-center justify-center">
-
-                            <i class="fa-solid fa-envelope text-green-400"></i>
-
+                    <!-- Dispatch Anchor -->
+                    <div class="flex items-center gap-3.5 group">
+                        <div class="w-9 h-9 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 group-hover:border-emerald-500/30 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         </div>
-
                         <div>
-
-                            <p class="text-white font-semibold">
-                                Email
-                            </p>
-
-                            <p class="text-gray-400">
-                                info@smarttravels.co.ke
-                            </p>
-
+                            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Digital Post Dispatch</p>
+                            <p class="text-slate-300 font-medium mt-0.5">info@smarttravels.co.ke</p>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
 
         </div>
 
-        <!-- NEWSLETTER -->
-        <div class="mt-20 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-10">
-
-            <div class="grid lg:grid-cols-2 gap-10 items-center">
-
-                <div>
-
-                    <h2 class="text-4xl font-bold text-white leading-tight">
+        <!-- INTEGRATED SUBSCRIPTION INSULATION PIPELINE -->
+        <div class="mt-16 bg-slate-900/30 backdrop-blur-xl border border-slate-900 rounded-2xl p-8 lg:p-10">
+            <div class="grid lg:grid-cols-12 gap-8 items-center">
+                
+                <div class="lg:col-span-6 space-y-2">
+                    <h2 class="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                         Subscribe for Travel Updates
                     </h2>
-
-                    <p class="text-gray-400 mt-4 text-lg">
-                        Get route updates, travel offers and parcel delivery notifications.
+                    <p class="text-slate-400 text-sm max-w-md">
+                        Get critical regional routing metrics, operations notices, and instant parcel dispatch updates natively.
                     </p>
-
                 </div>
 
-                <form method="POST" action="{% url 'subscribe' %}" class="flex flex-col sm:flex-row gap-4">
-                    {% csrf_token %}
-                    <input type="email" name="email"
-                           placeholder="Enter your email"
-                           required
-                           class="flex-1 px-6 py-4 rounded-2xl bg-white/10 border border-white/10 text-white placeholder:text-gray-400 outline-none focus:border-cyan-400">
-
-                    <button type="submit"
-                            class="px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white font-semibold hover:scale-105 transition duration-300 shadow-2xl">
-
-                        Subscribe
-                    </button>
-
-                </form>
+                <div class="lg:col-span-6 w-full">
+                    <form method="POST" action="{% url 'subscribe' %}" class="flex flex-col sm:flex-row gap-3 w-full">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Enter processing email address" required
+                               class="flex-1 px-4 h-12 rounded-xl bg-slate-950 border border-slate-800 text-white text-sm placeholder:text-slate-600 outline-none focus:border-cyan-500 transition">
+                        <button type="submit"
+                                class="h-12 px-6 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm shadow-xl shadow-cyan-500/5 transition-all duration-200">
+                            Subscribe
+                        </button>
+                    </form>
+                </div>
 
             </div>
-
         </div>
 
-        <!-- BOTTOM -->
-        <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
-
-            <p class="text-gray-500 text-center md:text-left">
-                © 2026 SmartTravels. All Rights Reserved.
+        <!-- SYSTEM COMPLIANCE MARGIN FOOTNOTE -->
+        <div class="mt-16 pt-8 border-t border-slate-900/60 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium tracking-wide">
+            <p class="text-slate-600 text-center sm:text-left">
+                &copy; 2026 SmartTravels Platform Systems. All Rights Reserved.
             </p>
-
-            <div class="flex items-center gap-6 text-gray-500 text-sm">
-
-                <a href="{% url 'privacy_policy' %}" class="hover:text-cyan-400 transition duration-300">
-                    Privacy Policy
-                </a>
-
-                <a href="{% url 'terms_conditions' %}" class="hover:text-cyan-400 transition duration-300">
-                    Terms & Conditions
-                </a>
-
-                <a href="#" class="hover:text-cyan-400 transition duration-300">
-                    Support
-                </a>
-
+            <div class="flex items-center gap-6 text-slate-500">
+                <a href="{% url 'privacy_policy' %}" class="hover:text-cyan-400 transition">Privacy Policy</a>
+                <a href="{% url 'terms_conditions' %}" class="hover:text-cyan-400 transition">Terms & Conditions</a>
+                <a href="#" class="hover:text-cyan-400 transition">Support Hub</a>
             </div>
-
         </div>
 
     </div>
-
 </footer>

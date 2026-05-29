@@ -5,581 +5,304 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Technical Dashboard | SmartTravels</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-        .glass-card{
-            background: rgba(255,255,255,0.75);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-        }
-
-        .gradient-border{
-            position: relative;
-        }
-
-        .gradient-border::before{
-            content: "";
-            position: absolute;
-            inset: 0;
-            padding: 1px;
-            border-radius: 24px;
-            background: linear-gradient(to right, rgba(16,185,129,.4), rgba(59,130,246,.4));
-            -webkit-mask:
-                linear-gradient(#fff 0 0) content-box,
-                linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-                    mask-composite: exclude;
-            pointer-events: none;
-        }
-    </style>
-
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50 min-h-screen">
+<body class="bg-slate-50 text-slate-900 min-h-screen antialiased">
 
-<div class="flex">
+<div class="flex w-full relative">
 
-    {% include 'technical_staff/sidebar.html' %}
+    <!-- SIDEBAR CONTAINER -->
+    <div class="shrink-0">
+        {% include 'technical_staff/sidebar.html' %}
+    </div>
 
-    <!-- MAIN -->
-    <div class="ml-72 w-full min-h-screen p-8">
+    <!-- MAIN PANEL -->
+    <div class="ml-72 flex-1 min-w-0 min-h-screen p-6 md:p-8">
 
         <!-- TOP HEADER -->
-        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-8 mb-10">
-
+        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 border-b border-slate-200 pb-6 mb-8">
+            
             <!-- WELCOME -->
-            <div class="flex items-center gap-6">
-
-                <div class="h-24 w-24 rounded-3xl bg-gradient-to-r from-cyan-500 via-blue-600 to-emerald-500 flex items-center justify-center shadow-2xl text-5xl text-white">
-                    🛠️
+            <div class="flex items-center gap-4">
+                <!-- System Config Mini-Vector Box (Replacing raw emoji box) -->
+                <div class="h-14 w-14 shrink-0 rounded-xl bg-slate-900 flex flex-col gap-1 items-center justify-center shadow-sm">
+                    <div class="w-5 h-1 bg-slate-200 rounded-full"></div>
+                    <div class="w-5 h-1 bg-slate-400 rounded-full"></div>
+                    <div class="w-3 h-1 bg-slate-500 rounded-full self-start ml-4.5"></div>
                 </div>
 
                 <div>
-
-                    <h1 class="text-4xl font-extrabold text-gray-800">
+                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">
                         Technical Operations Dashboard
                     </h1>
-
-                    <p class="text-gray-500 mt-2 text-lg">
-                        Manage bookings, verify passengers, register parcels and monitor daily transport operations.
+                    <p class="text-sm text-slate-500 mt-0.5">
+                        Manage bookings, verify passengers, register parcels, and monitor daily transport operations.
                     </p>
-
                 </div>
-
             </div>
 
-            <!-- STATUS -->
-            <div class="glass-card gradient-border rounded-3xl px-8 py-6 shadow-2xl">
-
-                <div class="flex items-center gap-3">
-
-                    <div class="h-4 w-4 rounded-full bg-emerald-500 animate-pulse"></div>
-
-                    <span class="font-semibold text-emerald-700">
-                        System Online
-                    </span>
-
+            <!-- STATUS BOX -->
+            <div class="bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm xl:max-w-xs w-full flex items-center gap-3.5">
+                <div class="relative flex h-2.5 w-2.5 shrink-0">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                 </div>
-
-                <p class="text-sm text-gray-500 mt-3">
-                    Real-time booking, parcel and boarding verification services are active.
-                </p>
-
+                <div>
+                    <p class="text-xs font-semibold text-emerald-800 uppercase tracking-wider">System Operational</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Real-time parcel logs & verification tools are active.</p>
+                </div>
             </div>
 
         </div>
 
-        <!-- COMPANY CARD -->
+        <!-- COMPANY OPERATIONS BANNER -->
         {% if company %}
-        <div class="glass-card gradient-border rounded-[30px] shadow-2xl p-8 mb-10 overflow-hidden relative">
-
-            <!-- BACKGROUND EFFECT -->
-            <div class="absolute -top-20 -right-20 h-64 w-64 bg-cyan-400/20 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-20 -left-20 h-64 w-64 bg-emerald-400/20 rounded-full blur-3xl"></div>
-
-            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center gap-8">
-
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 mb-8 relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                
                 <!-- COMPANY INFO -->
-                <div class="flex-1">
-
-                    <div class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold mb-5">
-                        🚍 {{ transport_label }} Operations
+                <div class="flex-1 min-w-0">
+                    <div class="inline-flex items-center gap-2 bg-slate-100 border border-slate-200 text-slate-700 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider mb-3">
+                        <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                        {{ transport_label }} Hub
                     </div>
 
-                    <h2 class="text-4xl font-extrabold text-gray-800">
+                    <h2 class="text-xl font-bold text-slate-900 truncate">
                         {{ company.name }}
                     </h2>
 
-                    <p class="text-gray-600 mt-3 text-lg leading-relaxed">
+                    <p class="text-sm text-slate-500 mt-2 max-w-3xl leading-relaxed">
                         {{ company.description|default:"Manage transport operations, passenger verification, parcel tracking and payment assistance efficiently from one dashboard." }}
                     </p>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-
-                        <div class="bg-white/70 rounded-2xl p-4 border border-white/50 shadow">
-                            <p class="text-xs uppercase text-gray-400 font-bold">
-                                Transport
-                            </p>
-                            <h3 class="font-bold text-gray-800 mt-1">
-                                {{ transport_label }}
-                            </h3>
+                    <!-- Mini KPI Grid Inside Banner -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                            <p class="text-[10px] uppercase text-slate-400 font-bold tracking-wider">Transport</p>
+                            <h3 class="text-sm font-semibold text-slate-800 mt-0.5 truncate">{{ transport_label }}</h3>
                         </div>
-
-                        <div class="bg-white/70 rounded-2xl p-4 border border-white/50 shadow">
-                            <p class="text-xs uppercase text-gray-400 font-bold">
-                                Routes
-                            </p>
-                            <h3 class="font-bold text-gray-800 mt-1">
-                                {{ company_routes.count }}
-                            </h3>
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                            <p class="text-[10px] uppercase text-slate-400 font-bold tracking-wider">Assigned Routes</p>
+                            <h3 class="text-sm font-semibold text-slate-800 mt-0.5">{{ company_routes.count }}</h3>
                         </div>
-
-                        <div class="bg-white/70 rounded-2xl p-4 border border-white/50 shadow">
-                            <p class="text-xs uppercase text-gray-400 font-bold">
-                                Support
-                            </p>
-                            <h3 class="font-bold text-gray-800 mt-1">
-                                Active
-                            </h3>
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                            <p class="text-[10px] uppercase text-slate-400 font-bold tracking-wider">Assistance Mode</p>
+                            <h3 class="text-sm font-semibold text-slate-800 mt-0.5">Active Agent</h3>
                         </div>
-
-                        <div class="bg-white/70 rounded-2xl p-4 border border-white/50 shadow">
-                            <p class="text-xs uppercase text-gray-400 font-bold">
-                                Status
-                            </p>
-                            <h3 class="font-bold text-emerald-600 mt-1">
-                                Online
-                            </h3>
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                            <p class="text-[10px] uppercase text-slate-400 font-bold tracking-wider">Gateway Link</p>
+                            <h3 class="text-sm font-semibold text-emerald-600 mt-0.5">Online</h3>
                         </div>
-
                     </div>
-
                 </div>
 
-                <!-- LOGO -->
+                <!-- LOGO CONTAINER -->
                 {% if company.logo_image %}
-                <div class="relative">
-
-                    <div class="absolute inset-0 bg-cyan-400/20 blur-2xl rounded-full"></div>
-
-                    <div class="relative h-56 w-56 rounded-3xl overflow-hidden border border-white/50 bg-white shadow-2xl">
-                        <img src="{{ company.logo_image.url }}"
-                             alt="{{ company.name }}"
-                             class="w-full h-full object-cover">
+                <div class="shrink-0 mx-auto lg:mx-0">
+                    <div class="h-32 w-32 rounded-lg border border-slate-200 bg-slate-50 p-1 shadow-inner flex items-center justify-center overflow-hidden">
+                        <img src="{{ company.logo_image.url }}" alt="{{ company.name }}" class="w-full h-full object-contain rounded">
                     </div>
-
                 </div>
                 {% endif %}
 
             </div>
-
         </div>
-
         {% else %}
-
-        <!-- NO COMPANY -->
-        <div class="bg-yellow-50 border border-yellow-200 rounded-3xl p-8 shadow-lg mb-10">
-
-            <div class="flex items-start gap-4">
-
-                <div class="text-5xl">
-                    ⚠️
-                </div>
-
+        <!-- NO COMPANY ASSIGNED EXCEPTION -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 shadow-sm mb-8">
+            <div class="flex items-start gap-3">
+                <div class="h-6 w-6 rounded-full bg-amber-200 text-amber-800 font-bold text-sm flex items-center justify-center shrink-0">!</div>
                 <div>
-
-                    <h2 class="text-2xl font-bold text-yellow-800">
-                        No Company Assigned
-                    </h2>
-
-                    <p class="text-yellow-700 mt-2">
-                        Your account is not currently linked to any transport company.
-                        Please contact the system administrator.
-                    </p>
-
+                    <h2 class="text-sm font-bold text-amber-900">No Company Context Assigned</h2>
+                    <p class="text-xs text-amber-700 mt-1">Your profile node is not linked to an infrastructural transport company. Contact technical administration personnel to map operations parameters.</p>
                 </div>
-
             </div>
-
         </div>
-
         {% endif %}
 
-        <!-- STATISTICS -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+        <!-- METRICS ROW GRID -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-8">
 
             <!-- BOOKINGS -->
-            <div class="glass-card rounded-3xl shadow-2xl p-7 border border-white/50 hover:scale-[1.02] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-sm text-gray-500 font-medium">
-                            Bookings Assisted
-                        </p>
-
-                        <h2 class="text-5xl font-extrabold text-gray-800 mt-3">
-                            {{ bookings_today }}
-                        </h2>
-
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:border-slate-300 transition">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Bookings Assisted</p>
+                        <h2 class="text-2xl font-bold text-slate-900 mt-2 truncate">{{ bookings_today }}</h2>
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
-                        🎫
-                    </div>
-
+                    <div class="h-10 w-10 shrink-0 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 flex items-center justify-center font-bold text-xs">BK</div>
                 </div>
-
             </div>
 
             <!-- PAYMENTS -->
-            <div class="glass-card rounded-3xl shadow-2xl p-7 border border-white/50 hover:scale-[1.02] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-sm text-gray-500 font-medium">
-                            Pending Payments
-                        </p>
-
-                        <h2 class="text-5xl font-extrabold text-gray-800 mt-3">
-                            {{ pending_payments }}
-                        </h2>
-
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:border-slate-300 transition">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pending Orders</p>
+                        <h2 class="text-2xl font-bold text-slate-900 mt-2 truncate">{{ pending_payments }}</h2>
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-amber-100 flex items-center justify-center text-3xl">
-                        💳
-                    </div>
-
+                    <div class="h-10 w-10 shrink-0 rounded-lg bg-amber-50 text-amber-700 border border-amber-100 flex items-center justify-center font-bold text-xs">PM</div>
                 </div>
-
             </div>
 
             <!-- PARCELS -->
-            <div class="glass-card rounded-3xl shadow-2xl p-7 border border-white/50 hover:scale-[1.02] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-sm text-gray-500 font-medium">
-                            Parcels Registered
-                        </p>
-
-                        <h2 class="text-5xl font-extrabold text-gray-800 mt-3">
-                            {{ parcels_today }}
-                        </h2>
-
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:border-slate-300 transition">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Parcels Today</p>
+                        <h2 class="text-2xl font-bold text-slate-900 mt-2 truncate">{{ parcels_today }}</h2>
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-3xl">
-                        📦
-                    </div>
-
+                    <div class="h-10 w-10 shrink-0 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center font-bold text-xs">PC</div>
                 </div>
-
             </div>
 
             <!-- ACTIVE ROUTES -->
-            <div class="glass-card rounded-3xl shadow-2xl p-7 border border-white/50 hover:scale-[1.02] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-sm text-gray-500 font-medium">
-                            Active Routes
-                        </p>
-
-                        <h2 class="text-5xl font-extrabold text-gray-800 mt-3">
-                            {{ company_routes.count }}
-                        </h2>
-
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:border-slate-300 transition">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Sectors</p>
+                        <h2 class="text-2xl font-bold text-slate-900 mt-2 truncate">{{ company_routes.count }}</h2>
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-cyan-100 flex items-center justify-center text-3xl">
-                        📍
-                    </div>
-
+                    <div class="h-10 w-10 shrink-0 rounded-lg bg-cyan-50 text-cyan-700 border border-cyan-100 flex items-center justify-center font-bold text-xs">RT</div>
                 </div>
-
             </div>
 
             <!-- TRAFFIC STATUS -->
-            <div class="glass-card rounded-3xl shadow-2xl p-7 border border-white/50 hover:scale-[1.02] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-sm text-gray-500 font-medium">
-                            Traffic Status
-                        </p>
-
-                        <h2 class="text-5xl font-extrabold text-gray-800 mt-3">
-                            {{ traffic_status }}
-                        </h2>
-
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:border-slate-300 transition sm:col-span-2 xl:col-span-1 flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Traffic Status</p>
+                        <h2 class="text-xl font-bold text-slate-900 mt-2 truncate">{{ traffic_status }}</h2>
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-rose-100 flex items-center justify-center text-3xl">
-                        🚦
-                    </div>
-
+                    <div class="h-10 w-10 shrink-0 rounded-lg bg-rose-50 text-rose-700 border border-rose-100 flex items-center justify-center font-bold text-xs">TR</div>
                 </div>
-
-                <p class="text-sm text-gray-500 mt-3">
-                    Fleet average speed: {{ avg_speed|floatformat:0 }} km/h across {{ active_vehicles }} vehicles
+                <p class="text-[11px] text-slate-400 mt-3 border-t border-slate-100 pt-2 truncate">
+                    Fleet: {{ avg_speed|floatformat:0 }} km/h across {{ active_vehicles }} nodes
                 </p>
-
             </div>
 
         </div>
 
-        <!-- QUICK ACTIONS -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+        <!-- QUICK ACTIONS MATRIX CONTAINER -->
+        <div class="mb-8">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Operations Workspaces</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
 
-            <a href="{% url 'tech_booking_assist' %}"
-               class="group bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-3xl p-7 shadow-2xl hover:scale-[1.03] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <h2 class="text-2xl font-bold">
-                            Booking
-                        </h2>
-
-                        <p class="text-blue-100 mt-2">
-                            Assist passengers & payments
-                        </p>
-
+                <a href="{% url 'tech_booking_assist' %}" class="group bg-white border border-slate-200 hover:border-slate-400 rounded-xl p-5 shadow-sm transition flex flex-col justify-between min-h-[110px]">
+                    <div class="flex items-start justify-between">
+                        <span class="text-xs font-bold text-slate-800">Booking Desk</span>
+                        <span class="text-[11px] font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded">Go &rarr;</span>
                     </div>
+                    <p class="text-xs text-slate-400 group-hover:text-slate-500 mt-4">Assist route matching, manifest seat mapping & transactions.</p>
+                </a>
 
-                    <div class="text-5xl group-hover:rotate-6 transition">
-                        🎫
+                <a href="{% url 'tech_parcels' %}" class="group bg-white border border-slate-200 hover:border-slate-400 rounded-xl p-5 shadow-sm transition flex flex-col justify-between min-h-[110px]">
+                    <div class="flex items-start justify-between">
+                        <span class="text-xs font-bold text-slate-800">Parcel Registry</span>
+                        <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">Go &rarr;</span>
                     </div>
+                    <p class="text-xs text-slate-400 group-hover:text-slate-500 mt-4">Inbound/outbound parcel registration & routing manifests.</p>
+                </a>
 
-                </div>
-
-            </a>
-
-            <a href="{% url 'tech_parcels' %}"
-               class="group bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-3xl p-7 shadow-2xl hover:scale-[1.03] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <h2 class="text-2xl font-bold">
-                            Parcels
-                        </h2>
-
-                        <p class="text-emerald-100 mt-2">
-                            Register & track parcels
-                        </p>
-
+                <a href="{% url 'tech_ticket_scanner' %}" class="group bg-white border border-slate-200 hover:border-slate-400 rounded-xl p-5 shadow-sm transition flex flex-col justify-between min-h-[110px]">
+                    <div class="flex items-start justify-between">
+                        <span class="text-xs font-bold text-slate-800">Ticket Validation</span>
+                        <span class="text-[11px] font-semibold text-purple-600 bg-purple-50 border border-purple-100 px-1.5 py-0.5 rounded">Go &rarr;</span>
                     </div>
+                    <p class="text-xs text-slate-400 group-hover:text-slate-500 mt-4">Initialize scanning sequences to authorize QR passenger boarding.</p>
+                </a>
 
-                    <div class="text-5xl group-hover:rotate-6 transition">
-                        📦
+                <a href="{% url 'tech_boarding' %}" class="group bg-white border border-slate-200 hover:border-slate-400 rounded-xl p-5 shadow-sm transition flex flex-col justify-between min-h-[110px]">
+                    <div class="flex items-start justify-between">
+                        <span class="text-xs font-bold text-slate-800">Boarding Control</span>
+                        <span class="text-[11px] font-semibold text-orange-600 bg-orange-50 border border-orange-100 px-1.5 py-0.5 rounded">Go &rarr;</span>
                     </div>
+                    <p class="text-xs text-slate-400 group-hover:text-slate-500 mt-4">Crosscheck passenger validation codes & manifest states.</p>
+                </a>
 
-                </div>
-
-            </a>
-
-            <a href="{% url 'tech_ticket_scanner' %}"
-               class="group bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white rounded-3xl p-7 shadow-2xl hover:scale-[1.03] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <h2 class="text-2xl font-bold">
-                            Scanner
-                        </h2>
-
-                        <p class="text-purple-100 mt-2">
-                            Verify tickets & QR codes
-                        </p>
-
+                <a href="{% url 'tech_tracking' %}" class="group bg-white border border-slate-200 hover:border-slate-400 rounded-xl p-5 shadow-sm transition flex flex-col justify-between min-h-[110px] sm:col-span-2 xl:col-span-1">
+                    <div class="flex items-start justify-between">
+                        <span class="text-xs font-bold text-slate-800">Traffic Intelligence</span>
+                        <span class="text-[11px] font-semibold text-rose-600 bg-rose-50 border border-rose-100 px-1.5 py-0.5 rounded">Go &rarr;</span>
                     </div>
+                    <p class="text-xs text-slate-400 group-hover:text-slate-500 mt-4">Access active tracking telemetry, coordinates & metrics.</p>
+                </a>
 
-                    <div class="text-5xl group-hover:rotate-6 transition">
-                        📷
-                    </div>
-
-                </div>
-
-            </a>
-
-            <a href="{% url 'tech_boarding' %}"
-               class="group bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-3xl p-7 shadow-2xl hover:scale-[1.03] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <h2 class="text-2xl font-bold">
-                            Boarding
-                        </h2>
-
-                        <p class="text-orange-100 mt-2">
-                            Confirm passenger boarding
-                        </p>
-
-                    </div>
-
-                    <div class="text-5xl group-hover:rotate-6 transition">
-                        🚌
-                    </div>
-
-                </div>
-
-            </a>
-
-            <a href="{% url 'tech_tracking' %}"
-               class="group bg-gradient-to-r from-rose-600 to-pink-500 text-white rounded-3xl p-7 shadow-2xl hover:scale-[1.03] transition duration-300">
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <h2 class="text-2xl font-bold">
-                            Traffic Centre
-                        </h2>
-
-                        <p class="text-pink-100 mt-2">
-                            Monitor GPS & route traffic
-                        </p>
-
-                    </div>
-
-                    <div class="text-5xl group-hover:rotate-6 transition">
-                        🚦
-                    </div>
-
-                </div>
-
-            </a>
-
+            </div>
         </div>
 
-        <!-- ROUTES TABLE -->
+        <!-- SECTOR CONFIGURATION DATA TABLE -->
         {% if company_routes %}
-        <div class="glass-card rounded-[30px] shadow-2xl border border-white/50 overflow-hidden">
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
 
-            <!-- HEADER -->
-            <div class="p-8 border-b border-white/30 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
+            <!-- TABLE HEADER -->
+            <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-
-                    <h2 class="text-3xl font-bold text-gray-800">
-                        Company Routes
+                    <h2 class="text-base font-bold text-slate-900">
+                        Corporate Sector Route Matrix
                     </h2>
-
-                    <p class="text-gray-500 mt-2">
-                        Active routes available for {{ company.name }}
+                    <p class="text-xs text-slate-400 mt-0.5">
+                        Active route lines recognized for standard operating procedures under {{ company.name }}.
                     </p>
-
                 </div>
-
-                <div class="bg-emerald-100 text-emerald-700 px-5 py-3 rounded-2xl font-semibold">
-                    {{ company_routes.count }} Active Routes
+                <div class="bg-slate-100 text-slate-700 px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-bold uppercase tracking-wider self-start sm:self-auto">
+                    {{ company_routes.count }} Registered Lines
                 </div>
-
             </div>
 
-            <!-- TABLE -->
+            <!-- DATATABLE INTERFACE -->
             <div class="overflow-x-auto">
-
-                <table class="w-full">
-
-                    <thead class="bg-white/60 text-gray-600 uppercase text-sm">
-
+                <table class="w-full min-w-[600px] text-sm text-left">
+                    <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wider">
                         <tr>
-
-                            <th class="p-5 text-left">
-                                Route
-                            </th>
-
-                            <th class="p-5 text-left">
-                                Price
-                            </th>
-
-                            <th class="p-5 text-left">
-                                Status
-                            </th>
-
+                            <th scope="col" class="px-6 py-3.5">Active Transit Line</th>
+                            <th scope="col" class="px-6 py-3.5">Base Operational Rate</th>
+                            <th scope="col" class="px-6 py-3.5">Network Authorization State</th>
                         </tr>
-
                     </thead>
-
-                    <tbody>
-
+                    <tbody class="divide-y divide-slate-100">
                         {% for route in company_routes %}
-                        <tr class="border-t border-white/40 hover:bg-white/40 transition">
-
-                            <td class="p-5">
-
+                        <tr class="hover:bg-slate-50/50 transition">
+                            <!-- ROUTE BLOCK -->
+                            <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
-
-                                    <div class="h-12 w-12 rounded-2xl bg-cyan-100 flex items-center justify-center text-xl">
-                                        📍
+                                    <div class="h-8 w-8 rounded bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center font-bold text-[11px] shrink-0">
+                                        LN
                                     </div>
-
                                     <div>
-
-                                        <h3 class="font-bold text-gray-800">
-                                            {{ route.from_location }} → {{ route.to_location }}
+                                        <h3 class="font-semibold text-slate-800 text-sm">
+                                            {{ route.from_location }} &rarr; {{ route.to_location }}
                                         </h3>
-
-                                        <p class="text-sm text-gray-500">
-                                            Operational Route
-                                        </p>
-
+                                        <p class="text-xs text-slate-400 mt-0.5">Standard Fleet Allocation Corridor</p>
                                     </div>
-
                                 </div>
-
                             </td>
 
-                            <td class="p-5">
-
-                                <span class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl font-bold">
-                                    Ksh {{ route.price }}
+                            <!-- FINANCIALS -->
+                            <td class="px-6 py-4">
+                                <span class="font-bold text-slate-900 bg-slate-100/70 border border-slate-200/60 px-2.5 py-1 rounded text-xs">
+                                    KES {{ route.price }}
                                 </span>
-
                             </td>
 
-                            <td class="p-5">
-
-                                <span class="bg-green-100 text-green-700 px-4 py-2 rounded-xl text-sm font-semibold">
-                                    Active
+                            <!-- INFRASTRUCTURE STATE -->
+                            <td class="px-6 py-4">
+                                <span class="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-1 rounded text-xs font-semibold inline-flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Active System Line
                                 </span>
-
                             </td>
-
                         </tr>
                         {% endfor %}
-
                     </tbody>
-
                 </table>
-
             </div>
 
         </div>
         {% endif %}
 
     </div>
-
 </div>
 
 </body>

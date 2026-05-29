@@ -5,47 +5,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Route | SmartTravels</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons for Professional UI Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-gray-100">
+
+<body class="bg-slate-50 text-slate-900 antialiased font-sans">
+
 <div class="flex">
+
     {% include 'flight_admin/sidebar.html' %}
-    <div class="ml-64 w-full p-8">
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold">Edit Flight Route</h1>
-            <p class="text-gray-600 mt-1">Modify route details and pricing.</p>
+
+    <!-- Main Content Container -->
+    <div class="ml-72 w-full min-h-screen p-8 max-w-4xl">
+
+        <!-- Header Block -->
+        <div class="flex items-center gap-3 mb-8 border-b border-slate-200 pb-6">
+            <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                <i data-lucide="edit-3" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+                    Modify Flight Route
+                </h1>
+                <p class="text-sm text-slate-500 mt-0.5">
+                    Update current baseline logistics, sector targets, and tariff tiers.
+                </p>
+            </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow p-6 max-w-2xl">
+        <!-- Form Card Container -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            
             <form method="post" class="space-y-6">
                 {% csrf_token %}
                 
+                <!-- From Location Input Node -->
                 <div>
-                    <label class="block text-sm font-semibold mb-2">From Location</label>
-                    <input type="text" name="from_location" value="{{ route.from_location }}" class="w-full border rounded-lg p-3" required>
+                    <label class="block text-xs font-medium text-slate-600 uppercase tracking-wide mb-2">
+                        Departure Location
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i data-lucide="plane-takeoff" class="w-4 h-4"></i>
+                        </span>
+                        <input 
+                            type="text" 
+                            name="from_location" 
+                            value="{{ route.from_location }}" 
+                            class="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition" 
+                            required
+                        >
+                    </div>
                 </div>
 
+                <!-- To Location Input Node -->
                 <div>
-                    <label class="block text-sm font-semibold mb-2">To Location</label>
-                    <input type="text" name="to_location" value="{{ route.to_location }}" class="w-full border rounded-lg p-3" required>
+                    <label class="block text-xs font-medium text-slate-600 uppercase tracking-wide mb-2">
+                        Destination
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i data-lucide="plane-landing" class="w-4 h-4"></i>
+                        </span>
+                        <input 
+                            type="text" 
+                            name="to_location" 
+                            value="{{ route.to_location }}" 
+                            class="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition" 
+                            required
+                        >
+                    </div>
                 </div>
 
+                <!-- Tariff Price Input Node -->
                 <div>
-                    <label class="block text-sm font-semibold mb-2">Ticket Price (KES)</label>
-                    <input type="number" step="0.01" min="0" name="price" value="{{ route.price|floatformat:2 }}" class="w-full border rounded-lg p-3" required>
+                    <label class="block text-xs font-medium text-slate-600 uppercase tracking-wide mb-2">
+                        Ticket Price (KES)
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-sm font-semibold text-slate-400">
+                            KS
+                        </span>
+                        <input 
+                            type="number" 
+                            step="0.01" 
+                            min="0" 
+                            name="price" 
+                            value="{{ route.price|floatformat:2 }}" 
+                            class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm font-mono font-medium bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition" 
+                            required
+                        >
+                    </div>
                 </div>
 
-                <div class="flex gap-4">
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold">
-                        Update Route
-                    </button>
-                    <a href="{% url 'flight_add_route' %}" class="bg-gray-400 text-white px-6 py-3 rounded-lg hover:bg-gray-500 font-semibold">
-                        Cancel
+                <!-- Layout Action Triggers -->
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                    <a 
+                        href="{% url 'flight_add_route' %}" 
+                        class="px-5 py-2.5 rounded-lg text-sm font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition duration-150 inline-flex items-center gap-2"
+                    >
+                        Cancel Changes
                     </a>
+                    <button 
+                        type="submit" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-sm hover:shadow transition duration-150 inline-flex items-center gap-2"
+                    >
+                        <i data-lucide="check" class="w-4 h-4"></i> Update System Sector
+                    </button>
                 </div>
             </form>
         </div>
+
     </div>
 </div>
+
+<script>
+    // Initialize Professional Lucide SVG Icon Engine
+    lucide.createIcons();
+</script>
+
 </body>
 </html>

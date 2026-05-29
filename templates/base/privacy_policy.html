@@ -3,77 +3,205 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | SmartTravels</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            scroll-behavior: smooth;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-slate-950 text-slate-300 min-h-screen relative overflow-x-hidden">
 
-<div class="max-w-4xl mx-auto p-6">
-
-    <div class="bg-white rounded-2xl shadow p-8">
-
-        <h1 class="text-3xl font-bold mb-4">🔐 Privacy Policy</h1>
-        <p class="text-gray-500 mb-6">Effective Date: {{ date|default:"2026" }}</p>
-
-        <p class="mb-4 text-gray-700">
-            SmartTravels is committed to protecting your privacy. This policy explains how we collect,
-            use, and safeguard your information when you use our transport booking system.
-        </p>
-
-        <h2 class="text-xl font-bold mt-6 mb-2">1. Information We Collect</h2>
-        <ul class="list-disc ml-6 text-gray-700 space-y-1">
-            <li>Name (for ticket identification)</li>
-            <li>Phone number (for STK payments and ticket delivery)</li>
-            <li>Travel details (route, seat, time)</li>
-            <li>Location data (only for drivers during live trip tracking)</li>
-        </ul>
-
-        <h2 class="text-xl font-bold mt-6 mb-2">2. Why We Collect Your Data</h2>
-        <p class="text-gray-700 mb-2">
-            We collect your data strictly for the following purposes:
-        </p>
-
-        <ul class="list-disc ml-6 text-gray-700 space-y-1">
-            <li>To process bookings and issue valid tickets</li>
-            <li>To enable M-Pesa STK push payments</li>
-            <li>To track journeys for safety and real-time updates</li>
-            <li>To manage passenger manifests for drivers and transport operators</li>
-            <li><b>To award loyalty points for frequent travelers</b></li>
-            <li>To improve service reliability and customer experience</li>
-        </ul>
-
-        <h2 class="text-xl font-bold mt-6 mb-2">3. No Account Required</h2>
-        <p class="text-gray-700">
-            Passengers are not required to create an account or log in. We only store minimal booking data
-            needed to complete your journey and send your ticket.
-        </p>
-
-        <h2 class="text-xl font-bold mt-6 mb-2">4. Data Sharing</h2>
-        <p class="text-gray-700">
-            We do not sell your data. Information is only shared with transport operators (bus, train, flight)
-            to ensure smooth travel operations.
-        </p>
-
-        <h2 class="text-xl font-bold mt-6 mb-2">5. Data Security</h2>
-        <p class="text-gray-700">
-            Your data is protected using secure servers, encrypted transactions, and restricted access systems.
-        </p>
-
-        <h2 class="text-xl font-bold mt-6 mb-2">6. Driver GPS Tracking</h2>
-        <p class="text-gray-700">
-            Drivers are tracked in real-time during active journeys to improve passenger safety and trip monitoring.
-            Passenger tracking is only active during the trip and can be stopped when a passenger alights.
-        </p>
-
-        <h2 class="text-xl font-bold mt-6 mb-2">7. Contact</h2>
-        <p class="text-gray-700">
-            If you have questions about this policy, contact SmartTravels support.
-        </p>
-
+    <!-- ===== BACKGROUND GLOW EFFECTS ===== -->
+    <div class="absolute inset-0 z-0 pointer-events-none">
+        <div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-cyan-500/5 blur-[150px] rounded-full"></div>
+        <div class="absolute top-1/3 -right-40 w-[500px] h-[500px] bg-blue-600/5 blur-[150px] rounded-full"></div>
     </div>
 
-</div>
+    <!-- ===== TOP HEADER NAVIGATION BAR ===== -->
+    <header class="relative z-10 border-b border-slate-900 bg-slate-950/80 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img src="{% static 'images/logo.jpeg' %}" class="w-8 h-8 rounded-lg object-cover border border-slate-800" alt="Logo">
+                <div>
+                    <span class="text-white font-bold text-sm block tracking-tight">SmartTravels</span>
+                    <span class="text-[9px] tracking-wider uppercase text-slate-500 font-bold block">Privacy Console</span>
+                </div>
+            </div>
+            <a href="{% url 'register' %}" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 transition">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Account Creation
+            </a>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT LAYOUT ===== -->
+    <main class="relative z-10 max-w-6xl mx-auto px-6 py-12 lg:py-16">
+        <div class="flex flex-col lg:flex-row gap-10 items-start">
+            
+            <!-- ===== STICKY SIDEBAR NAVIGATION ===== -->
+            <aside class="w-full lg:w-64 shrink-0 lg:sticky lg:top-24 space-y-4 hidden lg:block">
+                <p class="text-[10px] tracking-wider uppercase text-slate-500 font-bold px-3">Policy Index</p>
+                <nav class="space-y-1 text-xs font-medium">
+                    <a href="#collection" class="block px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900/60 transition">1. Information Collection</a>
+                    <a href="#purpose" class="block px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900/60 transition">2. Processing Purpose</a>
+                    <a href="#account" class="block px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900/60 transition">3. Storage Requirements</a>
+                    <a href="#sharing" class="block px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900/60 transition">4. Data Sharing Scope</a>
+                    <a href="#security" class="block px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900/60 transition">5. Security Infrastructure</a>
+                    <a href="#tracking" class="block px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900/60 transition">6. GPS Telemetry Rules</a>
+                    <a href="#contact" class="block px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900/60 transition">7. Administrative Contact</a>
+                </nav>
+            </aside>
+
+            <!-- ===== CORE LEGAL TEXT WRAPPER ===== -->
+            <div class="flex-1 w-full bg-slate-900/40 border border-slate-900 rounded-2xl p-6 lg:p-10 backdrop-blur-xl shadow-xl">
+                
+                <!-- Title Block -->
+                <div class="border-b border-slate-800/80 pb-6 mb-8">
+                    <div class="flex items-center gap-3 text-cyan-400 mb-3">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        <h1 class="text-3xl font-extrabold text-white tracking-tight">Privacy Policy</h1>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium">SECURITY COMPLIANCE INVENTORY • EFFECTIVE DATE: <span class="text-slate-400">{{ date|default:"2026" }}</span></p>
+                </div>
+
+                <!-- Intro Statement -->
+                <p class="text-slate-300 text-sm leading-relaxed mb-8 border-l-2 border-cyan-500/30 pl-4 py-1">
+                    SmartTravels is explicitly committed to protecting your system identity and metadata. This documentation outlines how our infrastructure records, processes, and safeguards transactional logs across the transport booking layer.
+                </p>
+
+                <!-- Articles Group -->
+                <div class="space-y-8 text-sm leading-relaxed text-slate-400">
+                    
+                    <!-- Section 1 -->
+                    <section id="collection" class="scroll-mt-24">
+                        <h2 class="text-base font-bold text-white mb-3 flex items-center gap-2">
+                            <span class="text-cyan-500 text-xs tracking-wider uppercase font-mono">01.</span> Information We Collect
+                        </h2>
+                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <li class="bg-slate-950/40 border border-slate-800/60 rounded-xl p-3 flex items-center gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                                <span>Name <span class="text-slate-500 text-xs">(Ticket Validation Only)</span></span>
+                            </li>
+                            <li class="bg-slate-950/40 border border-slate-800/60 rounded-xl p-3 flex items-center gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                                <span>Phone Number <span class="text-slate-500 text-xs">(M-Pesa STK Gateway)</span></span>
+                            </li>
+                            <li class="bg-slate-950/40 border border-slate-800/60 rounded-xl p-3 flex items-center gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                                <span>Itinerary <span class="text-slate-500 text-xs">(Routes, Seats, Timestamp)</span></span>
+                            </li>
+                            <li class="bg-slate-950/40 border border-slate-800/60 rounded-xl p-3 flex items-center gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                                <span>GPS Telemetry <span class="text-slate-500 text-xs">(Active Journeys Only)</span></span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- Section 2 -->
+                    <section id="purpose" class="scroll-mt-24">
+                        <h2 class="text-base font-bold text-white mb-2.5 flex items-center gap-2">
+                            <span class="text-cyan-500 text-xs tracking-wider uppercase font-mono">02.</span> Why We Collect Your Data
+                        </h2>
+                        <p class="mb-3">We isolate data metrics transparently for the following performance dependencies:</p>
+                        <ul class="space-y-2.5">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-4 h-4 text-cyan-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>To map system inventories and render validated boarding codes.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-4 h-4 text-cyan-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>To safely handle transaction pipelines with mobile money operators.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-4 h-4 text-cyan-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>To manage precise travel manifests required by security compliance and vehicle captains.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span class="text-white font-medium">To correctly attribute programmatic loyalty tiers and fare credits to regular commuters.</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- Section 3 -->
+                    <section id="account" class="scroll-mt-24">
+                        <h2 class="text-base font-bold text-white mb-2.5 flex items-center gap-2">
+                            <span class="text-cyan-500 text-xs tracking-wider uppercase font-mono">03.</span> Storage Requirements
+                        </h2>
+                        <p>
+                            Passengers can interact with booking engines without permanent baseline account overheads. Our database clusters cache lightweight parameters for the exact lifecycle required to track and certify an isolated checkout loop.
+                        </p>
+                    </section>
+
+                    <!-- Section 4 -->
+                    <section id="sharing" class="scroll-mt-24">
+                        <h2 class="text-base font-bold text-white mb-2.5 flex items-center gap-2">
+                            <span class="text-cyan-500 text-xs tracking-wider uppercase font-mono">04.</span> Data Sharing Scope
+                        </h2>
+                        <p>
+                            We maintain zero-monetization broker standards. Data values are uniquely relayed to primary fulfillment partners (bus operations, rail lines, regional airlines) strictly to guarantee seat check-in logistics.
+                        </p>
+                    </section>
+
+                    <!-- Section 5 -->
+                    <section id="security" class="scroll-mt-24">
+                        <h2 class="text-base font-bold text-white mb-2.5 flex items-center gap-2">
+                            <span class="text-cyan-500 text-xs tracking-wider uppercase font-mono">05.</span> Security Infrastructure
+                        </h2>
+                        <p>
+                            Sensitive parameters sit behind strict firewalls. System access configurations are heavily monitored using cryptographically signed SSL layers, restricted database access tokens, and localized threat mitigation engines.
+                        </p>
+                    </section>
+
+                    <!-- Section 6 -->
+                    <section id="tracking" class="scroll-mt-24">
+                        <h2 class="text-base font-bold text-white mb-2.5 flex items-center gap-2">
+                            <span class="text-cyan-500 text-xs tracking-wider uppercase font-mono">06.</span> Driver GPS Tracking
+                        </h2>
+                        <p>
+                            Fleet vehicles report location telemetry constantly for active operations safety optimization. Commuter geolocation triggers only match localized path checkpoints during active travel states and drop monitoring functions automatically when checking out at terminal structures.
+                        </p>
+                    </section>
+
+                    <!-- Section 7 -->
+                    <section id="contact" class="scroll-mt-24">
+                        <h2 class="text-base font-bold text-white mb-2.5 flex items-center gap-2">
+                            <span class="text-cyan-500 text-xs tracking-wider uppercase font-mono">07.</span> Administrative Contact
+                        </h2>
+                        <p>
+                            If you require deep system clarification on localized data handling architectures, compliance states, or data removal paths, please file a support request through the central SmartTravels helpdesk.
+                        </p>
+                    </section>
+
+                </div>
+
+                <!-- Footer Fine Print -->
+                <div class="border-t border-slate-800/60 mt-10 pt-6 text-center text-xs text-slate-500">
+                    Your interaction with our platform confirms your acknowledgment of these privacy measures.
+                </div>
+
+            </div>
+        </div>
+    </main>
 
 </body>
 </html>

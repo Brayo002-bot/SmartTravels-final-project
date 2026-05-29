@@ -5,8 +5,20 @@ from .models import Bus, Booking, Driver, Route
 
 @admin.register(Route)
 class RouteAdmin(admin.ModelAdmin):
-    list_display = ('from_location', 'to_location')
+    list_display = ('from_location', 'to_location', 'price', 'vip_price', 'normal_price')
     search_fields = ('from_location', 'to_location')
+    fieldsets = (
+        ('Location', {
+            'fields': ('from_location', 'to_location')
+        }),
+        ('Pricing', {
+            'fields': ('price', 'vip_price', 'normal_price'),
+            'description': 'Set base price as fallback. VIP and Normal prices override the base price for respective seat types.'
+        }),
+        ('Company', {
+            'fields': ('company',)
+        }),
+    )
 
 
 @admin.register(Driver)

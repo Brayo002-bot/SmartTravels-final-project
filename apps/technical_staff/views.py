@@ -161,102 +161,150 @@ def tech_booking_assist(request):
         passenger_name = request.POST.get('passenger_name', '').strip()
         passenger_phone = request.POST.get('phone', '').strip()
         passenger_email = request.POST.get('passenger_email', '').strip()
-        vehicle_name = request.POST.get('book_passenger', '').strip()
+        schedule_id = request.POST.get('book_passenger', '').strip()
+        selected_seat = request.POST.get('selected_seat', '').strip()
+        selected_seat_class = request.POST.get('selected_seat_class', '').strip
         travel_date = request.POST.get('travel_date', '').strip()
         from_loc = request.POST.get('from_location', '').strip()
         to_loc = request.POST.get('destination', '').strip()
 
-        logger.info(f'📝 Booking attempt - Name: {passenger_name}, Phone: {passenger_phone}, Email: {passenger_email}, Vehicle: {vehicle_name}')
+        logger.info(f'📝 Booking attempt - Name: {passenger_name}, Phone: {passenger_phone}, Email: {passenger_email}, ScheduleID: {schedule_id}, Seat: {selected_seat}')
 
-        if not all([passenger_name, passenger_phone, passenger_email, vehicle_name, travel_date, from_loc, to_loc]):
-            logger.warning(f'❌ Missing booking details: name={bool(passenger_name)}, phone={bool(passenger_phone)}, email={bool(passenger_email)}, vehicle={bool(vehicle_name)}, date={bool(travel_date)}, from={bool(from_loc)}, to={bool(to_loc)}')
+        if not all([passenger_name, passenger_phone, passenger_email, schedule_id, travel_date, from_loc, to_loc]):
+            logger.warning(f'❌ Missing booking details: name={bool(passenger_name)}, phone={bool(passenger_phone)}, email={bool(passenger_email)}, schedule_id={bool(schedule_id)}, date={bool(travel_date)}, from={bool(from_loc)}, to={bool(to_loc)}')
             messages.error(request, '❌ Please fill in all passenger and trip details before booking.')
+        elif not selected_seat:
+            messages.error(request, 'Please select a seat before sending the payment prompt.')
         else:
             try:
                 # Find the vehicle and its schedule
                 vehicle = None
                 schedule = None
+                booking_conflict = False
                 booking_reference = f'TECH{uuid.uuid4().hex[:8].upper()}'
                 price = 0
                 departure_time = ''
 
                 if company.transport_type == 'bus':
                     from apps.buses.models import Bus, Booking, Schedule
-                    vehicle = Bus.objects.filter(company=company, vehicle_number=vehicle_name.split(' ')[-1]).first()
-                    if vehicle:
-                        schedule = Schedule.objects.filter(
-                            bus=vehicle, 
-                            travel_date=travel_date,
-                            bus__route__from_location=from_loc,
-                            bus__route__to_location=to_loc
-                        ).first()
-                        if schedule:
+                    schedule = Schedule.objects.filter(
+                        pk=schedule_id,
+                        bus__company=company,
+                        travel_date=travel_date,
+                        bus__route__from_location=from_loc,
+                        bus__route__to_location=to_loc,
+                        bus__is_cargo=False,
+                    ).first()
+                    if schedule:
+                        vehicle = schedule.bus
+                        price = schedule.price
+                        departure_time = schedule.travel_time or ''
+                        if Booking.objects.filter(bus=vehicle, travel_date=travel_date, seat_number=selected_seat).exists():
+                            messages.error(request, f'Seat {selected_seat} is already booked for this trip. Choose another seat.')
+                            booking_conflict = True
+                            schedule = None
+                            vehicle = None
+                        else:
+                            # Determine price based on seat class
                             price = schedule.price
-                            departure_time = schedule.travel_time or ''
+                            if selected_seat_class == 'VIP' and vehicle.route.vip_price:
+                                price = vehicle.route.vip_price
+                            elif selected_seat_class == 'Normal' and vehicle.route.normal_price:
+                                price = vehicle.route.normal_price
+                            
                             booking = Booking.objects.create(
                                 booking_reference=booking_reference,
                                 passenger_name=passenger_name,
-                                passenger_phone=passenger_phone,
+                                phone=passenger_phone,
                                 bus=vehicle,
                                 route=vehicle.route,
-                                schedule=schedule,
                                 travel_date=travel_date,
                                 travel_time=departure_time,
-                                seat_number='TBD',  # Will be assigned at terminal
+                                seat_number=selected_seat,
                                 price=price,
                                 status='pending',
                             )
 
                 elif company.transport_type == 'train':
                     from apps.trains.models import Train, Booking, Schedule
-                    vehicle = Train.objects.filter(company=company, vehicle_number=vehicle_name.split(' ')[-1]).first()
-                    if vehicle:
-                        schedule = Schedule.objects.filter(
-                            train=vehicle, 
-                            travel_date=travel_date,
-                            train__route__from_location=from_loc,
-                            train__route__to_location=to_loc
-                        ).first()
-                        if schedule:
+                    schedule = Schedule.objects.filter(
+                        pk=schedule_id,
+                        train__company=company,
+                        travel_date=travel_date,
+                        train__route__from_location=from_loc,
+                        train__route__to_location=to_loc,
+                        train__is_cargo=False,
+                    ).first()
+                    if schedule:
+                        vehicle = schedule.train
+                        price = schedule.price
+                        departure_time = schedule.travel_time or ''
+                        if Booking.objects.filter(train=vehicle, travel_date=travel_date, seat_number=selected_seat).exists():
+                            messages.error(request, f'Seat {selected_seat} is already booked for this trip. Choose another seat.')
+                            booking_conflict = True
+                            schedule = None
+                            vehicle = None
+                        else:
+                            # Determine price based on seat class
                             price = schedule.price
-                            departure_time = schedule.travel_time or ''
+                            if selected_seat_class == 'First Class' and vehicle.route.first_class_price:
+                                price = vehicle.route.first_class_price
+                            elif selected_seat_class == 'Business' and vehicle.route.business_price:
+                                price = vehicle.route.business_price
+                            elif selected_seat_class == 'Economy' and vehicle.route.economy_price:
+                                price = vehicle.route.economy_price
+                            
                             booking = Booking.objects.create(
                                 booking_reference=booking_reference,
                                 passenger_name=passenger_name,
-                                passenger_phone=passenger_phone,
+                                phone=passenger_phone,
                                 train=vehicle,
                                 route=vehicle.route,
-                                schedule=schedule,
                                 travel_date=travel_date,
                                 travel_time=departure_time,
-                                seat_number='TBD',
+                                seat_number=selected_seat,
                                 price=price,
                                 status='pending',
                             )
 
                 elif company.transport_type == 'flight':
                     from apps.flights.models import Flight, Booking, Schedule
-                    vehicle = Flight.objects.filter(company=company, vehicle_number=vehicle_name.split(' ')[-1]).first()
-                    if vehicle:
-                        schedule = Schedule.objects.filter(
-                            flight=vehicle, 
-                            travel_date=travel_date,
-                            flight__route__from_location=from_loc,
-                            flight__route__to_location=to_loc
-                        ).first()
-                        if schedule:
+                    schedule = Schedule.objects.filter(
+                        pk=schedule_id,
+                        flight__company=company,
+                        travel_date=travel_date,
+                        flight__route__from_location=from_loc,
+                        flight__route__to_location=to_loc,
+                        flight__is_cargo=False,
+                    ).first()
+                    if schedule:
+                        vehicle = schedule.flight
+                        price = schedule.price
+                        departure_time = schedule.travel_time or ''
+                        if Booking.objects.filter(flight=vehicle, travel_date=travel_date, seat_number=selected_seat).exists():
+                            messages.error(request, f'Seat {selected_seat} is already booked for this trip. Choose another seat.')
+                            booking_conflict = True
+                            schedule = None
+                            vehicle = None
+                        else:
+                            # Determine price based on seat class
                             price = schedule.price
-                            departure_time = schedule.travel_time or ''
+                            if selected_seat_class == 'First Class' and vehicle.route.first_class_price:
+                                price = vehicle.route.first_class_price
+                            elif selected_seat_class == 'Business' and vehicle.route.business_price:
+                                price = vehicle.route.business_price
+                            elif selected_seat_class == 'Economy' and vehicle.route.economy_price:
+                                price = vehicle.route.economy_price
+                            
                             booking = Booking.objects.create(
                                 booking_reference=booking_reference,
                                 passenger_name=passenger_name,
-                                passenger_phone=passenger_phone,
+                                phone=passenger_phone,
                                 flight=vehicle,
                                 route=vehicle.route,
-                                schedule=schedule,
                                 travel_date=travel_date,
                                 travel_time=departure_time,
-                                seat_number='TBD',
+                                seat_number=selected_seat,
                                 price=price,
                                 status='pending',
                             )
@@ -300,7 +348,7 @@ def tech_booking_assist(request):
                                             f'Route: {from_loc} → {to_loc}\n'
                                             f'Date: {travel_date}\n'
                                             f'Time: {departure_time or "TBD"}\n'
-                                            f'Vehicle: {vehicle_name}\n'
+                                            f'Vehicle: {vehicle and str(vehicle) or schedule_id}\n'
                                             f'Price: KES {price:.2f}\n'
                                             f'Seat: {booking.seat_number}\n\n'
                                             f'Safe travels!\n'
@@ -327,8 +375,8 @@ def tech_booking_assist(request):
                     except Exception as e:
                         logger.exception(f'M-Pesa error: {str(e)}')
                         messages.warning(request, f'Booking created but M-Pesa prompt failed: {str(e)}')
-                else:
-                    logger.warning(f'Trip not found: vehicle={vehicle_name}, from={from_loc}, to={to_loc}, date={travel_date}')
+                elif not booking_conflict:
+                    logger.warning(f'Trip not found: schedule_id={schedule_id}, from={from_loc}, to={to_loc}, date={travel_date}')
                     messages.error(request, 'Could not find the selected trip. Please search again.')
             except Exception as e:
                 logger.exception(f'Booking error: {str(e)}')
@@ -344,6 +392,7 @@ def tech_booking_assist(request):
                     if s.bus.route.from_location == query_from and s.bus.route.to_location == query_to:
                         available_trips.append({
                             'transport_type': 'Bus',
+                            'mode': 'bus',
                             'company': s.bus.company.name,
                             'available_seats': s.bus.available_seats,
                             'from_location': s.bus.route.from_location,
@@ -351,6 +400,7 @@ def tech_booking_assist(request):
                             'vehicle_name': str(s.bus),
                             'departure_time': s.travel_time,
                             'price': s.price,
+                            'schedule_id': s.id,
                         })
             elif company.transport_type == 'train':
                 from apps.trains.models import Schedule
@@ -359,6 +409,7 @@ def tech_booking_assist(request):
                     if s.train.route.from_location == query_from and s.train.route.to_location == query_to:
                         available_trips.append({
                             'transport_type': 'Train',
+                            'mode': 'train',
                             'company': s.train.company.name,
                             'available_seats': s.train.available_seats,
                             'from_location': s.train.route.from_location,
@@ -366,6 +417,7 @@ def tech_booking_assist(request):
                             'vehicle_name': str(s.train),
                             'departure_time': s.travel_time,
                             'price': s.price,
+                            'schedule_id': s.id,
                         })
             elif company.transport_type == 'flight':
                 from apps.flights.models import Schedule
@@ -374,6 +426,7 @@ def tech_booking_assist(request):
                     if s.flight.route.from_location == query_from and s.flight.route.to_location == query_to:
                         available_trips.append({
                             'transport_type': 'Flight',
+                            'mode': 'flight',
                             'company': s.flight.company.name,
                             'available_seats': s.flight.available_seats,
                             'from_location': s.flight.route.from_location,
@@ -381,6 +434,7 @@ def tech_booking_assist(request):
                             'vehicle_name': str(s.flight),
                             'departure_time': s.travel_time,
                             'price': s.price,
+                            'schedule_id': s.id,
                         })
 
     return render(request, 'technical_staff/tech_booking_assist.html', {

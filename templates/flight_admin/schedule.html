@@ -6,393 +6,250 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flight Schedule Management | SmartTravels</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        body{
+        body {
             font-family: 'Inter', sans-serif;
-        }
-
-        .glass-card{
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(14px);
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50">
+<body class="bg-slate-50 text-slate-900 antialiased">
 
 <div class="flex">
 
     {% include 'flight_admin/sidebar.html' %}
 
-    <!-- MAIN CONTENT -->
-    <div class="ml-72 w-full min-h-screen p-8">
+    <div class="ml-72 w-full min-h-screen p-8 lg:p-12">
 
-        <!-- PAGE HEADER -->
-        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 mb-10">
-
-            <div class="flex items-center gap-5">
-
-                <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center text-4xl shadow-2xl">
-                    🗓️
-                </div>
-
-                <div>
-
-                    <h1 class="text-4xl font-extrabold text-gray-800">
-                        Flight Schedule Management
-                    </h1>
-
-                    <p class="text-gray-500 mt-2 text-lg">
-                        Manage flight departures, schedules and daily operations.
-                    </p>
-
-                </div>
-
+        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 pb-6 mb-8 border-b border-slate-200">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+                    Flight Schedule Management
+                </h1>
+                <p class="text-sm text-slate-500 mt-1">
+                    Manage active flight departures, operational schedules, and daily system routing.
+                </p>
             </div>
 
-            <!-- DATE FILTER -->
-            <form method="get"
-                  class="glass-card border border-white/40 rounded-3xl shadow-xl p-5 flex flex-col sm:flex-row items-start sm:items-end gap-4">
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+            <form method="get" class="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 bg-white p-3 border border-slate-200 rounded-xl shadow-sm">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                         View Schedule Date
                     </label>
-
                     <input type="date"
                            name="date"
                            value="{{ selected_date }}"
-                           class="border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
+                           class="border border-slate-200 bg-slate-50 rounded-lg px-3 py-2 text-sm text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
                 </div>
 
                 <button type="submit"
-                        class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition">
-                    View Schedule
+                        class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium px-4 py-2 rounded-lg shadow transition whitespace-nowrap">
+                    Filter View
                 </button>
-
             </form>
-
         </div>
 
-        <!-- ANALYTICS CARDS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-            <!-- TOTAL FLIGHTS -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40">
-
+            <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between">
-
                     <div>
-
-                        <p class="text-gray-500 text-sm font-medium">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             Available Flights
                         </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                        <h2 class="text-3xl font-bold text-slate-800 mt-2 tracking-tight">
                             {{ flights|length }}
                         </h2>
-
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-sky-100 flex items-center justify-center text-3xl">
-                        ✈️
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A1 1 0 014.17 1.853l14.246 3.562a1 1 0 01.723.689L21.32 12m-15.32 0l-2.73 8.874a1 1 0 00.901 1.273l14.246-3.562a1 1 0 00.723-.689L21.32 12M5.12 12h16.2"></path></svg>
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- TOTAL SCHEDULES -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40">
-
+            <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between">
-
                     <div>
-
-                        <p class="text-gray-500 text-sm font-medium">
-                            Scheduled Flights
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            Scheduled Today
                         </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                        <h2 class="text-3xl font-bold text-slate-800 mt-2 tracking-tight">
                             {{ schedules|length }}
                         </h2>
-
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-3xl">
-                        📋
+                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- ACTIVE ROUTES -->
-            <div class="glass-card rounded-3xl p-6 shadow-xl border border-white/40">
-
+            <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between">
-
                     <div>
-
-                        <p class="text-gray-500 text-sm font-medium">
-                            Active Routes
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            Active System Routes
                         </p>
-
-                        <h2 class="text-4xl font-extrabold text-gray-800 mt-2">
+                        <h2 class="text-3xl font-bold text-slate-800 mt-2 tracking-tight">
                             {{ flights|length }}
                         </h2>
-
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-cyan-100 flex items-center justify-center text-3xl">
-                        🌍
+                    <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h2.5M14 22c5.523 0 10-4.477 10-10S19.523 2,14 2 4 6.477 4 12s4.477 10 10 10z"></path></svg>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
-        <!-- MAIN GRID -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
 
-            <!-- ADD SCHEDULE FORM -->
-            <div class="glass-card rounded-3xl shadow-2xl border border-white/40 p-8">
-
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 xl:col-span-1">
                 <div class="mb-6">
-
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Add Flight Schedule
+                    <h2 class="text-lg font-bold text-slate-900">
+                        Create Flight Schedule
                     </h2>
-
-                    <p class="text-gray-500 mt-2">
-                        Create new departure schedules for passengers.
+                    <p class="text-xs text-slate-400 mt-0.5">
+                        Establish new distinct departure instances for commercial ticketing.
                     </p>
-
                 </div>
 
-                <form method="post" class="space-y-5">
-
+                <form method="post" class="space-y-4">
                     {% csrf_token %}
 
-                    <!-- FLIGHT -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Flight
+                        <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">
+                            Flight Selection
                         </label>
-
                         <select name="flight"
-                                class="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                                 required>
-
-                            <option value="">
-                                Select flight
-                            </option>
-
+                            <option value="" disabled selected>Select an active fleet code...</option>
                             {% for flight in flights %}
                             <option value="{{ flight.id }}">
                                 {{ flight.flight_number }} ({{ flight.route.from_location }} → {{ flight.route.to_location }})
                             </option>
                             {% endfor %}
-
                         </select>
-
                     </div>
 
-                    <!-- DATE -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">
                             Travel Date
                         </label>
-
                         <input type="date"
                                name="travel_date"
-                               class="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none"
+                               class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                                required>
-
                     </div>
 
-                    <!-- TIME -->
                     <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Departure Time
+                        <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">
+                            Departure Time (24h)
                         </label>
-
                         <input type="time"
                                name="travel_time"
-                               class="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 outline-none"
+                               class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                                required>
-
                     </div>
 
-                    <!-- BUTTON -->
                     <button type="submit"
-                            class="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-4 rounded-2xl font-bold hover:scale-[1.02] transition shadow-lg">
-
-                        Save Schedule
-
+                            class="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-3 rounded-lg shadow-sm transition">
+                        Commit Schedule
                     </button>
-
                 </form>
-
             </div>
 
-            <!-- SCHEDULE TABLE -->
-            <div class="xl:col-span-2 glass-card rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
-
-                <!-- TABLE HEADER -->
-                <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
+            <div class="xl:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                
+                <div class="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-
-                        <h2 class="text-2xl font-bold text-gray-800">
-                            Flight Schedules
+                        <h2 class="text-lg font-bold text-slate-900">
+                            Manifest Timetable
                         </h2>
-
-                        <p class="text-gray-500 mt-1">
-                            Scheduled flights for {{ selected_date }}
+                        <p class="text-xs text-slate-400 mt-0.5">
+                            Displaying operating routines logs verified for <span class="font-medium text-slate-600">{{ selected_date }}</span>
                         </p>
-
                     </div>
 
-                    <div class="bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-semibold">
-                        ✈️ Daily Operations
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-md text-xs font-medium text-slate-600 self-start sm:self-center">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                        Active Operations
                     </div>
-
                 </div>
 
-                <!-- TABLE -->
                 <div class="overflow-x-auto">
-
-                    <table class="min-w-full">
-
-                        <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
-
+                    <table class="min-w-full divide-y divide-slate-200 text-sm">
+                        <thead class="bg-slate-50 text-slate-500 font-medium text-xs tracking-wider uppercase">
                             <tr>
-
-                                <th class="px-6 py-4 text-left">
-                                    Departure Time
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Flight
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Route
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Ticket Price
-                                </th>
-
-                                <th class="px-6 py-4 text-left">
-                                    Status
-                                </th>
-
+                                <th scope="col" class="px-6 py-3.5 text-left">Departure Time</th>
+                                <th scope="col" class="px-6 py-3.5 text-left">Flight Number</th>
+                                <th scope="col" class="px-6 py-3.5 text-left">Sector Route</th>
+                                <th scope="col" class="px-6 py-3.5 text-left">Base Tariff</th>
+                                <th scope="col" class="px-6 py-3.5 text-left">Status</th>
                             </tr>
-
                         </thead>
 
-                        <tbody class="divide-y divide-gray-100">
-
+                        <tbody class="divide-y divide-slate-100 bg-white text-slate-700">
                             {% for schedule in schedules %}
-
-                            <tr class="hover:bg-cyan-50 transition">
-
-                                <!-- TIME -->
-                                <td class="px-6 py-5">
-
-                                    <div class="font-bold text-gray-800">
-                                        {{ schedule.travel_time }}
-                                    </div>
-
+                            <tr class="hover:bg-slate-50/70 transition-colors">
+                                
+                                <td class="px-6 py-4 font-semibold text-slate-900 whitespace-nowrap">
+                                    {{ schedule.travel_time }}
                                 </td>
 
-                                <!-- FLIGHT -->
-                                <td class="px-6 py-5">
-
-                                    <div class="font-semibold text-gray-800">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="bg-slate-100 font-mono text-xs px-2 py-1 rounded text-slate-700 font-bold">
                                         {{ schedule.flight.flight_number }}
-                                    </div>
-
+                                    </span>
                                 </td>
 
-                                <!-- ROUTE -->
-                                <td class="px-6 py-5 text-gray-700">
-
+                                <td class="px-6 py-4 text-slate-600 whitespace-nowrap">
                                     {{ schedule.flight.route.from_location }}
-                                    →
+                                    <span class="text-slate-300 mx-1">→</span>
                                     {{ schedule.flight.route.to_location }}
-
                                 </td>
 
-                                <!-- PRICE -->
-                                <td class="px-6 py-5">
-
-                                    <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-md">
                                         KES {{ schedule.price }}
                                     </span>
-
                                 </td>
 
-                                <!-- STATUS -->
-                                <td class="px-6 py-5">
-
-                                    <span class="bg-sky-100 text-sky-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200/50">
                                         Scheduled
                                     </span>
-
                                 </td>
-
                             </tr>
 
                             {% empty %}
-
                             <tr>
-
-                                <td colspan="5" class="px-6 py-14 text-center">
-
-                                    <div class="flex flex-col items-center justify-center">
-
-                                        <div class="text-6xl mb-4">
-                                            🛫
+                                <td colspan="5" class="px-6 py-16 text-center bg-slate-50/50">
+                                    <div class="flex flex-col items-center justify-center max-w-sm mx-auto">
+                                        <div class="p-3 bg-slate-100 text-slate-400 rounded-full mb-3">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         </div>
-
-                                        <h3 class="text-xl font-bold text-gray-700">
-                                            No Flight Schedules
-                                        </h3>
-
-                                        <p class="text-gray-500 mt-2">
-                                            No schedules found for this selected date.
+                                        <h4 class="text-sm font-bold text-slate-800">No Flight Schedules Posted</h4>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            There are currently zero automated departures allocated for the selected date query. Use the form module to build one.
                                         </p>
-
                                     </div>
-
                                 </td>
-
                             </tr>
-
                             {% endfor %}
-
                         </tbody>
-
                     </table>
-
                 </div>
 
             </div>
-
         </div>
 
     </div>
-
 </div>
 
 </body>

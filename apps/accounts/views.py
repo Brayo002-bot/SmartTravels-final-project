@@ -817,6 +817,7 @@ def book_trip(request, mode, schedule_id):
 
     if request.method == 'POST':
         selected_seat = request.POST.get('selected_seat', '').strip()
+        selected_seat_class = request.POST.get('selected_seat_class', 'Normal').strip()
         phone = request.POST.get('phone', '').strip() or default_phone
 
         if not selected_seat:
@@ -831,17 +832,31 @@ def book_trip(request, mode, schedule_id):
             booking_reference = _generate_booking_reference() # Generate before STK push for AccountReference
             try:
                 from apps.payments.models import Payment, MPesaService
+                
+                # Determine price based on seat class and route pricing
+                price = schedule.price
+                if selected_seat_class == 'VIP' and hasattr(transport.route, 'vip_price') and transport.route.vip_price:
+                    price = transport.route.vip_price
+                elif selected_seat_class == 'Normal' and hasattr(transport.route, 'normal_price') and transport.route.normal_price:
+                    price = transport.route.normal_price
+                elif selected_seat_class == 'First Class' and hasattr(transport.route, 'first_class_price') and transport.route.first_class_price:
+                    price = transport.route.first_class_price
+                elif selected_seat_class == 'Business' and hasattr(transport.route, 'business_price') and transport.route.business_price:
+                    price = transport.route.business_price
+                elif selected_seat_class == 'Economy' and hasattr(transport.route, 'economy_price') and transport.route.economy_price:
+                    price = transport.route.economy_price
+                
                 payment_record = Payment.objects.create(
                     booking_reference=booking_reference,
                     booking_type=mode,
                     passenger=request.user,
-                    amount=schedule.price,
+                    amount=price,
                     method='mpesa',
                     phone_number=phone,
                     status='pending',
                 )
                 service = MPesaService()
-                response = service.stk_push(phone, schedule.price, booking_reference)
+                response = service.stk_push(phone, price, booking_reference)
                 if response.get('ResponseCode') == '0':
                     payment_record.merchant_ref = response.get('CheckoutRequestID', '')
                     payment_record.save(update_fields=['merchant_ref'])
@@ -854,7 +869,7 @@ def book_trip(request, mode, schedule_id):
                         mode: transport,
                         'travel_date': schedule.travel_date,
                         'travel_time': schedule.travel_time,
-                        'price': schedule.price,
+                        'price': price,
                         'seat_number': selected_seat,
                         'booking_reference': booking_reference,
                         'status': 'pending',

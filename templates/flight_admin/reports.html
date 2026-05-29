@@ -5,409 +5,267 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flight Reports | SmartTravels</title>
-
+    
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50">
+<body class="bg-slate-50 font-sans antialiased text-slate-900">
 
 <div class="flex">
 
     {% include 'flight_admin/sidebar.html' %}
 
-    <!-- Main Content -->
-    <div class="ml-72 w-full min-h-screen p-8">
+    <div class="ml-72 w-full min-h-screen p-8 lg:p-12">
 
-        <!-- Header -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
-
-            <div class="flex items-center gap-5">
-
-                <div class="h-20 w-20 rounded-3xl bg-gradient-to-r from-sky-500 to-cyan-400 flex items-center justify-center text-4xl shadow-2xl">
-                    📊
-                </div>
-
-                <div>
-                    <h1 class="text-4xl font-extrabold text-gray-800">
-                        Flight Analytics Dashboard
-                    </h1>
-
-                    <p class="text-gray-500 mt-2 text-lg">
-                        Real-time operational insights, bookings & airline performance.
-                    </p>
-                </div>
-
-            </div>
-
-            <div class="bg-white/80 backdrop-blur-lg border border-white/40 rounded-3xl shadow-xl px-6 py-5">
-
-                <p class="text-sm text-gray-500">
-                    System Status
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 mb-8 border-b border-slate-200">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+                    Flight Analytics Dashboard
+                </h1>
+                <p class="text-sm text-slate-500 mt-1">
+                    Real-time operational insights, bookings, and fleet capacities.
                 </p>
-
-                <h2 class="text-xl font-bold text-gray-800 mt-1">
-                    Analytics Live
-                </h2>
-
-                <div class="mt-4 flex items-center gap-2 text-sm text-emerald-600 font-semibold">
-                    <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Updated in Real-Time
-                </div>
-
             </div>
-
+            
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm self-start sm:self-center">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="text-xs font-medium text-slate-600">Updated Live</span>
+            </div>
         </div>
 
-        <!-- Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-            <!-- Flights -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition duration-300">
-
+            <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between">
-
                     <div>
-                        <p class="text-gray-500 text-sm font-medium">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             Total Flights
                         </p>
-
-                        <h2 class="text-5xl font-extrabold text-gray-800 mt-2">
+                        <h2 class="text-3xl font-bold text-slate-800 mt-2 tracking-tight">
                             {{ total_flights }}
                         </h2>
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-sky-100 flex items-center justify-center text-3xl shadow">
-                        ✈️
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A1 1 0 014.17 1.853l14.246 3.562a1 1 0 01.723.689L21.32 12m-15.32 0l-2.73 8.874a1 1 0 00.901 1.273l14.246-3.562a1 1 0 00.723-.689L21.32 12M5.12 12h16.2"></path></svg>
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- Pilots -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition duration-300">
-
+            <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between">
-
                     <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Total Pilots
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            Active Crew (Pilots)
                         </p>
-
-                        <h2 class="text-5xl font-extrabold text-gray-800 mt-2">
+                        <h2 class="text-3xl font-bold text-slate-800 mt-2 tracking-tight">
                             {{ total_pilots }}
                         </h2>
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-3xl shadow">
-                        👨‍✈️
+                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- Routes -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/40 hover:-translate-y-1 transition duration-300">
-
+            <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between">
-
                     <div>
-                        <p class="text-gray-500 text-sm font-medium">
-                            Total Routes
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            Operational Routes
                         </p>
-
-                        <h2 class="text-5xl font-extrabold text-gray-800 mt-2">
+                        <h2 class="text-3xl font-bold text-slate-800 mt-2 tracking-tight">
                             {{ total_routes }}
                         </h2>
                     </div>
-
-                    <div class="h-16 w-16 rounded-2xl bg-indigo-100 flex items-center justify-center text-3xl shadow">
-                        🌍
+                    <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h2.5M14 22c5.523 0 10-4.477 10-10S19.523 2,14 2 4 6.477 4 12s4.477 10 10 10z"></path></svg>
                     </div>
-
                 </div>
-
             </div>
 
         </div>
 
-        <!-- Analytics Charts -->
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-10">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
 
-            <!-- Booking Status -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-6">
-
-                <div class="flex items-center justify-between mb-6">
-
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800">
-                            Booking Status Overview
-                        </h2>
-
-                        <p class="text-gray-500 mt-1">
-                            Confirmed, pending and cancelled bookings.
-                        </p>
-                    </div>
-
-                    <div class="text-3xl">
-                        🎫
-                    </div>
-
-                </div>
-
-                <canvas id="bookingPieChart" height="260"></canvas>
-
-            </div>
-
-            <!-- Flights Performance -->
-            <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-6">
-
-                <div class="flex items-center justify-between mb-6">
-
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800">
-                            Fleet Capacity Analysis
-                        </h2>
-
-                        <p class="text-gray-500 mt-1">
-                            Seat distribution across flights.
-                        </p>
-                    </div>
-
-                    <div class="text-3xl">
-                        🛫
-                    </div>
-
-                </div>
-
-                <canvas id="flightBarChart" height="260"></canvas>
-
-            </div>
-
-        </div>
-
-        <!-- Recent Bookings -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 overflow-hidden mb-10">
-
-            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 xl:col-span-1 flex flex-col justify-between">
                 <div>
-
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Recent Bookings
-                    </h2>
-
-                    <p class="text-gray-500 mt-1">
-                        Latest passenger reservations.
-                    </p>
-
+                    <h3 class="text-base font-bold text-slate-900">Booking Status Overview</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Distribution across confirmed, pending, and cancelled states.</p>
                 </div>
-
-                <div class="bg-sky-100 text-sky-700 px-4 py-2 rounded-xl font-semibold">
-                    🎟️ Live Feed
+                <div class="my-6 max-h-[220px] flex justify-center">
+                    <canvas id="bookingPieChart"></canvas>
                 </div>
+            </div>
 
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 xl:col-span-2 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Fleet Capacity Analysis</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Available seats distribution mapped dynamically against aircraft types.</p>
+                </div>
+                <div class="mt-4 h-[220px]">
+                    <canvas id="flightBarChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-8">
+            <div class="p-6 border-b border-slate-200 flex items-center justify-between bg-white">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Recent Bookings</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Live roster feed monitoring passenger processing details.</p>
+                </div>
             </div>
 
             <div class="overflow-x-auto">
-
-                <table class="min-w-full">
-
-                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
-
+                <table class="min-w-full divide-y divide-slate-200 text-sm">
+                    <thead class="bg-slate-50 text-slate-500 font-medium text-xs tracking-wider uppercase">
                         <tr>
-                            <th class="px-6 py-4 text-left">Passenger</th>
-                            <th class="px-6 py-4 text-left">Flight</th>
-                            <th class="px-6 py-4 text-left">Route</th>
-                            <th class="px-6 py-4 text-left">Date</th>
-                            <th class="px-6 py-4 text-left">Status</th>
+                            <th scope="col" class="px-6 py-3.5 text-left">Passenger</th>
+                            <th scope="col" class="px-6 py-3.5 text-left">Flight</th>
+                            <th scope="col" class="px-6 py-3.5 text-left">Route</th>
+                            <th scope="col" class="px-6 py-3.5 text-left">Date</th>
+                            <th scope="col" class="px-6 py-3.5 text-left">Status</th>
                         </tr>
-
                     </thead>
-
-                    <tbody class="divide-y divide-gray-100">
-
+                    <tbody class="divide-y divide-slate-100 bg-white text-slate-700">
                         {% for booking in bookings %}
-
-                        <tr class="hover:bg-sky-50 transition duration-200">
-
-                            <td class="px-6 py-4 font-semibold text-gray-800">
+                        <tr class="hover:bg-slate-50/80 transition-colors">
+                            <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
                                 {{ booking.passenger_name }}
                             </td>
-
-                            <td class="px-6 py-4 text-gray-700">
-                                {{ booking.flight.flight_number }}
+                            <td class="px-6 py-4 text-slate-600 whitespace-nowrap">
+                                <span class="bg-slate-100 font-mono text-xs px-2 py-1 rounded text-slate-700">{{ booking.flight.flight_number }}</span>
                             </td>
-
-                            <td class="px-6 py-4 text-gray-700">
+                            <td class="px-6 py-4 text-slate-600 whitespace-nowrap">
                                 {{ booking.route }}
                             </td>
-
-                            <td class="px-6 py-4 text-gray-700">
+                            <td class="px-6 py-4 text-slate-500 whitespace-nowrap">
                                 {{ booking.travel_date }}
                             </td>
-
-                            <td class="px-6 py-4">
-
-                                <span class="px-3 py-1 rounded-full text-xs font-semibold
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium
                                     {% if booking.status == 'confirmed' %}
-                                        bg-green-100 text-green-700
+                                        bg-emerald-50 text-emerald-700 border border-emerald-200/50
                                     {% elif booking.status == 'pending' %}
-                                        bg-yellow-100 text-yellow-700
+                                        bg-amber-50 text-amber-700 border border-amber-200/50
                                     {% else %}
-                                        bg-red-100 text-red-700
+                                        bg-rose-50 text-rose-700 border border-rose-200/50
                                     {% endif %}">
-
                                     {{ booking.status|title }}
-
                                 </span>
-
                             </td>
-
                         </tr>
-
                         {% empty %}
-
                         <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-gray-500">
-                                No recent bookings available.
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-400 bg-slate-50/50">
+                                No records of recent bookings detected in system database.
                             </td>
                         </tr>
-
                         {% endfor %}
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
 
-        <!-- Flight Fleet -->
-        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 overflow-hidden">
-
-            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-200 flex items-center justify-between bg-white">
                 <div>
-
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Flight Fleet
-                    </h2>
-
-                    <p class="text-gray-500 mt-1">
-                        Registered aircraft and assigned pilots.
-                    </p>
-
+                    <h3 class="text-base font-bold text-slate-900">Flight Fleet Status</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Real-time status overview of assigned cockpits and resource arrays.</p>
                 </div>
-
-                <div class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl font-semibold">
-                    🛩️ Fleet Active
-                </div>
-
             </div>
 
             <div class="overflow-x-auto">
-
-                <table class="min-w-full">
-
-                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase">
-
+                <table class="min-w-full divide-y divide-slate-200 text-sm">
+                    <thead class="bg-slate-50 text-slate-500 font-medium text-xs tracking-wider uppercase">
                         <tr>
-                            <th class="px-6 py-4 text-left">Flight Number</th>
-                            <th class="px-6 py-4 text-left">Route</th>
-                            <th class="px-6 py-4 text-left">Pilot</th>
-                            <th class="px-6 py-4 text-left">Available Seats</th>
+                            <th scope="col" class="px-6 py-3.5 text-left">Flight Number</th>
+                            <th scope="col" class="px-6 py-3.5 text-left">Route</th>
+                            <th scope="col" class="px-6 py-3.5 text-left">Pilot in Command</th>
+                            <th scope="col" class="px-6 py-3.5 text-left">Capacity Registry</th>
                         </tr>
-
                     </thead>
-
-                    <tbody class="divide-y divide-gray-100">
-
+                    <tbody class="divide-y divide-slate-100 bg-white text-slate-700">
                         {% for flight in flights %}
-
-                        <tr class="hover:bg-cyan-50 transition duration-200">
-
-                            <td class="px-6 py-4 font-semibold text-gray-800">
+                        <tr class="hover:bg-slate-50/80 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-slate-900 whitespace-nowrap">
                                 {{ flight.flight_number }}
                             </td>
-
-                            <td class="px-6 py-4 text-gray-700">
+                            <td class="px-6 py-4 text-slate-600 whitespace-nowrap">
                                 {{ flight.route }}
                             </td>
-
-                            <td class="px-6 py-4 text-gray-700">
+                            <td class="px-6 py-4 text-slate-600 whitespace-nowrap">
                                 {{ flight.pilot.name }}
                             </td>
-
-                            <td class="px-6 py-4">
-
-                                <span class="bg-sky-100 text-sky-700 px-3 py-1 rounded-full text-sm font-semibold">
-                                    {{ flight.available_seats }} Seats
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-md">
+                                    {{ flight.available_seats }} Seats Available
                                 </span>
-
                             </td>
-
                         </tr>
-
                         {% empty %}
-
                         <tr>
-                            <td colspan="4" class="px-6 py-10 text-center text-gray-500">
-                                No flights available.
+                            <td colspan="4" class="px-6 py-12 text-center text-slate-400 bg-slate-50/50">
+                                No active aircraft metrics verified currently.
                             </td>
                         </tr>
-
                         {% endfor %}
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
 
     </div>
-
 </div>
 
-<!-- Charts -->
 <script>
+    // System color variables matching modern slate styling
+    const colors = {
+        emerald: '#10b981',
+        amber: '#f59e0b',
+        rose: '#f43f5e',
+        sky: '#0ea5e9'
+    };
 
-    // Booking Status Pie Chart
+    // Booking Status Doughnut Chart Setup
     const bookingPieChart = new Chart(
         document.getElementById('bookingPieChart'),
         {
-            type: 'pie',
+            type: 'doughnut',
             data: {
                 labels: ['Confirmed', 'Pending', 'Cancelled'],
                 datasets: [{
                     data: [65, 20, 15],
-                    backgroundColor: [
-                        '#10B981',
-                        '#F59E0B',
-                        '#EF4444'
-                    ],
-                    borderWidth: 0
+                    backgroundColor: [colors.emerald, colors.amber, colors.rose],
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 4
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 20,
+                            font: { size: 12, weight: '500' }
+                        }
                     }
-                }
+                },
+                cutout: '75%'
             }
         }
     );
 
-    // Fleet Bar Chart
+    // Fleet Bar Chart Setup
     const flightBarChart = new Chart(
         document.getElementById('flightBarChart'),
         {
@@ -425,21 +283,31 @@
                             {{ flight.available_seats }},
                         {% endfor %}
                     ],
-                    backgroundColor: '#0EA5E9',
-                    borderRadius: 10
+                    backgroundColor: colors.sky,
+                    borderRadius: 6,
+                    barThickness: 24,
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
                 scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11 } }
+                    },
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: { font: { size: 11 } }
                     }
                 }
             }
         }
     );
-
 </script>
 
 </body>
