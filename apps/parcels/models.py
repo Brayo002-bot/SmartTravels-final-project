@@ -20,12 +20,15 @@ class Parcel(models.Model):
     sender          = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_parcels')
     sender_name     = models.CharField(max_length=150)
     sender_phone    = models.CharField(max_length=20)
+    sender_email    = models.EmailField(blank=True, default='')
     recipient_name  = models.CharField(max_length=150)
     recipient_phone = models.CharField(max_length=20)
+    recipient_email = models.EmailField(blank=True, default='')
     origin          = models.CharField(max_length=100)
     destination     = models.CharField(max_length=100)
     category        = models.CharField(max_length=20, choices=CATEGORY, default='other')
-    description     = models.TextField()
+    description     = models.TextField(blank=True)
+    item_image      = models.ImageField(upload_to='parcel_images/', blank=True, null=True)
     weight_kg       = models.DecimalField(max_digits=6, decimal_places=2, default=1)
     declared_value  = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     shipping_cost   = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -41,6 +44,17 @@ class Parcel(models.Model):
 
     def __str__(self):
         return f"{self.parcel_id}: {self.origin} → {self.destination}"
+
+    def progress_percentage(self):
+        progress_map = {
+            'booked': 10,
+            'dropped_off': 40,
+            'in_transit': 70,
+            'arrived': 100,
+            'collected': 100,
+            'returned': 100,
+        }
+        return progress_map.get(self.status, 20)
 
     def calc_cost(self):
         return round(100 + float(self.weight_kg) * 50, 2)

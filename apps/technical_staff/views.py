@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
+from django.core.mail import send_mail
+from django.conf import settings
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from apps.gps.models import GPSPoint
+from apps.payments.models import MPesaService, find_passenger_user
 from apps.systemadmin.models import Company
 from .models import TechnicalStaff
 
@@ -163,7 +166,7 @@ def tech_booking_assist(request):
         passenger_email = request.POST.get('passenger_email', '').strip()
         schedule_id = request.POST.get('book_passenger', '').strip()
         selected_seat = request.POST.get('selected_seat', '').strip()
-        selected_seat_class = request.POST.get('selected_seat_class', '').strip
+        selected_seat_class = request.POST.get('selected_seat_class', '').strip()
         travel_date = request.POST.get('travel_date', '').strip()
         from_loc = request.POST.get('from_location', '').strip()
         to_loc = request.POST.get('destination', '').strip()
@@ -310,11 +313,14 @@ def tech_booking_assist(request):
                             )
 
                 if schedule and vehicle:
-                    # Create payment and send M-Pesa prompt
+                    # Prefer the passenger account if they exist for loyalty and dashboards
+                    passenger_account = find_passenger_user(passenger_email, passenger_phone)
+                    payment_owner = passenger_account or request.user
+
                     payment = Payment.objects.create(
                         booking_reference=booking_reference,
                         booking_type=company.transport_type,
-                        passenger=request.user,  # Technical staff user
+                        passenger=payment_owner,
                         amount=price,
                         method='mpesa',
                         phone_number=passenger_phone,
@@ -467,82 +473,265 @@ def tech_parcels(request):
 
     parcel_qr = None
     tracking_id = None
+    prompt_sent = request.session.get('tech_parcels_prompt_sent', False)
+    stk_sent = request.session.get('tech_parcels_stk_sent', False)
+    stk_phone = request.session.get('tech_parcels_stk_phone', '')
 
     if request.method == 'POST':
         from apps.parcels.models import Parcel, ParcelLog
         from apps.payments.models import Payment, MPesaService
+        import base64
+        import io
+        import qrcode
+
+        prompt_action = request.POST.get('prompt_action', 'send_prompt')
         sender_name = request.POST.get('sender_name', '').strip() or str(request.user)
         sender_phone = request.POST.get('phone', '').strip() or request.user.phone_number or ''
+        sender_email = request.POST.get('sender_email', '').strip() or getattr(request.user, 'email', '')
         receiver_name = request.POST.get('receiver_name', '').strip()
+        receiver_phone = request.POST.get('receiver_phone', '').strip()
+        recipient_email = request.POST.get('recipient_email', '').strip()
         payment_phone = request.POST.get('payment_phone', '').strip() or sender_phone
         pickup_location = request.POST.get('pickup_location', '').strip() or ''
         destination = request.POST.get('destination', '').strip() or ''
         route_id = request.POST.get('route')
-        parcel_type = request.POST.get('parcel_type', 'other')
+        parcel_type = request.POST.get('parcel_type', 'other').strip().lower()
         weight = float(request.POST.get('weight') or 1)
+        declared_value = float(request.POST.get('declared_value') or 0)
         amount = float(request.POST.get('amount') or 0)
         payment_status = request.POST.get('payment_status', 'Pending')
         description = request.POST.get('description', '').strip()
+        item_image = request.FILES.get('item_image')
 
-        if sender_name and sender_phone and receiver_name and pickup_location and destination:
-            parcel = Parcel.objects.create(
-                sender=request.user,
-                sender_name=sender_name,
-                sender_phone=sender_phone,
-                recipient_name=receiver_name,
-                recipient_phone=payment_phone,
-                origin=pickup_location,
-                destination=destination,
-                category=parcel_type,
-                description=description,
-                weight_kg=weight,
-                declared_value=0,
-                shipping_cost=amount,
-                is_fragile=False,
-                is_paid=(payment_status == 'Paid'),
-                status='booked' if payment_status == 'Paid' else 'booked',
-            )
-            ParcelLog.objects.create(parcel=parcel, status='booked', note='Registered by technical staff', updated_by=request.user)
+        form_data = {
+            'sender_name': sender_name,
+            'sender_phone': sender_phone,
+            'sender_email': sender_email,
+            'receiver_name': receiver_name,
+            'receiver_phone': receiver_phone,
+            'recipient_email': recipient_email,
+            'pickup_location': pickup_location,
+            'destination': destination,
+            'route': route_id,
+            'parcel_type': parcel_type,
+            'weight': weight,
+            'declared_value': declared_value,
+            'amount': amount,
+            'payment_status': payment_status,
+            'description': description,
+        }
 
-            # assign vehicle if any
-            transport_choice = request.POST.get('transport_choice')
-            if transport_choice == 'bus' and request.POST.get('bus'):
+        if prompt_action == 'send_prompt':
+            if not all([sender_name, sender_phone, sender_email, receiver_name, receiver_phone, recipient_email, pickup_location, destination]):
+                messages.error(request, 'Complete all sender/receiver contact, route, and email details before sending the confirmation prompt.')
+                return render(request, 'technical_staff/tech_parcels.html', {
+                    'routes': routes,
+                    'buses': buses,
+                    'trains': trains,
+                    'flights': flights,
+                    'prompt_sent': prompt_sent,
+                    'stk_sent': stk_sent,
+                    'form_data': form_data,
+                })
+
+            recipients = []
+            if sender_email:
+                recipients.append(sender_email)
+            if recipient_email and recipient_email != sender_email:
+                recipients.append(recipient_email)
+
+            if recipients:
+                prompt_subject = f"SmartTravels Parcel Confirmation Request"
+                prompt_body = (
+                    f"Dear customer,\n\n"
+                    f"A parcel confirmation request has been initiated for sender {sender_name} and receiver {receiver_name}.\n"
+                    f"Route: {pickup_location} → {destination}\n"
+                    f"Estimated item value: KES {declared_value:.2f}\n"
+                    f"Please allow the technical staff to proceed with payment collection.\n\n"
+                    f"Thank you,\nSmartTravels Logistics Team"
+                )
                 try:
-                    from apps.buses.models import Bus
-                    b = Bus.objects.filter(id=request.POST.get('bus'), company=company).first()
-                    if b:
-                        parcel.assigned_vehicle_type = 'bus'
-                        parcel.assigned_vehicle_id = b.id
-                        parcel.assigned_vehicle_name = str(b)
+                    send_mail(prompt_subject, prompt_body, getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@smarttravels.local'), recipients, fail_silently=False)
+                    request.session['tech_parcels_prompt_sent'] = True
+                    prompt_sent = True
+                    messages.success(request, 'Confirmation prompt sent to sender and receiver. Proceed to payment collection.')
+                except Exception as exc:
+                    messages.error(request, f'Failed to send confirmation prompt: {exc}')
+
+            return render(request, 'technical_staff/tech_parcels.html', {
+                'routes': routes,
+                'buses': buses,
+                'trains': trains,
+                'flights': flights,
+                'prompt_sent': prompt_sent,
+                'stk_sent': stk_sent,
+                'form_data': form_data,
+            })
+
+        if prompt_action == 'send_stk':
+            if not request.session.get('tech_parcels_prompt_sent'):
+                messages.error(request, 'Send the confirmation prompt before initiating payment.')
+                return redirect('tech_parcels')
+
+            if not payment_phone or amount <= 0:
+                messages.error(request, 'Specify a payment phone number and amount before sending STK push.')
+                return render(request, 'technical_staff/tech_parcels.html', {
+                    'routes': routes,
+                    'buses': buses,
+                    'trains': trains,
+                    'flights': flights,
+                    'prompt_sent': prompt_sent,
+                    'stk_sent': stk_sent,
+                    'form_data': form_data,
+                })
+
+            try:
+                parcel_ref = f"PARCEL-{sender_name.replace(' ', '-')[:10]}-{timezone.now().timestamp()}"
+                pay = Payment.objects.create(
+                    booking_reference=parcel_ref,
+                    booking_type='parcel',
+                    passenger=request.user,
+                    amount=amount,
+                    method='mpesa',
+                    phone_number=payment_phone,
+                )
+                svc = MPesaService()
+                res = svc.stk_push(payment_phone, amount, parcel_ref)
+                if isinstance(res, dict) and res.get('ResponseCode') == '0':
+                    pay.merchant_ref = res.get('CheckoutRequestID', '')
+                    pay.save(update_fields=['merchant_ref'])
+                    request.session['tech_parcels_stk_sent'] = True
+                    request.session['tech_parcels_stk_phone'] = payment_phone
+                    stk_sent = True
+                    stk_phone = payment_phone
+                    messages.success(request, f'STK push sent to {payment_phone}. Await confirmation and then process the waybill.')
+                else:
+                    messages.warning(request, 'STK push initiated but may require manual confirmation.')
+                    request.session['tech_parcels_stk_sent'] = True
+                    request.session['tech_parcels_stk_phone'] = payment_phone
+                    stk_sent = True
+                    stk_phone = payment_phone
+            except Exception as exc:
+                messages.error(request, f'Failed to send STK push: {exc}')
+
+            return render(request, 'technical_staff/tech_parcels.html', {
+                'routes': routes,
+                'buses': buses,
+                'trains': trains,
+                'flights': flights,
+                'prompt_sent': prompt_sent,
+                'stk_sent': stk_sent,
+                'stk_phone': stk_phone,
+                'form_data': form_data,
+            })
+
+        if prompt_action == 'process_waybill':
+            if not request.session.get('tech_parcels_stk_sent'):
+                messages.error(request, 'Send and confirm the STK push before processing the waybill.')
+                return redirect('tech_parcels')
+
+            if sender_name and sender_phone and receiver_name and receiver_phone and pickup_location and destination:
+                passenger_user = None
+                if sender_email:
+                    passenger_user = User.objects.filter(email__iexact=sender_email, role='passenger').first()
+                if not passenger_user and sender_phone:
+                    passenger_user = User.objects.filter(phone_number__iexact=sender_phone, role='passenger').first()
+
+                sender_for_parcel = passenger_user if passenger_user else request.user
+                if passenger_user:
+                    sender_name = sender_name or passenger_user.get_full_name() or passenger_user.email
+                    sender_email = sender_email or passenger_user.email
+                    sender_phone = sender_phone or passenger_user.phone_number
+
+                parcel = Parcel.objects.create(
+                    sender=sender_for_parcel,
+                    sender_name=sender_name,
+                    sender_phone=sender_phone,
+                    sender_email=sender_email,
+                    recipient_name=receiver_name,
+                    recipient_phone=receiver_phone,
+                    recipient_email=recipient_email,
+                    origin=pickup_location,
+                    destination=destination,
+                    category=parcel_type,
+                    description=description,
+                    item_image=item_image,
+                    weight_kg=weight,
+                    declared_value=declared_value,
+                    shipping_cost=amount,
+                    is_fragile=False,
+                    is_paid=(payment_status == 'Paid'),
+                    status='booked',
+                )
+                ParcelLog.objects.create(parcel=parcel, status='booked', note='Registered by technical staff', updated_by=request.user)
+
+                transport_choice = request.POST.get('transport_choice')
+                if transport_choice == 'bus' and request.POST.get('bus'):
+                    try:
+                        from apps.buses.models import Bus
+                        b = Bus.objects.filter(id=request.POST.get('bus'), company=company).first()
+                        if b:
+                            parcel.assigned_vehicle_type = 'bus'
+                            parcel.assigned_vehicle_id = b.id
+                            parcel.assigned_vehicle_name = str(b)
+                    except Exception:
+                        pass
+                elif transport_choice == 'truck' and request.POST.get('truck'):
+                    parcel.assigned_vehicle_name = f"Truck {request.POST.get('truck')}"
+
+                parcel.save()
+                request.session.pop('tech_parcels_prompt_sent', None)
+                request.session.pop('tech_parcels_stk_sent', None)
+                request.session.pop('tech_parcels_stk_phone', None)
+
+                try:
+                    recipients = []
+                    if sender_email:
+                        recipients.append(sender_email)
+                    if recipient_email and recipient_email != sender_email:
+                        recipients.append(recipient_email)
+                    if recipients:
+                        receipt_subject = f"SmartTravels Parcel Registered: {parcel.parcel_id}"
+                        receipt_body = (
+                            f"Hello,\n\nYour parcel has been registered and the waybill has been generated.\n"
+                            f"Tracking ID: {parcel.parcel_id}\n"
+                            f"Route: {pickup_location} → {destination}\n"
+                            f"Declared item value: KES {declared_value:.2f}\n"
+                            f"Shipping fee: KES {amount:.2f}\n\n"
+                            f"Thank you for using SmartTravels."
+                        )
+                        send_mail(receipt_subject, receipt_body, getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@smarttravels.local'), recipients, fail_silently=True)
                 except Exception:
                     pass
-            elif transport_choice == 'truck' and request.POST.get('truck'):
-                # trucks may be modelled differently; store id/name as provided
-                parcel.assigned_vehicle_name = f"Truck {request.POST.get('truck')}"
 
-            parcel.save()
-
-            # If payment pending and amount provided, create Payment and push STK
-            if payment_status == 'Pending' and amount > 0:
                 try:
-                    pay = Payment.objects.create(
-                        booking_reference=parcel.parcel_id,
-                        booking_type='parcel',
-                        passenger=request.user,
-                        amount=amount,
-                        method='mpesa',
-                        phone_number=payment_phone,
-                    )
-                    svc = MPesaService()
-                    res = svc.stk_push(payment_phone, amount, parcel.parcel_id)
-                    if isinstance(res, dict) and res.get('ResponseCode') == '0':
-                        pay.merchant_ref = res.get('CheckoutRequestID', '')
-                        pay.save(update_fields=['merchant_ref'])
+                    qr_data = f"PARCEL|{parcel.parcel_id}|{pickup_location}|{destination}|{sender_email}|{recipient_email}"
+                    qr_image = qrcode.make(qr_data)
+                    buffer = io.BytesIO()
+                    qr_image.save(buffer, format='PNG')
+                    buffer.seek(0)
+                    parcel_qr = {'url': 'data:image/png;base64,' + base64.b64encode(buffer.getvalue()).decode()}
+                    tracking_id = parcel.parcel_id
                 except Exception:
-                    pass
+                    parcel_qr = None
+                    tracking_id = parcel.parcel_id
 
-            messages.success(request, 'Parcel registered. You can prompt payment if required.')
-            return redirect('tech_parcels')
+                messages.success(request, 'Waybill processed and QR code generated. You can print the label now.')
+                return render(request, 'technical_staff/tech_parcels.html', {
+                    'routes': routes,
+                    'buses': buses,
+                    'trains': trains,
+                    'flights': flights,
+                    'parcel_qr': parcel_qr,
+                    'tracking_id': tracking_id,
+                    'sender_name': sender_name,
+                    'receiver_name': receiver_name,
+                    'pickup_location': pickup_location,
+                    'destination': destination,
+                    'parcel_type': parcel_type,
+                    'weight': weight,
+                    'amount': amount,
+                })
 
     return render(request, 'technical_staff/tech_parcels.html', {
         'routes': routes,
@@ -551,6 +740,9 @@ def tech_parcels(request):
         'flights': flights,
         'parcel_qr': parcel_qr,
         'tracking_id': tracking_id,
+        'prompt_sent': prompt_sent,
+        'stk_sent': stk_sent,
+        'stk_phone': stk_phone,
     })
 
 

@@ -2,353 +2,334 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Admins • SmartTravels</title>
 
-<title>Manage Admins • SmartTravels</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    <!-- Tailwind CSS Engine -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-indigo-50 to-slate-200 min-h-screen">
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen">
 
 <div class="flex">
 
-{% include 'system_admin/sidebar.html' with active_page='manage_admins' %}
+    <!-- SIDEBAR INCLUSION COMPONENT -->
+    {% include 'system_admin/sidebar.html' with active_page='manage_admins' %}
 
-<!-- MAIN -->
-<div class="ml-72 w-full p-8">
+    <!-- MAIN INTERACTIVE WORKSPACE CONTAINER -->
+    <main class="ml-72 w-full min-h-screen p-8 lg:p-10">
 
-    <!-- HEADER -->
-    <div class="bg-white/60 backdrop-blur-xl rounded-3xl shadow-xl border border-white/30 p-6 mb-8">
-
-        <div class="flex justify-between items-center">
-
+        <!-- SECTION: PAGE HEADER -->
+        <header class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 pb-6 mb-8 border-b border-slate-200">
             <div>
-                <p class="text-indigo-600 font-medium mb-1">
+                <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">
                     SmartTravels Administration
                 </p>
-
-                <h1 class="text-3xl font-bold text-slate-800">
+                <h1 class="text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
                     Admin Management Center
                 </h1>
-
-                <p class="text-slate-500">
-                    Create, assign and manage administrators and companies
+                <p class="text-sm text-slate-500 mt-0.5">
+                    Create, assign, and manage administrative clearance levels and corporate structures.
                 </p>
             </div>
 
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white flex items-center justify-center shadow-lg">
-                <i class="fas fa-user-shield text-2xl"></i>
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 self-start sm:self-center shadow-sm">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+        </header>
+
+        <!-- SECTION: ANALYTICS / OVERVIEW METRICS -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            
+            <!-- Card 1 -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">System Admins</p>
+                    <h3 class="text-3xl font-bold text-slate-900 mt-1">{{ admin_roles|length }}</h3>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <i data-lucide="shield" class="w-5 h-5"></i>
+                </div>
             </div>
 
-        </div>
+            <!-- Card 2 -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Transport Admins</p>
+                    <h3 class="text-3xl font-bold text-slate-900 mt-1">{{ transport_admins|length }}</h3>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
+                    <i data-lucide="bus" class="w-5 h-5"></i>
+                </div>
+            </div>
 
-    </div>
+            <!-- Card 3 -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Companies</p>
+                    <h3 class="text-3xl font-bold text-slate-900 mt-1">{{ companies|length }}</h3>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <i data-lucide="building-2" class="w-5 h-5"></i>
+                </div>
+            </div>
 
-    <!-- STATS -->
-    <div class="grid md:grid-cols-4 gap-6 mb-8">
+            <!-- Card 4 -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">System Status</p>
+                    <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-100">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Healthy
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <i data-lucide="activity" class="w-5 h-5"></i>
+                </div>
+            </div>
 
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl">
-            <p class="text-indigo-100">System Admins</p>
-            <h2 class="text-4xl font-bold mt-2">
-                {{ admin_roles|length }}
-            </h2>
-        </div>
+        </section>
 
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-xl">
-            <p class="text-sky-100">Transport Admins</p>
-            <h2 class="text-4xl font-bold mt-2">
-                {{ transport_admins|length }}
-            </h2>
-        </div>
+        <!-- SECTION: NOTIFICATION FEEDBACK MESSAGES -->
+        {% if messages %}
+        <section class="mb-6 space-y-2.5">
+            {% for message in messages %}
+            <div class="rounded-xl p-4 border text-sm flex items-center gap-3 shadow-sm
+                {% if message.tags == 'error' %}
+                    bg-rose-50 border-rose-200 text-rose-800
+                {% elif message.tags == 'success' %}
+                    bg-emerald-50 border-emerald-200 text-emerald-800
+                {% else %}
+                    bg-indigo-50 border-indigo-200 text-indigo-800
+                {% endif %}">
+                <i data-lucide="{% if message.tags == 'error' %}alert-circle{% else %}check-circle-2{% endif %}" class="w-4 h-4 flex-shrink-0"></i>
+                <p class="font-medium">{{ message }}</p>
+            </div>
+            {% endfor %}
+        </section>
+        {% endif %}
 
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-xl">
-            <p class="text-emerald-100">Companies</p>
-            <h2 class="text-4xl font-bold mt-2">
-                {{ companies|length }}
-            </h2>
-        </div>
+        <!-- SECTION: ACTION CREATION FORMS -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xl">
-            <p class="text-amber-100">System Status</p>
-            <h2 class="text-3xl font-bold mt-2">
-                Healthy
-            </h2>
-        </div>
+            <!-- Form Block: System Admin Assignment -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
+                    <i data-lucide="user-plus" class="w-5 h-5 text-indigo-600"></i>
+                    <h2 class="text-base font-bold text-slate-900">Create System Admin</h2>
+                </div>
 
-    </div>
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <input type="text" name="username" placeholder="Username" required
+                            class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition">
+                    </div>
+                    <div>
+                        <input type="email" name="email" placeholder="Email Destination Address" required
+                            class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition">
+                    </div>
+                    <div>
+                        <input type="password" name="password" placeholder="Access Password" required
+                            class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition">
+                    </div>
+                    <div>
+                        <select name="role" required
+                            class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition">
+                            <option value="">Select Role Blueprint</option>
+                            <option value="super_admin">Super Admin</option>
+                            <option value="user_manager">User Manager</option>
+                            <option value="content_manager">Content Manager</option>
+                            <option value="finance_manager">Finance Manager</option>
+                            <option value="support_manager">Support Manager</option>
+                        </select>
+                    </div>
 
-    <!-- MESSAGES -->
-    {% if messages %}
-    <div class="space-y-3 mb-6">
+                    <button type="submit" name="create_admin"
+                        class="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-white bg-indigo-600 border border-indigo-700 rounded-xl shadow-sm hover:bg-indigo-700 transition">
+                        Provision System Admin
+                    </button>
+                </form>
+            </div>
 
-        {% for message in messages %}
-        <div class="rounded-2xl p-4 shadow border
-            {% if message.tags == 'error' %}
-            bg-red-50 border-red-200 text-red-700
-            {% elif message.tags == 'success' %}
-            bg-emerald-50 border-emerald-200 text-emerald-700
-            {% else %}
-            bg-indigo-50 border-indigo-200 text-indigo-700
-            {% endif %}">
-            {{ message }}
-        </div>
-        {% endfor %}
+            <!-- Form Block: Transport Admin Assignment -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
+                    <i data-lucide="bus" class="w-5 h-5 text-sky-600"></i>
+                    <h2 class="text-base font-bold text-slate-900">Create Transport Admin</h2>
+                </div>
 
-    </div>
-    {% endif %}
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <input type="text" name="admin_username" placeholder="Username" required
+                            class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition">
+                    </div>
+                    <div>
+                        <input type="email" name="admin_email" placeholder="Email Destination Address" required
+                            class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition">
+                    </div>
+                    <div>
+                        <input type="password" name="admin_password" placeholder="Access Password" required
+                            class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <select name="admin_type" required
+                            class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition">
+                            <option value="">Admin Type</option>
+                            <option value="bus_admin">Bus Admin</option>
+                            <option value="flight_admin">Flight Admin</option>
+                            <option value="train_admin">Train Admin</option>
+                        </select>
+                        <select name="company_id" required
+                            class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition">
+                            <option value="">Select Corporate Scope</option>
+                            {% for company in companies %}
+                            <option value="{{ company.id }}">{{ company.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-    <!-- FORMS -->
-    <div class="grid lg:grid-cols-2 gap-6 mb-8">
+                    <button type="submit" name="create_transport_admin"
+                        class="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-white bg-sky-600 border border-sky-700 rounded-xl shadow-sm hover:bg-sky-700 transition">
+                        Provision Transport Admin
+                    </button>
+                </form>
+            </div>
 
-        <!-- SYSTEM ADMIN -->
-        <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl border border-white/30 p-6">
+        </section>
 
-            <h2 class="text-xl font-bold text-slate-800 mb-5">
-                <i class="fas fa-user-plus text-indigo-600 mr-2"></i>
-                Create System Admin
-            </h2>
+        <!-- SECTION: COMPANY FORM CREATION -->
+        <section class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8">
+            <div class="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
+                <i data-lucide="building-2" class="w-5 h-5 text-violet-600"></i>
+                <h2 class="text-base font-bold text-slate-900">Register New Corporate Entity</h2>
+            </div>
 
-            <form method="POST" class="space-y-4">
+            <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {% csrf_token %}
+                <div>
+                    <input type="text" name="company_name" placeholder="Legal Company Name" required
+                        class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition">
+                </div>
+                <div>
+                    <select name="transport_type" required
+                        class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition">
+                        <option value="">Primary Logistics Type</option>
+                        <option value="bus">Bus Infrastructure</option>
+                        <option value="flight">Airlines / Aviation</option>
+                        <option value="train">Railways network</option>
+                    </select>
+                </div>
+                <div>
+                    <input type="email" name="contact_email" placeholder="Corporate Contact Email" required
+                        class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition">
+                </div>
+                <div>
+                    <input type="text" name="contact_phone" placeholder="Direct Line Contact Phone" required
+                        class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition">
+                </div>
 
-                <input type="text" name="username"
-                placeholder="Username"
-                class="w-full rounded-2xl border border-slate-200 p-3">
-
-                <input type="email" name="email"
-                placeholder="Email"
-                class="w-full rounded-2xl border border-slate-200 p-3">
-
-                <input type="password" name="password"
-                placeholder="Password"
-                class="w-full rounded-2xl border border-slate-200 p-3">
-
-                <select name="role"
-                class="w-full rounded-2xl border border-slate-200 p-3">
-
-                    <option value="">Select Role</option>
-                    <option value="super_admin">Super Admin</option>
-                    <option value="user_manager">User Manager</option>
-                    <option value="content_manager">Content Manager</option>
-                    <option value="finance_manager">Finance Manager</option>
-                    <option value="support_manager">Support Manager</option>
-
-                </select>
-
-                <button
-                class="w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg hover:scale-105 transition"
-                name="create_admin">
-
-                    Create System Admin
-
+                <button type="submit" name="create_company"
+                    class="md:col-span-2 inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-white bg-violet-600 border border-violet-700 rounded-xl shadow-sm hover:bg-violet-700 transition">
+                    Execute Enterprise Registration
                 </button>
-
             </form>
+        </section>
 
-        </div>
+        <!-- SECTION: MATRIX DATA TABLES -->
+        <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+            
+            <div class="px-6 py-5 border-b border-slate-100">
+                <h2 class="text-base font-bold text-slate-900">System Administrators Listing</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Active directory records mapping security administrative levels.</p>
+            </div>
 
-        <!-- TRANSPORT ADMIN -->
-        <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl border border-white/30 p-6">
+            <div class="w-full overflow-x-auto">
+                <table class="w-full text-left border-collapse whitespace-nowrap">
+                    <thead>
+                        <tr class="bg-slate-50/70 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                            <th class="px-6 py-3.5">Admin Profile</th>
+                            <th class="px-6 py-3.5">Email Destination Address</th>
+                            <th class="px-6 py-3.5">Current Authorization Role</th>
+                            <th class="px-6 py-3.5 text-right">Alter Permissions Scope</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                        {% for admin_role in admin_roles %}
+                        <tr class="hover:bg-slate-50/40 transition duration-150">
+                            
+                            <!-- ADMIN USER -->
+                            <td class="px-6 py-3.5 font-semibold text-slate-900">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold border border-slate-200">
+                                        {{ admin_role.user.username|first|upper }}
+                                    </div>
+                                    <span>{{ admin_role.user.username }}</span>
+                                </div>
+                            </td>
 
-            <h2 class="text-xl font-bold text-slate-800 mb-5">
-                <i class="fas fa-bus text-emerald-600 mr-2"></i>
-                Create Transport Admin
-            </h2>
+                            <!-- EMAIL -->
+                            <td class="px-6 py-3.5 text-slate-500 font-medium">
+                                {{ admin_role.user.email }}
+                            </td>
 
-            <form method="POST" class="space-y-4">
-                {% csrf_token %}
+                            <!-- BADGE ROLE -->
+                            <td class="px-6 py-3.5">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-indigo-50 border border-indigo-100 text-indigo-700">
+                                    {{ admin_role.get_role_display }}
+                                </span>
+                            </td>
 
-                <input type="text" name="admin_username"
-                placeholder="Username"
-                class="w-full rounded-2xl border p-3">
+                            <!-- ACTIONS FIELD MUTATION -->
+                            <td class="px-6 py-3.5 text-right">
+                                <form method="POST" class="inline-flex items-center gap-2 justify-end">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="admin_id" value="{{ admin_role.id }}">
 
-                <input type="email" name="admin_email"
-                placeholder="Email"
-                class="w-full rounded-2xl border p-3">
+                                    <select name="new_role"
+                                        class="text-xs rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-slate-700 focus:border-indigo-500 outline-none transition">
+                                        <option value="super_admin">Super Admin</option>
+                                        <option value="user_manager">User Manager</option>
+                                        <option value="content_manager">Content Manager</option>
+                                        <option value="finance_manager">Finance Manager</option>
+                                        <option value="support_manager">Support Manager</option>
+                                    </select>
 
-                <input type="password" name="admin_password"
-                placeholder="Password"
-                class="w-full rounded-2xl border p-3">
+                                    <button type="submit" name="update_system_role"
+                                        class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition">
+                                        Update
+                                    </button>
+                                </form>
+                            </td>
 
-                <select name="admin_type"
-                class="w-full rounded-2xl border p-3">
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center text-sm text-slate-400">
+                                No system administrators currently discovered in the database profile indexes.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-                    <option value="">Select Admin Type</option>
-                    <option value="bus_admin">Bus Admin</option>
-                    <option value="flight_admin">Flight Admin</option>
-                    <option value="train_admin">Train Admin</option>
-
-                </select>
-
-                <select name="company_id"
-                class="w-full rounded-2xl border p-3">
-
-                    <option value="">Select Company</option>
-
-                    {% for company in companies %}
-                    <option value="{{ company.id }}">
-                        {{ company.name }}
-                    </option>
-                    {% endfor %}
-
-                </select>
-
-                <button
-                class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg hover:scale-105 transition"
-                name="create_transport_admin">
-
-                    Create Transport Admin
-
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-
-    <!-- COMPANY -->
-    <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl border border-white/30 p-6 mb-8">
-
-        <h2 class="text-xl font-bold mb-5 text-slate-800">
-            <i class="fas fa-building text-violet-600 mr-2"></i>
-            Create Company
-        </h2>
-
-        <form method="POST"
-        class="grid md:grid-cols-2 gap-4">
-
-            {% csrf_token %}
-
-            <input type="text"
-            name="company_name"
-            placeholder="Company Name"
-            class="rounded-2xl border p-3">
-
-            <select name="transport_type"
-            class="rounded-2xl border p-3">
-
-                <option value="">Transport Type</option>
-                <option value="bus">Bus</option>
-                <option value="flight">Flight</option>
-                <option value="train">Train</option>
-
-            </select>
-
-            <input type="email"
-            name="contact_email"
-            placeholder="Email"
-            class="rounded-2xl border p-3">
-
-            <input type="text"
-            name="contact_phone"
-            placeholder="Phone"
-            class="rounded-2xl border p-3">
-
-            <button
-            class="md:col-span-2 py-3 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg hover:scale-105 transition"
-            name="create_company">
-
-                Create Company
-
-            </button>
-
-        </form>
-
-    </div>
-
-    <!-- SYSTEM ADMINS TABLE -->
-    <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl overflow-hidden mb-8">
-
-        <div class="p-6 border-b">
-            <h2 class="text-xl font-bold text-slate-800">
-                System Admins
-            </h2>
-        </div>
-
-        <div class="overflow-x-auto">
-
-            <table class="w-full">
-
-                <thead class="bg-slate-100 text-slate-600">
-                    <tr>
-                        <th class="p-4 text-left">Admin</th>
-                        <th class="p-4 text-left">Email</th>
-                        <th class="p-4 text-left">Role</th>
-                        <th class="p-4 text-left">Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                {% for admin_role in admin_roles %}
-                <tr class="border-t hover:bg-indigo-50/40">
-
-                    <td class="p-4 font-semibold">
-                        {{ admin_role.user.username }}
-                    </td>
-
-                    <td class="p-4">
-                        {{ admin_role.user.email }}
-                    </td>
-
-                    <td class="p-4">
-                        <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold">
-                            {{ admin_role.get_role_display }}
-                        </span>
-                    </td>
-
-                    <td class="p-4">
-
-                        <form method="POST" class="flex gap-2">
-                            {% csrf_token %}
-
-                            <input type="hidden"
-                            name="admin_id"
-                            value="{{ admin_role.id }}">
-
-                            <select name="new_role"
-                            class="border rounded-xl p-2">
-
-                                <option value="super_admin">Super Admin</option>
-                                <option value="user_manager">User Manager</option>
-                                <option value="content_manager">Content Manager</option>
-                                <option value="finance_manager">Finance Manager</option>
-                                <option value="support_manager">Support Manager</option>
-
-                            </select>
-
-                            <button
-                            class="bg-emerald-500 text-white px-3 py-2 rounded-xl hover:bg-emerald-600"
-                            name="update_system_role">
-
-                                Update
-
-                            </button>
-
-                        </form>
-
-                    </td>
-
-                </tr>
-                {% endfor %}
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
+    </main>
 </div>
-</div>
+
+<!-- VECTOR ICON ENGINE SOURCE FROM CDN -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    // Global Safe Vector Graphics Handler Load
+    document.addEventListener("DOMContentLoaded", function() {
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    });
+</script>
 
 </body>
 </html>

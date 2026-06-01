@@ -2,269 +2,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Reports • SmartTravels</title>
 
-<title>System Reports • SmartTravels</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    <!-- Tailwind CSS Engine -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js Core Library Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-indigo-50 to-slate-200 min-h-screen">
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen">
 
 <div class="flex">
 
-{% include 'system_admin/sidebar.html' with active_page='system_reports' %}
+    <!-- SIDEBAR INCLUSION COMPONENT -->
+    {% include 'system_admin/sidebar.html' with active_page='system_reports' %}
 
-<!-- MAIN -->
-<div class="ml-72 w-full p-8">
+    <!-- MAIN INTERACTIVE WORKSPACE CONTAINER -->
+    <main class="ml-72 w-full min-h-screen p-8 lg:p-10">
 
-    <!-- HEADER -->
-    <div class="bg-white/60 backdrop-blur-xl rounded-3xl shadow-xl border border-white/30 p-6 mb-8">
-
-        <div class="flex flex-col md:flex-row justify-between md:items-center gap-5">
-
+        <!-- SECTION: PAGE HEADER -->
+        <header class="flex flex-col xl:flex-row justify-between xl:items-center gap-6 pb-6 mb-8 border-b border-slate-200">
             <div>
-                <p class="text-indigo-600 font-medium mb-1">
+                <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">
                     SmartTravels Enterprise Analytics
                 </p>
-
-                <h1 class="text-3xl font-bold text-slate-800">
+                <h1 class="text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
                     System Reports & Analytics
                 </h1>
-
-                <p class="text-slate-500">
-                    Monitor performance, bookings, revenue and transport analytics
+                <p class="text-sm text-slate-500 mt-0.5">
+                    Monitor metrics, platform bookings distribution, gross revenue, and logistics operational analytics.
                 </p>
             </div>
 
-            <!-- EXPORTS -->
-            <div class="flex gap-3">
-
-                <button class="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg hover:scale-105 transition">
-                    <i class="fas fa-file-csv mr-2"></i>
-                    Export CSV
+            <!-- EXPORT ACTION UTILITIES -->
+            <div class="flex items-center gap-2.5 self-start xl:self-center">
+                <button class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl shadow-sm hover:bg-slate-50 transition">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i>
+                    <span>Export CSV</span>
                 </button>
 
-                <button class="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-lg hover:scale-105 transition">
-                    <i class="fas fa-file-pdf mr-2"></i>
-                    Export PDF
+                <button class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl shadow-sm hover:bg-slate-50 transition">
+                    <i data-lucide="file-text" class="w-4 h-4 text-rose-600"></i>
+                    <span>Export PDF</span>
                 </button>
-
             </div>
+        </header>
 
-        </div>
-
-    </div>
-
-    <!-- KPI CARDS -->
-    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl">
-            <div class="flex justify-between">
+        <!-- SECTION: CORE LOGISTICS METRICS -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            
+            <!-- KPI: Buses -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-indigo-100">Total Buses</p>
-                    <h2 class="text-4xl font-bold mt-2">
-                        {{ total_buses }}
-                    </h2>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Active Buses</p>
+                    <h3 class="text-3xl font-bold text-slate-900 mt-1 tracking-tight">{{ total_buses }}</h3>
                 </div>
-                <i class="fas fa-bus text-3xl"></i>
+                <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <i data-lucide="bus" class="w-5 h-5"></i>
+                </div>
             </div>
-        </div>
 
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-xl">
-            <div class="flex justify-between">
+            <!-- KPI: Flights -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-sky-100">Flights</p>
-                    <h2 class="text-4xl font-bold mt-2">
-                        {{ total_flights }}
-                    </h2>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Scheduled Flights</p>
+                    <h3 class="text-3xl font-bold text-slate-900 mt-1 tracking-tight">{{ total_flights }}</h3>
                 </div>
-                <i class="fas fa-plane text-3xl"></i>
+                <div class="w-10 h-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
+                    <i data-lucide="plane" class="w-5 h-5"></i>
+                </div>
             </div>
-        </div>
 
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xl">
-            <div class="flex justify-between">
+            <!-- KPI: Trains -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-amber-100">Trains</p>
-                    <h2 class="text-4xl font-bold mt-2">
-                        {{ total_trains }}
-                    </h2>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Rail Transits</p>
+                    <h3 class="text-3xl font-bold text-slate-900 mt-1 tracking-tight">{{ total_trains }}</h3>
                 </div>
-                <i class="fas fa-train text-3xl"></i>
+                <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                    <i data-lucide="train" class="w-5 h-5"></i>
+                </div>
             </div>
-        </div>
 
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-xl">
-            <div class="flex justify-between">
+            <!-- KPI: Gross Revenue -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-emerald-100">Revenue</p>
-                    <h2 class="text-3xl font-bold mt-2">
-                        KES {{ total_revenue }}
-                    </h2>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Gross Revenue</p>
+                    <h3 class="text-2xl font-bold text-slate-900 mt-1 tracking-tight">
+                        <span class="text-xs font-semibold text-slate-400 mr-0.5">KES</span>{{ total_revenue }}
+                    </h3>
                 </div>
-                <i class="fas fa-wallet text-3xl"></i>
+                <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <i data-lucide="wallet" class="w-5 h-5"></i>
+                </div>
             </div>
-        </div>
 
-    </div>
+        </section>
 
-    <!-- CHARTS ROW 1 -->
-    <div class="grid lg:grid-cols-2 gap-6 mb-6">
+        <!-- SECTION: DATA GRAPH VISUALIZATIONS (ROW 1) -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
 
-        <!-- BAR -->
-        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
-            <h2 class="font-bold text-slate-700 text-lg mb-5">
-                <i class="fas fa-chart-column text-indigo-600 mr-2"></i>
-                Bookings by Transport Mode
-            </h2>
-            <canvas id="barChart"></canvas>
-        </div>
+            <!-- Chart Card: Bar Modal -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-5 pb-3 border-b border-slate-100">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-600"></i>
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Bookings by Transport Mode</h2>
+                </div>
+                <div class="h-64 relative">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
 
-        <!-- DOUGHNUT -->
-        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
-            <h2 class="font-bold text-slate-700 text-lg mb-5">
-                <i class="fas fa-chart-pie text-emerald-600 mr-2"></i>
-                Booking Distribution
-            </h2>
-            <canvas id="pieChart"></canvas>
-        </div>
+            <!-- Chart Card: Doughnut Model -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-5 pb-3 border-b border-slate-100">
+                    <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-600"></i>
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Booking Distribution Profile</h2>
+                </div>
+                <div class="h-64 relative flex justify-center">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
 
-    </div>
+        </section>
 
-    <!-- CHARTS ROW 2 -->
-    <div class="grid lg:grid-cols-2 gap-6 mb-8">
+        <!-- SECTION: DATA GRAPH VISUALIZATIONS (ROW 2) -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
-        <!-- REVENUE TREND -->
-        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
-            <h2 class="font-bold text-slate-700 text-lg mb-5">
-                <i class="fas fa-chart-line text-emerald-600 mr-2"></i>
-                Revenue Growth
-            </h2>
-            <canvas id="revenueChart"></canvas>
-        </div>
+            <!-- Chart Card: Revenue Growth Line Matrix -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-5 pb-3 border-b border-slate-100">
+                    <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Revenue Growth Trend</h2>
+                </div>
+                <div class="h-64 relative">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
 
-        <!-- PERFORMANCE -->
-        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
-            <h2 class="font-bold text-slate-700 text-lg mb-5">
-                <i class="fas fa-chart-area text-violet-600 mr-2"></i>
-                Transport Performance
-            </h2>
-            <canvas id="performanceChart"></canvas>
-        </div>
+            <!-- Chart Card: Radar Evaluation Matrix -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-5 pb-3 border-b border-slate-100">
+                    <i data-lucide="activity" class="w-4 h-4 text-violet-600"></i>
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Logistics Performance Radar</h2>
+                </div>
+                <div class="h-64 relative flex justify-center">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
 
-    </div>
+        </section>
 
-    <!-- REPORT SUMMARY -->
-    <div class="grid md:grid-cols-3 gap-6">
+        <!-- SECTION: TARGET VOLUME INDEX SUMMARIES -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
-            <div class="flex justify-between items-center">
+            <!-- Summary Block: Bus -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-slate-500">Bus Bookings</p>
-                    <h2 class="text-3xl font-bold text-slate-800">
-                        {{ bus_bookings }}
-                    </h2>
+                    <span class="text-xs font-semibold text-slate-400">Bus Volume Index</span>
+                    <h4 class="text-2xl font-bold text-slate-900 tracking-tight mt-0.5">{{ bus_bookings }}</h4>
                 </div>
-                <i class="fas fa-bus text-3xl text-indigo-500"></i>
+                <span class="text-xs font-medium bg-indigo-50 border border-indigo-100 text-indigo-700 px-2 py-1 rounded-md">
+                    Active Transits
+                </span>
             </div>
-        </div>
 
-        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
-            <div class="flex justify-between items-center">
+            <!-- Summary Block: Flights -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-slate-500">Flight Bookings</p>
-                    <h2 class="text-3xl font-bold text-slate-800">
-                        {{ flight_bookings }}
-                    </h2>
+                    <span class="text-xs font-semibold text-slate-400">Flight Volume Index</span>
+                    <h4 class="text-2xl font-bold text-slate-900 tracking-tight mt-0.5">{{ flight_bookings }}</h4>
                 </div>
-                <i class="fas fa-plane text-3xl text-emerald-500"></i>
+                <span class="text-xs font-medium bg-sky-50 border border-sky-100 text-sky-700 px-2 py-1 rounded-md">
+                    Air Corridors
+                </span>
             </div>
-        </div>
 
-        <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30">
-            <div class="flex justify-between items-center">
+            <!-- Summary Block: Train -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-slate-500">Train Bookings</p>
-                    <h2 class="text-3xl font-bold text-slate-800">
-                        {{ train_bookings }}
-                    </h2>
+                    <span class="text-xs font-semibold text-slate-400">Train Volume Index</span>
+                    <h4 class="text-2xl font-bold text-slate-900 tracking-tight mt-0.5">{{ train_bookings }}</h4>
                 </div>
-                <i class="fas fa-train text-3xl text-amber-500"></i>
+                <span class="text-xs font-medium bg-amber-50 border border-amber-100 text-amber-700 px-2 py-1 rounded-md">
+                    Rail Network
+                </span>
             </div>
-        </div>
 
-    </div>
+        </section>
 
+    </main>
 </div>
-</div>
 
+<!-- VECTOR ICON ENGINE SOURCE FROM CDN -->
+<script src="https://unpkg.com/lucide@latest"></script>
 <script>
-const bus={{ bus_bookings|default:0 }};
-const flight={{ flight_bookings|default:0 }};
-const train={{ train_bookings|default:0 }};
+    document.addEventListener("DOMContentLoaded", function() {
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    });
 
-// BOOKINGS BAR
-new Chart(document.getElementById('barChart'),{
-type:'bar',
-data:{
-labels:['Bus','Flight','Train'],
-datasets:[{
-data:[bus,flight,train],
-backgroundColor:['#6366F1','#10B981','#F59E0B'],
-borderRadius:10
-}]
-},
-options:{plugins:{legend:{display:false}}}
-});
+    // DATA CONTEXT STRINGS PIPED FROM DJANGO CONTEXT ENGINE
+    const bus = {{ bus_bookings|default:0 }};
+    const flight = {{ flight_bookings|default:0 }};
+    const train = {{ train_bookings|default:0 }};
 
-// DISTRIBUTION
-new Chart(document.getElementById('pieChart'),{
-type:'doughnut',
-data:{
-labels:['Bus','Flight','Train'],
-datasets:[{
-data:[bus,flight,train],
-backgroundColor:['#4F46E5','#14B8A6','#F97316']
-}]
-}
-});
+    // Shared Configuration Defaults
+    const systemFont = { family: "Inter, system-ui, -apple-system, sans-serif", size: 12 };
 
-// REVENUE
-new Chart(document.getElementById('revenueChart'),{
-type:'line',
-data:{
-labels:['Jan','Feb','Mar','Apr','May','Jun'],
-datasets:[{
-label:'Revenue',
-data:[12000,17000,14000,22000,28000,34000],
-borderColor:'#10B981',
-backgroundColor:'rgba(16,185,129,.15)',
-fill:true,
-tension:.4
-}]
-}
-});
+    // CHART 1: BOOKINGS BAR DATA STRUCTURE
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Bus Logistics', 'Air Travel', 'Rail Systems'],
+            datasets: [{
+                data: [bus, flight, train],
+                backgroundColor: ['#6366f1', '#38bdf8', '#f59e0b'],
+                borderWidth: 0,
+                maxBarThickness: 32,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { grid: { color: '#f1f5f9' }, ticks: { font: systemFont, color: '#94a3b8' } },
+                x: { grid: { display: false }, ticks: { font: systemFont, color: '#64748b' } }
+            }
+        }
+    });
 
-// PERFORMANCE
-new Chart(document.getElementById('performanceChart'),{
-type:'radar',
-data:{
-labels:['Speed','Bookings','Revenue','Growth','Engagement'],
-datasets:[{
-label:'Performance',
-data:[80,90,75,85,88],
-backgroundColor:'rgba(99,102,241,.2)',
-borderColor:'#6366F1'
-}]
-}
-});
+    // CHART 2: BOOKING PIE/DOUGHNUT DISTRIBUTION
+    new Chart(document.getElementById('pieChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Bus Logistics', 'Air Travel', 'Rail Systems'],
+            datasets: [{
+                data: [bus, flight, train],
+                backgroundColor: ['#4f46e5', '#0ea5e9', '#d97706'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, font: systemFont, color: '#475569', padding: 20 } }
+            },
+            cutout: '75%'
+        }
+    });
+
+    // CHART 3: REVENUE LINE METRIC MODEL
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Gross Revenue Trend',
+                data: [12000, 17000, 14000, 22000, 28000, 34000],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.04)',
+                fill: true,
+                tension: 0.35,
+                borderWidth: 2.5,
+                pointRadius: 2,
+                pointHoverRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { grid: { color: '#f1f5f9' }, ticks: { font: systemFont, color: '#94a3b8' } },
+                x: { grid: { display: false }, ticks: { font: systemFont, color: '#64748b' } }
+            }
+        }
+    });
+
+    // CHART 4: PERFORMANCE RADAR MODEL MODULE
+    new Chart(document.getElementById('performanceChart'), {
+        type: 'radar',
+        data: {
+            labels: ['Transit Velocity', 'Bookings Fill Rate', 'Yield Revenue', 'Quarterly Growth', 'User Retention'],
+            datasets: [{
+                label: 'Performance Spectrum',
+                data: [80, 90, 75, 85, 88],
+                backgroundColor: 'rgba(99, 102, 241, 0.06)',
+                borderColor: '#6366f1',
+                borderWidth: 2,
+                pointRadius: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                r: {
+                    grid: { color: '#e2e8f0' },
+                    angleLines: { color: '#f1f5f9' },
+                    pointLabels: { font: { family: "Inter, sans-serif", size: 10, weight: '500' }, color: '#64748b' },
+                    ticks: { display: false }
+                }
+            }
+        }
+    });
 </script>
 
 </body>

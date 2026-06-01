@@ -140,7 +140,7 @@
                     <div>
 
                         <label class="block text-sm font-semibold mb-2 text-gray-700">
-                            Ticket Price (KES)
+                            Ticket Price (Base KES)
                         </label>
 
                         <div class="relative">
@@ -157,6 +157,78 @@
                                    placeholder="0.00"
                                    class="w-full pl-16 p-4 border border-gray-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    required>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">
+                            First Class Price (KES)
+                        </label>
+
+                        <div class="relative">
+
+                            <span class="absolute left-4 top-4 text-gray-400 font-semibold">
+                                KES
+                            </span>
+
+                            <input type="number"
+                                   step="0.01"
+                                   min="0"
+                                   name="vip_price"
+                                   value="{{ route.first_class_price|floatformat:2 }}"
+                                   placeholder="0.00"
+                                   class="w-full pl-16 p-4 border border-gray-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">
+                            Business Price (KES)
+                        </label>
+
+                        <div class="relative">
+
+                            <span class="absolute left-4 top-4 text-gray-400 font-semibold">
+                                KES
+                            </span>
+
+                            <input type="number"
+                                   step="0.01"
+                                   min="0"
+                                   name="business_price"
+                                   value="{{ route.business_price|floatformat:2 }}"
+                                   placeholder="0.00"
+                                   class="w-full pl-16 p-4 border border-gray-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">
+                            Economy Price (KES)
+                        </label>
+
+                        <div class="relative">
+
+                            <span class="absolute left-4 top-4 text-gray-400 font-semibold">
+                                KES
+                            </span>
+
+                            <input type="number"
+                                   step="0.01"
+                                   min="0"
+                                   name="economy_price"
+                                   value="{{ route.economy_price|floatformat:2 }}"
+                                   placeholder="0.00"
+                                   class="w-full pl-16 p-4 border border-gray-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                         </div>
 

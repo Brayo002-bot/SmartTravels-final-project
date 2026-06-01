@@ -15,10 +15,22 @@ def driver_required(view_func):
         if request.user.role != 'driver':
             raise PermissionDenied('Only drivers may access the driver dashboard.')
 
+        driver = None
         try:
-            driver = Driver.objects.get(user=request.user)
-        except Driver.DoesNotExist:
-            raise PermissionDenied('No driver profile is linked to this user account.')
+            driver = request.user.driver_profile
+        except Exception:
+            pass
+
+        if not driver:
+            try:
+                driver = Driver.objects.get(user=request.user)
+            except Driver.DoesNotExist:
+                # Fallback to a temporary driver object if the user is a driver but profile isn't linked.
+                driver = SimpleNamespace(
+                    name=request.user.get_full_name() or request.user.username,
+                    phone=getattr(request.user, 'phone_number', ''),
+                    company=None,
+                )
 
         request.driver = driver
         return view_func(request, *args, **kwargs)
@@ -71,7 +83,7 @@ def driver_dashboard(request):
         role_display = getattr(request.user, 'role', '')
 
     # Get driver company and details
-    company = request.driver.company
+    company = getattr(request.driver, 'company', None)
     company_logo_url = None
     if company and hasattr(company, 'logo_image') and company.logo_image:
         try:
@@ -80,9 +92,11 @@ def driver_dashboard(request):
             company_logo_url = None
 
     # Prepare driver credentials object with all available fields
+    driver_name = getattr(request.driver, 'name', None) or request.user.get_full_name() or request.user.username
+    driver_phone = getattr(request.driver, 'phone', None) or getattr(request.user, 'phone_number', '')
     credentials = {
-        'driver_name': request.driver.name,
-        'driver_phone': request.driver.phone,
+        'driver_name': driver_name,
+        'driver_phone': driver_phone,
         'user_email': request.user.email,
         'user_first_name': request.user.first_name,
         'user_last_name': request.user.last_name,

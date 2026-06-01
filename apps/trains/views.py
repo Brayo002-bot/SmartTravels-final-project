@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Avg, Sum
+from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -13,6 +14,7 @@ from django.utils import timezone
 
 from apps.gps.models import GPSPoint
 from apps.parcels.models import Parcel, ParcelLog
+from apps.payments.models import Payment, MPesaService, find_passenger_user
 from apps.systemadmin.models import SeatLayoutHistory
 from apps.systemadmin.seat_layout import generate_seat_layout, normalize_class_counts
 from .models import Train, Booking, Conductor, Route, Schedule
@@ -83,7 +85,18 @@ def add_route(request):
             if existing_route:
                 messages.warning(request, f'Route from {from_location} to {to_location} already exists.')
             else:
-                Route.objects.create(from_location=from_location, to_location=to_location, price=price, company=company)
+                vip_price = float(request.POST.get('vip_price', 0) or 0)
+                business_price = float(request.POST.get('business_price', 0) or 0)
+                economy_price = float(request.POST.get('economy_price', 0) or 0)
+                Route.objects.create(
+                    from_location=from_location,
+                    to_location=to_location,
+                    price=price,
+                    first_class_price=vip_price,
+                    business_price=business_price,
+                    economy_price=economy_price,
+                    company=company,
+                )
                 messages.success(request, f'Route from {from_location} to {to_location} added successfully.')
                 return redirect('train_add_route')
 
@@ -99,6 +112,9 @@ def edit_route(request, route_id):
         route.from_location = request.POST.get('from_location', '').strip()
         route.to_location = request.POST.get('to_location', '').strip()
         route.price = float(request.POST.get('price', 0) or 0)
+        route.first_class_price = float(request.POST.get('vip_price', 0) or 0)
+        route.business_price = float(request.POST.get('business_price', 0) or 0)
+        route.economy_price = float(request.POST.get('economy_price', 0) or 0)
         route.save()
         messages.success(request, 'Route updated successfully.')
         return redirect('train_add_route')
@@ -143,11 +159,13 @@ def booking(request):
 
     if request.method == 'POST':
         passenger_name = request.POST.get('passenger_name', '').strip()
+        passenger_email = request.POST.get('passenger_email', '').strip()
         phone = request.POST.get('phone', '').strip()
         route_id = request.POST.get('route')
         train_id = request.POST.get('train')
         travel_date = request.POST.get('travel_date')
         seat_number = request.POST.get('seat_number', '').strip()
+        seat_class = request.POST.get('seat_class', '').strip()
 
         if passenger_name and phone and route_id and train_id and travel_date:
             train = get_object_or_404(Train, id=train_id, company=company)
@@ -157,9 +175,16 @@ def booking(request):
             if schedule:
                 price = schedule.price
 
+            if seat_class == 'First' and route.first_class_price:
+                price = route.first_class_price
+            elif seat_class == 'Business' and route.business_price:
+                price = route.business_price
+            elif seat_class == 'Economy' and route.economy_price:
+                price = route.economy_price
+
             if train.available_seats > 0:
                 booking_reference = _generate_booking_reference()
-                Booking.objects.create(
+                booking = Booking.objects.create(
                     passenger_name=passenger_name,
                     phone=phone,
                     train=train,
@@ -172,7 +197,40 @@ def booking(request):
                 )
                 train.available_seats -= 1
                 train.save()
-                return redirect(reverse('payment_checkout_typed', args=[booking_reference, 'train']) + f'?amount={price}')
+
+                passenger_account = find_passenger_user(passenger_email, phone)
+                payment_owner = passenger_account or request.user
+                payment = Payment.objects.create(
+                    booking_reference=booking_reference,
+                    booking_type='train',
+                    passenger=payment_owner,
+                    amount=price,
+                    method='mpesa',
+                    phone_number=phone,
+                )
+                try:
+                    svc = MPesaService()
+                    res = svc.stk_push(phone, price, booking_reference)
+                    if res.get('ResponseCode') == '0':
+                        payment.merchant_ref = res.get('CheckoutRequestID', '')
+                        payment.save(update_fields=['merchant_ref'])
+                        if settings.DEBUG:
+                            payment.mark_completed(code='DEBUG-AUTO-' + booking_reference)
+                            booking.status = 'confirmed'
+                            booking.save(update_fields=['status'])
+                            messages.success(request, 'Booking created and payment auto-completed (DEBUG). Ticket will be sent once payment is confirmed.')
+                        else:
+                            messages.success(request, 'Booking created. M-Pesa prompt sent to passenger phone. Booking will confirm after payment.')
+                    else:
+                        payment.status = 'failed'
+                        payment.save(update_fields=['status'])
+                        messages.warning(request, 'Booking created, but M-Pesa push failed. Check phone number or MPesa settings.')
+                except Exception as e:
+                    payment.status = 'failed'
+                    payment.save(update_fields=['status'])
+                    messages.warning(request, f'Booking created, but payment prompt failed: {e}')
+
+                return redirect('train_booking')
 
     return render(request, 'train_admin/booking.html', {
         'routes': routes,
@@ -480,8 +538,10 @@ def cargo(request):
 
     if request.method == 'POST':
         sender_name = request.POST.get('sender_name', '').strip() or str(request.user)
+        sender_email = request.POST.get('sender_email', '').strip()
         sender_phone = request.POST.get('sender_phone', '').strip() or request.user.phone_number or ''
         recipient_name = request.POST.get('recipient_name', '').strip()
+        recipient_email = request.POST.get('recipient_email', '').strip()
         recipient_phone = request.POST.get('recipient_phone', '').strip()
         origin = request.POST.get('origin', '').strip()
         destination = request.POST.get('destination', '').strip()
@@ -494,8 +554,10 @@ def cargo(request):
         notes = request.POST.get('notes', '').strip()
 
         if sender_name and sender_phone and recipient_name and recipient_phone and origin and destination:
+            passenger_account = find_passenger_user(sender_email, sender_phone)
+            parcel_sender = passenger_account or request.user
             parcel = Parcel.objects.create(
-                sender=request.user,
+                sender=parcel_sender,
                 sender_name=sender_name,
                 sender_phone=sender_phone,
                 recipient_name=recipient_name,
@@ -509,17 +571,53 @@ def cargo(request):
                 shipping_cost=0,
                 is_fragile=is_fragile,
                 is_paid=is_paid,
-                status='booked',
+                status='pending',
                 notes=notes,
             )
             parcel.shipping_cost = parcel.calc_cost()
             parcel.save(update_fields=['shipping_cost'])
+            payment_owner = passenger_account or request.user
+            payment = Payment.objects.create(
+                booking_reference=parcel.parcel_id,
+                booking_type='parcel',
+                passenger=payment_owner,
+                amount=parcel.shipping_cost,
+                method='mpesa',
+                phone_number=sender_phone,
+            )
+            try:
+                svc = MPesaService()
+                res = svc.stk_push(sender_phone, parcel.shipping_cost, parcel.parcel_id)
+                if res.get('ResponseCode') == '0':
+                    payment.merchant_ref = res.get('CheckoutRequestID', '')
+                    payment.save(update_fields=['merchant_ref'])
+                    if settings.DEBUG:
+                        payment.mark_completed(code='DEBUG-AUTO-' + parcel.parcel_id)
+                        parcel.is_paid = True
+                        parcel.status = 'booked'
+                        parcel.save(update_fields=['is_paid','status'])
+                        log_note = 'Cargo shipment created and auto-paid (DEBUG).'
+                    else:
+                        parcel.status = 'pending'
+                        parcel.save(update_fields=['status'])
+                        log_note = 'Cargo shipment created and awaiting payment via M-Pesa.'
+                else:
+                    payment.status = 'failed'
+                    payment.save(update_fields=['status'])
+                    log_note = 'Cargo shipment created but M-Pesa push failed.'
+                    messages.warning(request, 'Cargo shipment created, but payment prompt failed. Please verify phone or MPesa settings.')
+            except Exception as e:
+                payment.status = 'failed'
+                payment.save(update_fields=['status'])
+                log_note = f'Cargo shipment created but payment prompt failed: {e}'
+                messages.warning(request, f'Cargo shipment created, but payment prompt failed: {e}')
+
             ParcelLog.objects.create(
                 parcel=parcel,
-                status='booked',
+                status=parcel.status,
                 location=origin,
                 updated_by=request.user,
-                note='Cargo shipment created by admin.',
+                note=log_note,
             )
             vehicle_id = request.POST.get('vehicle_id')
             if vehicle_id:
@@ -532,7 +630,30 @@ def cargo(request):
                         parcel.save(update_fields=['assigned_vehicle_type','assigned_vehicle_id','assigned_vehicle_name'])
                 except Exception:
                     pass
-            messages.success(request, f'Cargo shipment {parcel.parcel_id} created successfully.')
+
+            try:
+                from django.core.mail import send_mail
+                from django.conf import settings as django_settings
+                recipients = []
+                if sender_email:
+                    recipients.append(sender_email)
+                if recipient_email:
+                    recipients.append(recipient_email)
+                if recipients:
+                    send_mail(
+                        f'SmartTravels Cargo Shipment Created - {parcel.parcel_id}',
+                        f'Your cargo shipment {parcel.parcel_id} from {origin} to {destination} is now registered. Total cost is KES {parcel.shipping_cost:.2f}.',
+                        django_settings.DEFAULT_FROM_EMAIL,
+                        recipients,
+                        fail_silently=True,
+                    )
+            except Exception:
+                pass
+
+            if parcel.status == 'booked':
+                messages.success(request, f'Cargo shipment {parcel.parcel_id} created and marked paid successfully.')
+            else:
+                messages.success(request, f'Cargo shipment {parcel.parcel_id} created successfully. Awaiting payment.')
             return redirect('train_cargo')
         else:
             messages.error(request, 'Please complete sender, recipient, origin and destination information.')

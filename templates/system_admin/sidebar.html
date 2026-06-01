@@ -1,163 +1,214 @@
-<!-- SYSTEM ADMIN SIDEBAR -->
-<aside class="fixed top-0 left-0 w-72 min-h-screen bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-900 text-white shadow-2xl border-r border-indigo-900/40 backdrop-blur-xl z-50">
+<aside class="fixed top-0 left-0 w-72 min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-neutral-950 text-slate-100 shadow-2xl border-r border-slate-800/60 backdrop-blur-xl z-50 flex flex-col justify-between">
 
-    <!-- Logo / Brand -->
-    <div class="px-6 py-6 border-b border-indigo-800/40">
-
-        <div class="flex items-center gap-3">
-
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg">
-                <i class="fas fa-plane-departure text-xl"></i>
-            </div>
-
-            <div>
-                <h2 class="text-xl font-bold tracking-wide">
-                    SmartTravels
-                </h2>
-                <p class="text-xs text-indigo-300">
-                    System Administration
-                </p>
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Admin Profile -->
-    <div class="px-5 py-5 border-b border-indigo-800/30">
-
-        <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-4 border border-white/10 shadow-lg">
-
+    <div>
+        <div class="px-6 py-6 border-b border-slate-800/50">
             <div class="flex items-center gap-3">
-
-                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-lg shadow-md">
-                    {{ request.user.username|first|upper }}
+                <div class="w-10 h-10 rounded-xl bg-indigo-600/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-inner">
+                    <i data-lucide="plane" class="w-5 h-5"></i>
                 </div>
 
                 <div>
-                    <h3 class="font-semibold text-sm">
-                        {{ request.user.username }}
-                    </h3>
-
-                    <p class="text-xs text-indigo-300">
-                        Super Administrator
+                    <h2 class="text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                        SmartTravels
+                    </h2>
+                    <p class="text-[11px] font-medium text-indigo-400/80 tracking-wider uppercase">
+                        System Admin
                     </p>
                 </div>
-
             </div>
-
         </div>
 
+        <div class="px-4 py-4 border-b border-slate-800/30">
+            <div class="bg-white/[0.02] border border-white/[0.05] rounded-xl p-3.5 flex items-center justify-between group hover:bg-white/[0.04] transition duration-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center font-bold text-sm text-white shadow-md">
+                        {{ request.user.username|first|upper }}
+                    </div>
+
+                    <div>
+                        <h3 class="font-medium text-sm text-slate-200 truncate max-w-[130px]">
+                            {{ request.user.username }}
+                        </h3>
+                        <p class="text-[11px] text-slate-400">
+                            Super Admin
+                        </p>
+                    </div>
+                </div>
+                
+                <a href="{% url 'logout' %}" class="text-slate-500 hover:text-rose-400 p-1.5 rounded-md hover:bg-white/5 transition duration-150" title="Logout Session">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+
+        <nav class="mt-4 px-3 space-y-1 flex-1">
+            
+            <a href="{% url 'system_admin_dashboard' %}"
+               class="group flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-sm relative
+               {% if active_page == 'dashboard' %}
+               bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20
+               {% else %}
+               text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]
+               {% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 group-hover:scale-105 transition-transform"></i>
+                    <span>Dashboard</span>
+                </div>
+                {% if active_page == 'dashboard' %}
+                <span class="absolute left-0 top-1/3 bottom-1/3 w-1 bg-indigo-500 rounded-r-md"></span>
+                {% endif %}
+            </a>
+
+            <a href="{% url 'manage_users' %}"
+               class="group flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-sm relative
+               {% if active_page == 'manage_users' %}
+               bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20
+               {% else %}
+               text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]
+               {% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="users" class="w-4 h-4 group-hover:scale-105 transition-transform"></i>
+                    <span>Manage Users</span>
+                </div>
+                {% if active_page == 'manage_users' %}
+                <span class="absolute left-0 top-1/3 bottom-1/3 w-1 bg-indigo-500 rounded-r-md"></span>
+                {% endif %}
+            </a>
+
+            <a href="{% url 'manage_admins' %}"
+               class="group flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-sm relative
+               {% if active_page == 'manage_admins' %}
+               bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20
+               {% else %}
+               text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]
+               {% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="shield-check" class="w-4 h-4 group-hover:scale-105 transition-transform"></i>
+                    <span>Manage Admins</span>
+                </div>
+                {% if active_page == 'manage_admins' %}
+                <span class="absolute left-0 top-1/3 bottom-1/3 w-1 bg-indigo-500 rounded-r-md"></span>
+                {% endif %}
+            </a>
+
+            <a href="{% url 'manage_companies' %}"
+               class="group flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-sm relative
+               {% if active_page == 'manage_companies' %}
+               bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20
+               {% else %}
+               text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]
+               {% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="building" class="w-4 h-4 group-hover:scale-105 transition-transform"></i>
+                    <span>Manage Companies</span>
+                </div>
+                {% if active_page == 'manage_companies' %}
+                <span class="absolute left-0 top-1/3 bottom-1/3 w-1 bg-indigo-500 rounded-r-md"></span>
+                {% endif %}
+            </a>
+
+            <a href="{% url 'system_reports' %}"
+               class="group flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-sm relative
+               {% if active_page == 'system_reports' %}
+               bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20
+               {% else %}
+               text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]
+               {% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 group-hover:scale-105 transition-transform"></i>
+                    <span>Reports</span>
+                </div>
+                {% if active_page == 'system_reports' %}
+                <span class="absolute left-0 top-1/3 bottom-1/3 w-1 bg-indigo-500 rounded-r-md"></span>
+                {% endif %}
+            </a>
+
+            <a href="{% url 'subscribers' %}"
+               class="group flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-sm relative
+               {% if active_page == 'subscribers' %}
+               bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20
+               {% else %}
+               text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]
+               {% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="mail" class="w-4 h-4 group-hover:scale-105 transition-transform"></i>
+                    <span>Subscribers</span>
+                </div>
+                {% if active_page == 'subscribers' %}
+                <span class="absolute left-0 top-1/3 bottom-1/3 w-1 bg-indigo-500 rounded-r-md"></span>
+                {% endif %}
+            </a>
+
+            <a href="{% url 'system_settings' %}"
+               class="group flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-sm relative
+               {% if active_page == 'system_settings' %}
+               bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20
+               {% else %}
+               text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]
+               {% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="sliders" class="w-4 h-4 group-hover:scale-105 transition-transform"></i>
+                    <span>Settings</span>
+                </div>
+                {% if active_page == 'system_settings' %}
+                <span class="absolute left-0 top-1/3 bottom-1/3 w-1 bg-indigo-500 rounded-r-md"></span>
+                {% endif %}
+            </a>
+
+            <a href="{% url 'seat_layout_builder' %}"
+               class="group flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-sm relative
+               {% if active_page == 'seat_layout_builder' %}
+               bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20
+               {% else %}
+               text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]
+               {% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="layout" class="w-4 h-4 group-hover:scale-105 transition-transform"></i>
+                    <span>Seat Layout Builder</span>
+                </div>
+                {% if active_page == 'seat_layout_builder' %}
+                <span class="absolute left-0 top-1/3 bottom-1/3 w-1 bg-indigo-500 rounded-r-md"></span>
+                {% endif %}
+            </a>
+
+            <a href="{% url 'audit_logs' %}"
+               class="group flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-sm relative
+               {% if active_page == 'audit_logs' %}
+               bg-indigo-600/10 text-indigo-400 font-semibold border border-indigo-500/20
+               {% else %}
+               text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]
+               {% endif %}">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="activity" class="w-4 h-4 group-hover:scale-105 transition-transform"></i>
+                    <span>Audit Logs</span>
+                </div>
+                {% if active_page == 'audit_logs' %}
+                <span class="absolute left-0 top-1/3 bottom-1/3 w-1 bg-indigo-500 rounded-r-md"></span>
+                {% endif %}
+            </a>
+
+        </nav>
     </div>
 
-    <!-- Navigation -->
-    <nav class="mt-5 px-4 space-y-2">
-
-        <!-- Dashboard -->
-        <a href="{% url 'system_admin_dashboard' %}"
-           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
-           {% if active_page == 'dashboard' %}
-           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
-           {% else %}
-           hover:bg-white/10 hover:translate-x-1
-           {% endif %}">
-            <i class="fas fa-chart-pie text-lg"></i>
-            <span class="font-medium">Dashboard</span>
-        </a>
-
-        <!-- Users -->
-        <a href="{% url 'manage_users' %}"
-           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
-           {% if active_page == 'manage_users' %}
-           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
-           {% else %}
-           hover:bg-white/10 hover:translate-x-1
-           {% endif %}">
-            <i class="fas fa-users text-lg"></i>
-            <span class="font-medium">Manage Users</span>
-        </a>
-
-        <!-- Admins -->
-        <a href="{% url 'manage_admins' %}"
-           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
-           {% if active_page == 'manage_admins' %}
-           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
-           {% else %}
-           hover:bg-white/10 hover:translate-x-1
-           {% endif %}">
-            <i class="fas fa-user-shield text-lg"></i>
-            <span class="font-medium">Manage Admins</span>
-        </a>
-
-        <!-- Reports -->
-        <a href="{% url 'system_reports' %}"
-           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
-           {% if active_page == 'system_reports' %}
-           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
-           {% else %}
-           hover:bg-white/10 hover:translate-x-1
-           {% endif %}">
-            <i class="fas fa-chart-line text-lg"></i>
-            <span class="font-medium">Reports</span>
-        </a>
-
-        <!-- Subscribers -->
-        <a href="{% url 'subscribers' %}"
-           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
-           {% if active_page == 'subscribers' %}
-           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
-           {% else %}
-           hover:bg-white/10 hover:translate-x-1
-           {% endif %}">
-            <i class="fas fa-envelope-open-text text-lg"></i>
-            <span class="font-medium">Subscribers</span>
-        </a>
-
-        <!-- Settings -->
-        <a href="{% url 'system_settings' %}"
-           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
-           {% if active_page == 'system_settings' %}
-           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
-           {% else %}
-           hover:bg-white/10 hover:translate-x-1
-           {% endif %}">
-            <i class="fas fa-cogs text-lg"></i>
-            <span class="font-medium">Settings</span>
-        </a>
-
-        <!-- Audit Logs -->
-        <a href="{% url 'audit_logs' %}"
-           class="flex items-center gap-3 px-4 py-3 rounded-2xl transition duration-300
-           {% if active_page == 'audit_logs' %}
-           bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-900/40
-           {% else %}
-           hover:bg-white/10 hover:translate-x-1
-           {% endif %}">
-            <i class="fas fa-clipboard-list text-lg"></i>
-            <span class="font-medium">Audit Logs</span>
-        </a>
-
-    </nav>
-
-    <!-- Footer -->
-    <div class="absolute bottom-5 left-4 right-4">
-
-        <div class="bg-gradient-to-r from-indigo-600/20 to-violet-600/20 border border-indigo-500/20 rounded-2xl p-4 text-center backdrop-blur-lg">
-
-            <p class="text-xs text-indigo-200">
+    <div class="p-4">
+        <div class="bg-slate-900/60 border border-slate-800/60 rounded-xl p-3.5 text-center">
+            <p class="text-xs font-semibold text-slate-300">
                 SmartTravels Enterprise
             </p>
-
-            <p class="text-[11px] text-gray-400 mt-1">
-                System Admin Panel v1.0
+            <p class="text-[10px] font-mono text-slate-500 mt-0.5">
+                Build v2.1.0-Admin
             </p>
-
         </div>
-
     </div>
 
 </aside>
 
-<!-- FONT AWESOME -->
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    // Safe initialization block for systems with dynamically rendered pages
+    document.addEventListener("DOMContentLoaded", function() {
+        if(window.lucide) {
+            window.lucide.createIcons();
+        }
+    });
+</script>

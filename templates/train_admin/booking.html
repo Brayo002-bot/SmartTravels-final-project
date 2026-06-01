@@ -104,6 +104,16 @@
                                    required>
                         </div>
 
+                        <div>
+                            <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">
+                                Passenger Email
+                            </label>
+                            <input type="email"
+                                   name="passenger_email"
+                                   placeholder="passenger@example.com"
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-50/50 transition">
+                        </div>
+
                         <!-- Phone -->
                         <div>
                             <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">
@@ -121,12 +131,12 @@
                             <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">
                                 Select Route
                             </label>
-                            <select name="route"
+                            <select id="route-select" name="route"
                                     class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-50/50 transition"
                                     required>
                                 <option value="">Choose route</option>
                                 {% for route in routes %}
-                                <option value="{{ route.id }}">{{ route }}</option>
+                                <option value="{{ route.id }}" data-price="{{ route.price }}" data-first-class-price="{{ route.first_class_price }}" data-business-price="{{ route.business_price }}" data-economy-price="{{ route.economy_price }}">{{ route }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -148,7 +158,7 @@
                         </div>
 
                         <!-- Travel Date -->
-                        <div class="md:col-span-2">
+                        <div class="md:col-span-2 lg:col-span-1">
                             <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">
                                 Travel Date
                             </label>
@@ -156,6 +166,18 @@
                                    name="travel_date"
                                    class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-50/50 transition"
                                    required>
+                        </div>
+
+                        <div class="md:col-span-2 lg:col-span-1">
+                            <label class="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">
+                                Seat Class
+                            </label>
+                            <select id="seat-class" name="seat_class" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-50/50 transition">
+                                <option value="">Standard</option>
+                                <option value="First">First</option>
+                                <option value="Business">Business</option>
+                                <option value="Economy">Economy</option>
+                            </select>
                         </div>
                     </div>
 
@@ -165,6 +187,7 @@
                         <div id="seat-grid" class="flex flex-col gap-4 mb-4"></div>
                         <input type="hidden" id="selected-seat" name="seat_number">
                         <p id="seat-status" class="text-sm font-medium text-blue-600 bg-blue-50 inline-block px-3 py-1.5 rounded-lg empty:hidden"></p>
+                        <p id="seat-price-display" class="text-sm text-slate-600 mt-2"></p>
                     </div>
 
                     <!-- BUTTON -->
@@ -338,6 +361,7 @@ function loadTrainSeats() {
     if (!trainId) {
         seatSection.style.display = 'none';
         document.getElementById('selected-seat').value = '';
+        document.getElementById('seat-price-display').textContent = '';
         return;
     }
 
@@ -380,7 +404,15 @@ function loadTrainSeats() {
                             btn.className = 'w-11 h-11 text-xs rounded-lg bg-white border border-slate-200 text-slate-700 font-bold shadow-sm hover:border-blue-500 hover:text-blue-600 transition duration-150 seat-btn'; 
                             btn.addEventListener('click', () => {
                                 document.getElementById('selected-seat').value = cell.seat_number;
-                                document.getElementById('seat-status').textContent = `Selected Seat: ${cell.seat_number}`;
+                                const seatClassSelect = document.getElementById('seat-class');
+                                if (seatClassSelect) {
+                                    seatClassSelect.value = cell.seat_class;
+                                }
+                                document.getElementById('seat-status').textContent = `Selected Seat: ${cell.seat_number} (${cell.seat_class})`;
+                                const price = getSeatPriceForClass(cell.seat_class);
+                                if (price !== null) {
+                                    document.getElementById('seat-price-display').textContent = `Seat price: KES ${price.toFixed(2)}`;
+                                }
                                 document.querySelectorAll('#seat-grid .seat-btn').forEach(b => b.classList.remove('ring-2','ring-blue-500','border-blue-500','bg-blue-50','text-blue-600'));
                                 btn.classList.add('ring-2','ring-blue-500','border-blue-500','bg-blue-50','text-blue-600');
                             }); 
@@ -404,7 +436,12 @@ function loadTrainSeats() {
                     btn.onclick = (e) => {
                         e.preventDefault();
                         document.getElementById('selected-seat').value = seat;
+                        const seatClassSelect = document.getElementById('seat-class');
+                        if (seatClassSelect) {
+                            seatClassSelect.value = '';
+                        }
                         document.getElementById('seat-status').textContent = `Selected Seat: ${seat}`;
+                        document.getElementById('seat-price-display').textContent = '';
                         document.querySelectorAll('#seat-grid .seat-btn').forEach(b => b.classList.remove('ring-2','ring-blue-500','border-blue-500','bg-blue-50','text-blue-600'));
                         btn.classList.add('ring-2','ring-blue-500','border-blue-500','bg-blue-50','text-blue-600');
                     };
@@ -415,10 +452,27 @@ function loadTrainSeats() {
             } else {
                 seatSection.style.display = 'none';
                 document.getElementById('seat-status').textContent = 'No seats available';
+                document.getElementById('seat-price-display').textContent = '';
             }
         })
         .catch(e => console.error(e));
 }
-</script>
+function getSeatPriceForClass(seatClass) {
+    const routeSelect = document.getElementById('route-select');
+    if (!routeSelect) return null;
+    const selectedOption = routeSelect.options[routeSelect.selectedIndex];
+    if (!selectedOption) return null;
+    const basePrice = parseFloat(selectedOption.dataset.price || '0') || 0;
+    if (seatClass === 'First') {
+        return parseFloat(selectedOption.dataset.firstClassPrice || '') || basePrice;
+    }
+    if (seatClass === 'Business') {
+        return parseFloat(selectedOption.dataset.businessPrice || '') || basePrice;
+    }
+    if (seatClass === 'Economy') {
+        return parseFloat(selectedOption.dataset.economyPrice || '') || basePrice;
+    }
+    return basePrice;
+}</script>
 </body>
 </html>

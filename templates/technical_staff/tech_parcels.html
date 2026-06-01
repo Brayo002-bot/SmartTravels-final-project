@@ -60,28 +60,43 @@
                         <p class="text-sm text-slate-500 mt-1">Complete the manifest info below to construct the live routing token.</p>
                     </div>
 
-                    <form method="POST" class="space-y-6">
+                    <form method="POST" enctype="multipart/form-data" id="parcelForm" class="space-y-6">
                         {% csrf_token %}
+                        <input type="hidden" name="prompt_action" id="promptAction" value="">
+                        <input type="hidden" id="promptSentFlag" name="prompt_sent_flag" value="{{ prompt_sent|yesno:'1,0' }}">
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Sender Full Name</label>
-                                <input type="text" name="sender_name" placeholder="Elisha Matangi" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
+                                <input type="text" name="sender_name" placeholder="Elisha Matangi" value="{{ form_data.sender_name|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
                             </div>
-
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Sender Email</label>
+                                <input type="email" name="sender_email" placeholder="sender@example.com" value="{{ form_data.sender_email|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
+                            </div>
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Receiver Full Name</label>
-                                <input type="text" name="receiver_name" placeholder="Brian Odhiambo" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
+                                <input type="text" name="receiver_name" placeholder="Brian Odhiambo" value="{{ form_data.receiver_name|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
                             </div>
-
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Receiver Email</label>
+                                <input type="email" name="recipient_email" placeholder="receiver@example.com" value="{{ form_data.recipient_email|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
+                            </div>
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Sender Phone Number</label>
-                                <input type="text" id="senderPhone" name="phone" placeholder="e.g., +254712345678" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
+                                <input type="text" id="senderPhone" name="phone" placeholder="e.g., +254712345678" value="{{ form_data.sender_phone|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
                             </div>
-
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Receiver Phone Number</label>
+                                <input type="text" name="receiver_phone" placeholder="e.g., +254798765432" value="{{ form_data.receiver_phone|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
+                            </div>
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Handling Carrier Company</label>
                                 <input type="text" value="{{ user.company.name }}" name="company" class="w-full px-3 py-2.5 bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-500 font-medium cursor-not-allowed" readonly>
+                            </div>
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Package Image (optional)</label>
+                                <input type="file" name="item_image" accept="image/*" class="w-full text-sm text-slate-700 border border-slate-200 rounded-lg bg-white px-3 py-2.5 outline-none">
                             </div>
                         </div>
 
@@ -156,31 +171,35 @@
                             </div>
                         </div>
 
-                        <div class="border-t border-slate-100 pt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="border-t border-slate-100 pt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Classification</label>
                                 <select name="parcel_type" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none">
-                                    <option value="Documents">📄 Documents</option>
-                                    <option value="Electronics">⚡ Electronics</option>
-                                    <option value="Food">🍎 Food Material</option>
-                                    <option value="Fragile">💎 Fragile Cargo</option>
-                                    <option value="Clothes">👕 Apparel / Clothes</option>
-                                    <option value="Other">📦 Miscellaneous</option>
+                                    <option value="documents" {% if form_data.parcel_type == 'documents' %}selected{% endif %}>📄 Documents</option>
+                                    <option value="electronics" {% if form_data.parcel_type == 'electronics' %}selected{% endif %}>⚡ Electronics</option>
+                                    <option value="food" {% if form_data.parcel_type == 'food' %}selected{% endif %}>🍎 Food Material</option>
+                                    <option value="fragile" {% if form_data.parcel_type == 'fragile' %}selected{% endif %}>💎 Fragile Cargo</option>
+                                    <option value="clothing" {% if form_data.parcel_type == 'clothing' %}selected{% endif %}>👕 Apparel / Clothes</option>
+                                    <option value="other" {% if form_data.parcel_type == 'other' %}selected{% endif %}>📦 Miscellaneous</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Dead Weight (KG)</label>
-                                <input type="number" step="0.1" name="weight" placeholder="0.0" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none">
+                                <input type="number" step="0.1" name="weight" placeholder="0.0" value="{{ form_data.weight|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Estimated Item Cost</label>
+                                <input type="number" step="0.01" name="declared_value" placeholder="0" value="{{ form_data.declared_value|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none">
                             </div>
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Agreed Fare (KES)</label>
-                                <input type="number" id="amountInput" name="amount" placeholder="0" class="w-full px-3 py-2.5 bg-emerald-50/50 border border-emerald-200 rounded-lg text-sm font-semibold text-emerald-800 placeholder-emerald-400 focus:bg-white focus:border-emerald-500 outline-none" required>
+                                <input type="number" id="amountInput" name="amount" placeholder="0" value="{{ form_data.amount|default:'' }}" class="w-full px-3 py-2.5 bg-emerald-50/50 border border-emerald-200 rounded-lg text-sm font-semibold text-emerald-800 placeholder-emerald-400 focus:bg-white focus:border-emerald-500 outline-none" required>
                             </div>
                         </div>
 
                         <div>
                             <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Content Manifest Description</label>
-                            <textarea name="description" rows="3" placeholder="Identify declarations or exceptional handling handling metadata..." class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none"></textarea>
+                            <textarea name="description" rows="3" placeholder="Identify declarations or exceptional handling metadata..." class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none">{{ form_data.description|default:'' }}</textarea>
                         </div>
 
                         <div class="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-4">
@@ -190,18 +209,18 @@
                                     <h4 class="text-sm font-bold text-slate-700">M-Pesa STK Push Gateway</h4>
                                 </div>
                                 <select name="payment_status" class="px-2 py-1 bg-white border border-slate-200 rounded-md text-xs font-medium text-slate-600 outline-none">
-                                    <option value="Paid">Instant Clear (Paid)</option>
                                     <option value="Pending">On Delivery (Pending)</option>
+                                    <option value="Paid">Instant Clear (Paid)</option>
                                 </select>
                             </div>
                             
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <button type="button" onclick="promptSameNumber()" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2 px-4 rounded-lg text-xs font-medium transition shadow-sm">
+                                <button type="button" id="billSenderBtn" onclick="submitAction('send_stk', true)" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2 px-4 rounded-lg text-xs font-medium transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                                     Bill Primary Sender Phone
                                 </button>
                                 <div class="flex gap-2">
                                     <input type="text" id="paymentPhone" placeholder="Alternative Phone" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:border-slate-400">
-                                    <button type="button" onclick="promptAlternativeNumber()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 rounded-lg text-xs font-medium transition">
+                                    <button type="button" id="billAltBtn" onclick="submitAction('send_stk', false)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 rounded-lg text-xs font-medium transition disabled:opacity-50 disabled:cursor-not-allowed">
                                         Bill Alt
                                     </button>
                                 </div>
@@ -212,9 +231,34 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-3 px-4 rounded-lg shadow-sm transition">
-                            Process Waybill &amp; Encrypt Trackable QR Code
-                        </button>
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-[11px]">
+                                <div class="px-3 py-2 rounded-lg {% if prompt_sent %}bg-emerald-50 border border-emerald-200 text-emerald-700{% else %}bg-slate-100 border border-slate-200 text-slate-500{% endif %}">
+                                    <div class="font-semibold">1. Confirm</div>
+                                    <div>{% if prompt_sent %}✓ Sent{% else %}Pending{% endif %}</div>
+                                </div>
+                                <div class="px-3 py-2 rounded-lg {% if stk_sent %}bg-emerald-50 border border-emerald-200 text-emerald-700{% else %}bg-slate-100 border border-slate-200 text-slate-500{% endif %}">
+                                    <div class="font-semibold">2. Collect Payment</div>
+                                    <div>{% if stk_sent %}✓ {{ stk_phone }}{% else %}Pending{% endif %}</div>
+                                </div>
+                                <div class="px-3 py-2 rounded-lg {% if stk_sent %}bg-emerald-50 border border-emerald-200 text-emerald-700{% else %}bg-slate-100 border border-slate-200 text-slate-500{% endif %}">
+                                    <div class="font-semibold">3. Process QR</div>
+                                    <div>{% if stk_sent %}Ready{% else %}Locked{% endif %}</div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <button type="button" id="promptBtn" onclick="submitAction('send_prompt', null)" {% if prompt_sent %}disabled{% endif %} class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-lg text-sm font-semibold transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                    {% if prompt_sent %}✓ Confirmation Sent{% else %}Send Confirmation{% endif %}
+                                </button>
+                                <button type="button" id="stkBtn" onclick="submitAction('send_stk', true)" {% if not prompt_sent %}disabled{% endif %} class="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 px-4 rounded-lg text-sm font-semibold transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                    {% if stk_sent %}✓ Payment Sent{% else %}Collect Payment{% endif %}
+                                </button>
+                                <button type="button" id="processBtn" onclick="submitAction('process_waybill', null)" {% if not stk_sent %}disabled{% endif %} class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-3 px-4 rounded-lg shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                    {% if stk_sent %}Generate QR & Print{% else %}Awaiting Payment{% endif %}
+                                </button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -326,28 +370,50 @@
 </div>
 
 <script>
-function promptSameNumber() {
+function submitAction(action, useSenderPhone) {
+    const promptSent = document.getElementById('promptSentFlag').value === '1';
     const senderPhone = document.getElementById('senderPhone').value;
-    const amount = document.getElementById('amountInput').value;
-
-    if (!senderPhone || !amount) {
-        alert('Validation Exception: Primary Sender Phone and Agreed Fare value inputs must be completed first.');
-        return;
-    }
-    document.getElementById('activePromptNumber').innerText = senderPhone;
-    alert(`STK Push Sequence Triggered: Requesting KES ${amount} collection from subscriber destination endpoint: ${senderPhone}`);
-}
-
-function promptAlternativeNumber() {
     const altPhone = document.getElementById('paymentPhone').value;
     const amount = document.getElementById('amountInput').value;
 
-    if (!altPhone || !amount) {
-        alert('Validation Exception: Alternative Billing field entries and Agreed Fare values must be configured first.');
-        return;
+    if (action === 'send_prompt') {
+        document.getElementById('promptAction').value = 'send_prompt';
+        document.getElementById('parcelForm').submit();
+    } else if (action === 'send_stk') {
+        if (!promptSent) {
+            alert('Send the confirmation prompt to sender and receiver first.');
+            return;
+        }
+        
+        let selectedPhone = '';
+        if (useSenderPhone) {
+            selectedPhone = senderPhone;
+        } else {
+            selectedPhone = altPhone;
+        }
+
+        if (!selectedPhone) {
+            alert('Please select or enter a phone number for payment collection.');
+            return;
+        }
+
+        if (!amount || parseFloat(amount) <= 0) {
+            alert('Please enter a valid amount for payment.');
+            return;
+        }
+
+        document.getElementById('activePromptNumber').innerText = selectedPhone;
+        document.getElementById('promptAction').value = 'send_stk';
+        if (!useSenderPhone) {
+            document.getElementById('paymentPhone').name = 'payment_phone';
+        } else {
+            document.getElementById('senderPhone').name = 'phone';
+        }
+        document.getElementById('parcelForm').submit();
+    } else if (action === 'process_waybill') {
+        document.getElementById('promptAction').value = 'process_waybill';
+        document.getElementById('parcelForm').submit();
     }
-    document.getElementById('activePromptNumber').innerText = altPhone;
-    alert(`STK Push Alternate Sequence Triggered: Requesting KES ${amount} collection from client destination endpoint: ${altPhone}`);
 }
 </script>
 

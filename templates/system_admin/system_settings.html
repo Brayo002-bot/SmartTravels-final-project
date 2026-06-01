@@ -2,336 +2,283 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>System Settings • SmartTravels</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-<style>
-body{
-    font-family:'Plus Jakarta Sans',sans-serif;
-}
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings • SmartTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 via-indigo-50 to-slate-200 min-h-screen">
+<body class="bg-[#f8fafc] text-slate-900 min-h-screen antialiased">
 
 <div class="flex">
 
-{% include 'system_admin/sidebar.html' with active_page='system_settings' %}
+    {% include 'system_admin/sidebar.html' with active_page='system_settings' %}
 
-<!-- MAIN -->
-<div class="ml-72 w-full p-8">
+    <div class="ml-72 w-full p-8 max-w-7xl mx-auto">
 
-    <!-- HEADER -->
-    <div class="bg-white/60 backdrop-blur-xl rounded-3xl shadow-xl border border-white/30 p-6 mb-8">
-
-        <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
-
+        <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 pb-6 mb-6 border-b border-slate-200">
             <div>
-
-                <p class="text-indigo-600 font-medium mb-1">
+                <nav class="text-xs font-semibold text-indigo-600 tracking-wider uppercase mb-1">
                     SmartTravels Control Center
-                </p>
-
-                <h1 class="text-3xl font-bold text-slate-800">
+                </nav>
+                <h1 class="text-2xl font-bold tracking-tight text-slate-900">
                     System Settings & Configuration
                 </h1>
-
-                <p class="text-slate-500">
-                    Configure platform behavior, visibility and system operations
+                <p class="text-sm text-slate-500 mt-0.5">
+                    Configure platform behavior, localization options, external APIs, and custom operational values.
                 </p>
-
             </div>
-
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white flex items-center justify-center shadow-lg">
-                <i class="fas fa-sliders text-2xl"></i>
+            <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100">
+                <i class="fas fa-sliders text-base"></i>
             </div>
-
         </div>
 
-    </div>
-
-    <!-- ALERTS -->
-    {% if messages %}
-    <div class="mb-6 space-y-3">
-        {% for message in messages %}
-        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-4 rounded-2xl shadow-sm">
-            {{ message }}
+        {% if messages %}
+        <div class="mb-6 space-y-3">
+            {% for message in messages %}
+            <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm shadow-sm">
+                <i class="fas fa-circle-check text-emerald-600 text-base"></i>
+                <span class="font-medium">{{ message }}</span>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+        {% endif %}
 
-    <!-- STATUS CARDS -->
-    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-xl">
-            <div class="flex justify-between">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-emerald-100">
-                        System Mode
-                    </p>
-                    <h2 class="text-2xl font-bold mt-2">
-                        Operational
-                    </h2>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">System Mode</p>
+                    <h3 class="text-lg font-bold text-emerald-600 mt-1">Operational</h3>
                 </div>
-                <i class="fas fa-power-off text-3xl"></i>
+                <div class="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                    <i class="fas fa-power-off text-sm"></i>
+                </div>
             </div>
-        </div>
 
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl">
-            <div class="flex justify-between">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-indigo-100">
-                        Database
-                    </p>
-                    <h2 class="text-2xl font-bold mt-2">
-                        Connected
-                    </h2>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Database</p>
+                    <h3 class="text-lg font-bold text-slate-900 mt-1">Connected</h3>
                 </div>
-                <i class="fas fa-database text-3xl"></i>
+                <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <i class="fas fa-database text-sm"></i>
+                </div>
             </div>
-        </div>
 
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-xl">
-            <div class="flex justify-between">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-sky-100">
-                        API Status
-                    </p>
-                    <h2 class="text-2xl font-bold mt-2">
-                        Active
-                    </h2>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">API Gateway</p>
+                    <h3 class="text-lg font-bold text-sky-600 mt-1">Active</h3>
                 </div>
-                <i class="fas fa-plug text-3xl"></i>
+                <div class="w-9 h-9 rounded-lg bg-sky-50 flex items-center justify-center text-sky-600">
+                    <i class="fas fa-plug text-sm"></i>
+                </div>
             </div>
-        </div>
 
-        <div class="rounded-3xl p-6 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xl">
-            <div class="flex justify-between">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-amber-100">
-                        Last Update
-                    </p>
-                    <h2 class="text-2xl font-bold mt-2">
-                        Today
-                    </h2>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Last Config Change</p>
+                    <h3 class="text-lg font-bold text-slate-700 mt-1">Today</h3>
                 </div>
-                <i class="fas fa-clock text-3xl"></i>
+                <div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
+                    <i class="fas fa-clock text-sm"></i>
+                </div>
             </div>
         </div>
 
-    </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                    <div class="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
+                        <i class="fas fa-plus-circle text-slate-400 text-sm"></i>
+                        <h2 class="font-semibold text-base text-slate-800">Add / Update Variable</h2>
+                    </div>
 
-    <!-- SETTINGS FORM -->
-    <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl border border-white/30 p-6 mb-8">
+                    <form method="POST" class="space-y-4">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Setting Key</label>
+                            <input type="text" name="key" required placeholder="e.g., site_name"
+                                   class="w-full text-sm rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-slate-800 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition">
+                        </div>
 
-        <div class="flex items-center gap-3 mb-5">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Value</label>
+                            <input type="text" name="value" required placeholder="e.g., SmartTravels"
+                                   class="w-full text-sm rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-slate-800 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition">
+                        </div>
 
-            <div class="w-11 h-11 rounded-2xl bg-indigo-100 flex items-center justify-center">
-                <i class="fas fa-gear text-indigo-600"></i>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Description</label>
+                            <textarea name="description" rows="3" placeholder="Explain what this configuration controls..."
+                                      class="w-full text-sm rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-slate-800 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition"></textarea>
+                        </div>
+
+                        <div class="pt-2">
+                            <label class="inline-flex items-center gap-2.5 cursor-pointer group">
+                                <input type="checkbox" name="is_public" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 w-4 h-4 transition">
+                                <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition">Publicly Visible <span class="text-slate-400 font-normal text-xs">(exposed via client endpoints)</span></span>
+                            </label>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-100">
+                            <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition">
+                                <i class="fas fa-save mr-2 text-indigo-200 text-xs"></i> Save Setting
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <div>
-                <h2 class="text-xl font-bold text-slate-800">
-                    Add / Update System Setting
+            <div class="lg:col-span-2 space-y-6">
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
+                            <i class="fas fa-sliders text-slate-400 text-sm"></i>
+                            <h2 class="font-semibold text-base text-slate-800">General Core Parameters</h2>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Platform Name</label>
+                                <input type="text" name="platform_name" value="SmartTravels" class="w-full text-sm rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-slate-800 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Support Email</label>
+                                <input type="email" name="support_email" value="support@smarttravels.co.ke" class="w-full text-sm rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-slate-800 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Support Phone</label>
+                                <input type="text" name="support_phone" value="+254 700 000 000" class="w-full text-sm rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-slate-800 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Default Currency</label>
+                                <select name="default_currency" class="w-full text-sm rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-slate-800 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition">
+                                    <option value="KES" selected>KES — Kenyan Shilling</option>
+                                    <option value="USD">USD — United States Dollar</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
+                            <i class="fas fa-credit-card text-slate-400 text-sm"></i>
+                            <h2 class="font-semibold text-base text-slate-800">M-Pesa API Integration Gateway</h2>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Business Shortcode</label>
+                                <input type="text" name="mpesa_shortcode" placeholder="174379" class="w-full text-sm rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-slate-800 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Environment Mode</label>
+                                <select name="mpesa_environment" class="w-full text-sm rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-slate-800 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition">
+                                    <option value="sandbox" selected>Sandbox Testing Environment</option>
+                                    <option value="production">Live Production Environment</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-100">
+                            <i class="fas fa-language text-slate-400 text-sm"></i>
+                            <h2 class="font-semibold text-base text-slate-800">Language & Localisation</h2>
+                        </div>
+                        <div class="flex gap-6">
+                            <label class="inline-flex items-center gap-2.5 cursor-pointer group">
+                                <input type="checkbox" name="languages" value="en" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 w-4 h-4 transition">
+                                <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition">English</span>
+                            </label>
+                            <label class="inline-flex items-center gap-2.5 cursor-pointer group">
+                                <input type="checkbox" name="languages" value="sw" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 w-4 h-4 transition">
+                                <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition">Swahili (Kiswahili)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3">
+                        <button type="submit" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg shadow-sm transition">
+                            Update Parameters
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50/50">
+                <h2 class="text-sm font-bold text-slate-800">
+                    Active System Variable Registry
                 </h2>
-
-                <p class="text-sm text-slate-500">
-                    Manage configuration values and platform settings
+                <p class="text-xs text-slate-500 mt-0.5">
+                    Live parameters running inside runtime configurations.
                 </p>
             </div>
 
-        </div>
-
-        <form method="POST" class="space-y-6">
-
-            {% csrf_token %}
-
-            <div class="grid md:grid-cols-2 gap-6">
-
-                <!-- KEY -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-600 mb-2">
-                        Setting Key
-                    </label>
-
-                    <input
-                        type="text"
-                        name="key"
-                        required
-                        placeholder="site_name"
-                        class="w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none">
-                </div>
-
-                <!-- VALUE -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-600 mb-2">
-                        Value
-                    </label>
-
-                    <input
-                        type="text"
-                        name="value"
-                        required
-                        placeholder="SmartTravels"
-                        class="w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none">
-                </div>
-
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                            <th class="p-4 w-64">Configuration Key</th>
+                            <th class="p-4 w-64">Live Value</th>
+                            <th class="p-4">Context Description</th>
+                            <th class="p-4 w-32 text-center">Visibility</th>
+                            <th class="p-4 w-44">Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                        {% for setting in settings %}
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="p-4 font-mono text-xs text-indigo-600 font-semibold tracking-wide">
+                                {{ setting.key }}
+                            </td>
+                            <td class="p-4 font-medium text-slate-900 break-all max-w-xs">
+                                {{ setting.value }}
+                            </td>
+                            <td class="p-4 text-slate-500 text-xs">
+                                {{ setting.description|default:'—'|truncatechars:80 }}
+                            </td>
+                            <td class="p-4 text-center whitespace-nowrap">
+                                {% if setting.is_public %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                    Public
+                                </span>
+                                {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                    Private
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="p-4 whitespace-nowrap text-xs text-slate-400 font-mono">
+                                {{ setting.updated_at|date:"Y-m-d H:i" }}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-12 px-4 text-slate-400 bg-slate-50/10">
+                                <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3 text-slate-400">
+                                    <i class="fas fa-sliders text-base"></i>
+                                </div>
+                                <p class="text-sm font-medium text-slate-600">No runtime parameters configured</p>
+                                <p class="text-xs text-slate-400 mt-0.5">Custom layout key/value pairs will render inside this matrix module.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-
-            <!-- DESCRIPTION -->
-            <div>
-
-                <label class="block text-sm font-semibold text-slate-600 mb-2">
-                    Description
-                </label>
-
-                <textarea
-                    name="description"
-                    rows="4"
-                    placeholder="Explain what this setting controls..."
-                    class="w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-
-            </div>
-
-            <!-- PUBLIC -->
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-                <label class="flex items-center gap-3 text-sm font-semibold text-slate-700">
-
-                    <input
-                        type="checkbox"
-                        name="is_public"
-                        class="w-5 h-5 accent-indigo-600">
-
-                    Public Setting
-                    <span class="text-slate-400 font-normal">
-                        (visible to users)
-                    </span>
-
-                </label>
-
-                <button
-                    type="submit"
-                    class="px-6 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg hover:scale-105 transition">
-
-                    <i class="fas fa-save mr-2"></i>
-                    Save Setting
-
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
-
-    <!-- SETTINGS TABLE -->
-    <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl border border-white/30 overflow-hidden">
-
-        <!-- HEADER -->
-        <div class="px-6 py-5 border-b border-slate-200">
-
-            <h2 class="text-xl font-bold text-slate-800">
-                Current Configuration
-            </h2>
-
-            <p class="text-sm text-slate-500">
-                Active SmartTravels system settings
-            </p>
-
-        </div>
-
-        <div class="overflow-x-auto">
-
-            <table class="w-full">
-
-                <thead class="bg-slate-100 text-slate-600 text-sm">
-
-                    <tr>
-                        <th class="p-4 text-left">Key</th>
-                        <th class="p-4 text-left">Value</th>
-                        <th class="p-4 text-left">Description</th>
-                        <th class="p-4 text-left">Visibility</th>
-                        <th class="p-4 text-left">Updated</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                {% for setting in settings %}
-
-                <tr class="border-t border-slate-100 hover:bg-indigo-50/40 transition">
-
-                    <td class="p-4 font-mono text-sm text-slate-800">
-                        {{ setting.key }}
-                    </td>
-
-                    <td class="p-4 font-semibold text-slate-700">
-                        {{ setting.value }}
-                    </td>
-
-                    <td class="p-4 text-slate-600">
-                        {{ setting.description|default:'-'|truncatechars:80 }}
-                    </td>
-
-                    <td class="p-4">
-
-                        {% if setting.is_public %}
-                        <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">
-                            Public
-                        </span>
-                        {% else %}
-                        <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold">
-                            Private
-                        </span>
-                        {% endif %}
-
-                    </td>
-
-                    <td class="p-4 text-sm text-slate-500">
-                        {{ setting.updated_at|date:"M d, Y H:i" }}
-                    </td>
-
-                </tr>
-
-                {% empty %}
-
-                <tr>
-
-                    <td colspan="5"
-                        class="text-center p-8 text-slate-500">
-
-                        <i class="fas fa-sliders text-4xl mb-3 text-slate-300"></i>
-
-                        <p>No system settings configured yet.</p>
-
-                    </td>
-
-                </tr>
-
-                {% endfor %}
-
-                </tbody>
-
-            </table>
-
         </div>
 
     </div>
-
-</div>
 </div>
 
 </body>

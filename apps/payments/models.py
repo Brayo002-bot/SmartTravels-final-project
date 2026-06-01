@@ -112,5 +112,31 @@ class MPesaService:
     @staticmethod
     def _norm(ph):
         ph = ph.replace(' ','').replace('-','').replace('+','')
-        if ph.startswith('0'): ph = '254' + ph[1:]
+        if ph.startswith('0'):
+            ph = '254' + ph[1:]
         return ph
+
+
+def normalize_phone(ph):
+    if not ph:
+        return ''
+    ph = str(ph).strip().replace(' ', '').replace('-', '').replace('+', '')
+    if ph.startswith('0'):
+        return '254' + ph[1:]
+    return ph
+
+
+def find_passenger_user(email='', phone=''):
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+
+    email = (email or '').strip()
+    phone = normalize_phone(phone)
+    qs = User.objects.filter(role='passenger')
+
+    if email:
+        qs = qs.filter(email__iexact=email)
+    if phone:
+        qs = qs.filter(models.Q(phone_number__iexact=phone) | models.Q(phone_number__iexact=phone[2:] if phone.startswith('254') else phone))
+
+    return qs.first()

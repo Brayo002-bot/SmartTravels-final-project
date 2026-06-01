@@ -103,6 +103,12 @@
                     </div>
 
                     <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Passenger Email</label>
+                        <input type="email" name="passenger_email" placeholder="passenger@example.com"
+                               class="w-full text-sm border border-slate-200 rounded-xl py-2 px-3.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition outline-none bg-white/50">
+                    </div>
+
+                    <div>
                         <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Phone Number</label>
                         <input type="text" name="phone" placeholder="e.g., +1 234 567 890"
                                class="w-full text-sm border border-slate-200 rounded-xl py-2 px-3.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition outline-none bg-white/50" required>
@@ -110,10 +116,10 @@
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Route</label>
-                        <select name="route" class="w-full text-sm border border-slate-200 rounded-xl py-2 px-3.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition outline-none bg-white/50" required>
+                        <select id="route-select" name="route" class="w-full text-sm border border-slate-200 rounded-xl py-2 px-3.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition outline-none bg-white/50" required>
                             <option value="">Select Route</option>
                             {% for route in routes %}
-                            <option value="{{ route.id }}">{{ route }}</option>
+                            <option value="{{ route.id }}" data-price="{{ route.price }}" data-first-class-price="{{ route.first_class_price }}" data-business-price="{{ route.business_price }}" data-economy-price="{{ route.economy_price }}">{{ route }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -135,11 +141,22 @@
                                class="w-full text-sm border border-slate-200 rounded-xl py-2 px-3.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition outline-none bg-white/50" required>
                     </div>
 
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Seat Class</label>
+                        <select id="seat-class" name="seat_class" class="w-full text-sm border border-slate-200 rounded-xl py-2 px-3.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition outline-none bg-white/50">
+                            <option value="">Standard</option>
+                            <option value="First">First</option>
+                            <option value="Business">Business</option>
+                            <option value="Economy">Economy</option>
+                        </select>
+                    </div>
+
                     <div id="seat-section" class="pt-2 border-t border-slate-200/60" style="display:none;">
                         <h3 class="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Select Seat</h3>
                         <div id="seat-grid" class="space-y-3 max-h-60 overflow-y-auto pr-1"></div>
                         <input type="hidden" id="selected-seat" name="seat_number">
                         <p id="seat-status" class="text-xs font-medium text-blue-600 mt-2"></p>
+                        <p id="seat-price-display" class="text-xs text-slate-500 mt-1"></p>
                     </div>
 
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-semibold transition shadow-sm shadow-blue-200 mt-2">
@@ -220,6 +237,7 @@ function loadFlightSeats() {
     if (!flightId) {
         seatSection.style.display = 'none';
         document.getElementById('selected-seat').value = '';
+        document.getElementById('seat-price-display').textContent = '';
         return;
     }
     const travelDate = document.querySelector('input[name="travel_date"]').value;
@@ -259,7 +277,15 @@ function loadFlightSeats() {
                             btn.className = 'w-9 h-9 text-xs rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition duration-150 seat-btn'; 
                             btn.addEventListener('click', () => {
                                 document.getElementById('selected-seat').value = cell.seat_number;
-                                document.getElementById('seat-status').textContent = `Selected: Seat ${cell.seat_number}`;
+                                const seatClassSelect = document.getElementById('seat-class');
+                                if (seatClassSelect) {
+                                    seatClassSelect.value = cell.seat_class;
+                                }
+                                document.getElementById('seat-status').textContent = `Selected: Seat ${cell.seat_number} (${cell.seat_class})`;
+                                const price = getSeatPriceForClass(cell.seat_class);
+                                if (price !== null) {
+                                    document.getElementById('seat-price-display').textContent = `Seat price: KES ${price.toFixed(2)}`;
+                                }
                                 document.querySelectorAll('.seat-btn').forEach(b => {
                                     b.classList.remove('bg-blue-600', 'text-white', 'hover:bg-blue-700');
                                     b.classList.add('bg-slate-100', 'text-slate-700');
@@ -285,7 +311,12 @@ function loadFlightSeats() {
                     btn.onclick = (e) => { 
                         e.preventDefault(); 
                         document.getElementById('selected-seat').value = seat; 
+                        const seatClassSelect = document.getElementById('seat-class');
+                        if (seatClassSelect) {
+                            seatClassSelect.value = '';
+                        }
                         document.getElementById('seat-status').textContent = `Selected: Seat ${seat}`; 
+                        document.getElementById('seat-price-display').textContent = '';
                         document.querySelectorAll('.seat-btn').forEach(b => {
                             b.classList.remove('bg-blue-600', 'text-white', 'hover:bg-blue-700');
                             b.classList.add('bg-slate-100', 'text-slate-700');
@@ -300,9 +331,28 @@ function loadFlightSeats() {
             } else {
                 seatSection.style.display = 'none';
                 document.getElementById('seat-status').textContent = 'No seats available';
+                document.getElementById('seat-price-display').textContent = '';
             }
         })
         .catch(e => console.error(e));
+}
+
+function getSeatPriceForClass(seatClass) {
+    const routeSelect = document.getElementById('route-select');
+    if (!routeSelect) return null;
+    const selectedOption = routeSelect.options[routeSelect.selectedIndex];
+    if (!selectedOption) return null;
+    const basePrice = parseFloat(selectedOption.dataset.price || '0') || 0;
+    if (seatClass === 'First') {
+        return parseFloat(selectedOption.dataset.firstClassPrice || '') || basePrice;
+    }
+    if (seatClass === 'Business') {
+        return parseFloat(selectedOption.dataset.businessPrice || '') || basePrice;
+    }
+    if (seatClass === 'Economy') {
+        return parseFloat(selectedOption.dataset.economyPrice || '') || basePrice;
+    }
+    return basePrice;
 }
 </script>
 

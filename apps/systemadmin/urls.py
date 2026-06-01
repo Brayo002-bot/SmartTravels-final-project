@@ -4,9 +4,11 @@ from . import seat_views
 
 urlpatterns = [
     path('dashboard/',          views.system_admin_dashboard, name='system_admin_dashboard'),
+    path('seat-layout-builder/', views.seat_layout_builder,     name='seat_layout_builder'),
     path('users/',              views.manage_users,           name='manage_users'),
     path('users/<int:user_id>/toggle/', views.toggle_user_status, name='toggle_user_status'),
     path('admins/',             views.manage_admins,          name='manage_admins'),
+     path('companies/',          views.manage_companies,       name='manage_companies'),
     path('analytics/',          views.analytics,              name='system_analytics'),
     path('reports/',             views.analytics,              name='system_reports'),
     path('audit/',              views.audit_logs,             name='audit_logs'),

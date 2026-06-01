@@ -348,14 +348,19 @@ def passenger_payments(request):
 
     from apps.payments.models import Payment
 
-    payments = list(Payment.objects.filter(passenger=request.user).order_by('-created_at')[:12])
-    total_amount = sum(payment.amount for payment in payments)
-    successful = sum(1 for payment in payments if payment.status == 'completed')
-    pending = sum(1 for payment in payments if payment.status == 'pending')
+    payments_qs = Payment.objects.filter(passenger=request.user).order_by('-created_at')
+    payments = list(payments_qs[:12])
+    total_amount = payments_qs.aggregate(total=Sum('amount'))['total'] or 0
+    successful = payments_qs.filter(status='completed').count()
+    pending = payments_qs.filter(status='pending').count()
+    payments_count = payments_qs.count()
+    recent_payments = payments[:2]
 
     return render(request, 'passenger/payments.html', {
         'active': 'payments',
         'payments': payments,
+        'recent_payments': recent_payments,
+        'payments_count': payments_count,
         'total_payments': total_amount,
         'successful_payments': successful,
         'pending_payments': pending,
@@ -369,18 +374,27 @@ def passenger_track_parcel(request):
 
     from apps.parcels.models import Parcel
 
-    # Keep a QuerySet to allow aggregation/filtering, then slice for display
-    parcels_qs = Parcel.objects.filter(sender=request.user).order_by('-created_at')
+    user_phone = getattr(request.user, 'phone_number', '') or ''
+    parcels_qs = Parcel.objects.filter(
+        Q(sender=request.user)
+        | Q(sender_email__iexact=request.user.email)
+        | Q(sender_phone__iexact=user_phone)
+    ).order_by('-created_at').prefetch_related('logs')
+
     total_parcels = parcels_qs.count()
     in_transit = parcels_qs.filter(status='in_transit').count()
     delivered = parcels_qs.filter(status='arrived').count()
     pending = parcels_qs.exclude(status__in=['arrived', 'collected']).count()
 
-    parcels = parcels_qs[:12]
+    parcels = list(parcels_qs[:12])
+    selected_parcel = parcels[0] if parcels else None
+    parcel_logs = selected_parcel.logs.all() if selected_parcel else []
 
     return render(request, 'passenger/track_parcel.html', {
         'active': 'track_parcel',
         'parcels': parcels,
+        'selected_parcel': selected_parcel,
+        'parcel_logs': parcel_logs,
         'total_parcels': total_parcels,
         'in_transit': in_transit,
         'delivered': delivered,

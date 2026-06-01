@@ -132,6 +132,19 @@ def system_admin_dashboard(request):
     })
 
 
+@login_required
+@sysadmin_required
+def seat_layout_builder(request):
+    vehicle_type = request.GET.get('vehicle_type', 'bus').strip().lower()
+    if vehicle_type not in ['bus', 'train', 'flight']:
+        vehicle_type = 'bus'
+
+    return render(request, 'system_admin/seat_layout_builder.html', {
+        'vehicle_type': vehicle_type,
+        'active_page': 'seat_layout_builder',
+    })
+
+
 # ── USER MANAGEMENT ──────────────────────────────────────────────────────────
 @login_required
 @sysadmin_required
@@ -452,6 +465,91 @@ def manage_admins(request):
         'companies': companies,
         'admin_roles': admin_roles,
         'transport_admins': transport_admins,
+    })
+
+
+# ── COMPANY MANAGEMENT ──────────────────────────────────────────────────────
+@login_required
+@sysadmin_required
+def manage_companies(request):
+    if request.method == 'POST':
+        if 'create_company' in request.POST:
+            name = request.POST.get('company_name', '').strip()
+            transport_type = request.POST.get('transport_type', '').strip()
+            contact_email = request.POST.get('contact_email', '').strip()
+            contact_phone = request.POST.get('contact_phone', '').strip()
+            description = request.POST.get('description', '').strip()
+            address = request.POST.get('address', '').strip()
+
+            if not name or not transport_type:
+                messages.error(request, 'Company name and transport type are required.')
+            elif Company.objects.filter(name__iexact=name).exists():
+                messages.error(request, f'Company "{name}" already exists.')
+            else:
+                company = Company.objects.create(
+                    name=name,
+                    transport_type=transport_type,
+                    contact_email=contact_email,
+                    contact_phone=contact_phone,
+                    description=description,
+                    address=address,
+                )
+                messages.success(request, f'Company "{name}" created successfully.')
+                record_audit(
+                    request,
+                    'create',
+                    'Company',
+                    object_id=company.id,
+                    details=f'Created company {company.name} ({company.get_transport_type_display()}).'
+                )
+            return redirect('manage_companies')
+
+        if 'update_company' in request.POST:
+            company_id = request.POST.get('company_id')
+            company = Company.objects.filter(id=company_id).first()
+            if not company:
+                messages.error(request, 'Company not found.')
+                return redirect('manage_companies')
+            company.name = request.POST.get('company_name', company.name).strip()
+            company.transport_type = request.POST.get('transport_type', company.transport_type).strip()
+            company.contact_email = request.POST.get('contact_email', company.contact_email).strip()
+            company.contact_phone = request.POST.get('contact_phone', company.contact_phone).strip()
+            company.description = request.POST.get('description', company.description).strip()
+            company.address = request.POST.get('address', company.address).strip()
+            company.save()
+            messages.success(request, 'Company updated successfully.')
+            record_audit(
+                request,
+                'update',
+                'Company',
+                object_id=company.id,
+                details=f'Updated company {company.name}.'
+            )
+            return redirect('manage_companies')
+
+        if 'delete_company' in request.POST:
+            company_id = request.POST.get('company_id')
+            company = Company.objects.filter(id=company_id).first()
+            if company:
+                cid = company.id
+                cname = company.name
+                company.delete()
+                messages.success(request, 'Company deleted.')
+                record_audit(
+                    request,
+                    'delete',
+                    'Company',
+                    object_id=cid,
+                    details=f'Deleted company {cname}.'
+                )
+            else:
+                messages.error(request, 'Company not found.')
+            return redirect('manage_companies')
+
+    companies = Company.objects.all().order_by('name')
+    return render(request, 'system_admin/manage_companies.html', {
+        'companies': companies,
+        'active_page': 'manage_companies',
     })
 
 

@@ -2,384 +2,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Book Trip | SmartTravels</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Trip | SmartTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<style>
-:root {
-  --navy: #080d1a;
-  --gold: #c9a84c;
-  --gold-l: #e8c97a;
-  --border: rgba(255,255,255,0.08);
-  --border-h: rgba(255,255,255,0.16);
-  --glass: rgba(255,255,255,0.04);
-  --glass-h: rgba(255,255,255,0.07);
-  --muted: rgba(255,255,255,0.45);
-  --green: #4ade80;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--navy); color: #fff;
-  min-height: 100vh; overflow-x: hidden;
-}
-
-.orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
-.orb-1 { width: 500px; height: 500px; top: -150px; right: -150px; background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 65%); }
-.orb-2 { width: 400px; height: 400px; bottom: -120px; left: -100px; background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 65%); }
-
-.page { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; z-index: 1; }
-
-/* TOP NAV */
-.top-nav {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  flex-wrap: wrap; gap: 1rem; margin-bottom: 1.75rem;
-}
-.page-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.9rem; font-weight: 500; color: #fff;
-}
-.page-sub { font-size: 0.85rem; font-weight: 300; color: var(--muted); margin-top: 4px; line-height: 1.5; }
-.btn-outline {
-  display: flex; align-items: center; gap: 7px;
-  padding: 9px 18px; border-radius: 9px;
-  background: var(--glass); border: 0.5px solid var(--border);
-  color: rgba(255,255,255,0.75); font-family: 'DM Sans', sans-serif;
-  font-size: 0.83rem; font-weight: 400; text-decoration: none;
-  transition: background 0.18s, border-color 0.18s; white-space: nowrap;
-}
-.btn-outline:hover { background: var(--glass-h); border-color: var(--border-h); }
-
-/* ERROR */
-.error-banner {
-  background: rgba(239,68,68,0.08); border: 0.5px solid rgba(239,68,68,0.3);
-  border-radius: 12px; padding: 12px 16px;
-  color: #fca5a5; font-size: 0.85rem; margin-bottom: 1.5rem;
-}
-
-/* GRID */
-.layout { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; align-items: start; }
-@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
-
-/* CARD */
-.card {
-  background: var(--glass); border: 0.5px solid var(--border);
-  border-radius: 16px; overflow: hidden;
-}
-.card-body { padding: 1.5rem; }
-.card-section { padding-bottom: 1.25rem; margin-bottom: 1.25rem; border-bottom: 0.5px solid var(--border); }
-
-/* TRIP HEADER */
-.mode-badge {
-  display: inline-block; padding: 4px 12px; border-radius: 100px;
-  font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em;
-  background: rgba(45,212,191,0.1); border: 0.5px solid rgba(45,212,191,0.25); color: #2dd4bf;
-  margin-bottom: 0.75rem;
-}
-.trip-route {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.7rem; font-weight: 500; color: #fff; line-height: 1.2; margin-bottom: 0.35rem;
-}
-.trip-route .arr { color: var(--gold); margin: 0 6px; }
-.trip-depart { font-size: 0.82rem; font-weight: 300; color: var(--muted); }
-.price-box {
-  text-align: right;
-  background: rgba(255,255,255,0.03); border: 0.5px solid var(--border);
-  border-radius: 12px; padding: 1rem 1.25rem;
-}
-.price-label { font-size: 0.72rem; font-weight: 400; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
-.price-value {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem; font-weight: 500; color: #fff; margin-top: 4px;
-}
-
-/* PASSENGER COUNTER */
-.pax-row {
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;
-}
-.pax-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 500; }
-.pax-sub { font-size: 0.78rem; font-weight: 300; color: var(--muted); margin-top: 2px; }
-.pax-counter {
-  display: flex; align-items: center; gap: 0;
-  background: var(--glass); border: 0.5px solid var(--border); border-radius: 10px; overflow: hidden;
-}
-.pax-btn {
-  width: 38px; height: 38px; background: none; border: none; cursor: pointer;
-  color: rgba(255,255,255,0.6); font-size: 1.1rem;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s;
-}
-.pax-btn:hover { background: var(--glass-h); }
-.pax-input {
-  width: 44px; background: transparent; border: none; outline: none;
-  text-align: center; font-family: 'DM Sans', sans-serif;
-  font-size: 0.95rem; font-weight: 500; color: #fff;
-}
-
-/* LEGEND */
-.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 1.25rem; }
-.legend-item { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; color: var(--muted); }
-.legend-dot { width: 14px; height: 14px; border-radius: 4px; }
-
-/* SEAT MAP */
-#seat-map { min-height: 240px; }
-
-/* SELECTED DISPLAY */
-.selected-box {
-  margin-top: 1.25rem;
-  background: rgba(255,255,255,0.03); border: 0.5px solid var(--border);
-  border-radius: 12px; padding: 1rem 1.25rem;
-}
-.selected-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 0.75rem;
-}
-.selected-label { font-size: 0.85rem; font-weight: 500; }
-.selected-count { font-size: 0.82rem; color: var(--gold); }
-.selected-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.seat-chip {
-  display: inline-block; padding: 5px 13px;
-  background: rgba(45,212,191,0.12); border: 0.5px solid rgba(45,212,191,0.3);
-  border-radius: 8px; font-size: 0.82rem; font-weight: 500; color: #2dd4bf;
-}
-
-/* STICKY PAYMENT PANEL */
-.payment-panel {
-  background: var(--glass); border: 0.5px solid var(--border);
-  border-radius: 16px; padding: 1.5rem;
-  position: sticky; top: 1.5rem;
-}
-.panel-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 1.5rem;
-}
-.panel-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 500; }
-.panel-sub { font-size: 0.78rem; font-weight: 300; color: var(--muted); margin-top: 2px; }
-.mpesa-icon {
-  width: 44px; height: 44px; border-radius: 11px;
-  background: rgba(74,222,128,0.1); border: 0.5px solid rgba(74,222,128,0.2);
-  color: #4ade80; display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem; animation: floatY 4s ease-in-out infinite;
-}
-@keyframes floatY { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
-
-.form-group { margin-bottom: 1rem; }
-.form-label {
-  display: block; font-size: 0.72rem; font-weight: 500; color: var(--muted);
-  letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px;
-}
-.form-input {
-  width: 100%; padding: 10px 14px;
-  background: rgba(255,255,255,0.06); border: 0.5px solid var(--border);
-  border-radius: 9px; font-family: 'DM Sans', sans-serif;
-  font-size: 0.88rem; color: #fff; outline: none;
-  transition: border-color 0.18s;
-}
-.form-input:focus { border-color: var(--border-h); }
-.form-input[readonly] { color: var(--muted); }
-
-.pay-btn {
-  width: 100%; padding: 12px;
-  background: #22c55e; border: none; border-radius: 10px;
-  font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
-  color: #fff; cursor: pointer;
-  transition: background 0.18s, transform 0.12s;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  margin-top: 0.25rem;
-}
-.pay-btn:hover:not(:disabled) { background: #16a34a; }
-.pay-btn:active:not(:disabled) { transform: scale(0.98); }
-.pay-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-</style>
+    <style>
+        :root {
+            --navy: #060a13;
+            --gold: #c9a84c;
+            --gold-l: #e8c97a;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-h: rgba(255, 255, 255, 0.12);
+            --glass: rgba(255, 255, 255, 0.02);
+            --glass-card: rgba(10, 17, 32, 0.7);
+            --muted: #94a3b8;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--navy);
+            color: #f8fafc;
+        }
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .glass-panel {
+            background: var(--glass-card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(120px);
+            opacity: 0.4;
+        }
+        .orb-1 { width: 600px; height: 600px; top: -200px; right: -150px; background: radial-gradient(circle, #1e3a8a 0%, transparent 70%); }
+        .orb-2 { width: 500px; height: 500px; bottom: -150px; left: -150px; background: radial-gradient(circle, #78350f 0%, transparent 70%); }
+        
+        /* Custom scrollbar for seat container if needed */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    </style>
 </head>
-<body>
+<body class="min-h-screen relative overflow-x-hidden antialiased">
 
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 
-<div class="page">
+<div class="max-w-[1140px] mx-auto px-4 py-8 relative z-10">
 
-  <!-- TOP -->
-  <div class="top-nav">
-    <div>
-      <div class="page-title">Book Your Seat</div>
-      <div class="page-sub">Select your seat, pay via M-Pesa STK Push and get your QR ticket instantly.</div>
-    </div>
-    <a href="{% url 'dashboard' %}" class="btn-outline">
-      <i class="fa-solid fa-arrow-left" style="font-size:0.8rem;"></i> Back to Dashboard
-    </a>
-  </div>
-
-  {% if error_message %}
-  <div class="error-banner">
-    <i class="fa-solid fa-circle-exclamation" style="margin-right:8px;"></i>{{ error_message }}
-  </div>
-  {% endif %}
-
-  <div class="layout">
-
-    <!-- LEFT: TRIP + SEAT MAP -->
-    <div class="card">
-      <div class="card-body">
-
-        <!-- TRIP INFO -->
-        <div class="card-section" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
-          <div>
-            <div class="mode-badge">{{ mode|title }}</div>
-            <div class="trip-route">
-              {{ transport.route.from_location }}<span class="arr">→</span>{{ transport.route.to_location }}
-            </div>
-            <div class="trip-depart">Departure: {{ schedule.travel_time }} · {{ schedule.travel_date }}</div>
-            {% if company %}
-            <div style="margin-top:8px;display:flex;align-items:center;gap:10px;">
-              {% if company_logo_url %}
-                <img src="{{ company_logo_url }}" alt="{{ company.name }}" style="width:48px;height:48px;border-radius:8px;object-fit:cover;">
-              {% endif %}
-              <div style="font-size:0.9rem;color:var(--muted);">{{ company.name }}</div>
-            </div>
-            {% endif %}
-          </div>
-          <div class="price-box">
-            <div class="price-label">Ticket Price</div>
-            <div class="price-value">KES {{ schedule.price }}</div>
-          </div>
-        </div>
-
-        <!-- PASSENGER COUNTER -->
-        <div class="pax-row">
-          <div>
-            <div class="pax-title">Select Your Seat</div>
-            <div class="pax-sub">Choose available seats from the map below</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span style="font-size:0.82rem;color:var(--muted);">Passengers</span>
-            <div class="pax-counter">
-              <button type="button" class="pax-btn" onclick="changePax(-1)">−</button>
-              <input type="number" id="pax-count" value="1" min="1" max="50" readonly class="pax-input">
-              <button type="button" class="pax-btn" onclick="changePax(1)">+</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- LEGEND -->
-        <div class="legend">
-          <div class="legend-item"><div class="legend-dot" style="background:#2563eb;"></div>Normal</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#ca8a04;"></div>VIP</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#dc2626;"></div>Booked</div>
-        </div>
-
-        <!-- SEAT MAP -->
-        <div id="seat-map"></div>
-
-        <!-- SELECTED SEATS -->
-        <div class="selected-box">
-          <div class="selected-header">
-            <span class="selected-label">Selected Seats</span>
-            <span class="selected-count">
-              <span id="sel-count">0</span> / <span id="pax-needed2">1</span>
-            </span>
-          </div>
-          <div class="selected-chips" id="selected-seat-display">
-            <span style="font-size:0.82rem;color:var(--muted);">None selected</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- RIGHT: PAYMENT -->
-    <div class="payment-panel">
-
-      <div class="panel-header">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <div class="panel-title">Payment</div>
-          <div class="panel-sub">Secure M-Pesa checkout</div>
+            <h1 class="font-serif text-3xl font-medium tracking-tight text-white">Book Your Seat</h1>
+            <p class="text-sm text-slate-400 mt-1 max-w-xl">Select your preferred seat, complete registration, and securely settle payments via M-Pesa instant STK Push.</p>
         </div>
-        <div class="mpesa-icon">
-          <i class="fa-solid fa-mobile-screen-button"></i>
+        <div>
+            <a href="{% url 'dashboard' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all shadow-sm">
+                <i class="fa-solid fa-arrow-left text-xs"></i> Dashboard
+            </a>
         </div>
-      </div>
-
-      <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="selected_seat" id="selected-seat-input">
-        <input type="hidden" name="selected_seat_class" id="selected-seat-class-input" value="Normal">
-
-        <div class="form-group">
-          <label class="form-label">Passenger Name</label>
-          <input type="text" value="{{ passenger_name }}" readonly class="form-input">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">M-Pesa Phone Number</label>
-          <input type="tel" name="phone" value="{{ default_phone }}"
-            placeholder="2547XXXXXXXX" required class="form-input"
-            style="color:#fff;">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Schedule</label>
-          <input type="text" value="{{ schedule.travel_date }} {{ schedule.travel_time }}" readonly class="form-input">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Amount</label>
-          <input type="text" value="KES {{ schedule.price }}" readonly class="form-input">
-        </div>
-
-        <button type="submit" id="pay-btn" disabled class="pay-btn">
-          Select seat to continue
-        </button>
-
-      </form>
-
     </div>
 
-  </div><!-- /layout -->
+    {% if error_message %}
+    <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-red-300 text-sm mb-6 animate-pulse">
+        <i class="fa-solid fa-circle-exclamation text-base text-red-400"></i>
+        <span>{{ error_message }}</span>
+    </div>
+    {% endif %}
 
-</div><!-- /page -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        
+        <div class="lg:col-span-2 space-y-6">
+            <div class="glass-panel rounded-2xl p-6 shadow-xl">
+                
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-4 pb-6 mb-6 border-b border-white/5">
+                    <div class="space-y-2">
+                        <span class="inline-block px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-teal-500/10 border border-teal-500/20 text-teal-400">
+                            {{ mode|title }}
+                        </span>
+                        <h2 class="font-serif text-2xl font-medium text-white tracking-wide">
+                            {{ transport.route.from_location }} <span class="text-[#c9a84c] px-1">→</span> {{ transport.route.to_location }}
+                        </h2>
+                        <p class="text-xs text-slate-400 flex items-center gap-2">
+                            <i class="fa-regular fa-calendar text-slate-500"></i> Departure: {{ schedule.travel_time }} &middot; {{ schedule.travel_date }}
+                        </p>
+                        
+                        {% if company %}
+                        <div class="flex items-center gap-3 pt-2">
+                            {% if company_logo_url %}
+                                <img src="{{ company_logo_url }}" alt="{{ company.name }}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-white/10">
+                            {% endif %}
+                            <span class="text-sm font-medium text-slate-300">{{ company.name }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="bg-white/[0.02] border border-white/5 rounded-xl p-4 min-w-[140px] text-right self-stretch sm:self-auto flex flex-col justify-center">
+                        <span class="text-[10px] uppercase tracking-widest text-slate-400 font-medium">Ticket Price</span>
+                        <span class="font-serif text-xl font-medium text-white mt-1">KES {{ schedule.price }}</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/[0.02] border border-white/5 rounded-xl p-4 mb-6">
+                    <div>
+                        <h3 class="font-medium text-white text-sm">Configure Passengers</h3>
+                        <p class="text-xs text-slate-400">Specify tickets to purchase before configuring layout</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-slate-400 font-medium">Total Tickets:</span>
+                        <div class="flex items-center bg-black/20 border border-white/10 rounded-xl overflow-hidden shadow-inner">
+                            <button type="button" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-white/5 hover:text-white active:bg-white/10 transition-colors font-medium text-lg" onclick="changePax(-1)">−</button>
+                            <input type="number" id="pax-count" value="1" min="1" max="50" readonly class="w-10 bg-transparent text-center font-semibold text-sm text-white focus:outline-none">
+                            <button type="button" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-white/5 hover:text-white active:bg-white/10 transition-colors font-medium text-lg" onclick="changePax(1)">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="font-serif text-lg font-medium text-white">Interactive Cabin Map</h3>
+                    <p class="text-xs text-slate-400">Click highlighted active locations to book structural seats.</p>
+                </div>
+
+                <div class="flex flex-wrap gap-4 mb-6 bg-black/10 p-3 rounded-xl border border-white/5">
+                    <div class="flex items-center gap-2 text-xs text-slate-400"><div class="w-3.5 h-3.5 rounded bg-blue-600"></div> Normal</div>
+                    <div class="flex items-center gap-2 text-xs text-slate-400"><div class="w-3.5 h-3.5 rounded bg-amber-600"></div> VIP</div>
+                    <div class="flex items-center gap-2 text-xs text-slate-400"><div class="w-3.5 h-3.5 rounded bg-red-600/50"></div> Booked</div>
+                </div>
+
+                <div id="seat-map" class="overflow-x-auto p-4 bg-black/20 rounded-2xl border border-white/5 mb-6 min-h-[180px] flex flex-col justify-center">
+                    </div>
+
+                <div class="bg-white/[0.02] border border-white/5 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-medium text-slate-300">Selected Assignments</span>
+                        <span class="text-xs font-semibold text-[#c9a84c] bg-[#c9a84c]/10 px-2 py-0.5 rounded-md">
+                            <span id="sel-count">0</span> / <span id="pax-needed2">1</span> Seats Selected
+                        </span>
+                    </div>
+                    <div class="flex flex-wrap gap-2" id="selected-seat-display">
+                        <span class="text-xs text-slate-500 italic">No assets assigned yet</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="payment-panel glass-panel rounded-2xl p-6 shadow-xl lg:sticky lg:top-6">
+            <div class="flex items-center justify-between pb-4 mb-5 border-b border-white/5">
+                <div>
+                    <h2 class="font-serif text-xl font-medium text-white">Checkout Hub</h2>
+                    <p class="text-xs text-slate-400">Instant validation & payment tracking</p>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-md shadow-sm">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+            </div>
+
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="selected_seat" id="selected-seat-input">
+                <input type="hidden" name="selected_seat_class" id="selected-seat-class-input" value="Normal">
+
+                <div class="space-y-1">
+                    <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Passenger Identity</label>
+                    <input type="text" value="{{ passenger_name }}" readonly class="w-100 w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-slate-300 focus:outline-none opacity-80 cursor-not-allowed">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">M-Pesa Express Line</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-sm">+</span>
+                        <input type="tel" name="phone" value="{{ default_phone }}" placeholder="2547XXXXXXXX" required class="w-full pl-6 pr-3 py-2.5 bg-white/[0.07] border border-white/10 rounded-xl text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/20 transition-all">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Departure Window</label>
+                    <input type="text" value="{{ schedule.travel_date }} {{ schedule.travel_time }}" readonly class="w-100 w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-slate-400 focus:outline-none opacity-80 cursor-not-allowed">
+                </div>
+
+                <div class="space-y-1 pb-2">
+                    <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Gross Total Aggregate</label>
+                    <input type="text" value="KES {{ schedule.price }}" readonly class="w-100 w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-semibold text-emerald-400 focus:outline-none opacity-80 cursor-not-allowed">
+                </div>
+
+                <button type="submit" id="pay-btn" disabled class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:border disabled:border-white/5 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-all shadow-lg active:scale-[0.99] flex items-center justify-center gap-2 text-sm">
+                    Select seat to continue
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
 
 <script>
 let selectedSeats = [];
 let paxNeeded = 1;
 
 function changePax(delta) {
-  const input = document.getElementById('pax-count');
-  const newVal = Math.max(1, parseInt(input.value) + delta);
-  input.value = newVal;
-  paxNeeded = newVal;
-  document.getElementById('pax-needed2').textContent = newVal;
-  selectedSeats = [];
-  document.querySelectorAll('#seat-map button').forEach(b => b.classList.remove('ring-4','ring-white'));
-  document.getElementById('selected-seat-input').value = '';
-  document.getElementById('selected-seat-class-input').value = 'Normal';
-  updateSelectedDisplay();
-  updatePayBtn();
+    const input = document.getElementById('pax-count');
+    const newVal = Math.max(1, parseInt(input.value) + delta);
+    input.value = newVal;
+    paxNeeded = newVal;
+    document.getElementById('pax-needed2').textContent = newVal;
+    selectedSeats = [];
+    
+    document.querySelectorAll('#seat-map button').forEach(b => {
+        b.classList.remove('ring-2', 'ring-teal-400', 'ring-offset-2', 'ring-offset-slate-900');
+    });
+    document.getElementById('selected-seat-input').value = '';
+    document.getElementById('selected-seat-class-input').value = 'Normal';
+    updateSelectedDisplay();
+    updatePayBtn();
 }
 
 function updateSelectedDisplay() {
-  const d = document.getElementById('selected-seat-display');
-  document.getElementById('sel-count').textContent = selectedSeats.length;
-  if (selectedSeats.length === 0) {
-    d.innerHTML = '<span style="font-size:0.82rem;color:var(--muted);">None selected</span>';
-  } else {
-    d.innerHTML = selectedSeats.map(s => `<span class="seat-chip">${s.number}</span>`).join('');
-  }
+    const d = document.getElementById('selected-seat-display');
+    document.getElementById('sel-count').textContent = selectedSeats.length;
+    if (selectedSeats.length === 0) {
+        d.innerHTML = '<span class="text-xs text-slate-500 italic">No assets assigned yet</span>';
+    } else {
+        d.innerHTML = selectedSeats.map(s => `
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-teal-500/10 border border-teal-500/20 text-teal-400 animate-fade-in">
+                Seat ${s.number}
+            </span>
+        `).join('');
+    }
 }
 
 function updatePayBtn() {
-  const btn = document.getElementById('pay-btn');
-  const ready = selectedSeats.length >= paxNeeded;
-  btn.disabled = !ready;
-  btn.innerHTML = ready
-    ? '<i class="fa-solid fa-mobile-screen-button" style="font-size:0.85rem;"></i> Pay with STK Push'
-    : `Select ${paxNeeded} seat${paxNeeded > 1 ? 's' : ''} to continue`;
+    const btn = document.getElementById('pay-btn');
+    const ready = selectedSeats.length >= paxNeeded;
+    btn.disabled = !ready;
+    btn.innerHTML = ready
+        ? '<i class="fa-solid fa-mobile-screen-button text-xs"></i> Pay with M-Pesa STK'
+        : `Assign ${paxNeeded} seat${paxNeeded > 1 ? 's' : ''} to checkout`;
 }
 
 const seatMapContainer = document.getElementById('seat-map');
@@ -387,92 +253,93 @@ const selectedSeatInput = document.getElementById('selected-seat-input');
 const seatLayoutUrl = '{% url "passenger_seat_layout" %}?mode={{ mode }}&schedule_id={{ schedule.id }}';
 
 function formatSeatElement(cell) {
-  if (cell.is_empty) {
-    const d = document.createElement('div');
-    d.className = 'w-12 h-12';
-    return d;
-  }
-  const btn = document.createElement('button');
-  btn.type = 'button';
-  btn.textContent = cell.seat_number || '';
-  btn.style.cssText = 'width:48px;height:48px;border-radius:10px;font-size:0.78rem;font-weight:500;transition:all 0.15s;border:none;cursor:pointer;';
-
-  if (cell.is_aisle) {
-    btn.textContent = '';
-    btn.style.background = 'transparent';
-    btn.disabled = true;
-    return btn;
-  }
-  if (cell.booking_status === 'booked') {
-    btn.style.background = '#dc2626';
-    btn.style.color = '#fff';
-    btn.style.opacity = '0.6';
-    btn.style.cursor = 'not-allowed';
-    btn.disabled = true;
-    return btn;
-  }
-
-  const classColors = {
-    'VIP': { bg: '#854d0e', color: '#fef08a' },
-    'Normal': { bg: '#1d4ed8', color: '#fff' },
-    'First Class': { bg: '#3730a3', color: '#fff' },
-    'Business': { bg: '#0f766e', color: '#fff' },
-    'Economy': { bg: '#374151', color: '#fff' },
-  };
-  const c = classColors[cell.seat_class] || { bg: '#374151', color: '#fff' };
-  btn.style.background = c.bg;
-  btn.style.color = c.color;
-
-  btn.addEventListener('click', () => {
-    const idx = selectedSeats.findIndex(s => s.number === cell.seat_number);
-    if (idx > -1) {
-      selectedSeats.splice(idx, 1);
-      btn.style.outline = 'none';
-    } else {
-      if (selectedSeats.length >= paxNeeded) {
-        const old = selectedSeats.shift();
-        document.querySelectorAll('#seat-map button').forEach(b => {
-          if (b.textContent.trim() === old.number) b.style.outline = 'none';
-        });
-      }
-      selectedSeats.push({ number: cell.seat_number, class: cell.seat_class });
-      btn.style.outline = '2px solid #2dd4bf';
-      btn.style.outlineOffset = '2px';
+    if (cell.is_empty) {
+        const d = document.createElement('div');
+        d.className = 'w-11 h-11';
+        return d;
     }
-    selectedSeatInput.value = selectedSeats[0]?.number || '';
-    document.getElementById('selected-seat-class-input').value = selectedSeats[0]?.class || 'Normal';
-    updateSelectedDisplay();
-    updatePayBtn();
-  });
-  return btn;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = cell.seat_number || '';
+    btn.className = 'w-11 h-11 rounded-xl text-xs font-semibold transition-all flex items-center justify-center cursor-pointer select-none';
+
+    if (cell.is_aisle) {
+        btn.textContent = '';
+        btn.className = 'w-11 h-11 bg-transparent cursor-default pointer-events-none';
+        btn.disabled = true;
+        return btn;
+    }
+    if (cell.booking_status === 'booked') {
+        btn.className = 'w-11 h-11 bg-red-900/40 border border-red-500/20 text-red-400/50 cursor-not-allowed';
+        btn.disabled = true;
+        return btn;
+    }
+
+    const classColors = {
+        'VIP': 'bg-amber-600 text-amber-50 hover:bg-amber-500 shadow-sm',
+        'Normal': 'bg-blue-600 text-blue-50 hover:bg-blue-500 shadow-sm',
+        'First Class': 'bg-indigo-600 text-indigo-50 hover:bg-indigo-500 shadow-sm',
+        'Business': 'bg-cyan-700 text-cyan-50 hover:bg-cyan-600 shadow-sm',
+        'Economy': 'bg-slate-700 text-slate-100 hover:bg-slate-600 shadow-sm',
+    };
+    
+    const baseColorClass = classColors[cell.seat_class] || 'bg-slate-700 text-slate-100';
+    btn.className = `${btn.className} ${baseColorClass}`;
+
+    btn.addEventListener('click', () => {
+        const idx = selectedSeats.findIndex(s => s.number === cell.seat_number);
+        if (idx > -1) {
+            selectedSeats.splice(idx, 1);
+            btn.classList.remove('ring-2', 'ring-teal-400', 'ring-offset-2', 'ring-offset-slate-900');
+        } else {
+            if (selectedSeats.length >= paxNeeded) {
+                const old = selectedSeats.shift();
+                document.querySelectorAll('#seat-map button').forEach(b => {
+                    if (b.textContent.trim() === old.number) {
+                        b.classList.remove('ring-2', 'ring-teal-400', 'ring-offset-2', 'ring-offset-slate-900');
+                    }
+                });
+            }
+            selectedSeats.push({ number: cell.seat_number, class: cell.seat_class });
+            btn.classList.add('ring-2', 'ring-teal-400', 'ring-offset-2', 'ring-offset-slate-900');
+        }
+        selectedSeatInput.value = selectedSeats.map(s => s.number).join(',');
+        document.getElementById('selected-seat-class-input').value = selectedSeats[0]?.class || 'Normal';
+        updateSelectedDisplay();
+        updatePayBtn();
+    });
+    return btn;
 }
 
 function renderSeatMap(layoutData) {
-  seatMapContainer.innerHTML = '';
-  layoutData.rows.forEach(row => {
-    const rowWrapper = document.createElement('div');
-    rowWrapper.style.cssText = 'margin-bottom:14px;';
-    const rowLabel = document.createElement('div');
-    rowLabel.textContent = `Row ${row.row}`;
-    rowLabel.style.cssText = 'font-size:0.7rem;font-weight:500;color:#2dd4bf;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px;';
-    rowWrapper.appendChild(rowLabel);
-    const seatsRow = document.createElement('div');
-    seatsRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;';
-    row.seats.forEach(cell => seatsRow.appendChild(formatSeatElement(cell)));
-    rowWrapper.appendChild(seatsRow);
-    seatMapContainer.appendChild(rowWrapper);
-  });
+    seatMapContainer.innerHTML = '';
+    layoutData.rows.forEach(row => {
+        const rowWrapper = document.createElement('div');
+        rowWrapper.className = 'mb-4 last:mb-0';
+        
+        const rowLabel = document.createElement('div');
+        rowLabel.textContent = `Row ${row.row}`;
+        rowLabel.className = 'text-[9px] font-bold text-teal-400/70 uppercase tracking-widest mb-1.5 pl-0.5';
+        rowWrapper.appendChild(rowLabel);
+        
+        const seatsRow = document.createElement('div');
+        seatsRow.className = 'flex flex-wrap gap-2.5';
+        row.seats.forEach(cell => seatsRow.appendChild(formatSeatElement(cell)));
+        rowWrapper.appendChild(seatsRow);
+        
+        seatMapContainer.appendChild(rowWrapper);
+    });
 }
 
 fetch(seatLayoutUrl)
-  .then(r => r.json())
-  .then(data => {
-    if (data.rows) renderSeatMap(data);
-    else seatMapContainer.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">Unable to load seat layout.</p>';
-  })
-  .catch(() => {
-    seatMapContainer.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">Unable to load seat layout.</p>';
-  });
+    .then(r => r.json())
+    .then(data => {
+        if (data.rows) renderSeatMap(data);
+        else seatMapContainer.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Unable to build structural matrix.</p>';
+    })
+    .catch(() => {
+        seatMapContainer.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Fatal structure communication error.</p>';
+    });
 </script>
 
 </body>

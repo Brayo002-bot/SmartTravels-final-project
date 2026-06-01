@@ -247,21 +247,25 @@
 
                                 <div>
                                     <h3 class="font-semibold text-lg">
-                                        {{ parcel.parcel_code }}
+                                        {{ parcel.parcel_id }}
                                     </h3>
 
                                     <p class="text-gray-400 text-sm mt-1">
-                                        {{ parcel.company.name }}
+                                        {{ parcel.assigned_vehicle_name|default:'Unassigned' }}
                                     </p>
                                 </div>
 
-                                {% if parcel.status == 'Delivered' %}
+                                {% if parcel.status == 'arrived' %}
                                 <span class="bg-green-500/20 text-green-400 text-xs px-3 py-1 rounded-full">
                                     Delivered
                                 </span>
-                                {% elif parcel.status == 'In Transit' %}
+                                {% elif parcel.status == 'in_transit' %}
                                 <span class="bg-yellow-500/20 text-yellow-300 text-xs px-3 py-1 rounded-full">
                                     In Transit
+                                </span>
+                                {% elif parcel.status == 'dropped_off' %}
+                                <span class="bg-blue-500/20 text-blue-300 text-xs px-3 py-1 rounded-full">
+                                    Dropped Off
                                 </span>
                                 {% else %}
                                 <span class="bg-red-500/20 text-red-400 text-xs px-3 py-1 rounded-full">
@@ -295,21 +299,21 @@
 
                                 <div class="flex justify-between">
                                     <span class="text-gray-400">
-                                        Driver
+                                        Assigned Vehicle
                                     </span>
 
                                     <span>
-                                        {{ parcel.driver_name }}
+                                        {{ parcel.assigned_vehicle_name|default:'Not assigned' }}
                                     </span>
                                 </div>
 
                                 <div class="flex justify-between">
                                     <span class="text-gray-400">
-                                        ETA
+                                        Updated
                                     </span>
 
                                     <span class="text-yellow-300">
-                                        {{ parcel.estimated_arrival }}
+                                        {{ parcel.updated_at|date:'M d, Y H:i' }}
                                     </span>
                                 </div>
 
@@ -320,13 +324,11 @@
 
                                 <div class="flex justify-between text-xs text-gray-400 mb-2">
                                     <span>Tracking Progress</span>
-                                    <span>{{ parcel.progress }}%</span>
+                                    <span>{{ parcel.progress_percentage }}%</span>
                                 </div>
 
                                 <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                                    <div class="h-full bg-yellow-500 rounded-full"
-                                         style="width: {{ parcel.progress }}%">
-                                    </div>
+                                    <div class="h-full bg-yellow-500 rounded-full {% if parcel.status == 'booked' %}w-1/12{% elif parcel.status == 'dropped_off' %}w-2/5{% elif parcel.status == 'in_transit' %}w-7/10{% elif parcel.status == 'arrived' or parcel.status == 'collected' or parcel.status == 'returned' %}w-full{% else %}w-1/5{% endif %}"></div>
                                 </div>
 
                             </div>
@@ -383,7 +385,11 @@
                             </h2>
 
                             <p class="text-gray-400 text-sm mt-1">
-                                GPS updates from drivers in real-time
+                                {% if selected_parcel %}
+                                    Tracking updates for {{ selected_parcel.parcel_id }} from {{ selected_parcel.origin }} to {{ selected_parcel.destination }}.
+                                {% else %}
+                                    GPS updates from drivers in real-time.
+                                {% endif %}
                             </p>
                         </div>
 
@@ -424,73 +430,39 @@
 
                     </div>
 
+                    {% if selected_parcel %}
+                    {% if parcel_logs %}
                     <div class="space-y-8">
-
+                        {% for log in parcel_logs %}
                         <div class="flex gap-5">
-
                             <div class="flex flex-col items-center">
-                                <div class="w-5 h-5 rounded-full bg-green-500"></div>
-                                <div class="w-1 h-full bg-green-500/20 mt-2"></div>
+                                <div class="w-5 h-5 rounded-full {% if forloop.first %}bg-green-500{% else %}bg-yellow-500{% endif %}"></div>
+                                {% if not forloop.last %}
+                                <div class="w-1 h-full bg-slate-500/20 mt-2"></div>
+                                {% endif %}
                             </div>
-
                             <div>
-                                <h3 class="font-semibold">
-                                    Parcel Picked Up
-                                </h3>
-
-                                <p class="text-gray-400 text-sm mt-1">
-                                    Driver collected parcel from Nairobi CBD office.
-                                </p>
-
+                                <h3 class="font-semibold text-slate-900">{{ log.status|capfirst }}</h3>
+                                <p class="text-gray-400 text-sm mt-1">{{ log.note|default:'No update details available.' }}</p>
                                 <p class="text-xs text-yellow-300 mt-2">
-                                    Today • 9:24 AM
+                                    {{ log.timestamp|date:'M d, Y H:i' }}
+                                    {% if log.location %} • {{ log.location }}{% endif %}
+                                    {% if log.updated_by %} • by {{ log.updated_by.get_full_name|default:log.updated_by.email }}{% endif %}
                                 </p>
                             </div>
-
                         </div>
-
-                        <div class="flex gap-5">
-
-                            <div class="flex flex-col items-center">
-                                <div class="w-5 h-5 rounded-full bg-yellow-500"></div>
-                                <div class="w-1 h-full bg-yellow-500/20 mt-2"></div>
-                            </div>
-
-                            <div>
-                                <h3 class="font-semibold">
-                                    In Transit
-                                </h3>
-
-                                <p class="text-gray-400 text-sm mt-1">
-                                    Parcel is currently travelling to Kisumu.
-                                </p>
-
-                                <p class="text-xs text-yellow-300 mt-2">
-                                    Today • 12:40 PM
-                                </p>
-                            </div>
-
-                        </div>
-
-                        <div class="flex gap-5">
-
-                            <div class="flex flex-col items-center">
-                                <div class="w-5 h-5 rounded-full bg-white/20"></div>
-                            </div>
-
-                            <div>
-                                <h3 class="font-semibold text-gray-400">
-                                    Awaiting Delivery
-                                </h3>
-
-                                <p class="text-gray-500 text-sm mt-1">
-                                    Parcel will be delivered once driver reaches destination.
-                                </p>
-                            </div>
-
-                        </div>
-
+                        {% endfor %}
                     </div>
+                    {% else %}
+                    <div class="text-center text-slate-500 py-10">
+                        No tracking updates have been recorded for this parcel yet.
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <div class="text-center text-slate-500 py-10">
+                        No parcel selected. Send a parcel or select one from the list.
+                    </div>
+                    {% endif %}
 
                 </div>
 

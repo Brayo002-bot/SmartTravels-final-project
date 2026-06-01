@@ -4,175 +4,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seat Layout Builder - Admin</title>
+    <title>Seat Layout Builder • Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .layout-editor {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            padding: 20px;
-            color: white;
-        }
-
+        /* Interactive Component Overrides */
         .seat-preview {
-            width: 40px;
-            height: 40px;
-            background: #2ecc71;
-            border-radius: 6px;
-            display: flex;
+            width: 38px;
+            height: 38px;
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin: 4px;
-            border: 2px solid white;
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
 
         .seat-preview-row {
             display: flex;
             justify-content: center;
-            gap: 5px;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
         }
 
-        .config-panel {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #bdc3c7;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .btn {
-            padding: 12px 24px;
+        .tab-button {
+            padding: 12px 16px;
+            background: none;
             border: none;
-            border-radius: 6px;
-            font-weight: bold;
+            border-bottom: 2px solid transparent;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #ecf0f1;
-            color: #2c3e50;
-        }
-
-        .btn-secondary:hover {
-            background: #bdc3c7;
-        }
-
-        .template-card {
-            background: white;
-            border: 2px solid #ecf0f1;
-            border-radius: 8px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 10px;
-        }
-
-        .template-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        }
-
-        .template-card.selected {
-            background: #f0f4ff;
-            border-color: #667eea;
-        }
-
-        .seat-class-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .seat-class-btn {
-            padding: 10px;
-            border: 2px solid #bdc3c7;
-            border-radius: 6px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-            background: white;
-            font-weight: bold;
-        }
-
-        .seat-class-btn.active {
-            border-color: #667eea;
-            background: #f0f4ff;
-            color: #667eea;
-        }
-
-        .seat-class-btn:hover {
-            border-color: #667eea;
-        }
-
-        .color-picker {
-            width: 50px;
-            height: 50px;
-            border-radius: 6px;
-            cursor: pointer;
-            border: 2px solid #bdc3c7;
-        }
-
-        .success-message {
-            background: #d5f4e6;
-            border-left: 4px solid #27ae60;
-            padding: 15px;
-            border-radius: 6px;
-            color: #229954;
-            margin-bottom: 15px;
-        }
-
-        .error-message {
-            background: #fadbd8;
-            border-left: 4px solid #e74c3c;
-            padding: 15px;
-            border-radius: 6px;
-            color: #c0392b;
-            margin-bottom: 15px;
+        .tab-button.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
         }
 
         .tab-content {
@@ -183,433 +57,531 @@
             display: block;
         }
 
-        .tab-button {
-            padding: 12px 20px;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
+        .template-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
             cursor: pointer;
-            font-weight: bold;
-            color: #95a5a6;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
-        .tab-button.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
+        .template-card:hover {
+            border-color: #cbd5e1;
+            background-color: #f8fafc;
         }
 
-        .tabs {
-            display: flex;
-            gap: 10px;
-            border-bottom: 1px solid #ecf0f1;
-            margin-bottom: 20px;
-        }
-
-        .preview-container {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
+        .template-card.selected {
+            background-color: #f5f3ff;
+            border-color: #818cf8;
+            box-shadow: 0 0 0 1px #818cf8;
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen py-8">
-        <div class="max-w-6xl mx-auto px-4">
-            <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-4xl font-bold text-gray-800 mb-2">🎨 Seat Layout Builder</h1>
-                <p class="text-gray-600">Configure vehicle seat layouts for your {{ vehicle_type | upper }}</p>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen">
+
+<div class="flex">
+
+    <!-- SIDEBAR INCLUSION COMPONENT -->
+    {% include 'system_admin/sidebar.html' with active_page='layouts' %}
+
+    <!-- MAIN INTERACTIVE WORKSPACE CONTAINER -->
+    <main class="ml-72 w-full min-h-screen p-8 lg:p-10">
+
+        <!-- SECTION: PAGE HEADER -->
+        <header class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 pb-6 mb-8 border-b border-slate-200">
+            <div>
+                <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">
+                    Fleet Configuration Hub
+                </p>
+                <h1 class="text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
+                    Seat Layout Builder
+                </h1>
+                <p class="text-sm text-slate-500 mt-0.5">
+                    Configure and customize seating maps for your <span class="font-semibold text-slate-700">{{ vehicle_type|upper }}</span> inventory.
+                </p>
             </div>
 
-            <div id="messages"></div>
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 self-start sm:self-center shadow-sm">
+                <i data-lucide="layout-grid" class="w-5 h-5"></i>
+            </div>
+        </header>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Left: Configuration -->
-                <div class="lg:col-span-2">
-                    <div class="tabs">
-                        <button class="tab-button active" onclick="switchTab('step1')">Step 1: Choose Template</button>
-                        <button class="tab-button" onclick="switchTab('step2')">Step 2: Customize Layout</button>
-                        <button class="tab-button" onclick="switchTab('step3')">Step 3: Assign Classes</button>
-                        <button class="tab-button" onclick="switchTab('step4')">Step 4: Review & Save</button>
+        <!-- NOTIFICATION BANNER CONTAINER -->
+        <div id="messages" class="space-y-3 mb-6"></div>
+
+        <!-- MAIN LAYOUT STRUCTURAL GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            
+            <!-- LEFT COLUMN: CONFIGURATION INTERACTION STEPS -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- NAVIGATION STEPS TAB CONTAINER -->
+                <nav class="flex border-b border-slate-200 overflow-x-auto no-scrollbar gap-2">
+                    <button class="tab-button active" onclick="switchTab('step1')">Step 1: Template</button>
+                    <button class="tab-button" onclick="switchTab('step2')">Step 2: Customize</button>
+                    <button class="tab-button" onclick="switchTab('step3')">Step 3: Classes</button>
+                    <button class="tab-button" onclick="switchTab('step4')">Step 4: Save Map</button>
+                </nav>
+
+                <!-- STEP 1: CHOOSE TEMPLATE -->
+                <div id="step1" class="tab-content active bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <div class="mb-5">
+                        <h2 class="text-lg font-bold text-slate-900">Choose Seating Template</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Select a baseline system template matching your chassis profile.</p>
                     </div>
 
-                    <!-- Step 1: Choose Template -->
-                    <div id="step1" class="tab-content active">
-                        <div class="config-panel">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Choose a Template</h2>
-                            <p class="text-gray-600 mb-6">Select a pre-configured template or start from scratch</p>
-
-                            {% if vehicle_type == 'bus' %}
-                            <div id="busTemplates">
-                                <div class="template-card" onclick="selectTemplate('14_seater')">
-                                    <h3 class="font-bold">14-Seater</h3>
-                                    <p class="text-sm text-gray-600">Compact shuttle bus</p>
-                                </div>
-                                <div class="template-card" onclick="selectTemplate('25_seater')">
-                                    <h3 class="font-bold">25-Seater</h3>
-                                    <p class="text-sm text-gray-600">Standard mini coach</p>
-                                </div>
-                                <div class="template-card" onclick="selectTemplate('33_seater')">
-                                    <h3 class="font-bold">33-Seater</h3>
-                                    <p class="text-sm text-gray-600">Standard coach</p>
-                                </div>
-                                <div class="template-card" onclick="selectTemplate('49_seater')">
-                                    <h3 class="font-bold">49-Seater</h3>
-                                    <p class="text-sm text-gray-600">Large coach (Dreamline style)</p>
-                                </div>
-                                <div class="template-card" onclick="selectTemplate('custom')">
-                                    <h3 class="font-bold">Custom</h3>
-                                    <p class="text-sm text-gray-600">Define your own layout</p>
-                                </div>
-                            </div>
-                            {% elif vehicle_type == 'train' %}
-                            <div id="trainTemplates">
-                                <div class="template-card" onclick="selectTemplate('standard_train')">
-                                    <h3 class="font-bold">Standard Train (3 Cabins)</h3>
-                                    <p class="text-sm text-gray-600">First, Business, Economy</p>
-                                </div>
-                                <div class="template-card" onclick="selectTemplate('madaraka_express')">
-                                    <h3 class="font-bold">Madaraka Express Style</h3>
-                                    <p class="text-sm text-gray-600">Luxury train configuration</p>
-                                </div>
-                                <div class="template-card" onclick="selectTemplate('custom')">
-                                    <h3 class="font-bold">Custom</h3>
-                                    <p class="text-sm text-gray-600">Define your own cabins</p>
-                                </div>
-                            </div>
-                            {% elif vehicle_type == 'flight' %}
-                            <div id="flightTemplates">
-                                <div class="template-card" onclick="selectTemplate('narrow_body')">
-                                    <h3 class="font-bold">Narrow Body (3-3)</h3>
-                                    <p class="text-sm text-gray-600">Airbus A320 style</p>
-                                </div>
-                                <div class="template-card" onclick="selectTemplate('regional')">
-                                    <h3 class="font-bold">Regional (2-2)</h3>
-                                    <p class="text-sm text-gray-600">Small regional aircraft</p>
-                                </div>
-                                <div class="template-card" onclick="selectTemplate('custom')">
-                                    <h3 class="font-bold">Custom</h3>
-                                    <p class="text-sm text-gray-600">Define your own layout</p>
-                                </div>
-                            </div>
-                            {% endif %}
-
-                            <button class="btn btn-primary" onclick="nextStep(2)" style="margin-top: 20px;">Next →</button>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {% if vehicle_type == 'bus' %}
+                        <div class="template-card" onclick="selectTemplate('14_seater')">
+                            <h3 class="font-semibold text-slate-900 text-sm">14-Seater Shuttle</h3>
+                            <p class="text-xs text-slate-500 mt-1">Compact point-to-point regional commuter configuration.</p>
                         </div>
-                    </div>
-
-                    <!-- Step 2: Customize Layout -->
-                    <div id="step2" class="tab-content">
-                        <div class="config-panel">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Customize Layout</h2>
-
-                            <div class="form-group">
-                                <label>Total Seats</label>
-                                <input type="number" id="totalSeats" value="49" min="1" max="500" onchange="updatePreview()">
-                            </div>
-
-                            <div class="form-group">
-                                <label>Number of Rows</label>
-                                <input type="number" id="numRows" value="7" min="1" max="100" onchange="updatePreview()">
-                            </div>
-
-                            <div class="form-group">
-                                <label>Seats per Row (Columns)</label>
-                                <input type="number" id="numColumns" value="7" min="1" max="20" onchange="updatePreview()">
-                            </div>
-
-                            <div class="form-group">
-                                <label>Aisle Position (column number)</label>
-                                <select id="aislePosition" onchange="updatePreview()">
-                                    <option value="2">After column 2</option>
-                                    <option value="3">After column 3</option>
-                                    <option value="4">After column 4</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" id="hasDriver" checked onchange="updatePreview()">
-                                    Has Driver/Cockpit
-                                </label>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Driver Location</label>
-                                <select id="driverLocation">
-                                    <option value="front">Front (Driver position)</option>
-                                    <option value="left">Left side</option>
-                                    <option value="right">Right side</option>
-                                </select>
-                            </div>
-
-                            <!-- Preview -->
-                            <div class="preview-container">
-                                <p class="text-sm text-gray-600 mb-4">Layout Preview:</p>
-                                <div id="layoutPreview" style="overflow-x: auto;"></div>
-                            </div>
-
-                            <div class="button-group">
-                                <button class="btn btn-secondary" onclick="switchTab('step1')">← Back</button>
-                                <button class="btn btn-primary" onclick="nextStep(3)">Next →</button>
+                        <div class="template-card" onclick="selectTemplate('25_seater')">
+                            <h3 class="font-semibold text-slate-900 text-sm">25-Seater Mini Coach</h3>
+                            <p class="text-xs text-slate-500 mt-1">Standard medium-range urban luxury bus outline.</p>
+                        </div>
+                        <div class="template-card" onclick="selectTemplate('33_seater')">
+                            <h3 class="font-semibold text-slate-900 text-sm">33-Seater Executive</h3>
+                            <p class="text-xs text-slate-500 mt-1">Mid-tier long distance intercity transport.</p>
+                        </div>
+                        <div class="template-card" onclick="selectTemplate('49_seater')">
+                            <h3 class="font-semibold text-slate-900 text-sm">49-Seater Dreamline Coach</h3>
+                            <p class="text-xs text-slate-500 mt-1">Large-scale commercial high-deck travel layout.</p>
+                        </div>
+                        {% elif vehicle_type == 'train' %}
+                        <div class="template-card" onclick="selectTemplate('standard_train')">
+                            <h3 class="font-semibold text-slate-900 text-sm">3-Cabin Standard Train</h3>
+                            <p class="text-xs text-slate-500 mt-1">Split manifest containing First, Business, and Economy layout structures.</p>
+                        </div>
+                        <div class="template-card" onclick="selectTemplate('madaraka_express')">
+                            <h3 class="font-semibold text-slate-900 text-sm">Express Rail Configuration</h3>
+                            <p class="text-xs text-slate-500 mt-1">Luxury high-capacity inter-county transport matrix.</p>
+                        </div>
+                        {% elif vehicle_type == 'flight' %}
+                        <div class="template-card" onclick="selectTemplate('narrow_body')">
+                            <h3 class="font-semibold text-slate-900 text-sm">Narrow Body Fleet (3-3)</h3>
+                            <p class="text-xs text-slate-500 mt-1">Standard layout optimized for regional jet configurations.</p>
+                        </div>
+                        <div class="template-card" onclick="selectTemplate('regional')">
+                            <h3 class="font-semibold text-slate-900 text-sm">Regional Jetliner (2-2)</h3>
+                            <p class="text-xs text-slate-500 mt-1">Small aircraft multi-row distribution matrix.</p>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="template-card flex flex-col justify-between" onclick="selectTemplate('custom')">
+                            <div>
+                                <h3 class="font-semibold text-slate-900 text-sm">Custom Configuration</h3>
+                                <p class="text-xs text-slate-500 mt-1">Start from absolute scratch with manual limits.</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Step 3: Assign Seat Classes -->
-                    <div id="step3" class="tab-content">
-                        <div class="config-panel">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Assign Seat Classes</h2>
-                            <p class="text-gray-600 mb-6">Define seat classes and their pricing</p>
+                    <div class="flex justify-end pt-6 mt-6 border-t border-slate-100">
+                        <button class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition shadow-sm" onclick="nextStep(2)">
+                            <span>Continue to Layout</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
 
-                            <div id="seatClassesContainer"></div>
+                <!-- STEP 2: CUSTOMIZE LAYOUT -->
+                <div id="step2" class="tab-content bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <div class="mb-5">
+                        <h2 class="text-lg font-bold text-slate-900">Dimension Grid Mapping</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Define your total capacity along with technical layout parameters.</p>
+                    </div>
 
-                            <div class="button-group">
-                                <button class="btn btn-secondary" onclick="switchTab('step2')">← Back</button>
-                                <button class="btn btn-primary" onclick="nextStep(4)">Next →</button>
-                            </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Total Seating Space</label>
+                            <input type="number" id="totalSeats" value="49" min="1" max="500" onchange="updatePreview()"
+                                class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Seating Rows</label>
+                            <input type="number" id="numRows" value="7" min="1" max="100" onchange="updatePreview()"
+                                class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Seats Per Row (Columns)</label>
+                            <input type="number" id="numColumns" value="7" min="1" max="20" onchange="updatePreview()"
+                                class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Aisle Break Alignment</label>
+                            <select id="aislePosition" onchange="updatePreview()"
+                                class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition">
+                                <option value="2">Position after column 2</option>
+                                <option value="3">Position after column 3</option>
+                                <option value="4">Position after column 4</option>
+                            </select>
                         </div>
                     </div>
 
-                    <!-- Step 4: Review & Save -->
-                    <div id="step4" class="tab-content">
-                        <div class="config-panel">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Review & Save</h2>
+                    <div class="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-4">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="hasDriver" checked onchange="updatePreview()"
+                                class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <label for="hasDriver" class="ml-2.5 text-sm font-semibold text-slate-700">Include Driver Cockpit / Control Cabin Zone</label>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Control Cabin Location Alignment</label>
+                            <select id="driverLocation"
+                                class="w-full max-w-xs text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition">
+                                <option value="front">Front-Side Command Deck</option>
+                                <option value="left">Left Boundary Orientation</option>
+                                <option value="right">Right Boundary Orientation</option>
+                            </select>
+                        </div>
+                    </div>
 
-                            <div class="form-group">
-                                <label>Template Name</label>
-                                <input type="text" id="templateName" placeholder="e.g., Dreamline VIP 49-Seater">
-                            </div>
+                    <!-- LAYOUT DYNAMIC GRID PREVIEW -->
+                    <div class="mt-6 border border-slate-200 rounded-xl p-5 bg-slate-50/50">
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-1.5">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i> Live Deck Blueprint View
+                        </p>
+                        <div id="layoutPreview" class="p-4 bg-white border border-slate-200 rounded-xl overflow-x-auto shadow-inner text-center"></div>
+                    </div>
 
-                            <div class="form-group">
-                                <label>Description</label>
-                                <textarea id="templateDescription" placeholder="Describe this layout..."></textarea>
-                            </div>
+                    <div class="flex justify-between pt-6 mt-6 border-t border-slate-100">
+                        <button class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition" onclick="switchTab('step1')">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                            <span>Back</span>
+                        </button>
+                        <button class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition shadow-sm" onclick="nextStep(3)">
+                            <span>Assign Classes</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
 
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" id="saveAsTemplate" checked>
-                                    Save as reusable template
-                                </label>
-                            </div>
+                <!-- STEP 3: ASSIGN SEAT CLASSES -->
+                <div id="step3" class="tab-content bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <div class="mb-5">
+                        <h2 class="text-lg font-bold text-slate-900">Fare & Inventory Class Allocation</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Segregate seating distribution and establish baseline pricing frameworks.</p>
+                    </div>
 
-                            <h3 class="text-lg font-bold mt-6 mb-4">Configuration Summary</h3>
-                            <div id="configSummary" class="bg-gray-50 rounded p-4 mb-4"></div>
+                    <div id="seatClassesContainer" class="space-y-4"></div>
 
-                            <div class="button-group">
-                                <button class="btn btn-secondary" onclick="switchTab('step3')">← Back</button>
-                                <button class="btn btn-primary" onclick="saveLayout()">Save Layout ✓</button>
-                            </div>
+                    <div class="flex justify-between pt-6 mt-6 border-t border-slate-100">
+                        <button class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition" onclick="switchTab('step2')">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                            <span>Back</span>
+                        </button>
+                        <button class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition shadow-sm" onclick="nextStep(4)">
+                            <span>Review Configuration</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 4: REVIEW & SAVE -->
+                <div id="step4" class="tab-content bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <div class="mb-5">
+                        <h2 class="text-lg font-bold text-slate-900">Confirm & Deploy Deck Template</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Save your finalized layout matrix profile safely to inventory database.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Layout Blueprint Name</label>
+                            <input type="text" id="templateName" placeholder="e.g., Luxury Trans-County VIP Layout"
+                                class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Description Summary</label>
+                            <textarea id="templateDescription" placeholder="Provide system overview details regarding this mapping matrix specification..." rows="3"
+                                class="w-full text-sm rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition resize-none"></textarea>
+                        </div>
+
+                        <div class="flex items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <input type="checkbox" id="saveAsTemplate" checked
+                                class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <label for="saveAsTemplate" class="ml-2.5 text-sm font-medium text-slate-700">Flag as reusable ecosystem layout blueprint template</label>
+                        </div>
+                    </div>
+
+                    <h3 class="text-sm font-bold text-slate-900 mt-6 mb-3 flex items-center gap-1.5">
+                        <i data-lucide="file-text" class="w-4 h-4 text-slate-500"></i> Deployment Manifest Review
+                    </h3>
+                    <div id="configSummary" class="text-sm border border-slate-200 bg-slate-50 rounded-xl p-4 space-y-2 text-slate-600 font-medium"></div>
+
+                    <div class="flex justify-between pt-6 mt-6 border-t border-slate-100">
+                        <button class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition" onclick="switchTab('step3')">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                            <span>Back</span>
+                        </button>
+                        <button class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition shadow-sm" onclick="saveLayout()">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i>
+                            <span>Deploy Layout Map</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: ASSISTIVE INFORMATION SIDE PANEL -->
+            <div class="space-y-6 lg:sticky lg:top-8">
+                
+                <!-- DOCUMENTATION WIDGET -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center gap-1.5">
+                        <i data-lucide="help-circle" class="w-4 h-4 text-indigo-600"></i> Builder Guidelines
+                    </h3>
+                    <ul class="space-y-3 text-xs text-slate-600 font-medium">
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-500 font-bold">✓</span>
+                            <span>Select pre-built matrices to match standard manufacturing layouts seamlessly.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-500 font-bold">✓</span>
+                            <span>Adjust grid column bounds to match specific structural vehicle widths.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-500 font-bold">✓</span>
+                            <span>Isolate the central corridor matrix line position cleanly using the aisle positioning module.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-500 font-bold">✓</span>
+                            <span>Formulate distinct premium price scaling strategies over custom localized seat structures.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- STANDARDS OVERVIEW INDEX -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center gap-1.5">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 text-indigo-600"></i> Standard Layout Indexes
+                    </h3>
+                    <div class="text-xs text-slate-600 space-y-3 font-medium">
+                        <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                            <p class="text-slate-800 font-bold">Bus 2×2 Architecture</p>
+                            <p class="mt-0.5 text-slate-500">7 Seating Rows × 4 Structural Grid Columns = 28 Capacities</p>
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                            <p class="text-slate-800 font-bold">Bus 3×2 Transit</p>
+                            <p class="mt-0.5 text-slate-500">7 Seating Rows × 5 Structural Grid Columns = 35 Capacities</p>
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                            <p class="text-slate-800 font-bold">Commercial Jetliner 3-3</p>
+                            <p class="mt-0.5 text-slate-500">35 Seating Rows × 6 Structural Grid Columns = 180 Capacities</p>
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                            <p class="text-slate-800 font-bold">Express Mainline Coach Cabins</p>
+                            <p class="mt-0.5 text-slate-500">3-4 Separated Cabins, holding roughly 60-80 individual berths.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right: Info Panel -->
-                <div class="sticky top-8">
-                    <div class="config-panel">
-                        <h3 class="text-lg font-bold mb-4">💡 Tips</h3>
-                        <ul class="space-y-4 text-sm text-gray-700">
-                            <li>✓ Start with a preset template</li>
-                            <li>✓ Adjust rows and columns to match your vehicle</li>
-                            <li>✓ Position the aisle correctly</li>
-                            <li>✓ Define pricing for each seat class</li>
-                            <li>✓ Save as template for future use</li>
-                        </ul>
-
-                        <h3 class="text-lg font-bold mt-6 mb-4">📊 Common Layouts</h3>
-                        <div class="text-sm text-gray-700">
-                            <p><strong>Bus 2×2:</strong> 7 rows × 4 cols = 28 seats</p>
-                            <p><strong>Bus 3×2:</strong> 7 rows × 5 cols = 35 seats</p>
-                            <p><strong>Flight 3-3:</strong> 35 rows × 6 cols = 180 seats</p>
-                            <p><strong>Train cabins:</strong> 3-4 cabins, 60-80 seats each</p>
-                        </div>
-                    </div>
-                </div>
             </div>
+
         </div>
-    </div>
 
-    <script>
-        const config = {
-            vehicleType: '{{ vehicle_type }}',
-            selectedTemplate: null,
-            layout: {},
-            seatClasses: []
+    </main>
+</div>
+
+<!-- VECTOR ICON ENGINE SOURCE FROM CDN -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    const config = {
+        vehicleType: '{{ vehicle_type }}',
+        selectedTemplate: null,
+        layout: {},
+        seatClasses: []
+    };
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        
+        // Target specific active nav node link update elements safely
+        const activeNavBtn = Array.from(document.querySelectorAll('.tab-button')).find(btn => btn.getAttribute('onclick').includes(tabId));
+        if (activeNavBtn) activeNavBtn.classList.add('active');
+    }
+
+    function selectTemplate(template) {
+        config.selectedTemplate = template;
+        loadTemplateDefaults(template);
+        
+        document.querySelectorAll('.template-card').forEach(el => el.classList.remove('selected'));
+        if (event && event.target) {
+            const card = event.target.closest('.template-card');
+            if (card) card.classList.add('selected');
+        }
+    }
+
+    function loadTemplateDefaults(template) {
+        const defaults = {
+            '14_seater': { rows: 7, columns: 2, aislePos: 2, totalSeats: 14 },
+            '25_seater': { rows: 7, columns: 4, aislePos: 2, totalSeats: 25 },
+            '33_seater': { rows: 7, columns: 5, aislePos: 3, totalSeats: 33 },
+            '49_seater': { rows: 7, columns: 7, aislePos: 4, totalSeats: 49 },
+            'standard_train': { rows: 10, columns: 2, totalSeats: 60, cabins: 3 },
+            'narrow_body': { rows: 35, columns: 6, aislePos: 3, totalSeats: 180 },
+            'regional': { rows: 30, columns: 4, aislePos: 2, totalSeats: 90 },
         };
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
-        }
+        const def = defaults[template] || {};
+        document.getElementById('totalSeats').value = def.totalSeats || 49;
+        document.getElementById('numRows').value = def.rows || 7;
+        document.getElementById('numColumns').value = def.columns || 7;
+        document.getElementById('aislePosition').value = def.aislePos || 2;
+        
+        config.layout = def;
+        updatePreview();
+    }
 
-        function selectTemplate(template) {
-            config.selectedTemplate = template;
-            loadTemplateDefaults(template);
-            
-            // Highlight selected card
-            document.querySelectorAll('.template-card').forEach(el => el.classList.remove('selected'));
-            event.target.closest('.template-card').classList.add('selected');
-        }
+    function updatePreview() {
+        const rows = parseInt(document.getElementById('numRows').value) || 0;
+        const cols = parseInt(document.getElementById('numColumns').value) || 0;
+        const aislePos = parseInt(document.getElementById('aislePosition').value) || 0;
 
-        function loadTemplateDefaults(template) {
-            const defaults = {
-                '14_seater': { rows: 7, columns: 2, aislePos: 2, totalSeats: 14 },
-                '25_seater': { rows: 7, columns: 4, aislePos: 2, totalSeats: 25 },
-                '33_seater': { rows: 7, columns: 5, aislePos: 3, totalSeats: 33 },
-                '49_seater': { rows: 7, columns: 7, aislePos: 4, totalSeats: 49 },
-                'standard_train': { rows: 10, columns: 2, totalSeats: 60, cabins: 3 },
-                'narrow_body': { rows: 35, columns: 6, aislePos: 3, totalSeats: 180 },
-                'regional': { rows: 30, columns: 4, aislePos: 2, totalSeats: 90 },
-            };
-
-            const def = defaults[template] || {};
-            document.getElementById('totalSeats').value = def.totalSeats || 49;
-            document.getElementById('numRows').value = def.rows || 7;
-            document.getElementById('numColumns').value = def.columns || 7;
-            document.getElementById('aislePosition').value = def.aislePos || 2;
-            
-            config.layout = def;
-            updatePreview();
-        }
-
-        function updatePreview() {
-            const rows = parseInt(document.getElementById('numRows').value);
-            const cols = parseInt(document.getElementById('numColumns').value);
-            const aislePos = parseInt(document.getElementById('aislePosition').value);
-
-            let html = '';
-            for (let r = 1; r <= Math.min(rows, 5); r++) {
-                html += '<div class="seat-preview-row">';
-                for (let c = 1; c <= cols; c++) {
-                    if (c === aislePos) {
-                        html += '<div style="width: 5px; background: #bdc3c7; border-radius: 3px;"></div>';
-                    }
-                    const colLetter = String.fromCharCode(64 + c);
-                    html += `<div class="seat-preview">${r}${colLetter}</div>`;
+        let html = '<div class="inline-block p-2 bg-slate-50 border border-slate-100 rounded-xl">';
+        for (let r = 1; r <= Math.min(rows, 5); r++) {
+            html += '<div class="seat-preview-row">';
+            for (let c = 1; c <= cols; c++) {
+                if (c === aislePos) {
+                    html += '<div class="w-3 self-stretch bg-slate-200 mx-1 rounded-sm border-dashed border border-slate-300"></div>';
                 }
-                html += '</div>';
+                const colLetter = String.fromCharCode(64 + c);
+                html += `<div class="seat-preview">${r}${colLetter}</div>`;
             }
-            if (rows > 5) {
-                html += '<div class="text-center text-gray-600 text-sm mt-2">... and ' + (rows - 5) + ' more rows</div>';
-            }
-            document.getElementById('layoutPreview').innerHTML = html;
+            html += '</div>';
         }
-
-        function nextStep(step) {
-            const stepId = 'step' + step;
-            switchTab(stepId);
-            if (step === 3) loadSeatClasses();
-            if (step === 4) loadSummary();
+        if (rows > 5) {
+            html += `<div class="text-xs font-semibold text-slate-400 py-2 border-t border-slate-100 mt-2 bg-slate-50 rounded-lg">… and ${rows - 5} additional seating configurations down matrix</div>`;
         }
+        html += '</div>';
+        document.getElementById('layoutPreview').innerHTML = html;
+    }
 
-        function loadSeatClasses() {
-            const container = document.getElementById('seatClassesContainer');
-            const classes = config.vehicleType === 'bus' 
-                ? ['normal', 'vip', 'executive'] 
-                : ['economy', 'business', 'first_class'];
+    function nextStep(step) {
+        const stepId = 'step' + step;
+        switchTab(stepId);
+        if (step === 3) loadSeatClasses();
+        if (step === 4) loadSummary();
+    }
 
-            let html = '';
-            classes.forEach(cls => {
-                html += `
-                    <div class="form-group">
-                        <label>${cls.charAt(0).toUpperCase() + cls.slice(1)} Seats</label>
-                        <div class="flex gap-4">
-                            <input type="number" id="class_${cls}_count" placeholder="Number of seats" value="0">
-                            <input type="number" id="class_${cls}_price" placeholder="Price (KES)" value="1200" step="100">
-                            <input type="color" id="class_${cls}_color" value="#2ecc71" class="color-picker">
+    function loadSeatClasses() {
+        const container = document.getElementById('seatClassesContainer');
+        const classes = config.vehicleType === 'bus' 
+            ? ['normal', 'vip', 'executive'] 
+            : ['economy', 'business', 'first_class'];
+
+        let html = '';
+        classes.forEach(cls => {
+            html += `
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">${cls.replace('_', ' ')} Seating Manifest</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input type="number" id="class_${cls}_count" placeholder="Allocated Count" value="0"
+                            class="w-full text-sm rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-700 outline-none focus:border-indigo-500 focus:ring-1">
+                        <input type="number" id="class_${cls}_price" placeholder="Base Fare (KES)" value="1200" step="100"
+                            class="w-full text-sm rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-700 outline-none focus:border-indigo-500 focus:ring-1">
+                        <div class="flex items-center gap-2">
+                            <input type="color" id="class_${cls}_color" value="#4f46e5" 
+                                class="w-10 h-9 p-0.5 rounded-lg border border-slate-200 bg-white cursor-pointer">
+                            <span class="text-xs text-slate-500 font-semibold">Map UI Color Node</span>
                         </div>
                     </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        function loadSummary() {
-            const summary = `
-                <p><strong>Vehicle Type:</strong> ${config.vehicleType.toUpperCase()}</p>
-                <p><strong>Layout:</strong> ${document.getElementById('numRows').value} rows × ${document.getElementById('numColumns').value} columns</p>
-                <p><strong>Total Seats:</strong> ${document.getElementById('totalSeats').value}</p>
-                <p><strong>Aisle Position:</strong> Column ${document.getElementById('aislePosition').value}</p>
+                </div>
             `;
-            document.getElementById('configSummary').innerHTML = summary;
-        }
-
-        function saveLayout() {
-            const templateName = document.getElementById('templateName').value;
-            if (!templateName) {
-                showMessage('Please enter a template name', 'error');
-                return;
-            }
-
-            const payload = {
-                template_name: templateName,
-                description: document.getElementById('templateDescription').value,
-                total_seats: parseInt(document.getElementById('totalSeats').value),
-                rows: parseInt(document.getElementById('numRows').value),
-                columns: parseInt(document.getElementById('numColumns').value),
-                aisle_position: parseInt(document.getElementById('aislePosition').value),
-                has_driver: document.getElementById('hasDriver').checked,
-                driver_location: document.getElementById('driverLocation').value,
-                save_as_template: document.getElementById('saveAsTemplate').checked,
-                vehicle_type: config.vehicleType,
-            };
-
-            fetch('/systemadmin/api/save-layout/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    showMessage('Layout saved successfully! Layout ID: ' + data.layout_id, 'success');
-                    setTimeout(() => {
-                        window.location.href = `/systemadmin/layouts/${data.layout_id}/`;
-                    }, 2000);
-                } else {
-                    showMessage(data.error || 'Failed to save layout', 'error');
-                }
-            })
-            .catch(err => showMessage('Error: ' + err.message, 'error'));
-        }
-
-        function showMessage(text, type) {
-            const container = document.getElementById('messages');
-            const msgClass = type === 'error' ? 'error-message' : 'success-message';
-            const msg = document.createElement('div');
-            msg.className = msgClass;
-            msg.textContent = text;
-            container.appendChild(msg);
-            setTimeout(() => msg.remove(), 4000);
-        }
-
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-        // Initialize with first template
-        window.addEventListener('load', () => {
-            updatePreview();
         });
-    </script>
+        container.innerHTML = html;
+    }
+
+    function loadSummary() {
+        const summary = `
+            <div class="flex justify-between py-1 border-b border-slate-200/60"><span>Inventory Profile:</span> <span class="font-bold text-slate-800">${config.vehicleType.toUpperCase()}</span></div>
+            <div class="flex justify-between py-1 border-b border-slate-200/60"><span>Layout Grid Matrix:</span> <span class="font-bold text-slate-800">${document.getElementById('numRows').value} rows × ${document.getElementById('numColumns').value} columns</span></div>
+            <div class="flex justify-between py-1 border-b border-slate-200/60"><span>Capacity Limit Threshold:</span> <span class="font-bold text-slate-800">${document.getElementById('totalSeats').value} Gross Seats</span></div>
+            <div class="flex justify-between py-1"><span>Aisle Separation Break:</span> <span class="font-bold text-slate-800">Column Axis Point ${document.getElementById('aislePosition').value}</span></div>
+        `;
+        document.getElementById('configSummary').innerHTML = summary;
+    }
+
+    function saveLayout() {
+        const templateName = document.getElementById('templateName').value;
+        if (!templateName) {
+            showMessage('Please assign a layout blueprint identifier name.', 'error');
+            return;
+        }
+
+        const payload = {
+            template_name: templateName,
+            description: document.getElementById('templateDescription').value,
+            total_seats: parseInt(document.getElementById('totalSeats').value),
+            rows: parseInt(document.getElementById('numRows').value),
+            columns: parseInt(document.getElementById('numColumns').value),
+            aisle_position: parseInt(document.getElementById('aislePosition').value),
+            has_driver: document.getElementById('hasDriver').checked,
+            driver_location: document.getElementById('driverLocation').value,
+            save_as_template: document.getElementById('saveAsTemplate').checked,
+            vehicle_type: config.vehicleType,
+        };
+
+        fetch('/systemadmin/api/save-layout/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showMessage('Layout architecture deployed successfully! Layout Node ID: ' + data.layout_id, 'success');
+                setTimeout(() => {
+                    window.location.href = `/systemadmin/layouts/${data.layout_id}/`;
+                }, 2000);
+            } else {
+                showMessage(data.error || 'Database rejected generation command parameters.', 'error');
+            }
+        })
+        .catch(err => showMessage('System error processing requests: ' + err.message, 'error'));
+    }
+
+    function showMessage(text, type) {
+        const container = document.getElementById('messages');
+        const alertStyles = type === 'error' 
+            ? 'bg-rose-50 border-rose-200 text-rose-800' 
+            : 'bg-emerald-50 border-emerald-200 text-emerald-800';
+        
+        const msg = document.createElement('div');
+        msg.className = `p-4 rounded-xl border text-sm font-semibold shadow-sm transition duration-300 ${alertStyles}`;
+        msg.textContent = text;
+        container.appendChild(msg);
+        setTimeout(() => msg.remove(), 4000);
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+        updatePreview();
+    });
+</script>
 </body>
 </html>
