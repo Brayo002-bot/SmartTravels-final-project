@@ -8,258 +8,776 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --navy: #080d1a;
-  --gold: #c9a84c;
-  --gold-l: #e8c97a;
-  --border: rgba(255,255,255,0.08);
-  --border-h: rgba(255,255,255,0.16);
-  --glass: rgba(255,255,255,0.04);
-  --glass-h: rgba(255,255,255,0.07);
-  --muted: rgba(255,255,255,0.45);
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-hover: #334155;
+  --border: rgba(148,163,184,0.12);
+  --border-hover: rgba(148,163,184,0.2);
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --accent: #0ea5e9;
+  --accent-light: #38bdf8;
+  --accent-glow: rgba(14,165,233,0.15);
+  --success: #10b981;
+  --success-glow: rgba(16,185,129,0.15);
+  --warning: #f59e0b;
+  --warning-glow: rgba(245,158,11,0.15);
+  --danger: #ef4444;
+  --danger-glow: rgba(239,68,68,0.15);
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--navy); color: #fff;
-  min-height: 100vh; overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-.orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
-.orb-1 { width: 500px; height: 500px; top: -150px; right: -150px; background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 65%); }
-.orb-2 { width: 400px; height: 400px; bottom: -120px; left: -100px; background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 65%); }
+/* Ambient background */
+.ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.ambient::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  top: -200px;
+  right: -200px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+  animation: drift 20s ease-in-out infinite;
+}
+.ambient::after {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  bottom: -150px;
+  left: -150px;
+  background: radial-gradient(circle, var(--success-glow) 0%, transparent 60%);
+  animation: drift 25s ease-in-out infinite reverse;
+}
 
-.page { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; z-index: 1; }
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+}
 
-/* HEADER */
+/* Layout */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
 .page-header {
-  background: var(--glass); border: 0.5px solid var(--border);
-  border-radius: 16px; padding: 1.25rem 1.5rem;
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
 }
-.page-header-left { display: flex; align-items: center; gap: 14px; }
-.page-icon {
-  width: 52px; height: 52px; border-radius: 13px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.3rem;
-  background: rgba(201,168,76,0.1); border: 0.5px solid rgba(201,168,76,0.2);
-  color: var(--gold); animation: floatY 4s ease-in-out infinite;
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--success), var(--warning));
+  opacity: 0.6;
 }
-@keyframes floatY { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
-.page-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem; font-weight: 500; color: #fff;
-}
-.page-sub { font-size: 0.8rem; font-weight: 300; color: var(--muted); margin-top: 2px; }
 
-.hdr-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.btn-outline {
-  display: flex; align-items: center; gap: 7px;
-  padding: 8px 16px; border-radius: 9px;
-  background: var(--glass); border: 0.5px solid var(--border);
-  color: rgba(255,255,255,0.75); font-family: 'DM Sans', sans-serif;
-  font-size: 0.83rem; font-weight: 400; text-decoration: none;
-  transition: background 0.18s;
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
-.btn-outline:hover { background: var(--glass-h); }
-.btn-gold {
-  display: flex; align-items: center; gap: 7px;
-  padding: 8px 16px; border-radius: 9px;
-  background: var(--gold); border: none; color: #0a0f1e;
-  font-family: 'DM Sans', sans-serif; font-size: 0.83rem; font-weight: 500;
-  text-decoration: none; transition: background 0.18s;
-}
-.btn-gold:hover { background: var(--gold-l); }
 
-/* STATS */
+.header-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  background: linear-gradient(135deg, var(--accent-glow), rgba(56,189,248,0.1));
+  border: 1px solid rgba(14,165,233,0.2);
+  color: var(--accent-light);
+  position: relative;
+}
+
+.header-icon::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--accent), transparent);
+  opacity: 0.3;
+  z-index: -1;
+  filter: blur(8px);
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.header-sub {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-secondary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #0284c7);
+  color: white;
+  box-shadow: 0 4px 14px rgba(14,165,233,0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(14,165,233,0.4);
+}
+
+/* Stats */
 .stats-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
-  gap: 1rem; margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
+
 .stat-card {
-  background: var(--glass); border: 0.5px solid var(--border);
-  border-radius: 14px; padding: 1.1rem 1.25rem;
-  display: flex; align-items: center; justify-content: space-between;
-  transition: border-color 0.2s, transform 0.2s; position: relative; overflow: hidden;
-}
-.stat-card:hover { border-color: var(--border-h); transform: translateY(-3px); }
-.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: 14px 14px 0 0; }
-.stat-card.c-teal::before { background: #2dd4bf; }
-.stat-card.c-green::before { background: #4ade80; }
-.stat-card.c-amber::before { background: #fbbf24; }
-.stat-label { font-size: 0.73rem; font-weight: 400; color: var(--muted); }
-.stat-value { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 500; color: #fff; margin-top: 4px; }
-.stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
-.stat-icon.teal { background: rgba(45,212,191,0.1); color: #2dd4bf; }
-.stat-icon.green { background: rgba(74,222,128,0.1); color: #4ade80; }
-.stat-icon.amber { background: rgba(251,191,36,0.1); color: #fbbf24; }
-
-/* EMPTY STATE */
-.empty-card {
-  background: var(--glass); border: 0.5px solid var(--border);
-  border-radius: 16px; padding: 4rem 2rem; text-align: center;
-  position: relative; overflow: hidden;
-}
-.deco-icons {
-  position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
-}
-.deco-icon {
-  position: absolute; font-size: 5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.empty-icon-lg {
-  width: 80px; height: 80px; border-radius: 20px;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 1.5rem; font-size: 2rem;
-  background: rgba(201,168,76,0.08); border: 0.5px solid rgba(201,168,76,0.2);
-  color: var(--gold); animation: floatY 4s ease-in-out infinite;
+.stat-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
 }
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 16px 0 0 16px;
+}
+
+.stat-card.info::after { background: var(--accent); }
+.stat-card.success::after { background: var(--success); }
+.stat-card.warning::after { background: var(--warning); }
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.stat-icon.info {
+  background: var(--accent-glow);
+  color: var(--accent-light);
+}
+
+.stat-icon.success {
+  background: var(--success-glow);
+  color: var(--success);
+}
+
+.stat-icon.warning {
+  background: var(--warning-glow);
+  color: var(--warning);
+}
+
+/* Tickets Section */
+.tickets-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.section-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Ticket Card */
+.ticket-card {
+  background: rgba(30,41,59,0.6);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.ticket-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ticket-card:hover::before {
+  opacity: 0.5;
+}
+
+.ticket-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-light);
+  margin-bottom: 0.75rem;
+}
+
+.ticket-type i {
+  font-size: 0.8rem;
+}
+
+.ticket-route {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.ticket-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.ticket-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.ticket-meta i {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.ticket-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Status badges */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-confirmed {
+  background: var(--success-glow);
+  color: var(--success);
+  border: 1px solid rgba(16,185,129,0.2);
+}
+
+.status-pending {
+  background: var(--warning-glow);
+  color: var(--warning);
+  border: 1px solid rgba(245,158,11,0.2);
+}
+
+.status-cancelled {
+  background: var(--danger-glow);
+  color: var(--danger);
+  border: 1px solid rgba(239,68,68,0.2);
+}
+
+/* Empty State */
+.empty-state {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 2rem;
+  background: linear-gradient(135deg, var(--accent-glow), rgba(56,189,248,0.1));
+  border: 1px solid rgba(14,165,233,0.2);
+  color: var(--accent-light);
+  position: relative;
+}
+
+.empty-icon::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, var(--accent), transparent);
+  opacity: 0.2;
+  z-index: -1;
+  filter: blur(12px);
+}
+
 .empty-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.75rem; font-weight: 500; color: #fff; margin-bottom: 0.75rem;
-}
-.empty-sub {
-  font-size: 0.88rem; font-weight: 300; color: var(--muted);
-  max-width: 460px; margin: 0 auto 2.5rem; line-height: 1.7;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.75rem;
 }
 
-/* FEATURE CARDS */
+.empty-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  max-width: 480px;
+  margin: 0 auto 2rem;
+  line-height: 1.7;
+}
+
 .features-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem; margin-bottom: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
-.feature-card {
-  background: rgba(255,255,255,0.03); border: 0.5px solid var(--border);
-  border-radius: 13px; padding: 1.25rem; text-align: center;
-  transition: border-color 0.2s;
-}
-.feature-card:hover { border-color: var(--border-h); }
-.feature-icon {
-  width: 48px; height: 48px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 0.85rem; font-size: 1.1rem;
-}
-.feature-icon.teal { background: rgba(45,212,191,0.1); color: #2dd4bf; }
-.feature-icon.purple { background: rgba(167,139,250,0.1); color: #a78bfa; }
-.feature-icon.green { background: rgba(74,222,128,0.1); color: #4ade80; }
-.feature-title { font-size: 0.92rem; font-weight: 500; color: #fff; margin-bottom: 0.35rem; }
-.feature-desc { font-size: 0.78rem; font-weight: 300; color: var(--muted); line-height: 1.5; }
 
-.cta-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.feature-card {
+  background: rgba(30,41,59,0.5);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.2rem;
+}
+
+.feature-icon.blue {
+  background: var(--accent-glow);
+  color: var(--accent-light);
+}
+
+.feature-icon.purple {
+  background: rgba(167,139,250,0.1);
+  color: #a78bfa;
+}
+
+.feature-icon.green {
+  background: var(--success-glow);
+  color: var(--success);
+}
+
+.feature-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+
+.feature-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page { padding: 1rem; }
+  .page-header { padding: 1.25rem; }
+  .tickets-section { padding: 1.25rem; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 </style>
 </head>
 <body>
 
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
+<div class="ambient"></div>
 
 <div class="flex min-h-screen">
 
   {% include 'passenger/sidebar.html' %}
 
-  <main class="flex-1 lg:ml-64 w-full">
+  <main class="flex-1 lg:ml-72 w-full">
     <div class="page">
 
+      <!-- Header -->
       <div class="page-header">
-        <div class="page-header-left">
-          <div class="page-icon"><i class="fa-solid fa-qrcode"></i></div>
+        <div class="header-left">
+          <div class="header-icon">
+            <i class="fa-solid fa-qrcode"></i>
+          </div>
           <div>
-            <div class="page-title">My Tickets</div>
-            <div class="page-sub">View, download and manage your QR-coded travel tickets</div>
+            <div class="header-title">My Tickets</div>
+            <div class="header-sub">View, download and manage your QR-coded travel tickets</div>
           </div>
         </div>
-        <div class="hdr-actions">
-          <a href="{% url 'dashboard' %}" class="btn-outline">
-            <i class="fa-solid fa-house" style="font-size:0.8rem;"></i> Dashboard
+        <div class="header-actions">
+          <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+            <i class="fa-solid fa-house" style="font-size:0.75rem;"></i>
+            Dashboard
           </a>
-          <a href="{% url 'my_bookings' %}" class="btn-gold">
-            <i class="fa-solid fa-ticket" style="font-size:0.8rem;"></i> My Bookings
+          <a href="{% url 'my_bookings' %}" class="btn btn-primary">
+            <i class="fa-solid fa-ticket" style="font-size:0.75rem;"></i>
+            My Bookings
           </a>
         </div>
       </div>
 
+      <!-- Stats -->
       <div class="stats-grid">
-
-        <div class="stat-card c-teal">
-          <div>
+        <div class="stat-card info">
+          <div class="stat-content">
             <div class="stat-label">Total Tickets</div>
             <div class="stat-value">{{ total_tickets|default:'0' }}</div>
           </div>
-          <div class="stat-icon teal"><i class="fa-solid fa-ticket"></i></div>
+          <div class="stat-icon info">
+            <i class="fa-solid fa-ticket"></i>
+          </div>
         </div>
 
-        <div class="stat-card c-green">
-          <div>
+        <div class="stat-card success">
+          <div class="stat-content">
             <div class="stat-label">Confirmed</div>
             <div class="stat-value">{{ confirmed_tickets|default:'0' }}</div>
           </div>
-          <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="stat-icon success">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
         </div>
 
-        <div class="stat-card c-amber">
-          <div>
+        <div class="stat-card warning">
+          <div class="stat-content">
             <div class="stat-label">Loyalty Points</div>
             <div class="stat-value">{{ loyalty_points|default:'0' }}</div>
           </div>
-          <div class="stat-icon amber"><i class="fa-solid fa-gift"></i></div>
+          <div class="stat-icon warning">
+            <i class="fa-solid fa-gift"></i>
+          </div>
         </div>
-
       </div>
 
-      <div class="empty-card">
-
-        <div class="deco-icons">
-          <div class="deco-icon" style="top:8%;left:5%;">✈</div>
-          <div class="deco-icon" style="bottom:8%;right:5%;">🚂</div>
-          <div class="deco-icon" style="top:50%;left:42%;">🚌</div>
+      {% if bus_tickets or train_tickets or flight_tickets %}
+      <!-- Tickets List -->
+      <div class="tickets-section">
+        <div class="section-header">
+          <h2 class="section-title">Your Ticket History</h2>
+          <p class="section-desc">Download PDF tickets with QR codes, preview boarding passes and keep every journey record in one place.</p>
         </div>
 
-        <div style="position:relative;z-index:1;">
-
-          <div class="empty-icon-lg">
-            <i class="fa-solid fa-qrcode"></i>
-          </div>
-
-          <div class="empty-title">No tickets yet</div>
-          <div class="empty-sub">
-            Once you book and pay for your journey, your QR-coded tickets will
-            appear here for download, tracking and boarding verification.
-          </div>
-
-          <div class="features-grid">
-            <div class="feature-card">
-              <div class="feature-icon teal"><i class="fa-solid fa-qrcode"></i></div>
-              <div class="feature-title">QR Verification</div>
-              <div class="feature-desc">Tickets are scanned instantly before you board — no printing needed.</div>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon purple"><i class="fa-solid fa-download"></i></div>
-              <div class="feature-title">Download Tickets</div>
-              <div class="feature-desc">Save PDF tickets directly to your device for offline access.</div>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon green"><i class="fa-solid fa-location-dot"></i></div>
-              <div class="feature-title">Smart Tracking</div>
-              <div class="feature-desc">Track your journey and parcel movement in real time.</div>
-            </div>
-          </div>
-
-          <div class="cta-row">
-            <a href="{% url 'dashboard' %}" class="btn-gold">
-              <i class="fa-solid fa-route" style="font-size:0.8rem;"></i> Book a Trip
-            </a>
-            <a href="{% url 'my_bookings' %}" class="btn-outline">
-              <i class="fa-solid fa-clock-rotate-left" style="font-size:0.8rem;"></i> View Bookings
-            </a>
-          </div>
-
+        <div class="flex flex-wrap gap-3 mb-6">
+          <a href="{% url 'dashboard' %}" class="btn btn-secondary">📅 Book More Trips</a>
+          <a href="{% url 'my_bookings' %}" class="btn btn-primary">🧾 View Bookings</a>
         </div>
 
+        <div>
+          {% for ticket in bus_tickets %}
+          <div class="ticket-card">
+            <div class="ticket-type">
+              <i class="fa-solid fa-bus"></i>
+              Bus Ticket
+            </div>
+            <div class="ticket-route">{{ ticket.route.from_location }} → {{ ticket.route.to_location }}</div>
+            <div class="ticket-meta">
+              <span><i class="fa-solid fa-hashtag"></i> {{ ticket.booking_reference }}</span>
+              <span><i class="fa-solid fa-calendar"></i> {{ ticket.travel_date }}</span>
+              <span><i class="fa-solid fa-chair"></i> {{ ticket.seat_number|default:'Unassigned' }}</span>
+            </div>
+            <div class="ticket-actions">
+              <span class="status status-{{ ticket.status }}">
+                <i class="fa-solid fa-circle" style="font-size:0.4rem;"></i>
+                {{ ticket.status|title }}
+              </span>
+              <a href="{% url 'download_ticket' ticket.booking_reference %}" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.8rem;">
+                <i class="fa-solid fa-download" style="font-size:0.75rem;"></i>
+                Download PDF
+              </a>
+              <a href="{% url 'booking_ticket_preview' ticket.booking_reference %}" class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.8rem;">
+                <i class="fa-solid fa-eye" style="font-size:0.75rem;"></i>
+                Preview
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+
+          {% for ticket in train_tickets %}
+          <div class="ticket-card">
+            <div class="ticket-type">
+              <i class="fa-solid fa-train"></i>
+              Train Ticket
+            </div>
+            <div class="ticket-route">{{ ticket.route.from_location }} → {{ ticket.route.to_location }}</div>
+            <div class="ticket-meta">
+              <span><i class="fa-solid fa-hashtag"></i> {{ ticket.booking_reference }}</span>
+              <span><i class="fa-solid fa-calendar"></i> {{ ticket.travel_date }}</span>
+              <span><i class="fa-solid fa-chair"></i> {{ ticket.seat_number|default:'Unassigned' }}</span>
+            </div>
+            <div class="ticket-actions">
+              <span class="status status-{{ ticket.status }}">
+                <i class="fa-solid fa-circle" style="font-size:0.4rem;"></i>
+                {{ ticket.status|title }}
+              </span>
+              <a href="{% url 'download_ticket' ticket.booking_reference %}" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.8rem;">
+                <i class="fa-solid fa-download" style="font-size:0.75rem;"></i>
+                Download PDF
+              </a>
+              <a href="{% url 'booking_ticket_preview' ticket.booking_reference %}" class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.8rem;">
+                <i class="fa-solid fa-eye" style="font-size:0.75rem;"></i>
+                Preview
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+
+          {% for ticket in flight_tickets %}
+          <div class="ticket-card">
+            <div class="ticket-type">
+              <i class="fa-solid fa-plane"></i>
+              Flight Ticket
+            </div>
+            <div class="ticket-route">{{ ticket.route.from_location }} → {{ ticket.route.to_location }}</div>
+            <div class="ticket-meta">
+              <span><i class="fa-solid fa-hashtag"></i> {{ ticket.booking_reference }}</span>
+              <span><i class="fa-solid fa-calendar"></i> {{ ticket.travel_date }}</span>
+              <span><i class="fa-solid fa-chair"></i> {{ ticket.seat_number|default:'Unassigned' }}</span>
+            </div>
+            <div class="ticket-actions">
+              <span class="status status-{{ ticket.status }}">
+                <i class="fa-solid fa-circle" style="font-size:0.4rem;"></i>
+                {{ ticket.status|title }}
+              </span>
+              <a href="{% url 'download_ticket' ticket.booking_reference %}" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.8rem;">
+                <i class="fa-solid fa-download" style="font-size:0.75rem;"></i>
+                Download PDF
+              </a>
+              <a href="{% url 'booking_ticket_preview' ticket.booking_reference %}" class="btn btn-secondary" style="padding:0.5rem 1rem;font-size:0.8rem;">
+                <i class="fa-solid fa-eye" style="font-size:0.75rem;"></i>
+                Preview
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
       </div>
+
+      {% else %}
+      <!-- Empty State -->
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fa-solid fa-qrcode"></i>
+        </div>
+
+        <div class="empty-title">No tickets yet</div>
+        <div class="empty-desc">
+          Once you book and pay for your journey, your QR-coded tickets will appear here for download, tracking and boarding verification.
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon blue">
+              <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <div class="feature-title">QR Verification</div>
+            <div class="feature-desc">Tickets are scanned instantly before you board — no printing needed.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon purple">
+              <i class="fa-solid fa-download"></i>
+            </div>
+            <div class="feature-title">Download Tickets</div>
+            <div class="feature-desc">Save PDF tickets directly to your device for offline access.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon green">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <div class="feature-title">Smart Tracking</div>
+            <div class="feature-desc">Track your journey and parcel movement in real time.</div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3">
+          <a href="{% url 'dashboard' %}" class="btn btn-primary">
+            <i class="fa-solid fa-route" style="font-size:0.75rem;"></i>
+            Book a Trip
+          </a>
+          <a href="{% url 'my_bookings' %}" class="btn btn-secondary">
+            <i class="fa-solid fa-clock-rotate-left" style="font-size:0.75rem;"></i>
+            View Bookings
+          </a>
+        </div>
+      </div>
+      {% endif %}
 
     </div>
   </main>

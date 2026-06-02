@@ -163,6 +163,16 @@
             transform:translateY(-2px);
         }
 
+        .tracking-alert{
+            background:rgba(59,130,246,0.15);
+            border:1px solid rgba(59,130,246,0.28);
+            color:#93c5fd;
+            padding:12px 16px;
+            border-radius:12px;
+            font-size:0.875rem;
+            margin-top:8px;
+        }
+
         @media(max-width:768px){
             .page-content{
                 padding:20px;
@@ -317,122 +327,76 @@
                     {% for booking in bookings %}
                     <div class="booking-card glass rounded-[32px] p-7">
                         <div class="flex flex-col 2xl:flex-row 2xl:items-center 2xl:justify-between gap-8">
-                            <div class="flex flex-col lg:flex-row gap-6">
+                            <div class="flex flex-col lg:flex-row gap-6 w-full">
                                 <div class="w-full lg:w-32 h-32 rounded-[24px] overflow-hidden bg-white/10 shrink-0">
-                                    {% if booking.image %}
-                                        <img src="{{ booking.image.url }}" class="w-full h-full object-cover" alt="{{ booking.company_name }}">
-                                    {% else %}
-                                        <img src="{% static 'images/backgroundrl.webp' %}" class="w-full h-full object-cover" alt="Default Journey Image">
-                                    {% endif %}
+                                    <img src="{% static 'images/backgroundrl.webp' %}" class="w-full h-full object-cover" alt="Travel Image">
                                 </div>
 
-                                <div>
+                                <div class="flex-1">
                                     <div class="flex flex-wrap items-center gap-4 mb-4">
-                                        <h2 class="text-3xl font-bold">{{ booking.company_name }}</h2>
-                                        <span class="px-4 py-2 rounded-full text-sm font-bold 
-                                            {% if booking.status == 'Confirmed' %}status-confirmed
-                                            {% elif booking.status == 'Pending' %}status-pending
-                                            {% else %}status-cancelled{% endif %}">
-                                            {{ booking.status }}
-                                        </span>
+                                        <h2 class="text-3xl font-bold">{{ booking.route.from_location }} → {{ booking.route.to_location }}</h2>
+                                        <span class="px-4 py-2 rounded-full text-sm font-bold {% if booking.status == 'confirmed' %}status-confirmed{% elif booking.status == 'pending' %}status-pending{% else %}status-cancelled{% endif %}">{{ booking.status|title }}</span>
                                     </div>
-                                    <div class="text-slate-400 mb-6">Booking ID: #{{ booking.booking_id }}</div>
+                                    {% if booking.company_name %}
+                                    <div class="flex items-center gap-3 mt-2 mb-4">
+                                        {% if booking.company_logo_url %}
+                                        <img src="{{ booking.company_logo_url }}" alt="{{ booking.company_name }}" class="w-10 h-10 rounded-md object-cover" onerror="this.style.display='none'">
+                                        {% endif %}
+                                        <div class="text-sm text-slate-400">{{ booking.company_name }}</div>
+                                    </div>
+                                    {% endif %}
+                                    <div class="text-slate-400 mb-6">Booking Reference: {{ booking.booking_reference }}</div>
 
                                     <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
                                         <div>
-                                            <div class="text-sm text-slate-500 mb-2">From</div>
-                                            <div class="text-xl font-bold">{{ booking.departure_from }}</div>
+                                            <div class="text-sm text-slate-500 mb-2">📅 Date</div>
+                                            <div class="text-xl font-bold">{{ booking.travel_date|date:"d M Y" }}</div>
                                         </div>
                                         <div>
-                                            <div class="text-sm text-slate-500 mb-2">To</div>
-                                            <div class="text-xl font-bold">{{ booking.destination_to }}</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-sm text-slate-500 mb-2">Departure</div>
-                                            <div class="text-xl font-bold">{{ booking.departure_date|date:"d M Y" }}</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-sm text-slate-500 mb-2">
-                                                {% if booking.travel_type == 'Flight' %}Flight{% else %}Seat / Coach{% endif %}
+                                            <div class="text-sm text-slate-500 mb-2">🕐 Time</div>
+                                            <div class="text-xl font-bold">
+                                                {% if booking.travel_time %}
+                                                    {{ booking.travel_time|time:"H:i" }}
+                                                {% else %}
+                                                    TBD
+                                                {% endif %}
                                             </div>
-                                            <div class="text-xl font-bold gold-text">{{ booking.seat_or_reference }}</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-slate-500 mb-2">🪑 Seat</div>
+                                            <div class="text-xl font-bold gold-text">{{ booking.seat_number|default:'Unassigned' }}</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-slate-500 mb-2">💰 Amount</div>
+                                            <div class="text-xl font-bold">KES {{ booking.price|floatformat:2 }}</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- ACTIONS CONTAINER -->
                             <div class="flex flex-col gap-4 min-w-[240px]">
-                                {% if booking.status == 'Confirmed' %}
-                                    <button class="gold-btn action-btn px-6 py-4 rounded-2xl">🎫 View Ticket</button>
-                                    <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">📥 Download Receipt</button>
-                                    <button class="bg-red-500/15 hover:bg-red-500/25 transition text-red-300 action-btn px-6 py-4 rounded-2xl">❌ Cancel Booking</button>
-                                {% elif booking.status == 'Pending' %}
-                                    <button class="gold-btn action-btn px-6 py-4 rounded-2xl">💳 Complete Payment</button>
-                                    <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">👁 View Details</button>
-                                {% else %}
-                                    <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">🔄 Rebook Trip</button>
+                                <a href="{% url 'download_ticket' booking.booking_reference %}" class="gold-btn action-btn px-6 py-4 rounded-2xl text-center">📥 Download PDF</a>
+                                <a href="{% url 'booking_ticket_preview' booking.booking_reference %}" class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl text-center">👁 View Ticket</a>
+                                
+                                {% if booking.status == 'confirmed' %}
+                                    <a href="{% url 'vehicle_location' booking.vehicle_type booking.vehicle_id %}" class="glass action-btn border border-cyan-400/20 hover:border-cyan-400/50 hover:bg-cyan-400/10 px-6 py-4 rounded-2xl text-center text-cyan-300">📍 Track Journey</a>
+                                    
+                                    {% if not booking.gps_tracking_started %}
+                                        <div class="tracking-alert">
+                                            ⏳ Driver hasn't started GPS tracking yet. Check back soon!
+                                        </div>
+                                    {% endif %}
                                 {% endif %}
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                 {% else %}
-                    <!-- FALLBACK PLACEHOLDERS (Your original design items if Context is Empty) -->
-                    <!-- Easy Coach Sample -->
                     <div class="booking-card glass rounded-[32px] p-7">
-                        <div class="flex flex-col 2xl:flex-row 2xl:items-center 2xl:justify-between gap-8">
-                            <div class="flex flex-col lg:flex-row gap-6">
-                                <div class="w-full lg:w-32 h-32 rounded-[24px] overflow-hidden bg-white/10 shrink-0">
-                                    <img src="{% static 'images/backgroundrl.webp' %}" class="w-full h-full object-cover">
-                                </div>
-                                <div>
-                                    <div class="flex flex-wrap items-center gap-4 mb-4">
-                                        <h2 class="text-3xl font-bold">Easy Coach</h2>
-                                        <span class="status-confirmed px-4 py-2 rounded-full text-sm font-bold">Confirmed</span>
-                                    </div>
-                                    <div class="text-slate-400 mb-6">Booking ID: #STB-29452</div>
-                                    <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
-                                        <div><div class="text-sm text-slate-500 mb-2">From</div><div class="text-xl font-bold">Nairobi</div></div>
-                                        <div><div class="text-sm text-slate-500 mb-2">To</div><div class="text-xl font-bold">Mombasa</div></div>
-                                        <div><div class="text-sm text-slate-500 mb-2">Departure</div><div class="text-xl font-bold">20 May 2026</div></div>
-                                        <div><div class="text-sm text-slate-500 mb-2">Seat</div><div class="text-xl font-bold gold-text">A12</div></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-4 min-w-[240px]">
-                                <button class="gold-btn action-btn px-6 py-4 rounded-2xl">🎫 View Ticket</button>
-                                <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">📥 Download Receipt</button>
-                                <button class="bg-red-500/15 hover:bg-red-500/25 transition text-red-300 action-btn px-6 py-4 rounded-2xl">❌ Cancel Booking</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Kenya Airways Sample -->
-                    <div class="booking-card glass rounded-[32px] p-7">
-                        <div class="flex flex-col 2xl:flex-row 2xl:items-center 2xl:justify-between gap-8">
-                            <div class="flex flex-col lg:flex-row gap-6">
-                                <div class="w-full lg:w-32 h-32 rounded-[24px] overflow-hidden bg-white/10 shrink-0">
-                                    <img src="{% static 'images/backgroundrl.webp' %}" class="w-full h-full object-cover">
-                                </div>
-                                <div>
-                                    <div class="flex flex-wrap items-center gap-4 mb-4">
-                                        <h2 class="text-3xl font-bold">Kenya Airways</h2>
-                                        <span class="status-pending px-4 py-2 rounded-full text-sm font-bold">Pending</span>
-                                    </div>
-                                    <div class="text-slate-400 mb-6">Booking ID: #STB-84721</div>
-                                    <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
-                                        <div><div class="text-sm text-slate-500 mb-2">From</div><div class="text-xl font-bold">Nairobi</div></div>
-                                        <div><div class="text-sm text-slate-500 mb-2">To</div><div class="text-xl font-bold">Kisumu</div></div>
-                                        <div><div class="text-sm text-slate-500 mb-2">Departure</div><div class="text-xl font-bold">25 May 2026</div></div>
-                                        <div><div class="text-sm text-slate-500 mb-2">Flight</div><div class="text-xl font-bold gold-text">KQ 624</div></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-4 min-w-[240px]">
-                                <button class="gold-btn action-btn px-6 py-4 rounded-2xl">💳 Complete Payment</button>
-                                <button class="glass action-btn border border-white/10 hover:border-amber-400/20 px-6 py-4 rounded-2xl">👁 View Details</button>
-                            </div>
+                        <div class="text-center py-16">
+                            <h2 class="text-4xl font-bold mb-4">No bookings yet</h2>
+                            <p class="text-slate-400 mb-6">Book a trip and your confirmed tickets will appear here automatically with PDF download and QR code preview.</p>
+                            <a href="{% url 'dashboard' %}" class="gold-btn px-6 py-4 rounded-2xl">Book a Trip</a>
                         </div>
                     </div>
                 {% endif %}

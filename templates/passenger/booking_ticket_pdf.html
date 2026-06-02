@@ -1,0 +1,366 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>SmartTravels Ticket {{ booking.booking_reference }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #090d16;
+            color: #cbd5e1;
+            padding: 20px;
+        }
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .ticket {
+            background: linear-gradient(135deg, #111827 0%, #161f30 100%);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            border-radius: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 0;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .ticket-left {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+            background: linear-gradient(180deg, #111827 0%, #161f30 100%);
+            border-right: 1px dashed rgba(71, 85, 105, 0.4);
+        }
+        .ticket-right {
+            padding: 30px;
+            background: #161e2e;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid rgba(71, 85, 105, 0.4);
+        }
+        .brand-title {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #4f46e5;
+        }
+        .brand-sub {
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.05em;
+        }
+        .ticket-code {
+            text-align: right;
+        }
+        .code-label {
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #64748b;
+            margin-bottom: 3px;
+        }
+        .code-value {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .trip-section {
+            margin-bottom: 15px;
+        }
+        .section-label {
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+        .route-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .location {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .route-icon {
+            color: #4f46e5;
+            font-size: 12px;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .detail-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .detail-label {
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .detail-value {
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .detail-sub {
+            font-size: 9px;
+            color: #a0aec0;
+            margin-top: 3px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 5px;
+        }
+        .status-confirmed {
+            background: rgba(34, 197, 94, 0.15);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .status-pending {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+        .notice {
+            font-size: 9px;
+            color: #94a3b8;
+            line-height: 1.5;
+            padding-top: 10px;
+            border-top: 1px solid rgba(71, 85, 105, 0.3);
+            margin-top: 10px;
+        }
+        .qr-container {
+            width: 100%;
+            max-width: 180px;
+            background: #fff;
+            padding: 12px;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+        }
+        .qr-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .qr-label {
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #1e293b;
+            margin-top: 8px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 6px;
+            text-align: center;
+        }
+        .carrier-badge {
+            background: rgba(71, 85, 105, 0.2);
+            border: 1px solid rgba(71, 85, 105, 0.4);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #cbd5e1;
+        }
+        .carrier-logo {
+            max-width: 80px;
+            height: 30px;
+            object-fit: contain;
+        }
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9px;
+            padding: 6px 0;
+        }
+        .meta-label {
+            color: #94a3b8;
+        }
+        .meta-value {
+            color: #fff;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+        .footer-text {
+            font-size: 8px;
+            color: #64748b;
+            text-align: center;
+            padding-top: 10px;
+            border-top: 1px solid rgba(71, 85, 105, 0.3);
+        }
+        .dimensions-text {
+            font-size: 9px;
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+        @media (max-width: 800px) {
+            .ticket {
+                grid-template-columns: 1fr;
+            }
+            .ticket-left {
+                border-right: none;
+                border-bottom: 1px dashed rgba(71, 85, 105, 0.4);
+            }
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="ticket">
+            <!-- LEFT PANEL -->
+            <div class="ticket-left">
+                <div class="header">
+                    <div class="brand">
+                        <img src="{% static 'images/logo.jpeg' %}" alt="SmartTravels Logo" />
+                        <div>
+                            <div class="brand-title">SmartTravels</div>
+                            <div class="brand-sub">Official Boarding Pass</div>
+                        </div>
+                    </div>
+                    <div class="ticket-code">
+                        <div class="code-label">Booking Ref</div>
+                        <div class="code-value">{{ booking.booking_reference }}</div>
+                    </div>
+                </div>
+
+                <div class="trip-section">
+                    <div class="section-label">Transit Pathway Routing</div>
+                    <div class="route-display">
+                        <div class="location">{{ booking.route.from_location }}</div>
+                        <div class="route-icon">→</div>
+                        <div class="location">{{ booking.route.to_location }}</div>
+                    </div>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-card">
+                        <div class="detail-label">Passenger Manifesto</div>
+                        <div class="detail-value">{{ booking.passenger_name }}</div>
+                        <div class="detail-sub">{{ booking.phone }}</div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-label">Assigned Carrier Node</div>
+                        <div class="detail-value">{{ company.name|default:'SmartTravels' }}</div>
+                        <div class="detail-sub">Authorized Partner</div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-label">Departure Schedule</div>
+                        <div class="detail-value">{{ booking.travel_date }}</div>
+                        <div class="detail-sub">{{ booking.travel_time|default:'TBD' }}</div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-label">Accommodation Unit</div>
+                        <div class="detail-value">{{ booking.seat_number|default:'Unassigned' }}</div>
+                        <div class="status-badge {% if booking.status|lower == 'confirmed' or booking.status|lower == 'paid' %}status-confirmed{% else %}status-pending{% endif %}">{{ booking.status }}</div>
+                    </div>
+                </div>
+
+                <div class="notice">
+                    <strong>ℹ️ Important:</strong> Automated system receipt generated following successful M-Pesa clearing verification. Ensure the digital signature matches this configuration upon boarding.
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="ticket-right">
+                <div style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <div class="carrier-badge">{{ mode|default:"Transit" }} Tier</div>
+                    {% if company and company.logo_image %}
+                    <img src="{{ company.logo_image.url }}" alt="{{ company.name }} Logo" class="carrier-logo" />
+                    {% endif %}
+                </div>
+
+                <div class="qr-container">
+                    {% if qr_code %}
+                        <img src="data:image/png;base64,{{ qr_code }}" alt="Ticket QR Code" />
+                    {% else %}
+                        <div style="padding: 40px; text-align: center; color: #cbd5e1; font-size: 11px;">QR Code Unavailable</div>
+                    {% endif %}
+                    <div class="qr-label">Security Pass Token</div>
+                </div>
+
+                <div style="width: 100%; border-top: 1px solid rgba(71, 85, 105, 0.3); padding-top: 10px; space-y: 10px;">
+                    <div class="meta-row">
+                        <span class="meta-label">Fare Processing</span>
+                        <span class="meta-value">KES {{ booking.price|floatformat:2 }}</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Ticket Dimensions</span>
+                        <span class="dimensions-text">90mm × 180mm</span>
+                    </div>
+                    <div class="footer-text">
+                        SmartTravels Cloud Engine • Secure Digital Signature
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

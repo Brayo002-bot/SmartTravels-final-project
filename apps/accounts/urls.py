@@ -16,5 +16,6 @@ urlpatterns = [
     path('traffic/', views.passenger_traffic_alerts, name='traffic_alerts'),
     path('book-trip/<str:mode>/<int:schedule_id>/', views.book_trip, name='book_trip'),
     path('seat-layout/', views.passenger_seat_layout, name='passenger_seat_layout'),
+    path('ticket-preview/<str:booking_reference>/', views.booking_ticket_preview, name='booking_ticket_preview'),
     path('download-ticket/<str:booking_reference>/', views.download_ticket, name='download_ticket'),
 ]

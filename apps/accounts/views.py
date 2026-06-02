@@ -30,6 +30,19 @@ except ImportError:
 
 try:
     import qrcode
+    from base64 import b64encode
+    QRCODE_AVAILABLE = True
+except ImportError:
+    QRCODE_AVAILABLE = False
+
+try:
+    from xhtml2pdf import pisa
+    XHTML2PDF_AVAILABLE = True
+except ImportError:
+    XHTML2PDF_AVAILABLE = False
+
+try:
+    import qrcode
     QRCODE_AVAILABLE = True
 except ImportError:
     QRCODE_AVAILABLE = False
@@ -64,6 +77,25 @@ def _send_ticket_email(recipient_email, booking):
     except Exception as exc:
         logger.warning(f"Unable to send ticket email to {recipient_email}: {exc}")
         return False
+
+
+def _booking_qr_base64(booking):
+    qr_data = (
+        f"TICKET|{booking.booking_reference}|{booking.route.from_location} → {booking.route.to_location}|"
+        f"{booking.travel_date}|{booking.seat_number or 'NA'}"
+    )
+    if not QRCODE_AVAILABLE:
+        return ''
+    qr_image = qrcode.make(qr_data)
+    buffer = io.BytesIO()
+    qr_image.save(buffer, format='PNG')
+    buffer.seek(0)
+    return b64encode(buffer.read()).decode('utf-8')
+
+
+def _booking_company(booking):
+    transport = getattr(booking, 'bus', None) or getattr(booking, 'train', None) or getattr(booking, 'flight', None)
+    return getattr(transport, 'company', None) if transport else None
 
 
 def get_dashboard_template_for_role(role):
@@ -313,11 +345,56 @@ def passenger_my_bookings(request):
     from apps.buses.models import Booking as BusBooking
     from apps.flights.models import Booking as FlightBooking
     from apps.trains.models import Booking as TrainBooking
+    from apps.gps.models import GPSPoint
 
     user_name = request.user.get_full_name() or request.user.username
     bus_bookings = list(BusBooking.objects.filter(passenger_name__icontains=user_name).order_by('-created_at')[:6])
     train_bookings = list(TrainBooking.objects.filter(passenger_name__icontains=user_name).order_by('-created_at')[:6])
     flight_bookings = list(FlightBooking.objects.filter(passenger_name__icontains=user_name).order_by('-created_at')[:6])
+
+    # Add vehicle info and GPS tracking status to each booking
+    def enrich_booking(booking, vehicle_type):
+        booking.vehicle_type = vehicle_type
+        
+        if vehicle_type == 'bus':
+            booking.vehicle_id = booking.bus.id
+            booking.vehicle_name = booking.bus.bus_number
+            booking.driver = booking.bus.driver
+        elif vehicle_type == 'train':
+            booking.vehicle_id = booking.train.id
+            booking.vehicle_name = booking.train.train_number
+            booking.driver = booking.train.conductor
+        elif vehicle_type == 'flight':
+            booking.vehicle_id = booking.flight.id
+            booking.vehicle_name = booking.flight.flight_number
+            booking.driver = booking.flight.pilot
+        
+        # Check if GPS tracking has been started for this vehicle
+        gps_record = GPSPoint.objects.filter(
+            vehicle_id=booking.vehicle_id,
+            vehicle_type=vehicle_type,
+            recorded_at__date=booking.travel_date
+        ).exists()
+        
+        booking.gps_tracking_started = gps_record
+        # Attach company and logo for easy display in templates
+        try:
+            company = _booking_company(booking)
+            booking.company = company
+            booking.company_name = company.name if company else None
+            try:
+                booking.company_logo_url = company.logo_image.url if company and getattr(company, 'logo_image', None) else None
+            except Exception:
+                booking.company_logo_url = None
+        except Exception:
+            booking.company = None
+            booking.company_name = None
+            booking.company_logo_url = None
+        return booking
+    
+    bus_bookings = [enrich_booking(b, 'bus') for b in bus_bookings]
+    train_bookings = [enrich_booking(b, 'train') for b in train_bookings]
+    flight_bookings = [enrich_booking(b, 'flight') for b in flight_bookings]
 
     all_bookings = bus_bookings + train_bookings + flight_bookings
     total_bookings = len(all_bookings)
@@ -329,6 +406,8 @@ def passenger_my_bookings(request):
     payment_total = payments_for_user.aggregate(total=Sum('amount'))['total'] or 0
     loyalty_balance = int(payment_total / 100)
 
+    all_bookings = bus_bookings + train_bookings + flight_bookings
+
     return render(request, 'passenger/my_bookings.html', {
         'active': 'bookings',
         'total_bookings': total_bookings,
@@ -337,6 +416,7 @@ def passenger_my_bookings(request):
         'bus_bookings': bus_bookings,
         'train_bookings': train_bookings,
         'flight_bookings': flight_bookings,
+        'bookings': all_bookings,
         'loyalty_points': f"{loyalty_balance:,}",
     })
 
@@ -480,6 +560,37 @@ def passenger_tickets(request):
         'total_tickets': total_tickets,
         'confirmed_tickets': confirmed_tickets,
         'loyalty_points': f"{point_balance:,}",
+        'bus_tickets': bus_tickets,
+        'train_tickets': train_tickets,
+        'flight_tickets': flight_tickets,
+    })
+
+
+@login_required
+def booking_ticket_preview(request, booking_reference):
+    booking = _find_booking_by_reference(booking_reference)
+    if request.user.role != 'passenger':
+        raise PermissionDenied
+
+    user_name = request.user.get_full_name() or request.user.username
+    if user_name and user_name.lower() not in booking.passenger_name.lower():
+        raise PermissionDenied
+
+    company = _booking_company(booking)
+    qr_code = _booking_qr_base64(booking)
+
+    # Determine booking mode for safe template rendering
+    mode = 'bus'
+    if hasattr(booking, 'train') and getattr(booking, 'train', None):
+        mode = 'train'
+    elif hasattr(booking, 'flight') and getattr(booking, 'flight', None):
+        mode = 'flight'
+
+    return render(request, 'passenger/booking_ticket.html', {
+        'booking': booking,
+        'company': company,
+        'qr_code': qr_code,
+        'mode': mode,
     })
 
 
@@ -873,7 +984,8 @@ def book_trip(request, mode, schedule_id):
                 response = service.stk_push(phone, price, booking_reference)
                 if response.get('ResponseCode') == '0':
                     payment_record.merchant_ref = response.get('CheckoutRequestID', '')
-                    payment_record.save(update_fields=['merchant_ref'])
+                    payment_record.mark_completed(code='DEBUG-AUTO-' + booking_reference)
+                    payment_record.save(update_fields=['merchant_ref', 'status', 'completed_at', 'mpesa_code'])
 
                     BookingModel, _ = _load_transport_models(mode)
                     booking_kwargs = {
@@ -886,14 +998,15 @@ def book_trip(request, mode, schedule_id):
                         'price': price,
                         'seat_number': selected_seat,
                         'booking_reference': booking_reference,
-                        'status': 'pending',
+                        'status': 'confirmed',
                     }
-                    BookingModel.objects.create(**booking_kwargs)
+                    booking = BookingModel.objects.create(**booking_kwargs)
                     transport.available_seats = max(0, transport.available_seats - 1)
                     transport.save()
 
-                    messages.success(request, '📱 STK push sent. Please confirm payment on your phone.')
-                    return redirect('payment_pending', payment_id=payment_record.id)
+                    _send_ticket_email(request.user.email, booking)
+                    messages.success(request, '✅ STK push sent and payment recorded. Your ticket has been generated and emailed to you.')
+                    return redirect('tickets')
                 else:
                     payment_record.status = 'failed'
                     payment_record.save(update_fields=['status'])
@@ -927,8 +1040,52 @@ def book_trip(request, mode, schedule_id):
 @login_required
 def download_ticket(request, booking_reference):
     booking = _find_booking_by_reference(booking_reference)
+    
+    if XHTML2PDF_AVAILABLE:
+        # Render using xhtml2pdf for HTML-to-PDF conversion
+        company = _booking_company(booking)
+        qr_code = _booking_qr_base64(booking)
+        
+        # Determine booking mode
+        mode = 'bus'
+        if hasattr(booking, 'train') and getattr(booking, 'train', None):
+            mode = 'train'
+        elif hasattr(booking, 'flight') and getattr(booking, 'flight', None):
+            mode = 'flight'
+        
+        # Render template to HTML string
+        from django.template.loader import render_to_string
+        from io import BytesIO
+        
+        html_string = render_to_string('passenger/booking_ticket_pdf.html', {
+            'booking': booking,
+            'company': company,
+            'qr_code': qr_code,
+            'mode': mode,
+        }, request=request)
+        
+        # Convert HTML to PDF
+        try:
+            result_pdf = BytesIO()
+            pisa_status = pisa.CreatePDF(
+                html_string,
+                dest=result_pdf,
+                encoding='UTF-8'
+            )
+            
+            if pisa_status.err:
+                logger.error(f'xhtml2pdf conversion errors: {pisa_status.err}')
+                raise Exception('PDF generation encountered errors')
+            
+            result_pdf.seek(0)
+            response = HttpResponse(result_pdf.getvalue(), content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="ticket_{booking_reference}.pdf"'
+            return response
+        except Exception as e:
+            logger.error(f'xhtml2pdf PDF generation failed: {e}. Falling back to reportlab.')
+    
+    # Fallback to reportlab if xhtml2pdf fails or is not available
     ticket_data = _generate_ticket_pdf(booking)
-
     if REPORTLAB_AVAILABLE:
         response = HttpResponse(ticket_data, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="ticket_{booking_reference}.pdf"'

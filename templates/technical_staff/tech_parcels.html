@@ -4,417 +4,718 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parcel Management | SmartTravels</title>
+    <title>Parcel Booking | SmartTravels</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        .step-active { border-color: #059669; background-color: #ecfdf5; color: #059669; }
+        .step-completed { border-color: #059669; background-color: #059669; color: white; }
+        .step-pending { border-color: #e2e8f0; background-color: #f8fafc; color: #94a3b8; }
         @media print {
             .no-print { display: none !important; }
-            .print-card { border: 1px solid #e2e8f0 !important; box-shadow: none !important; margin: 0 !important; padding: 0 !important; }
+            body { background: white; }
+            .print-area { border: none !important; box-shadow: none !important; }
         }
     </style>
 </head>
-
-<body class="bg-slate-50 text-slate-900 min-h-screen antialiased">
+<body class="bg-slate-50 text-slate-900 min-h-screen">
 
 <div class="flex">
-
+    <!-- Sidebar -->
     <div class="no-print">
         {% include 'technical_staff/sidebar.html' %}
     </div>
 
-    <div class="ml-72 w-full min-h-screen p-8 print:m-0 print:p-0">
-
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 pb-6 border-b border-slate-200 no-print">
+    <!-- Main Content -->
+    <div class="ml-72 w-full min-h-screen p-8">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8 pb-6 border-b border-slate-200 no-print">
             <div class="flex items-center gap-4">
                 <div class="h-12 w-12 rounded-xl bg-emerald-600 flex items-center justify-center text-xl text-white shadow-sm">
                     📦
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Parcel Ticket System</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Register shipments, collect M-Pesa payments, and dispatch smart tracking labels.</p>
+                    <h1 class="text-2xl font-bold text-slate-800">Parcel Booking Desk</h1>
+                    <p class="text-sm text-slate-500">Register, price, collect payment, and dispatch parcels</p>
                 </div>
             </div>
-
-            <div class="bg-white border border-slate-200 rounded-xl shadow-sm px-4 py-3 flex items-center gap-4">
-                <div>
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Tracking Engine</p>
-                    <h2 class="text-sm font-semibold text-slate-700 mt-0.5">Systems Operational</h2>
-                </div>
-                <div class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg text-xs font-medium">
-                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    QR Active
-                </div>
+            <div class="bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm">
+                <p class="text-xs font-medium text-slate-400 uppercase">Terminal</p>
+                <p class="text-sm font-semibold text-slate-700">{{ user.company.name }} — {{ user.branch.name|default:"Main" }}</p>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
-
-            <div class="xl:col-span-7 space-y-6 no-print">
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                    <div class="mb-6">
-                        <h2 class="text-lg font-bold text-slate-800">New Parcel Registration</h2>
-                        <p class="text-sm text-slate-500 mt-1">Complete the manifest info below to construct the live routing token.</p>
-                    </div>
-
-                    <form method="POST" enctype="multipart/form-data" id="parcelForm" class="space-y-6">
-                        {% csrf_token %}
-                        <input type="hidden" name="prompt_action" id="promptAction" value="">
-                        <input type="hidden" id="promptSentFlag" name="prompt_sent_flag" value="{{ prompt_sent|yesno:'1,0' }}">
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Sender Full Name</label>
-                                <input type="text" name="sender_name" placeholder="Elisha Matangi" value="{{ form_data.sender_name|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
-                            </div>
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Sender Email</label>
-                                <input type="email" name="sender_email" placeholder="sender@example.com" value="{{ form_data.sender_email|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
-                            </div>
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Receiver Full Name</label>
-                                <input type="text" name="receiver_name" placeholder="Brian Odhiambo" value="{{ form_data.receiver_name|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
-                            </div>
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Receiver Email</label>
-                                <input type="email" name="recipient_email" placeholder="receiver@example.com" value="{{ form_data.recipient_email|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
-                            </div>
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Sender Phone Number</label>
-                                <input type="text" id="senderPhone" name="phone" placeholder="e.g., +254712345678" value="{{ form_data.sender_phone|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
-                            </div>
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Receiver Phone Number</label>
-                                <input type="text" name="receiver_phone" placeholder="e.g., +254798765432" value="{{ form_data.receiver_phone|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition outline-none" required>
-                            </div>
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Handling Carrier Company</label>
-                                <input type="text" value="{{ user.company.name }}" name="company" class="w-full px-3 py-2.5 bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-500 font-medium cursor-not-allowed" readonly>
-                            </div>
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Package Image (optional)</label>
-                                <input type="file" name="item_image" accept="image/*" class="w-full text-sm text-slate-700 border border-slate-200 rounded-lg bg-white px-3 py-2.5 outline-none">
-                            </div>
-                        </div>
-
-                        <div class="border-t border-slate-100 pt-6 space-y-4">
-                            <h3 class="text-sm font-bold text-slate-700 mb-2">Routing & Fleet Assignment</h3>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Origin Departure Station</label>
-                                    <input type="text" name="pickup_location" placeholder="e.g., Nairobi Terminal" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:bg-white focus:border-emerald-500 transition outline-none" required>
-                                </div>
-                                <div>
-                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Final Destination Terminal</label>
-                                    <input type="text" name="destination" placeholder="e.g., Mombasa Hub" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:bg-white focus:border-emerald-500 transition outline-none" required>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Assigned Trunk Route Path</label>
-                                <select name="route" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:bg-white focus:border-emerald-500 transition outline-none">
-                                    {% for route in routes %}
-                                    <option value="{{ route.id }}">{{ route.from_location }} &rarr; {{ route.to_location }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">Active Fleet Allocation</label>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <label class="relative block cursor-pointer group">
-                                        <input type="radio" name="transport_choice" value="bus" class="peer hidden" checked>
-                                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl group-hover:bg-slate-100 peer-checked:border-emerald-600 peer-checked:bg-emerald-50/50 transition">
-                                            <div class="flex items-center gap-3">
-                                                <span class="text-xl">🚌</span>
-                                                <div>
-                                                    <p class="text-sm font-semibold text-slate-800">Bus Line Courier</p>
-                                                    <p class="text-xs text-slate-400">Routes standard passenger luggage units</p>
-                                                </div>
-                                            </div>
-                                            <div class="mt-3">
-                                                <select name="bus" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-md text-xs focus:border-emerald-500 outline-none">
-                                                    <option value="">Choose Available Bus</option>
-                                                    {% for bus in buses %}
-                                                    <option value="{{ bus.id }}">{{ bus.bus_number }} ({{ bus.route.from_location }} - {{ bus.route.to_location }})</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </label>
-
-                                    <label class="relative block cursor-pointer group">
-                                        <input type="radio" name="transport_choice" value="truck" class="peer hidden">
-                                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl group-hover:bg-slate-100 peer-checked:border-emerald-600 peer-checked:bg-emerald-50/50 transition">
-                                            <div class="flex items-center gap-3">
-                                                <span class="text-xl">🚚</span>
-                                                <div>
-                                                    <p class="text-sm font-semibold text-slate-800">Heavy Carrier Truck</p>
-                                                    <p class="text-xs text-slate-400">Dedicated heavy freight logistics pipelines</p>
-                                                </div>
-                                            </div>
-                                            <div class="mt-3">
-                                                <select name="truck" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-md text-xs focus:border-emerald-500 outline-none">
-                                                    <option value="">Choose Logistics Truck</option>
-                                                    {% for truck in trucks %}
-                                                    <option value="{{ truck.id }}">{{ truck.truck_number }} &mdash; {{ truck.driver_name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="border-t border-slate-100 pt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Classification</label>
-                                <select name="parcel_type" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none">
-                                    <option value="documents" {% if form_data.parcel_type == 'documents' %}selected{% endif %}>📄 Documents</option>
-                                    <option value="electronics" {% if form_data.parcel_type == 'electronics' %}selected{% endif %}>⚡ Electronics</option>
-                                    <option value="food" {% if form_data.parcel_type == 'food' %}selected{% endif %}>🍎 Food Material</option>
-                                    <option value="fragile" {% if form_data.parcel_type == 'fragile' %}selected{% endif %}>💎 Fragile Cargo</option>
-                                    <option value="clothing" {% if form_data.parcel_type == 'clothing' %}selected{% endif %}>👕 Apparel / Clothes</option>
-                                    <option value="other" {% if form_data.parcel_type == 'other' %}selected{% endif %}>📦 Miscellaneous</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Dead Weight (KG)</label>
-                                <input type="number" step="0.1" name="weight" placeholder="0.0" value="{{ form_data.weight|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Estimated Item Cost</label>
-                                <input type="number" step="0.01" name="declared_value" placeholder="0" value="{{ form_data.declared_value|default:'' }}" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Agreed Fare (KES)</label>
-                                <input type="number" id="amountInput" name="amount" placeholder="0" value="{{ form_data.amount|default:'' }}" class="w-full px-3 py-2.5 bg-emerald-50/50 border border-emerald-200 rounded-lg text-sm font-semibold text-emerald-800 placeholder-emerald-400 focus:bg-white focus:border-emerald-500 outline-none" required>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">Content Manifest Description</label>
-                            <textarea name="description" rows="3" placeholder="Identify declarations or exceptional handling metadata..." class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:border-emerald-500 outline-none">{{ form_data.description|default:'' }}</textarea>
-                        </div>
-
-                        <div class="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm">⚡</span>
-                                    <h4 class="text-sm font-bold text-slate-700">M-Pesa STK Push Gateway</h4>
-                                </div>
-                                <select name="payment_status" class="px-2 py-1 bg-white border border-slate-200 rounded-md text-xs font-medium text-slate-600 outline-none">
-                                    <option value="Pending">On Delivery (Pending)</option>
-                                    <option value="Paid">Instant Clear (Paid)</option>
-                                </select>
-                            </div>
-                            
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <button type="button" id="billSenderBtn" onclick="submitAction('send_stk', true)" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2 px-4 rounded-lg text-xs font-medium transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                    Bill Primary Sender Phone
-                                </button>
-                                <div class="flex gap-2">
-                                    <input type="text" id="paymentPhone" placeholder="Alternative Phone" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:border-slate-400">
-                                    <button type="button" id="billAltBtn" onclick="submitAction('send_stk', false)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 rounded-lg text-xs font-medium transition disabled:opacity-50 disabled:cursor-not-allowed">
-                                        Bill Alt
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="bg-white px-3 py-2 rounded-lg border border-slate-100 flex justify-between items-center text-xs">
-                                <span class="text-slate-400">Current API Billing Payload Reference Target:</span>
-                                <span id="activePromptNumber" class="font-mono font-bold text-slate-700">None Scheduled</span>
-                            </div>
-                        </div>
-
-                        <div class="space-y-3">
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-[11px]">
-                                <div class="px-3 py-2 rounded-lg {% if prompt_sent %}bg-emerald-50 border border-emerald-200 text-emerald-700{% else %}bg-slate-100 border border-slate-200 text-slate-500{% endif %}">
-                                    <div class="font-semibold">1. Confirm</div>
-                                    <div>{% if prompt_sent %}✓ Sent{% else %}Pending{% endif %}</div>
-                                </div>
-                                <div class="px-3 py-2 rounded-lg {% if stk_sent %}bg-emerald-50 border border-emerald-200 text-emerald-700{% else %}bg-slate-100 border border-slate-200 text-slate-500{% endif %}">
-                                    <div class="font-semibold">2. Collect Payment</div>
-                                    <div>{% if stk_sent %}✓ {{ stk_phone }}{% else %}Pending{% endif %}</div>
-                                </div>
-                                <div class="px-3 py-2 rounded-lg {% if stk_sent %}bg-emerald-50 border border-emerald-200 text-emerald-700{% else %}bg-slate-100 border border-slate-200 text-slate-500{% endif %}">
-                                    <div class="font-semibold">3. Process QR</div>
-                                    <div>{% if stk_sent %}Ready{% else %}Locked{% endif %}</div>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <button type="button" id="promptBtn" onclick="submitAction('send_prompt', null)" {% if prompt_sent %}disabled{% endif %} class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-lg text-sm font-semibold transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                    {% if prompt_sent %}✓ Confirmation Sent{% else %}Send Confirmation{% endif %}
-                                </button>
-                                <button type="button" id="stkBtn" onclick="submitAction('send_stk', true)" {% if not prompt_sent %}disabled{% endif %} class="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 px-4 rounded-lg text-sm font-semibold transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                    {% if stk_sent %}✓ Payment Sent{% else %}Collect Payment{% endif %}
-                                </button>
-                                <button type="button" id="processBtn" onclick="submitAction('process_waybill', null)" {% if not stk_sent %}disabled{% endif %} class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-3 px-4 rounded-lg shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
-                                    {% if stk_sent %}Generate QR & Print{% else %}Awaiting Payment{% endif %}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+        <!-- Progress Steps -->
+        <div class="grid grid-cols-4 gap-3 mb-8 no-print">
+            <div class="step-active rounded-xl border-2 px-4 py-3 text-center transition" id="step1">
+                <div class="text-xs font-bold uppercase tracking-wider">1. Parcel Details</div>
+                <div class="text-[11px] mt-0.5 opacity-75">Sender, receiver & specs</div>
             </div>
+            <div class="step-pending rounded-xl border-2 px-4 py-3 text-center transition" id="step2">
+                <div class="text-xs font-bold uppercase tracking-wider">2. Pricing</div>
+                <div class="text-[11px] mt-0.5 opacity-75">Auto-calculate fare</div>
+            </div>
+            <div class="step-pending rounded-xl border-2 px-4 py-3 text-center transition" id="step3">
+                <div class="text-xs font-bold uppercase tracking-wider">3. Payment</div>
+                <div class="text-[11px] mt-0.5 opacity-75">M-Pesa or cash</div>
+            </div>
+            <div class="step-pending rounded-xl border-2 px-4 py-3 text-center transition" id="step4">
+                <div class="text-xs font-bold uppercase tracking-wider">4. Waybill</div>
+                <div class="text-[11px] mt-0.5 opacity-75">Print & dispatch</div>
+            </div>
+        </div>
 
-            <div class="xl:col-span-5 print:w-full">
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 print-card">
-                    <div class="mb-6 flex justify-between items-center no-print">
+        {% if prompt_sent %}
+        <div class="rounded-xl border border-blue-200 bg-blue-50 text-blue-700 px-4 py-3 mb-6">
+            Confirmation prompt sent to the sender and receiver. Proceed with payment collection.
+        </div>
+        {% endif %}
+        {% if stk_sent %}
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 px-4 py-3 mb-6">
+            STK push sent to {{ stk_phone }}. Await confirmation and then generate the waybill.
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left: Booking Form -->
+            <div class="xl:col-span-8 space-y-6 no-print">
+                <form method="POST" enctype="multipart/form-data" id="bookingForm" class="space-y-6">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" id="formAction" value="save_draft">
+                    <input type="hidden" name="prompt_action" id="promptAction" value="send_prompt">
+                    <input type="hidden" name="payment_method" id="paymentMethod" value="">
+                    <input type="hidden" name="payment_status" id="paymentStatus" value="Pending">
+                    <input type="hidden" name="transport_choice" id="transportChoice" value="">
+
+                    <!-- STEP 1: PARCEL DETAILS -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6" id="panel1">
+                        <div class="flex items-center gap-2 mb-6">
+                            <span class="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">1</span>
+                            <h2 class="text-lg font-bold text-slate-800">Parcel Details</h2>
+                        </div>
+
+                        <!-- Sender Information -->
+                        <div class="mb-6">
+                            <h3 class="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                                <span class="w-1 h-4 bg-emerald-500 rounded-full"></span>
+                                Sender (Consignor)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="md:col-span-2">
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Full Name *</label>
+                                    <input type="text" name="sender_name" required
+                                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                                        placeholder="Elisha Matangi">
+                                </div>
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">ID / Passport No. *</label>
+                                    <input type="text" name="sender_id" required
+                                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 outline-none"
+                                        placeholder="e.g., 12345678">
+                                </div>
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Phone *</label>
+                                    <input type="tel" name="phone" id="senderPhone" required
+                                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 outline-none"
+                                        placeholder="254712345678">
+                                </div>
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Email</label>
+                                    <input type="email" name="sender_email"
+                                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 outline-none"
+                                        placeholder="sender@email.com">
+                                </div>
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Origin Station</label>
+                                    <input type="text" name="pickup_location" value="{{ user.branch.name|default:'Nairobi Terminal' }}" readonly
+                                        class="w-full px-3 py-2.5 bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-500 font-medium cursor-not-allowed">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Receiver Information -->
+                        <div class="mb-6">
+                            <h3 class="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                                <span class="w-1 h-4 bg-blue-500 rounded-full"></span>
+                                Receiver (Consignee)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="md:col-span-2">
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Full Name *</label>
+                                    <input type="text" name="receiver_name" required
+                                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 outline-none"
+                                        placeholder="Brian Odhiambo">
+                                </div>
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Phone *</label>
+                                    <input type="tel" name="receiver_phone" required
+                                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 outline-none"
+                                        placeholder="254798765432">
+                                </div>
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Email</label>
+                                    <input type="email" name="receiver_email"
+                                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 outline-none"
+                                        placeholder="receiver@email.com">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Destination Pickup Station *</label>
+                                    <select name="destination" required
+                                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 outline-none">
+                                        <option value="">Select destination terminal...</option>
+                                        {% for station in stations %}
+                                        <option value="{{ station }}">{{ station }}</option>
+                                        {% empty %}
+                                        <option value="">No route stations available</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Parcel Specifications -->
                         <div>
-                            <h2 class="text-lg font-bold text-slate-800">Print Preview Console</h2>
-                            <p class="text-sm text-slate-500 mt-1">Live structural presentation of generated tracking payload tags.</p>
-                        </div>
-                        <span class="text-2xl text-slate-300">📄</span>
-                    </div>
-
-                    {% if parcel_qr %}
-                    <div class="border border-slate-300 rounded-xl overflow-hidden bg-white shadow-sm">
-                        <div class="bg-slate-900 p-4 text-white flex justify-between items-center">
-                            <div>
-                                <p class="text-[10px] uppercase font-bold tracking-widest text-slate-400">Logistics Token Receipt</p>
-                                <h3 class="text-base font-bold tracking-tight">SmartTravels Cargo</h3>
-                            </div>
-                            <div class="bg-slate-800 px-2.5 py-1 rounded border border-slate-700 text-xs font-mono tracking-wider">
-                                {{ tracking_id }}
-                            </div>
-                        </div>
-
-                        <div class="p-6 space-y-4 text-xs">
-                            <div class="grid grid-cols-2 gap-4 border-b border-slate-100 pb-4">
+                            <h3 class="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                                <span class="w-1 h-4 bg-amber-500 rounded-full"></span>
+                                Package Specifications
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 <div>
-                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Consignor (Sender)</p>
-                                    <p class="font-bold text-slate-800 text-sm">{{ sender_name }}</p>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Type *</label>
+                                    <select name="parcel_type" id="parcelType" required
+                                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 outline-none">
+                                        <option value="documents">📄 Documents</option>
+                                        <option value="electronics">⚡ Electronics</option>
+                                        <option value="food">🍎 Food / Perishable</option>
+                                        <option value="fragile">💎 Fragile</option>
+                                        <option value="clothing">👕 Clothing</option>
+                                        <option value="other">📦 Other</option>
+                                    </select>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Consignee (Receiver)</p>
-                                    <p class="font-bold text-slate-800 text-sm">{{ receiver_name }}</p>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4 border-b border-slate-100 pb-4">
-                                <div>
-                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Assigned Transit Unit</p>
-                                    <p class="font-medium text-slate-700">
-                                        {% if selected_bus %} 🚌 {{ selected_bus }}
-                                        {% elif selected_truck %} 🚚 {{ selected_truck }}
-                                        {% else %} Fleet Unassigned
-                                        {% endif %}
-                                    </p>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Weight (kg) *</label>
+                                    <input type="number" step="0.1" name="weight" id="weightInput" required
+                                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 outline-none"
+                                        placeholder="0.0">
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Assigned Line Route</p>
-                                    <p class="font-medium text-slate-700">{{ selected_route }}</p>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Dimensions (cm)</label>
+                                    <div class="flex gap-2">
+                                        <input type="number" name="dim_l" placeholder="L" class="w-full px-2 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-center">
+                                        <input type="number" name="dim_w" placeholder="W" class="w-full px-2 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-center">
+                                        <input type="number" name="dim_h" placeholder="H" class="w-full px-2 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-center">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Declared Value (KES)</label>
+                                    <input type="number" name="declared_value" id="declaredValue"
+                                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 outline-none"
+                                        placeholder="0">
                                 </div>
                             </div>
-
-                            <div class="border-b border-slate-100 pb-4">
-                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Transit Vector Trajectory</p>
-                                <p class="font-medium text-slate-700">{{ pickup_location }} &rarr; {{ destination }}</p>
+                            <div class="mt-4">
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Content Description</label>
+                                <textarea name="description" rows="2"
+                                    class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:border-emerald-500 outline-none"
+                                    placeholder="Detailed description of package contents..."></textarea>
                             </div>
-
-                            <div class="grid grid-cols-3 gap-2 border-b border-slate-100 pb-4">
-                                <div>
-                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Class Type</p>
-                                    <p class="font-medium text-slate-700">{{ parcel_type }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Mass</p>
-                                    <p class="font-medium text-slate-700">{{ weight }} KG</p>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Valuation Fee</p>
-                                    <p class="font-bold text-emerald-700">KES {{ amount }}</p>
-                                </div>
+                            <div class="mt-3 flex items-center gap-2">
+                                <input type="checkbox" name="fragile_flag" id="fragileFlag" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <label for="fragileFlag" class="text-sm text-slate-700">This package requires fragile handling</label>
                             </div>
-
-                            <div class="flex flex-col items-center justify-center pt-2">
-                                <div class="bg-white p-2 border border-slate-200 rounded-lg shadow-sm">
-                                    <img src="{{ parcel_qr.url }}" class="w-40 h-40 object-contain mx-auto" alt="Parcel Tracking Matrix Token">
-                                </div>
-                                <p class="text-[10px] text-slate-400 mt-3 text-center max-w-xs">Scan matrix identifier code over hub checkpoints to log tracking timelines.</p>
+                            <div class="mt-3 flex items-center gap-2">
+                                <input type="checkbox" name="insurance_opt_in" id="insuranceOptIn" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <label for="insuranceOptIn" class="text-sm text-slate-700">Opt-in for transit insurance (2% of declared value)</label>
+                            </div>
+                            <div class="mt-4">
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Package Photo (optional)</label>
+                                <input type="file" name="item_image" accept="image/*"
+                                    class="w-full text-sm text-slate-700 border border-slate-200 rounded-lg bg-white px-3 py-2.5">
                             </div>
                         </div>
 
-                        <div class="bg-slate-50 border-t border-slate-100 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 no-print">
-                            <div class="text-xs">
-                                <p class="font-medium text-slate-700">Token ID: <span class="font-mono text-emerald-600">{{ tracking_id }}</span></p>
-                                <p class="text-[11px] text-slate-400 mt-0.5">Secure sticker label element to physical package cargo.</p>
-                            </div>
-                            <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition">
-                                Dispatch Print
+                        <div class="mt-6 flex flex-col sm:flex-row justify-end gap-3">
+                            <button type="button" onclick="submitPromptAction('send_prompt')" class="bg-sky-600 hover:bg-sky-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition">
+                                Send Confirmation Prompt
+                            </button>
+                            <button type="button" onclick="goToStep(2)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition">
+                                Continue to Pricing →
                             </button>
                         </div>
                     </div>
 
-                    {% else %}
-                    <div class="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-                        <div class="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center text-2xl text-slate-400 mb-4">
-                            📥
+                    <!-- STEP 2: PRICING -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hidden" id="panel2">
+                        <div class="flex items-center gap-2 mb-6">
+                            <span class="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">2</span>
+                            <h2 class="text-lg font-bold text-slate-800">Pricing & Route Assignment</h2>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-700">No Waybill Records Found</h3>
-                        <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Fill the registration form database queries to compile metadata properties into printable barcodes.</p>
-                    </div>
-                    {% endif %}
 
-                </div>
+                        <!-- Route Selection -->
+                        <div class="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                            <h3 class="text-sm font-semibold text-slate-700 mb-3">Route & Fleet</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Select Route *</label>
+                                    <select name="route" id="routeSelect" required onchange="calculateFare()"
+                                        class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:border-emerald-500 outline-none">
+                                        <option value="">Choose route...</option>
+                                        {% for route in routes %}
+                                        <option value="{{ route.id }}" data-base-fare="{{ route.price }}" data-rate-per-kg="50">
+                                            {{ route.from_location }} → {{ route.to_location }}
+                                        </option>
+                                        {% empty %}
+                                        <option value="">No routes available</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Fleet Assignment</label>
+                                    <div class="flex gap-2">
+                                        <select name="fleet_assignment" id="fleetSelect"
+                                            class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:border-emerald-500 outline-none">
+                                            <option value="">Auto-assign next available</option>
+                                            {% for vehicle in available_vehicles %}
+                                            <option value="{{ vehicle.value }}">{{ vehicle.label }}</option>
+                                            {% empty %}
+                                            <option value="">No available vehicles</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-slate-500">
+                                <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded font-medium">Auto</span>
+                                <span>System will auto-assign to next available vehicle on selected route if none chosen</span>
+                            </div>
+                        </div>
+
+                        <!-- Fare Calculation -->
+                        <div class="mb-6 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                            <h3 class="text-sm font-semibold text-emerald-800 mb-3">Fare Breakdown</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Base fare (route)</span>
+                                    <span class="font-medium" id="baseFareDisplay">KES 0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Weight charge (<span id="weightDisplay">0</span> kg × rate)</span>
+                                    <span class="font-medium" id="weightChargeDisplay">KES 0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Insurance (if opted in)</span>
+                                    <span class="font-medium" id="insuranceDisplay">KES 0.00</span>
+                                </div>
+                                <div class="border-t border-emerald-200 pt-2 flex justify-between text-base font-bold text-emerald-800">
+                                    <span>Total Agreed Fare</span>
+                                    <span id="totalFareDisplay">KES 0.00</span>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Adjust Final Amount (KES) *</label>
+                                <input type="number" name="amount" id="finalAmount" required
+                                    class="w-full px-3 py-2.5 bg-white border border-emerald-300 rounded-lg text-sm font-bold text-emerald-800 focus:border-emerald-500 outline-none"
+                                    placeholder="0">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <button type="button" onclick="goToStep(1)" class="text-slate-600 hover:text-slate-800 px-4 py-2.5 text-sm font-medium">
+                                ← Back
+                            </button>
+                            <button type="button" onclick="goToStep(3)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition">
+                                Continue to Payment →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: PAYMENT -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hidden" id="panel3">
+                        <div class="flex items-center gap-2 mb-6">
+                            <span class="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">3</span>
+                            <h2 class="text-lg font-bold text-slate-800">Payment Collection</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <button type="button" onclick="setPaymentMethod('mpesa')" id="btnMpesa"
+                                class="p-4 border-2 border-slate-200 rounded-xl text-center hover:border-emerald-500 transition">
+                                <div class="text-2xl mb-2">📱</div>
+                                <div class="text-sm font-semibold text-slate-700">M-Pesa</div>
+                                <div class="text-xs text-slate-400">STK Push to phone</div>
+                            </button>
+                            <button type="button" onclick="setPaymentMethod('cash')" id="btnCash"
+                                class="p-4 border-2 border-slate-200 rounded-xl text-center hover:border-emerald-500 transition">
+                                <div class="text-2xl mb-2">💵</div>
+                                <div class="text-sm font-semibold text-slate-700">Cash</div>
+                                <div class="text-xs text-slate-400">Pay at counter</div>
+                            </button>
+                            <button type="button" onclick="setPaymentMethod('cod')" id="btnCod"
+                                class="p-4 border-2 border-slate-200 rounded-xl text-center hover:border-emerald-500 transition">
+                                <div class="text-2xl mb-2">🚚</div>
+                                <div class="text-sm font-semibold text-slate-700">Pay on Delivery</div>
+                                <div class="text-xs text-slate-400">Receiver pays at pickup</div>
+                            </button>
+                        </div>
+
+                        <!-- M-Pesa Panel -->
+                        <div id="mpesaPanel" class="hidden p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-4">
+                            <h3 class="text-sm font-semibold text-slate-700">M-Pesa STK Push</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Amount (KES)</label>
+                                    <input type="text" id="mpesaAmount" readonly
+                                        class="w-full px-3 py-2.5 bg-slate-100 border border-slate-200 rounded-lg text-sm font-bold text-slate-700 cursor-not-allowed">
+                                </div>
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Phone Number</label>
+                                    <div class="flex gap-2">
+                                        <input type="tel" name="mpesa_phone" id="mpesaPhone"
+                                            class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:border-emerald-500 outline-none"
+                                            placeholder="254712345678">
+                                        <button type="button" onclick="useSenderPhone()" class="text-xs bg-slate-200 hover:bg-slate-300 px-3 rounded-lg font-medium">
+                                            Use Sender
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" onclick="triggerMpesa()" id="stkTriggerBtn"
+                                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg text-sm font-semibold transition">
+                                Send M-Pesa Payment Request
+                            </button>
+                            <div id="stkStatus" class="hidden text-center py-2">
+                                <span class="text-xs text-amber-600 font-medium">⏳ STK Push sent. Waiting for customer to enter PIN...</span>
+                            </div>
+                        </div>
+
+                        <!-- Cash Panel -->
+                        <div id="cashPanel" class="hidden p-4 bg-slate-50 rounded-lg border border-slate-200">
+                            <h3 class="text-sm font-semibold text-slate-700 mb-2">Cash Payment</h3>
+                            <p class="text-xs text-slate-500">Staff will collect cash at the booking desk. Enter amount received:</p>
+                            <div class="mt-3 grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Amount Received (KES)</label>
+                                    <input type="number" name="cash_received"
+                                        class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:border-emerald-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block mb-1.5 text-xs font-semibold text-slate-600 uppercase">Receipt No.</label>
+                                    <input type="text" name="cash_receipt_no"
+                                        class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:border-emerald-500 outline-none"
+                                        placeholder="RCP-001">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- COD Panel -->
+                        <div id="codPanel" class="hidden p-4 bg-amber-50 rounded-lg border border-amber-200">
+                            <h3 class="text-sm font-semibold text-amber-800 mb-2">Pay on Delivery</h3>
+                            <p class="text-xs text-amber-700">Receiver will pay <strong id="codAmount">KES 0</strong> at destination station before collecting parcel.</p>
+                            <div class="mt-3">
+                                <label class="block mb-1.5 text-xs font-semibold text-amber-700 uppercase">Receiver Confirmation</label>
+                                <input type="checkbox" name="cod_confirmed" required class="mr-2">
+                                <span class="text-sm text-amber-800">I confirm the receiver has been notified and agrees to pay on pickup</span>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between mt-6">
+                            <button type="button" onclick="goToStep(2)" class="text-slate-600 hover:text-slate-800 px-4 py-2.5 text-sm font-medium">
+                                ← Back
+                            </button>
+                            <button type="button" onclick="submitPromptAction('process_waybill')" id="btnProceedToWaybill"
+                                class="bg-slate-300 text-slate-500 px-6 py-2.5 rounded-lg text-sm font-semibold cursor-not-allowed" disabled>
+                                Complete & Generate Waybill →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: WAYBILL PREVIEW -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 {% if not tracking_id %}hidden{% endif %}" id="panel4">
+                        <div class="flex items-center gap-2 mb-6">
+                            <span class="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">4</span>
+                            <h2 class="text-lg font-bold text-slate-800">Waybill & Dispatch</h2>
+                        </div>
+
+                        <div class="flex flex-col items-center justify-center py-8 text-center">
+                            <div class="h-16 w-16 rounded-full bg-emerald-100 flex items-center justify-center text-2xl mb-4">
+                                ✅
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800">Booking Complete</h3>
+                            <p class="text-sm text-slate-500 mt-1 max-w-md">
+                                Parcel registered successfully. Print the waybill label and attach it to the package.
+                            </p>
+                            <div class="mt-6 flex gap-3">
+                                <button type="submit" onclick="document.getElementById('formAction').value='finalize'" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg text-sm font-semibold transition shadow-sm">
+                                    Print Waybill Label
+                                </button>
+                                <button type="button" onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-lg text-sm font-semibold transition shadow-sm">
+                                    Print Receipt
+                                </button>
+                            </div>
+                            <button type="button" onclick="location.reload()" class="mt-3 text-sm text-slate-500 hover:text-slate-700">
+                                Start New Booking
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
 
+            <!-- Right: Live Preview -->
+            <div class="xl:col-span-4">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sticky top-6">
+                    <div class="flex justify-between items-center mb-4 no-print">
+                        <h2 class="text-lg font-bold text-slate-800">Live Waybill Preview</h2>
+                        <span class="text-xs text-slate-400">Updates as you type</span>
+                    </div>
+
+                    <div class="border border-slate-300 rounded-xl overflow-hidden bg-white shadow-sm print-area">
+                        <!-- Waybill Header -->
+                        <div class="bg-slate-900 p-4 text-white flex justify-between items-center">
+                            <div>
+                                <p class="text-[10px] uppercase font-bold tracking-widest text-slate-400">Logistics Token</p>
+                                <h3 class="text-base font-bold tracking-tight">{{ company_name|default:"SmartTravels" }}</h3>
+                            </div>
+                            <div class="bg-slate-800 px-2.5 py-1 rounded border border-slate-700 text-xs font-mono tracking-wider" id="previewTrackingId">
+                                {{ tracking_id|default:"PENDING" }}
+                            </div>
+                        </div>
+
+                        <!-- Waybill Body -->
+                        <div class="p-5 space-y-3 text-xs">
+                            <div class="grid grid-cols-2 gap-3 border-b border-slate-100 pb-3">
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">From (Sender)</p>
+                                    <p class="font-bold text-slate-800 text-sm" id="previewSender">—</p>
+                                    <p class="text-slate-500" id="previewSenderPhone">—</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">To (Receiver)</p>
+                                    <p class="font-bold text-slate-800 text-sm" id="previewReceiver">—</p>
+                                    <p class="text-slate-500" id="previewReceiverPhone">—</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 border-b border-slate-100 pb-3">
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Route</p>
+                                    <p class="font-medium text-slate-700" id="previewRoute">—</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Fleet</p>
+                                    <p class="font-medium text-slate-700" id="previewFleet">Auto-assigned</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 border-b border-slate-100 pb-3">
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Type</p>
+                                    <p class="font-medium text-slate-700" id="previewType">—</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Weight</p>
+                                    <p class="font-medium text-slate-700" id="previewWeight">—</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Amount</p>
+                                    <p class="font-bold text-emerald-700" id="previewAmount">KES 0</p>
+                                </div>
+                            </div>
+
+                            <div class="border-b border-slate-100 pb-3">
+                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Contents</p>
+                                <p class="font-medium text-slate-700" id="previewDescription">—</p>
+                            </div>
+
+                            <!-- QR Code Placeholder -->
+                            <div class="flex flex-col items-center justify-center pt-2">
+                                <div class="bg-white p-2 border border-slate-200 rounded-lg shadow-sm">
+                                    {% if parcel_qr %}
+                                    <img src="{{ parcel_qr.url }}" alt="Parcel QR code" class="w-36 h-36 object-contain rounded-lg">
+                                    {% else %}
+                                    <div id="qrPlaceholder" class="w-36 h-36 bg-slate-100 rounded flex items-center justify-center text-slate-400 text-xs">
+                                        QR will generate<br>after payment
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-2 text-center">Scan at checkpoints</p>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="bg-slate-50 border-t border-slate-100 px-5 py-3 no-print">
+                            <p class="text-[10px] text-slate-400 text-center">
+                                Printed: <span id="printDate">—</span> | Staff: {{ user.get_full_name|default:user.username }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-function submitAction(action, useSenderPhone) {
-    const promptSent = document.getElementById('promptSentFlag').value === '1';
-    const senderPhone = document.getElementById('senderPhone').value;
-    const altPhone = document.getElementById('paymentPhone').value;
-    const amount = document.getElementById('amountInput').value;
+// Step Navigation
+function goToStep(step) {
+    // Hide all panels
+    for (let i = 1; i <= 4; i++) {
+        document.getElementById('panel' + i).classList.add('hidden');
+        document.getElementById('step' + i).classList.remove('step-active', 'step-completed');
+        document.getElementById('step' + i).classList.add('step-pending');
+    }
+    
+    // Show target panel
+    document.getElementById('panel' + step).classList.remove('hidden');
+    
+    // Update steps
+    for (let i = 1; i < step; i++) {
+        document.getElementById('step' + i).classList.remove('step-pending');
+        document.getElementById('step' + i).classList.add('step-completed');
+    }
+    document.getElementById('step' + step).classList.remove('step-pending');
+    document.getElementById('step' + step).classList.add('step-active');
+    
+    // Update preview
+    updatePreview();
+}
 
-    if (action === 'send_prompt') {
-        document.getElementById('promptAction').value = 'send_prompt';
-        document.getElementById('parcelForm').submit();
-    } else if (action === 'send_stk') {
-        if (!promptSent) {
-            alert('Send the confirmation prompt to sender and receiver first.');
-            return;
-        }
-        
-        let selectedPhone = '';
-        if (useSenderPhone) {
-            selectedPhone = senderPhone;
-        } else {
-            selectedPhone = altPhone;
-        }
+// Live Preview Updates
+function updatePreview() {
+    document.getElementById('previewSender').textContent = document.querySelector('[name="sender_name"]').value || '—';
+    document.getElementById('previewSenderPhone').textContent = document.querySelector('[name="phone"]').value || '—';
+    document.getElementById('previewReceiver').textContent = document.querySelector('[name="receiver_name"]').value || '—';
+    document.getElementById('previewReceiverPhone').textContent = document.querySelector('[name="receiver_phone"]').value || '—';
+    document.getElementById('previewType').textContent = document.querySelector('[name="parcel_type"]').selectedOptions[0]?.text || '—';
+    document.getElementById('previewWeight').textContent = document.querySelector('[name="weight"]').value + ' kg' || '—';
+    document.getElementById('previewAmount').textContent = 'KES ' + (document.getElementById('finalAmount').value || '0');
+    document.getElementById('previewDescription').textContent = document.querySelector('[name="description"]').value || '—';
+    
+    const routeSelect = document.querySelector('[name="route"]');
+    if (routeSelect.selectedIndex > 0) {
+        document.getElementById('previewRoute').textContent = routeSelect.selectedOptions[0].text.split('(')[0].trim();
+    }
+    
+    const fleetSelect = document.querySelector('[name="fleet_assignment"]');
+    if (fleetSelect.selectedIndex > 0) {
+        document.getElementById('previewFleet').textContent = fleetSelect.selectedOptions[0].text;
+    }
+    
+    document.getElementById('printDate').textContent = new Date().toLocaleString();
+}
 
-        if (!selectedPhone) {
-            alert('Please select or enter a phone number for payment collection.');
-            return;
-        }
+// Fare Calculation
+function calculateFare() {
+    const routeSelect = document.getElementById('routeSelect');
+    const weight = parseFloat(document.getElementById('weightInput').value) || 0;
+    const declaredValue = parseFloat(document.getElementById('declaredValue').value) || 0;
+    const insuranceOpted = document.getElementById('insuranceOptIn').checked;
+    
+    if (routeSelect.selectedIndex === 0) return;
+    
+    const option = routeSelect.selectedOptions[0];
+    const baseFare = parseFloat(option.dataset.baseFare) || 0;
+    const ratePerKg = parseFloat(option.dataset.ratePerKg) || 0;
+    
+    const weightCharge = weight * ratePerKg;
+    const insurance = insuranceOpted ? (declaredValue * 0.02) : 0;
+    const total = baseFare + weightCharge + insurance;
+    
+    document.getElementById('baseFareDisplay').textContent = 'KES ' + baseFare.toFixed(2);
+    document.getElementById('weightDisplay').textContent = weight.toFixed(1);
+    document.getElementById('weightChargeDisplay').textContent = 'KES ' + weightCharge.toFixed(2);
+    document.getElementById('insuranceDisplay').textContent = 'KES ' + insurance.toFixed(2);
+    document.getElementById('totalFareDisplay').textContent = 'KES ' + total.toFixed(2);
+    document.getElementById('finalAmount').value = Math.ceil(total);
+    document.getElementById('mpesaAmount').value = Math.ceil(total);
+    document.getElementById('codAmount').textContent = 'KES ' + Math.ceil(total);
+    
+    updatePreview();
+}
 
-        if (!amount || parseFloat(amount) <= 0) {
-            alert('Please enter a valid amount for payment.');
-            return;
-        }
+// Payment Method Selection
+function setPaymentMethod(method) {
+    document.getElementById('paymentMethod').value = method;
+    
+    // Reset all buttons
+    ['btnMpesa', 'btnCash', 'btnCod'].forEach(id => {
+        document.getElementById(id).classList.remove('border-emerald-500', 'bg-emerald-50');
+        document.getElementById(id).classList.add('border-slate-200');
+    });
+    
+    // Hide all panels
+    document.getElementById('mpesaPanel').classList.add('hidden');
+    document.getElementById('cashPanel').classList.add('hidden');
+    document.getElementById('codPanel').classList.add('hidden');
+    
+    // Activate selected
+    document.getElementById('btn' + method.charAt(0).toUpperCase() + method.slice(1)).classList.add('border-emerald-500', 'bg-emerald-50');
+    document.getElementById('btn' + method.charAt(0).toUpperCase() + method.slice(1)).classList.remove('border-slate-200');
+    
+    // Show panel
+    document.getElementById(method + 'Panel').classList.remove('hidden');
 
-        document.getElementById('activePromptNumber').innerText = selectedPhone;
-        document.getElementById('promptAction').value = 'send_stk';
-        if (!useSenderPhone) {
-            document.getElementById('paymentPhone').name = 'payment_phone';
-        } else {
-            document.getElementById('senderPhone').name = 'phone';
-        }
-        document.getElementById('parcelForm').submit();
-    } else if (action === 'process_waybill') {
-        document.getElementById('promptAction').value = 'process_waybill';
-        document.getElementById('parcelForm').submit();
+    if (method === 'cash') {
+        document.getElementById('paymentStatus').value = 'Paid';
+        enableProceed();
+    } else if (method === 'cod') {
+        document.getElementById('paymentStatus').value = 'Pending';
+        enableProceed();
+    } else {
+        document.getElementById('paymentStatus').value = 'Pending';
+        disableProceed();
     }
 }
+
+function useSenderPhone() {
+    const senderPhone = document.getElementById('senderPhone').value;
+    document.getElementById('mpesaPhone').value = senderPhone;
+}
+
+function submitPromptAction(action) {
+    document.getElementById('promptAction').value = action;
+    document.getElementById('bookingForm').submit();
+}
+
+function triggerMpesa() {
+    const phone = document.getElementById('mpesaPhone').value;
+    const amount = document.getElementById('mpesaAmount').value;
+    
+    if (!phone || !amount) {
+        alert('Please enter phone number and ensure amount is set');
+        return;
+    }
+
+    document.getElementById('paymentMethod').value = 'mpesa';
+    document.getElementById('paymentStatus').value = 'Pending';
+    document.getElementById('promptAction').value = 'send_stk';
+    document.getElementById('bookingForm').submit();
+}
+
+function enableProceed() {
+    const btn = document.getElementById('btnProceedToWaybill');
+    btn.disabled = false;
+    btn.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
+    btn.classList.add('bg-emerald-600', 'text-white', 'hover:bg-emerald-700');
+}
+
+function disableProceed() {
+    const btn = document.getElementById('btnProceedToWaybill');
+    btn.disabled = true;
+    btn.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
+    btn.classList.remove('bg-emerald-600', 'text-white', 'hover:bg-emerald-700');
+}
+
+// Event Listeners for Live Preview
+document.querySelectorAll('input, select, textarea').forEach(el => {
+    el.addEventListener('input', updatePreview);
+    el.addEventListener('change', updatePreview);
+});
+
+// Initialize
+updatePreview();
+document.getElementById('printDate').textContent = new Date().toLocaleString();
 </script>
 
 </body>

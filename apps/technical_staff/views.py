@@ -454,22 +454,52 @@ def tech_parcels(request):
     company = request.user.company
     routes = []
     buses = []
-    trucks = []
     flights = []
     trains = []
+    available_vehicles = []
+    stations = []
+    company_name = company.name if company else ''
+
     if company:
         if company.transport_type == 'bus':
             from apps.buses.models import Route as BusRoute, Bus
             routes = BusRoute.objects.filter(company=company)
             buses = Bus.objects.filter(company=company)
+            available_vehicles = [
+                {
+                    'value': f'bus:{bus.id}',
+                    'label': f'🚌 {bus.bus_number} — {bus.route.from_location} → {bus.route.to_location}',
+                }
+                for bus in buses
+            ]
         elif company.transport_type == 'train':
             from apps.trains.models import Route as TrainRoute, Train
             routes = TrainRoute.objects.filter(company=company)
             trains = Train.objects.filter(company=company)
+            available_vehicles = [
+                {
+                    'value': f'train:{train.id}',
+                    'label': f'🚆 {train.train_number} — {train.route.from_location} → {train.route.to_location}',
+                }
+                for train in trains
+            ]
         elif company.transport_type == 'flight':
             from apps.flights.models import Route as FlightRoute, Flight
             routes = FlightRoute.objects.filter(company=company)
             flights = Flight.objects.filter(company=company)
+            available_vehicles = [
+                {
+                    'value': f'flight:{flight.id}',
+                    'label': f'✈️ {flight.flight_number} — {flight.route.from_location} → {flight.route.to_location}',
+                }
+                for flight in flights
+            ]
+
+        station_set = set()
+        for route in routes:
+            station_set.add(route.from_location)
+            station_set.add(route.to_location)
+        stations = sorted(station_set)
 
     parcel_qr = None
     tracking_id = None
@@ -666,17 +696,41 @@ def tech_parcels(request):
                 ParcelLog.objects.create(parcel=parcel, status='booked', note='Registered by technical staff', updated_by=request.user)
 
                 transport_choice = request.POST.get('transport_choice')
-                if transport_choice == 'bus' and request.POST.get('bus'):
-                    try:
-                        from apps.buses.models import Bus
-                        b = Bus.objects.filter(id=request.POST.get('bus'), company=company).first()
-                        if b:
-                            parcel.assigned_vehicle_type = 'bus'
-                            parcel.assigned_vehicle_id = b.id
-                            parcel.assigned_vehicle_name = str(b)
-                    except Exception:
-                        pass
-                elif transport_choice == 'truck' and request.POST.get('truck'):
+                vehicle_assignment = request.POST.get('fleet_assignment', '')
+                if vehicle_assignment and ':' in vehicle_assignment:
+                    vehicle_type, vehicle_id = vehicle_assignment.split(':', 1)
+                    if vehicle_type == 'bus' and vehicle_id:
+                        try:
+                            from apps.buses.models import Bus
+                            b = Bus.objects.filter(id=vehicle_id, company=company).first()
+                            if b:
+                                parcel.assigned_vehicle_type = 'bus'
+                                parcel.assigned_vehicle_id = b.id
+                                parcel.assigned_vehicle_name = str(b)
+                        except Exception:
+                            pass
+                    elif vehicle_type == 'train' and vehicle_id:
+                        try:
+                            from apps.trains.models import Train
+                            t = Train.objects.filter(id=vehicle_id, company=company).first()
+                            if t:
+                                parcel.assigned_vehicle_type = 'train'
+                                parcel.assigned_vehicle_id = t.id
+                                parcel.assigned_vehicle_name = str(t)
+                        except Exception:
+                            pass
+                    elif vehicle_type == 'flight' and vehicle_id:
+                        try:
+                            from apps.flights.models import Flight
+                            f = Flight.objects.filter(id=vehicle_id, company=company).first()
+                            if f:
+                                parcel.assigned_vehicle_type = 'flight'
+                                parcel.assigned_vehicle_id = f.id
+                                parcel.assigned_vehicle_name = str(f)
+                        except Exception:
+                            pass
+                elif request.POST.get('truck'):
+                    parcel.assigned_vehicle_type = 'truck'
                     parcel.assigned_vehicle_name = f"Truck {request.POST.get('truck')}"
 
                 parcel.save()
@@ -734,7 +788,10 @@ def tech_parcels(request):
                 })
 
     return render(request, 'technical_staff/tech_parcels.html', {
+        'company_name': company_name,
         'routes': routes,
+        'stations': stations,
+        'available_vehicles': available_vehicles,
         'buses': buses,
         'trains': trains,
         'flights': flights,
