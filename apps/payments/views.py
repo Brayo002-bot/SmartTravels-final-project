@@ -156,24 +156,9 @@ def _confirm_booking(ref, btype, pay=None):
             b.status = 'confirmed'
             b.save(update_fields=['status'])
             try:
-                from django.core.mail import send_mail
-                from django.conf import settings as django_settings
+                from apps.accounts.views import _send_ticket_email
                 if pay and pay.passenger.email:
-                    send_mail(
-                        f'SmartTravels Ticket Confirmed - {b.booking_reference}',
-                        (
-                            f'Hello {b.passenger_name},\n\n'
-                            f'Your booking {b.booking_reference} has been confirmed.\n'
-                            f'Route: {b.route.from_location} → {b.route.to_location}\n'
-                            f'Date: {b.travel_date} {b.travel_time or "TBD"}\n'
-                            f'Seat: {b.seat_number or "Unassigned"}\n'
-                            f'Price: KES {b.price:.2f}\n\n'
-                            'Thank you for using SmartTravels. Please present this ticket at boarding.\n'
-                        ),
-                        django_settings.DEFAULT_FROM_EMAIL,
-                        [pay.passenger.email],
-                        fail_silently=True,
-                    )
+                    _send_ticket_email(pay.passenger.email, b)
             except Exception:
                 pass
     except Exception:

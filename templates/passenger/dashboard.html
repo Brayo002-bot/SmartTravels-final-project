@@ -102,6 +102,9 @@
                     <p class="text-[11px] text-slate-400 font-medium mt-4 flex items-center gap-1">
                         <i class="fa-solid fa-circle-info text-slate-500"></i> 1 point = KES 100 spent
                     </p>
+                    <p class="text-[11px] text-slate-400 font-medium mt-2">
+                        Wallet balance: <span class="text-white font-semibold">{{ wallet_balance|default:'KES 0.00' }}</span>
+                    </p>
                 </div>
 
                 <div class="relative overflow-hidden rounded-2xl bg-slate-900/40 border border-slate-900 p-5 group hover:border-slate-800 transition-all duration-300">

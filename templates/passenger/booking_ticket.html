@@ -11,115 +11,129 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #090d16;
+            background-color: #F8FAFC;
+            background-image: radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.03) 0px, transparent 50%);
         }
         .ticket-shadow {
-            box-shadow: 0 30px 100px -10px rgba(0, 0, 0, 0.75);
+            box-shadow: 0 20px 50px -12px rgba(15, 23, 42, 0.08);
         }
-        .ticket-notch-left, .ticket-notch-right {
-            position: relative;
-        }
-        /* Geometric ticket punch architecture */
+        /* Perfect crisp physical ticket notches */
         @media (min-width: 1024px) {
+            .ticket-notch-left {
+                position: relative;
+            }
             .ticket-notch-left::before {
                 content: '';
                 position: absolute;
-                right: -14px;
-                top: -14px;
-                width: 28px;
-                height: 28px;
-                background-color: #090d16;
+                right: -10px;
+                top: -10px;
+                width: 20px;
+                height: 20px;
+                background-color: #F8FAFC;
+                border: 1px solid #E2E8F0;
                 border-radius: 50%;
                 z-index: 20;
             }
             .ticket-notch-left::after {
                 content: '';
                 position: absolute;
-                right: -14px;
-                bottom: -14px;
-                width: 28px;
-                height: 28px;
-                background-color: #090d16;
+                right: -10px;
+                bottom: -10px;
+                width: 20px;
+                height: 20px;
+                background-color: #F8FAFC;
+                border: 1px solid #E2E8F0;
                 border-radius: 50%;
                 z-index: 20;
             }
         }
     </style>
 </head>
-<body class="text-slate-200 min-h-screen antialiased flex items-center justify-center p-4 md:p-8">
+<body class="text-slate-800 min-h-screen antialiased flex items-center justify-center p-4 md:p-8">
 
-    <!-- Primary Ticket Box Layout Container -->
-    <article class="w-full max-w-5xl bg-[#111827] border border-slate-800/80 rounded-3xl ticket-shadow overflow-hidden grid grid-cols-1 lg:grid-cols-3">
+    <article class="w-full max-w-4xl bg-white border border-slate-200 rounded-3xl ticket-shadow overflow-hidden grid grid-cols-1 lg:grid-cols-3">
         
-        <!-- LEFT MAIN PANEL: ASSIGNMENT LOGISTICS & ROUTING -->
-        <section class="lg:col-span-2 p-6 sm:p-8 lg:p-10 flex flex-col justify-between gap-8 bg-gradient-to-br from-[#111827] to-[#161f30] border-b lg:border-b-0 lg:border-r border-dashed border-slate-800 ticket-notch-left">
+        <section class="lg:col-span-2 p-6 sm:p-8 lg:p-9 flex flex-col justify-between gap-8 border-b lg:border-b-0 lg:border-r border-dashed border-slate-200 ticket-notch-left">
             
-            <!-- Branding Header Row -->
             <div class="flex items-center justify-between gap-4">
-                <div class="flex items-center gap-3.5">
-                    <img src="{% static 'images/logo.jpeg' %}" alt="SmartTravels Logo" class="w-11 h-11 rounded-xl object-cover border border-slate-700/50" />
+                <div class="flex items-center gap-3">
+                    <img src="{% static 'images/logo2.jpeg' %}" alt="SmartTravels Logo" class="w-10 h-10 rounded-xl object-cover border border-slate-100" />
                     <div>
-                        <div class="text-xs font-bold tracking-[0.25em] text-indigo-400 uppercase">SmartTravels</div>
-                        <div class="text-sm font-extrabold text-white tracking-wide">Official Boarding Pass</div>
+                        <div class="text-[11px] font-extrabold tracking-[0.2em] text-indigo-600 uppercase">SmartTravels</div>
+                        <div class="text-xs font-semibold text-slate-400">Official Boarding Pass</div>
                     </div>
                 </div>
                 <div class="text-right">
-                    <span class="block text-[10px] font-bold uppercase text-slate-500 tracking-wider">Booking Ref</span>
-                    <span class="font-mono text-sm font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20 uppercase tracking-wider block mt-1">{{ booking.booking_reference }}</span>
+                    <span class="block text-[10px] font-bold uppercase text-slate-400 tracking-wider">Booking Ref</span>
+                    <span class="font-mono text-sm font-bold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg uppercase tracking-wide block mt-1 border border-slate-200/60">
+                        {{ booking.booking_reference }}
+                    </span>
                 </div>
             </div>
 
-            <!-- Prominent Origin Vector Row -->
-            <div class="my-2">
-                <span class="text-[10px] font-bold uppercase text-slate-500 tracking-widest block mb-1">Transit Pathway Routing</span>
+            <div class="my-1">
+                <span class="text-[10px] font-bold uppercase text-slate-400 tracking-widest block mb-2">Travel Route</span>
                 <div class="flex items-center gap-4 flex-wrap">
-                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{{ booking.route.from_location }}</h1>
-                    <div class="flex items-center gap-2 text-indigo-500 min-w-[60px] justify-center">
-                        <span class="h-[2px] bg-slate-800 flex-1"></span>
-                        <i class="fas {% if mode == 'flight' %}fa-plane{% elif mode == 'train' %}fa-train{% else %}fa-bus-simple{% endif %} text-sm"></i>
-                        <span class="h-[2px] bg-slate-800 flex-1"></span>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">{{ booking.route.from_location }}</h1>
+                    <div class="flex items-center gap-3 text-indigo-600 min-w-[70px] justify-center">
+                        <span class="h-[1px] bg-slate-200 flex-1"></span>
+                        <div class="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center text-xs">
+                            <i class="fas {% if mode == 'flight' %}fa-plane{% elif mode == 'train' %}fa-train{% else %}fa-bus-simple{% endif %}"></i>
+                        </div>
+                        <span class="h-[1px] bg-slate-200 flex-1"></span>
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{{ booking.route.to_location }}</h1>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">{{ booking.route.to_location }}</h1>
                 </div>
             </div>
 
-            <!-- Balanced Operational Specs Metric Block -->
             <div class="grid grid-cols-2 gap-4">
-                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-800/40">
-                    <span class="block text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1">Passenger Manifesto</span>
-                    <div class="text-sm font-bold text-white truncate">{{ booking.passenger_name }}</div>
-                    <div class="text-xs text-slate-400 mt-0.5 font-mono">{{ booking.phone }}</div>
+                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100">
+                    <span class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-0.5">Passenger Name</span>
+                    <div class="text-sm font-bold text-slate-900 truncate">{{ booking.passenger_name }}</div>
+                    <div class="text-xs text-slate-500 font-mono mt-0.5">{{ booking.phone }}</div>
                 </div>
 
-                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-800/40">
-                    <span class="block text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1">Assigned Carrier Node</span>
-                    <div class="text-sm font-bold text-white truncate">{{ company.name|default:'SmartTravels' }}</div>
-                    <div class="text-xs text-indigo-400 mt-0.5 font-medium flex items-center gap-1">
-                        <i class="fas fa-shield-check text-[10px]"></i> Authorized Partner
+                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100">
+                    <span class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-0.5">Carrier Service</span>
+                    <div class="text-sm font-bold text-slate-900 truncate">{{ company.name|default:'SmartTravels' }}</div>
+                    <div class="text-[11px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5">
+                        <i class="fas fa-check-circle text-[10px]"></i> Verified Trip
                     </div>
                 </div>
 
-                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-800/40">
-                    <span class="block text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1">Departure Schedule</span>
-                    <div class="text-sm font-bold text-white">{{ booking.travel_date }}</div>
-                    <div class="text-xs text-amber-400 font-mono mt-0.5 flex items-center gap-1.5 font-semibold">
-                        <i class="far fa-clock text-[10px]"></i> {{ booking.travel_time|default:'TBD' }}
+                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100">
+                    <span class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-0.5">Departure Date</span>
+                    <div class="text-sm font-bold text-slate-900">{{ booking.travel_date }}</div>
+                    <div class="text-xs text-indigo-600 font-medium mt-0.5 flex items-center gap-1">
+                        <i class="far fa-clock text-[11px]"></i> {{ booking.travel_time|default:'TBD' }}
                     </div>
                 </div>
 
-                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-800/40">
-                    <span class="block text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1">Accommodation Unit</span>
-                    <div class="text-sm font-bold text-white font-mono">{{ booking.seat_number|default:'Unassigned' }}</div>
+                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100">
+                    <span class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-0.5">Seat Assignment</span>
+                    <div class="text-sm font-bold text-slate-900 font-mono">{{ booking.seat_number|default:'Unassigned' }}</div>
                     <div class="mt-1">
                         {% if booking.status|lower == 'confirmed' or booking.status|lower == 'paid' %}
-                        <span class="inline-flex items-center text-[9px] font-extrabold uppercase bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 tracking-wider">
+                        <span class="inline-flex items-center text-[9px] font-extrabold uppercase bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-200 tracking-wider">
                             {{ booking.status }}
                         </span>
                         {% else %}
-                        <span class="inline-flex items-center text-[9px] font-extrabold uppercase bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20 tracking-wider">
+                        <span class="inline-flex items-center text-[9px] font-extrabold uppercase bg-amber-50 text-amber-700 px-2 py-0.5 rounded border border-amber-200 tracking-wider">
                             {{ booking.status }}
                         </span>
                         {% endif %}
@@ -127,56 +141,51 @@
                 </div>
             </div>
 
-            <!-- Ledger Base Warning Terms Disclosure -->
-            <div class="pt-4 border-t border-slate-800/60 flex items-start gap-2.5 text-[11px] text-slate-400 leading-normal">
-                <i class="fas fa-circle-info text-indigo-400 mt-0.5 shrink-0"></i>
+            <div class="pt-4 border-t border-slate-100 flex items-start gap-2.5 text-[11px] text-slate-400 leading-normal">
+                <i class="fas fa-circle-info text-slate-400 mt-0.5 shrink-0"></i>
                 <p>
-                    Automated system receipt generated following successful M-Pesa clearing verification hooks. Kindly ensure the digital manifest transponder signature matches this configuration profile upon route boarding verification checks.
+                    Please present this digital pass or a printed copy along with identification at the terminal entrance at least 30 minutes before departure.
                 </p>
             </div>
         </section>
 
-        <!-- RIGHT STUB PANEL: SECURITY VERIFICATION GATEWAY -->
-        <aside class="p-6 sm:p-8 lg:p-10 bg-[#161e2e] flex flex-col justify-between items-center gap-6 text-center ticket-notch-right">
+        <aside class="p-6 sm:p-8 lg:p-9 bg-slate-50 flex flex-col justify-between items-center gap-6 text-center">
             
-            <!-- Carrier Identity Logo Subheader Block -->
-            <div class="w-full flex items-center justify-center gap-3">
-                <div class="h-8 bg-slate-800/40 border border-slate-700/30 rounded-lg px-3 flex items-center justify-center text-[11px] font-bold uppercase tracking-wider text-slate-300">
-                    {{ mode|default:"Transit" }} Tier
-                </div>
+            <div class="w-full flex items-center justify-center gap-2">
+                <span class="bg-indigo-50 border border-indigo-100 rounded-full px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider text-indigo-700">
+                    {{ mode|default:"Transit" }} Service
+                </span>
                 {% if company and company.logo_image %}
-                <img src="{{ company.logo_image.url }}" alt="{{ company.name }} Logo" class="h-8 object-contain max-w-[100px]" />
+                <img src="{{ company.logo_image.url }}" alt="{{ company.name }} Logo" class="h-6 object-contain max-w-[90px]" />
                 {% endif %}
             </div>
 
-            <!-- QR Authentication Payload Scanner Wrapper -->
-            <div class="w-full max-w-[210px] mx-auto bg-white p-4 rounded-2xl shadow-inner border border-white/10 flex flex-col items-center justify-center">
+            <div class="w-full max-w-[190px] mx-auto bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center">
                 {% if qr_code %}
-                    <img src="data:image/png;base64,{{ qr_code }}" alt="Ticket QR Code" class="w-full h-auto object-contain" />
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="Ticket QR Code" class="w-full h-auto object-contain mix-blend-multiply" />
                 {% else %}
-                    <div class="py-12 flex flex-col items-center justify-center text-slate-400 gap-2">
-                        <i class="fas fa-qrcode text-3xl opacity-30"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-wider">No Vector Stream</span>
+                    <div class="py-10 flex flex-col items-center justify-center text-slate-300 gap-1.5">
+                        <i class="fas fa-qrcode text-3xl opacity-40"></i>
+                        <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">No Vector Stream</span>
                     </div>
                 {% endif %}
-                <div class="mt-2.5 text-[10px] font-bold text-slate-900 uppercase tracking-widest border-t border-slate-100 pt-2 w-full text-center">
-                    Security Pass Token
+                <div class="mt-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest border-t border-slate-100 pt-2 w-full text-center">
+                    Gate Check-in Token
                 </div>
             </div>
 
-            <!-- Consolidated Metadata Account Summary Elements -->
-            <div class="w-full border-t border-slate-800/80 pt-5 space-y-3">
+            <div class="w-full border-t border-slate-200/60 pt-4 space-y-2">
                 <div class="flex items-center justify-between text-xs">
-                    <span class="text-slate-400 font-medium">Fare Processing</span>
-                    <span class="font-mono font-bold text-white">KES {{ booking.price|floatformat:2 }}</span>
+                    <span class="text-slate-400 font-medium">Fare Paid</span>
+                    <span class="font-mono font-bold text-slate-900 text-sm">KES {{ booking.price|floatformat:2 }}</span>
                 </div>
                 <div class="flex items-center justify-between text-xs">
-                    <span class="text-slate-400 font-medium">Standard Slot Dimensions</span>
-                    <span class="text-slate-300 font-semibold">90mm × 180mm</span>
+                    <span class="text-slate-400 font-medium">Pass Dimensions</span>
+                    <span class="text-slate-500 font-medium">Standard Mobile</span>
                 </div>
                 
-                <div class="pt-2 text-[10px] text-slate-500 font-medium leading-normal border-t border-slate-800/40">
-                    SmartTravels Cloud Engine Ecosystem &bull; Secure Digital Signature
+                <div class="pt-3 text-[10px] text-slate-400 font-medium border-t border-slate-200/40">
+                    SmartTravels Core Infrastructure
                 </div>
             </div>
         </aside>

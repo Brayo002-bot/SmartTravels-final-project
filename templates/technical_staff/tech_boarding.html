@@ -271,44 +271,29 @@
 
                         <!-- ACTION FIELD -->
                         <td class="p-4 pr-6 text-right">
-                            {% if not booking.boarded %}
-                            <form method="POST" class="inline-block">
-                                {% csrf_token %}
-                                <input type="hidden" name="booking_id" value="{{ booking.id }}">
-                                
-                                <div class="flex items-center justify-end gap-2">
+                            <div class="flex flex-col items-end gap-2">
+                                {% if not booking.boarded %}
+                                <form method="POST" class="inline-flex items-center justify-end gap-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="booking_id" value="{{ booking.id }}">
                                     <input type="text" name="verify_ticket" placeholder="Input check-key" 
                                            class="p-2 border border-slate-200 rounded-lg text-xs font-mono focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none w-36 bg-slate-50/50">
-                                    
-                                    <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors duration-150 shadow-sm flex items-center gap-1">
+                                    <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors duration-150 shadow-sm inline-flex items-center gap-1">
                                         <i data-lucide="check" class="w-3.5 h-3.5"></i>
                                         Confirm Entry
                                     </button>
-                                </div>
-                            </form>
-                            {% else %}
-                            <span class="text-xs text-slate-400 font-medium inline-flex items-center gap-1 justify-end">
-                                <i data-lucide="check-square" class="w-3.5 h-3.5 text-emerald-600"></i> Log Reconciled
-                            </span>
-                            {% endif %}
-                        </td>
-
-                    </tr>
-                    {% empty %}
-                    <!-- EMPTY DATA PLACEHOLDER -->
-                    <tr>
-                        <td colspan="6" class="p-16 text-center">
-                            <div class="flex flex-col items-center justify-center max-w-sm mx-auto">
-                                <div class="h-12 w-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 mb-3">
-                                    <i data-lucide="folder-open" class="w-5 h-5"></i>
-                                </div>
-                                <h3 class="text-sm font-bold text-slate-900">No Manifest Records Pulled</h3>
-                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-                                    There are no passenger allocations registered under this targeted configuration pool for today.
-                                </p>
+                                </form>
+                                {% else %}
+                                <span class="text-xs text-slate-400 font-medium inline-flex items-center gap-1 justify-end">
+                                    <i data-lucide="check-square" class="w-3.5 h-3.5 text-emerald-600"></i> Log Reconciled
+                                </span>
+                                {% endif %}
+                                <a href="{% url 'download_ticket' booking.booking_reference %}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 justify-center bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors duration-150 shadow-sm">
+                                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                    Download Ticket
+                                </a>
                             </div>
                         </td>
-                    </tr>
                     {% endfor %}
                 </tbody>
             </table>

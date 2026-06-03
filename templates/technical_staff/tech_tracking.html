@@ -130,7 +130,69 @@
         </div>
     </div>
 
-    {% if parcel %}
+    <div class="grid grid-cols-1 xl:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <p class="text-xs uppercase tracking-wider font-semibold text-slate-400">My Sent Parcels</p>
+            <h3 class="text-3xl font-bold text-slate-900 mt-3">{{ staff_parcels.count }}</h3>
+            <p class="text-sm text-slate-500 mt-2">Parcels this technical staff member has dispatched to the centre.</p>
+        </div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-sm">
+            <p class="text-xs uppercase tracking-wider font-semibold text-slate-400">In Transit</p>
+            <h3 class="text-3xl font-bold text-slate-900 mt-3">{{ staff_parcels_in_transit|default:'0' }}</h3>
+        </div>
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 shadow-sm">
+            <p class="text-xs uppercase tracking-wider font-semibold text-amber-600">Pending Pickup</p>
+            <h3 class="text-3xl font-bold text-slate-900 mt-3">{{ staff_pending_pickups|default:'0' }}</h3>
+        </div>
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 shadow-sm">
+            <p class="text-xs uppercase tracking-wider font-semibold text-emerald-600">Picked / Delivered</p>
+            <h3 class="text-3xl font-bold text-slate-900 mt-3">{{ staff_picked_up|default:'0' }}</h3>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm mb-8 overflow-hidden">
+        <div class="border-b border-slate-200 bg-slate-50 p-6">
+            <h2 class="text-lg font-bold text-slate-900">Parcels Sent by You</h2>
+            <p class="text-sm text-slate-500 mt-1">Review the status of parcels you registered and their current progress.</p>
+        </div>
+        <div class="p-6">
+            {% if staff_parcels.exists %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-left text-sm text-slate-700">
+                    <thead class="bg-slate-100 text-slate-600 uppercase text-[11px] tracking-wider">
+                        <tr>
+                            <th class="px-4 py-3">Tracking ID</th>
+                            <th class="px-4 py-3">Recipient</th>
+                            <th class="px-4 py-3">Route</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for staff_parcel in staff_parcels %}
+                        <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                            <td class="px-4 py-4 font-medium text-slate-900">{{ staff_parcel.parcel_id }}</td>
+                            <td class="px-4 py-4">{{ staff_parcel.recipient_name }}</td>
+                            <td class="px-4 py-4">{{ staff_parcel.origin }} → {{ staff_parcel.destination }}</td>
+                            <td class="px-4 py-4">
+                                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold {% if staff_parcel.status == 'in_transit' %}bg-blue-50 text-blue-700 border border-blue-100{% elif staff_parcel.status == 'booked' or staff_parcel.status == 'dropped_off' %}bg-amber-50 text-amber-700 border border-amber-100{% elif staff_parcel.status == 'arrived' or staff_parcel.status == 'collected' %}bg-emerald-50 text-emerald-700 border border-emerald-100{% else %}bg-slate-50 text-slate-600 border border-slate-200{% endif %}">
+                                    {{ staff_parcel.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-4 text-slate-500">{{ staff_parcel.updated_at|date:'M d, Y H:i' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="py-12 text-center text-slate-500">
+                <p class="text-sm font-medium">No parcels found. Create a parcel to start tracking its status here.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
 
         <div class="border-b border-slate-200 bg-slate-50/50 p-6">

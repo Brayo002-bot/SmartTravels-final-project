@@ -171,6 +171,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="selected_seat" id="selected-seat-input">
                 <input type="hidden" name="selected_seat_class" id="selected-seat-class-input" value="Normal">
+                <input type="hidden" name="wallet_used" id="wallet-used-input" value="0">
 
                 <div class="space-y-1">
                     <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Passenger Identity</label>
@@ -193,6 +194,24 @@
                 <div class="space-y-1 pb-2">
                     <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Gross Total Aggregate</label>
                     <input type="text" value="KES {{ schedule.price }}" readonly class="w-100 w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-semibold text-emerald-400 focus:outline-none opacity-80 cursor-not-allowed">
+                </div>
+
+                <div class="space-y-3 bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <div class="flex items-center justify-between gap-3">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Wallet Credit</label>
+                            <div class="text-sm text-slate-200">Available balance</div>
+                        </div>
+                        <div class="text-right text-emerald-400 font-bold text-xl" id="wallet-balance-display">{{ wallet_balance|default:'KES 0.00' }}</div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Use wallet amount</label>
+                        <input id="wallet-use-input" type="number" name="wallet_use" min="0" step="1" value="0" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20" />
+                        <p class="text-[10px] text-slate-500">Enter the amount from your wallet to offset the fare. Remaining payable amount updates automatically.</p>
+                    </div>
+                    <div class="rounded-2xl bg-slate-950 border border-slate-800 p-3 text-sm text-slate-100">
+                        Remaining payable: <span class="font-semibold" id="remaining-amount-display">KES {{ schedule.price }}</span>
+                    </div>
                 </div>
 
                 <button type="submit" id="pay-btn" disabled class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:border disabled:border-white/5 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-all shadow-lg active:scale-[0.99] flex items-center justify-center gap-2 text-sm">
@@ -242,15 +261,46 @@ function updateSelectedDisplay() {
 function updatePayBtn() {
     const btn = document.getElementById('pay-btn');
     const ready = selectedSeats.length >= paxNeeded;
+    const remainingText = document.getElementById('remaining-amount-display')?.textContent || '';
+    const remainingAmount = parseFloat((remainingText.match(/[0-9,.]+/) || ['0'])[0].replace(/,/g, '')) || {{ schedule.price }};
     btn.disabled = !ready;
-    btn.innerHTML = ready
-        ? '<i class="fa-solid fa-mobile-screen-button text-xs"></i> Pay with M-Pesa STK'
-        : `Assign ${paxNeeded} seat${paxNeeded > 1 ? 's' : ''} to checkout`;
+    if (!ready) {
+        btn.innerHTML = `Assign ${paxNeeded} seat${paxNeeded > 1 ? 's' : ''} to checkout`;
+        return;
+    }
+    if (remainingAmount === 0) {
+        btn.innerHTML = '<i class="fa-solid fa-wallet text-xs"></i> Pay with Wallet';
+    } else {
+        btn.innerHTML = `<i class="fa-solid fa-mobile-screen-button text-xs"></i> Pay KES ${remainingAmount.toFixed(2)} with M-Pesa STK`;
+    }
+}
+
+function updateWalletUsage() {
+    const walletUseInput = document.getElementById('wallet-use-input');
+    const walletUsedInput = document.getElementById('wallet-used-input');
+    const remainingAmountDisplay = document.getElementById('remaining-amount-display');
+    if (!walletUseInput || !walletUsedInput || !remainingAmountDisplay) return;
+
+    const schedulePrice = parseFloat('{{ schedule.price }}') || 0;
+    const walletAvailable = parseFloat('{{ wallet_balance_raw|default:"0.00" }}') || 0;
+    let requested = parseFloat(walletUseInput.value) || 0;
+    requested = Math.max(0, Math.min(requested, walletAvailable, schedulePrice));
+    walletUseInput.value = requested;
+    walletUsedInput.value = requested.toFixed(2);
+    const remaining = Math.max(schedulePrice - requested, 0);
+    remainingAmountDisplay.textContent = `KES ${remaining.toFixed(2)}`;
+    updatePayBtn();
 }
 
 const seatMapContainer = document.getElementById('seat-map');
 const selectedSeatInput = document.getElementById('selected-seat-input');
 const seatLayoutUrl = '{% url "passenger_seat_layout" %}?mode={{ mode }}&schedule_id={{ schedule.id }}';
+const walletUseInput = document.getElementById('wallet-use-input');
+
+if (walletUseInput) {
+    walletUseInput.addEventListener('input', updateWalletUsage);
+    updateWalletUsage();
+}
 
 function formatSeatElement(cell) {
     if (cell.is_empty) {

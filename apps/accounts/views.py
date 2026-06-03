@@ -1,5 +1,6 @@
 from collections import Counter
 from datetime import date, time, datetime
+from decimal import Decimal
 import io
 import logging
 import uuid
@@ -282,9 +283,12 @@ def dashboard_view(request):
 
         # Compute loyalty points for the passenger dashboard
         from apps.payments.models import Payment
-        payments_for_user = Payment.objects.filter(passenger=request.user)
+        payments_for_user = Payment.objects.filter(passenger=request.user).exclude(method='loyalty')
         payment_total = payments_for_user.aggregate(total=Sum('amount'))['total'] or 0
-        loyalty_balance = int(payment_total / 100)  # 1 point per 100 KSH spent
+        earned_points = int(payment_total / 100)  # 1 point per 100 KSH spent
+        redeemed_points = getattr(request.user, 'redeemed_points', 0) or 0
+        available_points = max(earned_points - redeemed_points, 0)
+        wallet_balance = getattr(request.user, 'wallet_balance', Decimal('0')) or Decimal('0')
 
         return render(request, template_name, {
             'active': 'dashboard',
@@ -297,7 +301,10 @@ def dashboard_view(request):
             'query_date': query_date,
             'query_mode': query_mode,
             'query_time': query_time,
-            'loyalty_points': f"{loyalty_balance:,}",
+            'loyalty_points': f"{available_points:,}",
+            'loyalty_points_raw': available_points,
+            'wallet_balance': f"KES {wallet_balance:,.2f}",
+            'wallet_balance_raw': float(wallet_balance),
             'recommendations': {
                 'most_used_mode': most_used_mode,
                 'top_modes': top_modes,
@@ -402,9 +409,12 @@ def passenger_my_bookings(request):
     completed = sum(1 for booking in all_bookings if getattr(booking, 'travel_date', None) and booking.travel_date < date.today())
 
     from apps.payments.models import Payment
-    payments_for_user = Payment.objects.filter(passenger=request.user)
+    payments_for_user = Payment.objects.filter(passenger=request.user).exclude(method='loyalty')
     payment_total = payments_for_user.aggregate(total=Sum('amount'))['total'] or 0
-    loyalty_balance = int(payment_total / 100)
+    earned_points = int(payment_total / 100)
+    redeemed_points = getattr(request.user, 'redeemed_points', 0) or 0
+    available_points = max(earned_points - redeemed_points, 0)
+    wallet_balance = getattr(request.user, 'wallet_balance', Decimal('0')) or Decimal('0')
 
     all_bookings = bus_bookings + train_bookings + flight_bookings
 
@@ -417,7 +427,9 @@ def passenger_my_bookings(request):
         'train_bookings': train_bookings,
         'flight_bookings': flight_bookings,
         'bookings': all_bookings,
-        'loyalty_points': f"{loyalty_balance:,}",
+        'loyalty_points': f"{available_points:,}",
+        'wallet_balance': f"KES {wallet_balance:,.2f}",
+        'wallet_balance_raw': float(wallet_balance),
     })
 
 
@@ -489,11 +501,39 @@ def passenger_loyalty(request):
 
     from apps.payments.models import Payment
 
-    payments = Payment.objects.filter(passenger=request.user)
+    payments = Payment.objects.filter(passenger=request.user).exclude(method='loyalty')
     payment_total = payments.aggregate(total=Sum('amount'))['total'] or 0
-    point_balance = int(payment_total / 100)  # 1 point per 100 KSH spent
-    tier = 'Platinum' if point_balance >= 3000 else 'Gold' if point_balance >= 1500 else 'Silver'
-    savings = int(point_balance * 0.22)
+    earned_points = int(payment_total / 100)  # 1 point per 100 KSH spent
+    redeemed_points = getattr(request.user, 'redeemed_points', 0) or 0
+    available_points = max(earned_points - redeemed_points, 0)
+    tier = 'Platinum' if earned_points >= 3000 else 'Gold' if earned_points >= 1500 else 'Silver'
+    savings = int(earned_points * 0.22)
+    wallet_balance = getattr(request.user, 'wallet_balance', Decimal('0')) or Decimal('0')
+
+    redemption_message = None
+    if request.method == 'POST':
+        try:
+            requested_points = int(request.POST.get('redeem_points', 0))
+        except (TypeError, ValueError):
+            requested_points = 0
+
+        requested_points = max(0, requested_points)
+        if requested_points > available_points:
+            redemption_message = 'You cannot redeem more points than you currently have.'
+        else:
+            redeemable_points = (requested_points // 100) * 100
+            if redeemable_points <= 0:
+                redemption_message = 'Enter at least 100 points to convert to KES 1.'
+            else:
+                cash_amount = redeemable_points // 100
+                request.user.redeemed_points = redeemed_points + redeemable_points
+                request.user.wallet_balance = wallet_balance + Decimal(cash_amount)
+                request.user.save(update_fields=['redeemed_points', 'wallet_balance'])
+                available_points -= redeemable_points
+                wallet_balance += Decimal(cash_amount)
+                redemption_message = f'Success! {redeemable_points} points converted into KES {cash_amount:.2f} wallet credit.'
+
+    name = request.user.get_full_name() or request.user.username
 
     name = request.user.get_full_name() or request.user.username
     from apps.buses.models import Booking as BusBooking
@@ -505,27 +545,31 @@ def passenger_loyalty(request):
     flight_count = FlightBooking.objects.filter(passenger_name__icontains=name, status='confirmed').count()
     completed_trips = bus_count + train_count + flight_count
 
-    next_threshold = 3000 if point_balance >= 1500 else 1500
-    if point_balance >= 3000:
+    next_threshold = 3000 if earned_points >= 1500 else 1500
+    if earned_points >= 3000:
         progress = 100
         next_reward = 'VIP Upgrade'
         points_needed = 0
     else:
-        progress = int(min(100, (point_balance / next_threshold) * 100)) if next_threshold else 100
-        next_reward = 'Free Bus Ticket' if point_balance < 1500 else 'VIP Upgrade'
-        points_needed = max(0, next_threshold - point_balance)
+        progress = int(min(100, (earned_points / next_threshold) * 100)) if next_threshold else 100
+        next_reward = 'Free Bus Ticket' if earned_points < 1500 else 'VIP Upgrade'
+        points_needed = max(0, next_threshold - earned_points)
 
     return render(request, 'passenger/loyalty.html', {
         'active': 'loyalty',
-        'loyalty_points': f"{point_balance:,}",
+        'loyalty_points': f"{available_points:,}",
+        'loyalty_points_raw': available_points,
         'current_tier': tier,
         'savings_earned': f"KES {savings:,}",
-        'lifetime_points': f"{point_balance:,}",
+        'lifetime_points': f"{earned_points:,}",
         'trips_completed': completed_trips,
         'loyalty_badge': f"{tier} Traveller",
         'loyalty_progress': progress,
         'next_reward': next_reward,
         'points_to_next_tier': f"{points_needed:,}",
+        'wallet_balance': f"KES {wallet_balance:,.2f}",
+        'wallet_balance_raw': float(wallet_balance),
+        'redemption_message': redemption_message,
     })
 
 
@@ -944,15 +988,18 @@ def book_trip(request, mode, schedule_id):
         selected_seat = request.POST.get('selected_seat', '').strip()
         selected_seat_class = request.POST.get('selected_seat_class', 'Normal').strip()
         phone = request.POST.get('phone', '').strip() or default_phone
+        wallet_used = Decimal(request.POST.get('wallet_used', '0') or '0')
 
         if not selected_seat:
             error_message = 'Please select a seat from the layout before proceeding.'
         elif not phone:
-            error_message = 'Please provide a phone number for the STK push.'
+            error_message = 'Please provide a phone number to continue.'
         elif selected_seat in _get_booked_seat_numbers(mode, schedule):
             error_message = 'This seat is no longer available. Please select a different seat.'
         elif transport.available_seats <= 0:
             error_message = 'No available seats remain for this trip.'
+        elif wallet_used < 0:
+            error_message = 'Wallet amount must be a positive number.'
         else:
             booking_reference = _generate_booking_reference() # Generate before STK push for AccountReference
             try:
@@ -970,49 +1017,76 @@ def book_trip(request, mode, schedule_id):
                     price = transport.route.business_price
                 elif selected_seat_class == 'Economy' and hasattr(transport.route, 'economy_price') and transport.route.economy_price:
                     price = transport.route.economy_price
-                
-                payment_record = Payment.objects.create(
-                    booking_reference=booking_reference,
-                    booking_type=mode,
-                    passenger=request.user,
-                    amount=price,
-                    method='mpesa',
-                    phone_number=phone,
-                    status='pending',
-                )
-                service = MPesaService()
-                response = service.stk_push(phone, price, booking_reference)
-                if response.get('ResponseCode') == '0':
-                    payment_record.merchant_ref = response.get('CheckoutRequestID', '')
-                    payment_record.mark_completed(code='DEBUG-AUTO-' + booking_reference)
-                    payment_record.save(update_fields=['merchant_ref', 'status', 'completed_at', 'mpesa_code'])
 
-                    BookingModel, _ = _load_transport_models(mode)
-                    booking_kwargs = {
-                        'passenger_name': passenger_name,
-                        'phone': phone,
-                        'route': transport.route,
-                        mode: transport,
-                        'travel_date': schedule.travel_date,
-                        'travel_time': schedule.travel_time,
-                        'price': price,
-                        'seat_number': selected_seat,
-                        'booking_reference': booking_reference,
-                        'status': 'confirmed',
-                    }
-                    booking = BookingModel.objects.create(**booking_kwargs)
-                    transport.available_seats = max(0, transport.available_seats - 1)
-                    transport.save()
+                wallet_balance = getattr(request.user, 'wallet_balance', Decimal('0')) or Decimal('0')
+                wallet_used = min(wallet_used, wallet_balance, Decimal(price))
+                remaining_amount = max(Decimal(price) - wallet_used, Decimal('0'))
 
-                    _send_ticket_email(request.user.email, booking)
-                    messages.success(request, '✅ STK push sent and payment recorded. Your ticket has been generated and emailed to you.')
-                    return redirect('tickets')
+                # Apply wallet payment first if any
+                if wallet_used > 0:
+                    wallet_payment = Payment.objects.create(
+                        booking_reference=booking_reference,
+                        booking_type=mode,
+                        passenger=request.user,
+                        amount=wallet_used,
+                        method='loyalty',
+                        status='completed',
+                        phone_number=phone,
+                        merchant_ref='WALLET-REDEEM',
+                    )
+                    request.user.wallet_balance = wallet_balance - wallet_used
+                    request.user.save(update_fields=['wallet_balance'])
+
+                if remaining_amount == 0:
+                    booking_payment = None
                 else:
-                    payment_record.status = 'failed'
-                    payment_record.save(update_fields=['status'])
-                    error_message = response.get('CustomerMessage') or response.get('errorMessage') or 'STK push failed. Please try again.'
+                    booking_payment = Payment.objects.create(
+                        booking_reference=booking_reference,
+                        booking_type=mode,
+                        passenger=request.user,
+                        amount=remaining_amount,
+                        method='mpesa',
+                        phone_number=phone,
+                        status='pending',
+                    )
+                    service = MPesaService()
+                    response = service.stk_push(phone, remaining_amount, booking_reference)
+                    if response.get('ResponseCode') == '0':
+                        booking_payment.merchant_ref = response.get('CheckoutRequestID', '')
+                        booking_payment.mark_completed(code='DEBUG-AUTO-' + booking_reference)
+                        booking_payment.save(update_fields=['merchant_ref', 'status', 'completed_at', 'mpesa_code'])
+                    else:
+                        booking_payment.status = 'failed'
+                        booking_payment.save(update_fields=['status'])
+                        error_message = response.get('CustomerMessage') or response.get('errorMessage') or 'STK push failed. Please try again.'
+                        raise Exception(error_message)
+
+                BookingModel, _ = _load_transport_models(mode)
+                booking_kwargs = {
+                    'passenger_name': passenger_name,
+                    'phone': phone,
+                    'route': transport.route,
+                    mode: transport,
+                    'travel_date': schedule.travel_date,
+                    'travel_time': schedule.travel_time,
+                    'price': price,
+                    'seat_number': selected_seat,
+                    'booking_reference': booking_reference,
+                    'status': 'confirmed',
+                }
+                booking = BookingModel.objects.create(**booking_kwargs)
+                transport.available_seats = max(0, transport.available_seats - 1)
+                transport.save()
+
+                _send_ticket_email(request.user.email, booking)
+                if remaining_amount == 0:
+                    messages.success(request, '✅ Paid entirely from wallet. Your ticket has been generated and emailed to you.')
+                else:
+                    messages.success(request, '✅ STK push sent and payment recorded. Your ticket has been generated and emailed to you.')
+                return redirect('tickets')
             except Exception as exc:
-                error_message = f'Unable to start M-Pesa push: {exc}'
+                if not error_message:
+                    error_message = f'Unable to complete booking: {exc}'
 
     # Determine company and logo for the transport (show to passenger)
     company = None
@@ -1025,6 +1099,8 @@ def book_trip(request, mode, schedule_id):
     except Exception:
         company_logo_url = None
 
+    wallet_balance = getattr(request.user, 'wallet_balance', Decimal('0')) or Decimal('0')
+
     return render(request, 'passenger/book_trip.html', {
         'mode': mode,
         'schedule': schedule,
@@ -1034,6 +1110,8 @@ def book_trip(request, mode, schedule_id):
         'error_message': error_message,
         'company': company,
         'company_logo_url': company_logo_url,
+        'wallet_balance': f"KES {wallet_balance:,.2f}",
+        'wallet_balance_raw': float(wallet_balance),
     })
 
 

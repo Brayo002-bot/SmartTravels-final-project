@@ -81,6 +81,16 @@ class User(AbstractUser):
         null=True
     )
 
+    wallet_balance = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+
+    redeemed_points = models.PositiveIntegerField(
+        default=0
+    )
+
     company = models.ForeignKey(
         'systemadmin.Company',
         on_delete=models.SET_NULL,
