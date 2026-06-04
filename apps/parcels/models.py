@@ -18,6 +18,7 @@ class Parcel(models.Model):
     ]
     parcel_id       = models.CharField(max_length=20, unique=True, default=parcel_id)
     sender          = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_parcels')
+    processed_by    = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='processed_parcels')
     sender_name     = models.CharField(max_length=150)
     sender_phone    = models.CharField(max_length=20)
     sender_email    = models.EmailField(blank=True, default='')

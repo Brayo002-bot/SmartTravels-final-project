@@ -134,7 +134,7 @@
         <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
             <p class="text-xs uppercase tracking-wider font-semibold text-slate-400">My Sent Parcels</p>
             <h3 class="text-3xl font-bold text-slate-900 mt-3">{{ staff_parcels.count }}</h3>
-            <p class="text-sm text-slate-500 mt-2">Parcels this technical staff member has dispatched to the centre.</p>
+            <p class="text-sm text-slate-500 mt-2">Parcels processed by this technical staff member for customers.</p>
         </div>
         <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-sm">
             <p class="text-xs uppercase tracking-wider font-semibold text-slate-400">In Transit</p>
@@ -251,7 +251,7 @@
                             </p>
                         </div>
 
-                        {% if parcel.status != "Picked Up" %}
+                        {% if parcel.status != 'collected' %}
                         <form method="POST" class="shrink-0">
                             {% csrf_token %}
                             <input type="hidden" name="parcel_id" value="{{ parcel.id }}">
@@ -273,7 +273,7 @@
                         <div class="flex flex-col sm:flex-row sm:items-center gap-4">
                             <div class="flex-1 bg-slate-50 border border-slate-100 rounded-lg p-3.5">
                                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Origin Node</p>
-                                <h4 class="text-sm font-bold text-slate-700 mt-1">{{ parcel.pickup_location }}</h4>
+                                <h4 class="text-sm font-bold text-slate-700 mt-1">{{ parcel.origin }}</h4>
                             </div>
                             <div class="flex justify-center shrink-0">
                                 <div class="h-8 w-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 rotate-90 sm:rotate-0">
@@ -290,15 +290,15 @@
                     <div class="bg-white border border-slate-200 rounded-xl p-5">
                         <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6">Historical Ledger Timeline</h3>
                         <div class="relative border-l-2 border-slate-100 ml-3 pl-6 space-y-6">
-                            {% for update in tracking_updates %}
+                            {% for update in parcel_logs %}
                             <div class="relative">
                                 <span class="absolute -left-[31px] top-1 flex h-4 w-4 items-center justify-center rounded-full bg-white ring-4 ring-white border-2 border-blue-600"></span>
                                 <div>
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-800 border border-slate-200">
                                         {{ update.status }}
                                     </span>
-                                    <p class="text-sm text-slate-600 mt-1.5">{{ update.description }}</p>
-                                    <p class="text-xs font-mono text-slate-400 mt-1">{{ update.created_at }}</p>
+                                    <p class="text-sm text-slate-600 mt-1.5">{{ update.note }}</p>
+                                    <p class="text-xs font-mono text-slate-400 mt-1">{{ update.timestamp }}</p>
                                 </div>
                             </div>
                             {% empty %}
@@ -335,12 +335,12 @@
                             <div>
                                 <label class="block text-xs font-semibold text-slate-500 mb-1.5">Checkpoint Designation</label>
                                 <select name="status" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none transition-all">
-                                    <option value="Received">Parcel Received</option>
-                                    <option value="In Transit">In Transit</option>
-                                    <option value="Arrived">Arrived at Destination</option>
-                                    <option value="Out for Delivery">Out for Delivery</option>
-                                    <option value="Delivered">Delivered</option>
-                                    <option value="Picked Up">Picked Up</option>
+                                    <option value="booked">Parcel Received</option>
+                                    <option value="in_transit">In Transit</option>
+                                    <option value="dropped_off">Arrived at Destination</option>
+                                    <option value="in_transit">Out for Delivery</option>
+                                    <option value="collected">Delivered</option>
+                                    <option value="collected">Picked Up</option>
                                 </select>
                             </div>
 
@@ -359,7 +359,6 @@
             </div>
         </div>
     </div>
-    {% endif %}
 
 </div>
 </div>

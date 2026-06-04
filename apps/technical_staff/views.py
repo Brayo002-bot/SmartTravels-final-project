@@ -676,20 +676,15 @@ def tech_parcels(request):
                     stk_phone = payment_phone
 
                     # Create parcel and generate waybill immediately after prompting the user.
-                    passenger_user = None
-                    if sender_email:
-                        passenger_user = User.objects.filter(email__iexact=sender_email, role='passenger').first()
-                    if not passenger_user and sender_phone:
-                        passenger_user = User.objects.filter(phone_number__iexact=sender_phone, role='passenger').first()
-
-                    sender_for_parcel = passenger_user if passenger_user else request.user
+                    passenger_user = find_passenger_user(sender_email, sender_phone)
                     if passenger_user:
                         sender_name = sender_name or passenger_user.get_full_name() or passenger_user.email
                         sender_email = sender_email or passenger_user.email
                         sender_phone = sender_phone or passenger_user.phone_number
 
                     parcel = Parcel.objects.create(
-                        sender=sender_for_parcel,
+                        sender=passenger_user if passenger_user else request.user,
+                        processed_by=request.user,
                         sender_name=sender_name,
                         sender_phone=sender_phone,
                         sender_email=sender_email,
@@ -761,20 +756,15 @@ def tech_parcels(request):
                 return redirect('tech_parcels')
 
             if sender_name and sender_phone and receiver_name and receiver_phone and pickup_location and pickup_office and destination:
-                passenger_user = None
-                if sender_email:
-                    passenger_user = User.objects.filter(email__iexact=sender_email, role='passenger').first()
-                if not passenger_user and sender_phone:
-                    passenger_user = User.objects.filter(phone_number__iexact=sender_phone, role='passenger').first()
-
-                sender_for_parcel = passenger_user if passenger_user else request.user
+                passenger_user = find_passenger_user(sender_email, sender_phone)
                 if passenger_user:
                     sender_name = sender_name or passenger_user.get_full_name() or passenger_user.email
                     sender_email = sender_email or passenger_user.email
                     sender_phone = sender_phone or passenger_user.phone_number
 
                 parcel = Parcel.objects.create(
-                    sender=sender_for_parcel,
+                    sender=passenger_user if passenger_user else request.user,
+                    processed_by=request.user,
                     sender_name=sender_name,
                     sender_phone=sender_phone,
                     sender_email=sender_email,
@@ -904,7 +894,37 @@ def tech_parcels(request):
 
 @technical_staff_required
 def tech_ticket_scanner(request):
-    return render(request, 'technical_staff/tech_ticket_scanner.html')
+    verified_ticket = None
+    ticket_input = request.POST.get('qr_code', '').strip() if request.method == 'POST' else ''
+
+    if request.method == 'POST' and ticket_input:
+        booking_reference = ticket_input
+        parts = ticket_input.split('|')
+        if len(parts) >= 2 and parts[0].strip().upper() == 'TICKET':
+            booking_reference = parts[1].strip()
+
+        from apps.buses.models import Booking as BusBooking
+        from apps.trains.models import Booking as TrainBooking
+        from apps.flights.models import Booking as FlightBooking
+
+        for Model in (BusBooking, TrainBooking, FlightBooking):
+            booking = Model.objects.filter(booking_reference__iexact=booking_reference).first()
+            if booking:
+                verified_ticket = {
+                    'passenger_name': booking.passenger_name,
+                    'booking_reference': booking.booking_reference,
+                    'route': str(getattr(booking, 'route', '')),
+                }
+                messages.success(request, 'Ticket successfully verified.')
+                break
+
+        if not verified_ticket:
+            messages.error(request, 'Ticket verification failed. Please scan a valid ticket or enter a correct booking reference.')
+
+    return render(request, 'technical_staff/tech_ticket_scanner.html', {
+        'verified_ticket': verified_ticket,
+        'ticket_input': ticket_input,
+    })
 
 
 @technical_staff_required
@@ -1023,7 +1043,36 @@ def tech_tracking(request):
     tracking_id = request.GET.get('tracking_id', '').strip()
     parcel = None
     parcel_logs = []
-    from apps.parcels.models import Parcel
+    from apps.parcels.models import Parcel, ParcelLog
+
+    if request.method == 'POST':
+        parcel_id = request.POST.get('parcel_id')
+        target = Parcel.objects.filter(id=parcel_id).first()
+        if target:
+            if request.POST.get('action') == 'confirm_pickup':
+                target.status = 'collected'
+                note = 'Pickup confirmed by technical staff.'
+            else:
+                status_map = {
+                    'Received': 'booked',
+                    'In Transit': 'in_transit',
+                    'Arrived at Destination': 'dropped_off',
+                    'Out for Delivery': 'in_transit',
+                    'Delivered': 'collected',
+                    'Picked Up': 'collected',
+                }
+                selected_status = request.POST.get('status', '').strip()
+                target.status = status_map.get(selected_status, selected_status or target.status)
+                note = request.POST.get('description', '').strip() or f'Tracking updated to {target.get_status_display()}.'
+            target.save(update_fields=['status'])
+            ParcelLog.objects.create(
+                parcel=target,
+                status=target.status,
+                note=note,
+                location=request.POST.get('location', '').strip(),
+                updated_by=request.user,
+            )
+            return redirect(f"{request.path}?tracking_id={target.parcel_id}")
 
     if tracking_id:
         parcel = Parcel.objects.filter(parcel_id__iexact=tracking_id).first()
@@ -1032,13 +1081,13 @@ def tech_tracking(request):
 
     today = timezone.localdate()
     parcels_in_transit = Parcel.objects.filter(status='in_transit').count()
-    delivered_today = Parcel.objects.filter(status='arrived', updated_at__date=today).count()
+    delivered_today = Parcel.objects.filter(status='collected', updated_at__date=today).count()
     pending_pickups = Parcel.objects.filter(status__in=['booked', 'dropped_off']).count()
 
-    staff_parcels = Parcel.objects.filter(sender=request.user).order_by('-updated_at')
+    staff_parcels = Parcel.objects.filter(processed_by=request.user).order_by('-updated_at')
     staff_parcels_in_transit = staff_parcels.filter(status='in_transit').count()
     staff_pending_pickups = staff_parcels.filter(status__in=['booked', 'dropped_off']).count()
-    staff_picked_up = staff_parcels.filter(status__in=['arrived', 'collected']).count()
+    staff_picked_up = staff_parcels.filter(status='collected').count()
 
     traffic_status = 'Monitoring traffic...'
     avg_speed = 0
