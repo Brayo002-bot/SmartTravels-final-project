@@ -87,7 +87,7 @@
                     <input type="hidden" name="action" id="formAction" value="save_draft">
                     <input type="hidden" name="prompt_action" id="promptAction" value="send_prompt">
                     <input type="hidden" name="active_step" id="activeStep" value="{{ active_step|default:'1' }}">
-                    <input type="hidden" name="payment_method" id="paymentMethod" value="">
+                    <input type="hidden" name="payment_method" id="paymentMethod" value="mpesa">
                     <input type="hidden" name="payment_status" id="paymentStatus" value="Pending">
                     <input type="hidden" name="transport_choice" id="transportChoice" value="">
 
@@ -484,6 +484,46 @@
 
             <!-- Right: Live Preview -->
             <div class="xl:col-span-4">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6 sticky top-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800">Your Recent Parcel Registrations</h2>
+                            <p class="text-sm text-slate-500">Parcels you processed in the current session.</p>
+                        </div>
+                        <span class="text-xs text-slate-400">Latest first</span>
+                    </div>
+                    {% if staff_parcels %}
+                    <div class="space-y-3">
+                        {% for parcel in staff_parcels|slice:":5" %}
+                        <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50">
+                            <div class="flex items-center justify-between gap-4">
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-800">{{ parcel.parcel_id }}</p>
+                                    <p class="text-xs text-slate-500">{{ parcel.origin }} → {{ parcel.destination }}</p>
+                                </div>
+                                {% if parcel.status == 'booked' %}
+                                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide bg-amber-100 text-amber-700">
+                                    {{ parcel.get_status_display }}
+                                </span>
+                                {% else %}
+                                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide bg-slate-100 text-slate-600">
+                                    {{ parcel.get_status_display }}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="mt-3 text-xs text-slate-500 flex items-center justify-between">
+                                <span>Updated {{ parcel.updated_at|timesince }} ago</span>
+                                <span>{{ parcel.recipient_name }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="rounded-2xl border border-slate-200 p-6 bg-slate-50 text-slate-500 text-sm text-center">
+                        No parcels registered yet. Complete a waybill to see your parcel registrations here.
+                    </div>
+                    {% endif %}
+                </div>
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sticky top-6">
                     <div class="flex justify-between items-center mb-4 no-print">
                         <h2 class="text-lg font-bold text-slate-800">Live Waybill Preview</h2>

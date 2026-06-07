@@ -6,7 +6,7 @@ from django.conf import settings as django_settings
 logger = logging.getLogger(__name__)
 
 class Payment(models.Model):
-    METHOD = [('mpesa','M-Pesa'),('card','Card'),('cash','Cash'),('loyalty','Loyalty Points')]
+    METHOD = [('mpesa','M-Pesa'),('card','Card'),('cash','Cash'),('cod','Pay on Delivery'),('loyalty','Loyalty Points')]
     STATUS = [('pending','Pending'),('completed','Completed'),('failed','Failed'),('refunded','Refunded')]
 
     booking_reference = models.CharField(max_length=30)

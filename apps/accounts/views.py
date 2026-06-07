@@ -230,12 +230,16 @@ def dashboard_view(request):
 
                 def build_trip(schedule, mode_name):
                     transport = schedule.bus if mode_name == 'bus' else schedule.train if mode_name == 'train' else schedule.flight
+                    total_seats = _get_total_seats(transport)
+                    booked_count = len(_get_booked_seat_numbers(mode_name, schedule))
+                    available_seats = max(0, total_seats - booked_count)
                     return {
                         'mode': mode_name,
                         'from_location': transport.route.from_location,
                         'to_location': transport.route.to_location,
                         'departure_time': schedule.travel_time,
-                        'available_seats': transport.available_seats,
+                        'available_seats': available_seats,
+                        'total_seats': total_seats,
                         'price': transport.route.price,
                         'schedule_id': schedule.id,
                         'company_name': transport.company.name if transport.company else "Unknown",
@@ -250,36 +254,42 @@ def dashboard_view(request):
                         bus__route__from_location__iexact=query_from,
                         bus__route__to_location__iexact=query_to,
                         travel_date=travel_date,
-                        bus__available_seats__gt=0,
                         bus__is_cargo=False,
                     )
                     if time_filters is not None:
                         bus_schedules = bus_schedules.filter(time_filters)
-                    trips.extend([build_trip(schedule, 'bus') for schedule in bus_schedules])
+                    for schedule in bus_schedules:
+                        trip = build_trip(schedule, 'bus')
+                        if trip['available_seats'] > 0:
+                            trips.append(trip)
 
                 if query_mode in ['', 'train']:
                     train_schedules = TrainSchedule.objects.filter(
                         train__route__from_location__iexact=query_from,
                         train__route__to_location__iexact=query_to,
                         travel_date=travel_date,
-                        train__available_seats__gt=0,
                         train__is_cargo=False,
                     )
                     if time_filters is not None:
                         train_schedules = train_schedules.filter(time_filters)
-                    trips.extend([build_trip(schedule, 'train') for schedule in train_schedules])
+                    for schedule in train_schedules:
+                        trip = build_trip(schedule, 'train')
+                        if trip['available_seats'] > 0:
+                            trips.append(trip)
 
                 if query_mode in ['', 'flight']:
                     flight_schedules = FlightSchedule.objects.filter(
                         flight__route__from_location__iexact=query_from,
                         flight__route__to_location__iexact=query_to,
                         travel_date=travel_date,
-                        flight__available_seats__gt=0,
                         flight__is_cargo=False,
                     )
                     if time_filters is not None:
                         flight_schedules = flight_schedules.filter(time_filters)
-                    trips.extend([build_trip(schedule, 'flight') for schedule in flight_schedules])
+                    for schedule in flight_schedules:
+                        trip = build_trip(schedule, 'flight')
+                        if trip['available_seats'] > 0:
+                            trips.append(trip)
 
         # Compute loyalty points for the passenger dashboard
         from apps.payments.models import Payment
@@ -478,8 +488,16 @@ def passenger_track_parcel(request):
     delivered = parcels_qs.filter(status='arrived').count()
     pending = parcels_qs.exclude(status__in=['arrived', 'collected']).count()
 
+    search_query = request.GET.get('tracking_id', '').strip()
+    selected_parcel = None
+    if search_query:
+        selected_parcel = parcels_qs.filter(parcel_id__iexact=search_query).first()
+        if selected_parcel is None:
+            messages.warning(request, 'No parcel found for that tracking ID. Showing recent parcels instead.')
+
     parcels = list(parcels_qs[:12])
-    selected_parcel = parcels[0] if parcels else None
+    if selected_parcel is None:
+        selected_parcel = parcels[0] if parcels else None
     parcel_logs = selected_parcel.logs.all() if selected_parcel else []
 
     return render(request, 'passenger/track_parcel.html', {
@@ -491,6 +509,7 @@ def passenger_track_parcel(request):
         'in_transit': in_transit,
         'delivered': delivered,
         'pending': pending,
+        'search_query': search_query,
     })
 
 
@@ -727,7 +746,16 @@ def _generate_booking_reference():
 def _get_booked_seat_numbers(mode, schedule):
     BookingModel, _ = _load_transport_models(mode)
     transport = getattr(schedule, mode)
-    return list(BookingModel.objects.filter(**{mode: transport, 'travel_date': schedule.travel_date}).exclude(seat_number__isnull=True).exclude(seat_number__exact='').values_list('seat_number', flat=True))
+    return list(BookingModel.objects.filter(**{mode: transport, 'travel_date': schedule.travel_date})
+        .exclude(seat_number__isnull=True).exclude(seat_number__exact='').values_list('seat_number', flat=True))
+
+
+def _get_total_seats(transport):
+    if hasattr(transport, 'vip_seats'):
+        return transport.vip_seats + transport.normal_seats
+    return (getattr(transport, 'first_class_seats', 0) +
+            getattr(transport, 'business_seats', 0) +
+            getattr(transport, 'economy_seats', 0))
 
 
 def _get_schedule_by_mode(mode, schedule_id):
@@ -990,13 +1018,17 @@ def book_trip(request, mode, schedule_id):
         phone = request.POST.get('phone', '').strip() or default_phone
         wallet_used = Decimal(request.POST.get('wallet_used', '0') or '0')
 
+        booked_numbers = _get_booked_seat_numbers(mode, schedule)
+        total_seats = _get_total_seats(transport)
+        remaining_seats = max(0, total_seats - len(booked_numbers))
+
         if not selected_seat:
             error_message = 'Please select a seat from the layout before proceeding.'
         elif not phone:
             error_message = 'Please provide a phone number to continue.'
-        elif selected_seat in _get_booked_seat_numbers(mode, schedule):
+        elif selected_seat in booked_numbers:
             error_message = 'This seat is no longer available. Please select a different seat.'
-        elif transport.available_seats <= 0:
+        elif remaining_seats <= 0:
             error_message = 'No available seats remain for this trip.'
         elif wallet_used < 0:
             error_message = 'Wallet amount must be a positive number.'
@@ -1099,6 +1131,9 @@ def book_trip(request, mode, schedule_id):
     except Exception:
         company_logo_url = None
 
+    booked_numbers = _get_booked_seat_numbers(mode, schedule)
+    total_seats = _get_total_seats(transport)
+    remaining_seats = max(0, total_seats - len(booked_numbers))
     wallet_balance = getattr(request.user, 'wallet_balance', Decimal('0')) or Decimal('0')
 
     return render(request, 'passenger/book_trip.html', {
@@ -1112,6 +1147,8 @@ def book_trip(request, mode, schedule_id):
         'company_logo_url': company_logo_url,
         'wallet_balance': f"KES {wallet_balance:,.2f}",
         'wallet_balance_raw': float(wallet_balance),
+        'total_seats': total_seats,
+        'remaining_seats': remaining_seats,
     })
 
 

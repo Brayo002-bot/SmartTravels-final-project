@@ -56,7 +56,7 @@
                 <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">{{ transport_label }} cargo center</p>
                 <h2 class="text-xl font-bold text-slate-800 mt-0.5">{{ shipments_count }}</h2>
                 <div class="mt-2 flex items-center gap-1.5 text-xs font-medium text-slate-500">
-                    Shipments created by you
+                    Shipments created by your technical staff
                 </div>
             </div>
         </div>
@@ -118,6 +118,7 @@
                     </div>
                 </div>
 
+                {% if allow_new_cargo %}
                 <form method="POST" class="space-y-5">
                     {% csrf_token %}
                     
@@ -251,6 +252,12 @@
                         Create Shipment
                     </button>
                 </form>
+                {% else %}
+                <div class="rounded-3xl border border-rose-200 bg-rose-50 p-8 text-rose-700">
+                    <h3 class="text-lg font-bold">Cargo shipment creation disabled</h3>
+                    <p class="mt-3 text-sm text-rose-700/90">Creating new cargo shipments is disabled in this admin dashboard. You can still review parcels sent by your technical staff below.</p>
+                </div>
+                {% endif %}
             </div>
 
             <!-- TIMELINE HISTORY LOGS -->

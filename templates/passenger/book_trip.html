@@ -191,9 +191,10 @@
                     <input type="text" value="{{ schedule.travel_date }} {{ schedule.travel_time }}" readonly class="w-100 w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-slate-400 focus:outline-none opacity-80 cursor-not-allowed">
                 </div>
 
-                <div class="space-y-1 pb-2">
-                    <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Gross Total Aggregate</label>
-                    <input type="text" value="KES {{ schedule.price }}" readonly class="w-100 w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-semibold text-emerald-400 focus:outline-none opacity-80 cursor-not-allowed">
+                <div class="space-y-1">
+                    <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Seat Availability</label>
+                    <input type="text" value="{{ remaining_seats }} / {{ total_seats }} seats remaining" readonly class="w-100 w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-semibold text-emerald-400 focus:outline-none opacity-80 cursor-not-allowed">
+                </div>
                 </div>
 
                 <div class="space-y-3 bg-white/5 border border-white/10 rounded-2xl p-4">

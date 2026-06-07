@@ -148,83 +148,14 @@ def booking(request):
     bookings = Booking.objects.filter(bus__company=company).select_related('bus', 'route').order_by('-created_at')
 
     if request.method == 'POST':
-        passenger_name = request.POST.get('passenger_name', '').strip()
-        passenger_email = request.POST.get('passenger_email', '').strip()
-        phone = request.POST.get('phone', '').strip()
-        route_id = request.POST.get('route')
-        bus_id = request.POST.get('bus')
-        travel_date = request.POST.get('travel_date')
-        seat_number = request.POST.get('seat_number', '').strip()
-        seat_class = request.POST.get('seat_class', '').strip()
-
-        if passenger_name and phone and route_id and bus_id and travel_date:
-            bus = get_object_or_404(Bus, id=bus_id, company=company)
-            route = get_object_or_404(Route, id=route_id, company=company)
-            price = route.price
-            schedule = Schedule.objects.filter(bus=bus, travel_date=travel_date).first()
-            if schedule:
-                price = schedule.price
-
-            if seat_class == 'VIP' and route.vip_price:
-                price = route.vip_price
-            elif seat_class == 'Normal' and route.normal_price:
-                price = route.normal_price
-
-            if bus.available_seats > 0:
-                booking_reference = _generate_booking_reference()
-                booking = Booking.objects.create(
-                    passenger_name=passenger_name,
-                    phone=phone,
-                    bus=bus,
-                    route=route,
-                    travel_date=travel_date,
-                    travel_time=schedule.travel_time if schedule else None,
-                    seat_number=seat_number if seat_number else None,
-                    price=price,
-                    booking_reference=booking_reference,
-                    status='pending',
-                )
-                bus.available_seats -= 1
-                bus.save()
-
-                passenger_account = find_passenger_user(passenger_email, phone)
-                payment_owner = passenger_account or request.user
-                payment = Payment.objects.create(
-                    booking_reference=booking_reference,
-                    booking_type='bus',
-                    passenger=payment_owner,
-                    amount=price,
-                    method='mpesa',
-                    phone_number=phone,
-                )
-                try:
-                    svc = MPesaService()
-                    res = svc.stk_push(phone, price, booking_reference)
-                    if res.get('ResponseCode') == '0':
-                        payment.merchant_ref = res.get('CheckoutRequestID', '')
-                        payment.save(update_fields=['merchant_ref'])
-                        if settings.DEBUG:
-                            payment.mark_completed(code='DEBUG-AUTO-' + booking_reference)
-                            booking.status = 'confirmed'
-                            booking.save(update_fields=['status'])
-                            messages.success(request, 'Booking created and payment auto-completed (DEBUG). Ticket will be sent once payment is confirmed.')
-                        else:
-                            messages.success(request, 'Booking created. M-Pesa prompt sent to passenger phone. Booking will confirm after payment.')
-                    else:
-                        payment.status = 'failed'
-                        payment.save(update_fields=['status'])
-                        messages.warning(request, 'Booking created, but M-Pesa push failed. Check phone number or MPesa settings.')
-                except Exception as e:
-                    payment.status = 'failed'
-                    payment.save(update_fields=['status'])
-                    messages.warning(request, f'Booking created, but payment prompt failed: {e}')
-
-                return redirect('bus_booking')
+        messages.warning(request, 'Passenger booking creation is disabled in admin dashboards. Manage existing bookings only.')
+        return redirect('bus_booking')
 
     return render(request, 'bus_admin/booking.html', {
         'routes': routes,
         'buses': buses,
         'bookings': bookings,
+        'allow_new_booking': False,
     })
 
 
@@ -468,16 +399,15 @@ def add_buses(request):
 def cargo(request):
     company = request.user.company
     routes = Route.objects.filter(company=company).order_by('from_location', 'to_location')
-    cargo_items = Parcel.objects.filter(sender=request.user).order_by('-created_at')
+    cargo_items = Parcel.objects.filter(processed_by__company=company).order_by('-created_at')
     shipments_count = cargo_items.count()
     aggregates = cargo_items.aggregate(total_weight=Sum('weight_kg'), total_value=Sum('declared_value'))
     total_weight = float(aggregates['total_weight'] or 0)
     total_value = float(aggregates['total_value'] or 0)
 
     if request.method == 'POST':
-        sender_name = request.POST.get('sender_name', '').strip() or str(request.user)
-        sender_email = request.POST.get('sender_email', '').strip()
-        sender_phone = request.POST.get('sender_phone', '').strip() or request.user.phone_number or ''
+        messages.warning(request, 'Parcel shipment creation is disabled in admin dashboards. Manage only parcels created by your technical staff.')
+        return redirect('bus_cargo')
         recipient_name = request.POST.get('recipient_name', '').strip()
         recipient_email = request.POST.get('recipient_email', '').strip()
         recipient_phone = request.POST.get('recipient_phone', '').strip()
@@ -605,10 +535,11 @@ def cargo(request):
         'total_value': total_value,
         'sidebar_template': 'bus_admin/sidebar.html',
         'page_title': 'Bus Cargo Shipments',
-        'page_description': 'Create cargo and parcel shipments for your bus routes.',
+        'page_description': 'Manage parcels created by your technical staff.',
         'transport_label': 'Bus',
         'category_choices': Parcel.CATEGORY,
         'vehicles': Bus.objects.filter(company=company, is_cargo=True),
+        'allow_new_cargo': False,
     })
 
 
