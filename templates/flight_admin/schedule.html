@@ -37,7 +37,7 @@
                 </p>
             </div>
 
-            <form method="get" class="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 bg-white p-3 border border-slate-200 rounded-xl shadow-sm">
+            <form method="get" class="grid grid-cols-1 sm:grid-cols-[1fr_auto] xl:grid-cols-[auto_auto] gap-3 bg-white p-3 border border-slate-200 rounded-xl shadow-sm">
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                         View Schedule Date
@@ -48,8 +48,20 @@
                            class="border border-slate-200 bg-slate-50 rounded-lg px-3 py-2 text-sm text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
                 </div>
 
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                        Vehicle Type
+                    </label>
+                    <select name="vehicle_type"
+                            class="border border-slate-200 bg-slate-50 rounded-lg px-3 py-2 text-sm text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                        <option value="all" {% if vehicle_type == 'all' %}selected{% endif %}>All Routes</option>
+                        <option value="passenger" {% if vehicle_type == 'passenger' %}selected{% endif %}>Passenger Only</option>
+                        <option value="cargo" {% if vehicle_type == 'cargo' %}selected{% endif %}>Cargo Only</option>
+                    </select>
+                </div>
+
                 <button type="submit"
-                        class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium px-4 py-2 rounded-lg shadow transition whitespace-nowrap">
+                        class="self-end bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium px-4 py-2 rounded-lg shadow transition whitespace-nowrap">
                     Filter View
                 </button>
             </form>
@@ -131,7 +143,7 @@
                             <option value="" disabled selected>Select an active fleet code...</option>
                             {% for flight in flights %}
                             <option value="{{ flight.id }}">
-                                {{ flight.flight_number }} ({{ flight.route.from_location }} → {{ flight.route.to_location }})
+                                {{ flight.flight_number }} ({{ flight.route.route_display }})
                             </option>
                             {% endfor %}
                         </select>
@@ -209,9 +221,14 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-slate-600 whitespace-nowrap">
-                                    {{ schedule.flight.route.from_location }}
-                                    <span class="text-slate-300 mx-1">→</span>
-                                    {{ schedule.flight.route.to_location }}
+                                    <div class="flex flex-col gap-1">
+                                        <span>{{ schedule.flight.route.route_display }}</span>
+                                        {% if schedule.flight.is_cargo %}
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide bg-amber-50 text-amber-700 border border-amber-100">
+                                            Cargo Only
+                                        </span>
+                                        {% endif %}
+                                    </div>
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap">

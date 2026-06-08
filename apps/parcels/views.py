@@ -1,9 +1,39 @@
+from decimal import Decimal
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Parcel, ParcelLog
 from apps.payments.models import Payment
+
+
+def _get_parcel_route_base_price(origin, destination):
+    try:
+        from apps.buses.models import Route as BusRoute
+        route = BusRoute.objects.filter(from_location__iexact=origin, to_location__iexact=destination).first()
+        if route:
+            return route.parcel_base_price
+    except Exception:
+        pass
+
+    try:
+        from apps.trains.models import Route as TrainRoute
+        route = TrainRoute.objects.filter(from_location__iexact=origin, to_location__iexact=destination).first()
+        if route:
+            return route.parcel_base_price
+    except Exception:
+        pass
+
+    try:
+        from apps.flights.models import Route as FlightRoute
+        route = FlightRoute.objects.filter(from_location__iexact=origin, to_location__iexact=destination).first()
+        if route:
+            return route.parcel_base_price
+    except Exception:
+        pass
+
+    return None
 
 
 @login_required
@@ -20,21 +50,27 @@ def parcel_view(request):
 
     # Handle POST (book parcel)
     if request.method == 'POST':
+        origin = request.POST.get('origin', '').strip()
+        destination = request.POST.get('destination', '').strip()
         p = Parcel(
             sender=request.user,
             sender_name=request.POST.get('sender_name', request.user.get_full_name()),
             sender_phone=request.POST.get('sender_phone', ''),
             recipient_name=request.POST.get('recipient_name', ''),
             recipient_phone=request.POST.get('recipient_phone', ''),
-            origin=request.POST.get('origin', ''),
-            destination=request.POST.get('destination', ''),
+            origin=origin,
+            destination=destination,
             category=request.POST.get('category', 'other'),
             description=request.POST.get('description', ''),
             weight_kg=request.POST.get('weight_kg', 1),
             declared_value=request.POST.get('declared_value', 0),
             is_fragile=request.POST.get('is_fragile') == 'on',
         )
-        p.shipping_cost = p.calc_cost()
+        route_base_price = _get_parcel_route_base_price(origin, destination)
+        if route_base_price is not None:
+            p.shipping_cost = route_base_price
+        else:
+            p.shipping_cost = Decimal(p.calc_cost())
         p.save()
         ParcelLog.objects.create(
             parcel=p, status='booked',

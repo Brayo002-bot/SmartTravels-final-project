@@ -48,6 +48,16 @@ def driver_required(view_func):
             except Exception:
                 driver = None
 
+        # If company-based matching failed, broaden the search by name or phone alone
+        if not driver:
+            try:
+                if full_name:
+                    driver = Driver.objects.filter(name__iexact=full_name).first()
+                if not driver and phone:
+                    driver = Driver.objects.filter(phone=phone).first()
+            except Exception:
+                driver = None
+
         # If still not found, try to infer driver from any Bus entries where the admin assigned a driver
         if not driver:
             try:
@@ -81,6 +91,12 @@ def driver_required(view_func):
                 phone=getattr(request.user, 'phone_number', ''),
                 company=getattr(request.user, 'company', None),
             )
+
+        # Ensure driver-like object always carries a name and phone for template rendering
+        if not getattr(driver, 'name', None):
+            driver.name = request.user.get_full_name() or request.user.username
+        if not getattr(driver, 'phone', None):
+            driver.phone = getattr(request.user, 'phone_number', '') or ''
 
         request.driver = driver
         return view_func(request, *args, **kwargs)
@@ -206,12 +222,14 @@ def driver_dashboard(request):
     credentials = {
         'driver_name': driver_name,
         'driver_phone': driver_phone,
-        'user_email': request.user.email,
-        'user_first_name': request.user.first_name,
-        'user_last_name': request.user.last_name,
-        'user_phone': request.user.phone_number,
-        'username': request.user.username,
+        'user_email': request.user.email or 'Not set',
+        'user_first_name': request.user.first_name or '',
+        'user_last_name': request.user.last_name or '',
+        'user_phone': getattr(request.user, 'phone_number', '') or 'Not set',
+        'username': request.user.username or 'Not set',
     }
+    credentials['display_name'] = credentials['driver_name'] or credentials['username'] or 'Driver'
+    credentials['display_phone'] = credentials['driver_phone'] or credentials['user_phone'] or 'Not set'
 
     # Check if driver profile is properly linked
     is_linked, link_error = driver_profile_check(request.user)

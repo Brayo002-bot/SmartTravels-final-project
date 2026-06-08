@@ -8,6 +8,8 @@ class Route(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Price per ticket for this route")
     vip_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, null=True, help_text="Price for VIP seats on this route")
     normal_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, null=True, help_text="Price for normal seats on this route")
+    parcel_base_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Base parcel shipping price for this route")
+    other_destinations = models.JSONField(default=list, blank=True, help_text="Optional intermediate stop locations for this route.")
     company = models.ForeignKey(
         'systemadmin.Company',
         on_delete=models.CASCADE,
@@ -16,8 +18,33 @@ class Route(models.Model):
         blank=True,
     )
 
-    def __str__(self):
+    @property
+    def route_stops(self):
+        stops = [self.from_location]
+        stops.extend([stop.strip() for stop in (self.other_destinations or []) if stop.strip()])
+        stops.append(self.to_location)
+        return stops
+
+    @property
+    def route_display(self):
+        stops = self.route_stops
+        if len(stops) > 2:
+            return ' → '.join(stops)
         return f"{self.from_location} → {self.to_location}"
+
+    def covers_route(self, origin, destination):
+        origin = origin.strip().lower()
+        destination = destination.strip().lower()
+        stops = [stop.strip().lower() for stop in self.route_stops if stop.strip()]
+        try:
+            origin_index = stops.index(origin)
+            destination_index = stops.index(destination)
+            return origin_index < destination_index
+        except ValueError:
+            return False
+
+    def __str__(self):
+        return self.route_display
 
 
 class Driver(models.Model):

@@ -1,5 +1,5 @@
 from collections import Counter
-from datetime import date, time, datetime
+from datetime import date, time, datetime, timedelta
 from decimal import Decimal
 import io
 import logging
@@ -19,6 +19,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from apps.systemadmin.seat_layout import generate_seat_layout
+from apps.systemadmin.models import SystemSetting
 try:
     import requests # Assuming requests is installed
     from reportlab.lib.pagesizes import letter
@@ -99,6 +100,14 @@ def _booking_company(booking):
     return getattr(transport, 'company', None) if transport else None
 
 
+def _get_seat_price(mode, transport, seat_number):
+    try:
+        from apps.systemadmin.models import Seat
+        return Seat.objects.get(content_type=mode, vehicle_id=transport.id, seat_number=seat_number).price
+    except Exception:
+        return None
+
+
 def get_dashboard_template_for_role(role):
     role_templates = {
         'passenger': 'passenger/dashboard.html',
@@ -154,20 +163,16 @@ def dashboard_view(request):
         query_mode = request.GET.get('mode', '').strip().lower()
         query_time = request.GET.get('time', '').strip().lower()
 
-        from_choices = set()
-        to_choices = set()
+        all_stop_choices = set()
         for route in BusRoute.objects.all():
-            from_choices.add(route.from_location)
-            to_choices.add(route.to_location)
+            all_stop_choices.update(route.route_stops)
         for route in TrainRoute.objects.all():
-            from_choices.add(route.from_location)
-            to_choices.add(route.to_location)
+            all_stop_choices.update(route.route_stops)
         for route in FlightRoute.objects.all():
-            from_choices.add(route.from_location)
-            to_choices.add(route.to_location)
+            all_stop_choices.update(route.route_stops)
 
-        from_choices = sorted(from_choices)
-        to_choices = sorted(to_choices)
+        from_choices = sorted(all_stop_choices)
+        to_choices = sorted(all_stop_choices)
 
         # Recommendation data from historical bookings and active schedules
         bus_bookings = BusBooking.objects.count()
@@ -251,45 +256,42 @@ def dashboard_view(request):
 
                 if query_mode in ['', 'bus']:
                     bus_schedules = BusSchedule.objects.filter(
-                        bus__route__from_location__iexact=query_from,
-                        bus__route__to_location__iexact=query_to,
                         travel_date=travel_date,
                         bus__is_cargo=False,
                     )
                     if time_filters is not None:
                         bus_schedules = bus_schedules.filter(time_filters)
                     for schedule in bus_schedules:
-                        trip = build_trip(schedule, 'bus')
-                        if trip['available_seats'] > 0:
-                            trips.append(trip)
+                        if schedule.bus.route.covers_route(query_from, query_to):
+                            trip = build_trip(schedule, 'bus')
+                            if trip['available_seats'] > 0:
+                                trips.append(trip)
 
                 if query_mode in ['', 'train']:
                     train_schedules = TrainSchedule.objects.filter(
-                        train__route__from_location__iexact=query_from,
-                        train__route__to_location__iexact=query_to,
                         travel_date=travel_date,
                         train__is_cargo=False,
                     )
                     if time_filters is not None:
                         train_schedules = train_schedules.filter(time_filters)
                     for schedule in train_schedules:
-                        trip = build_trip(schedule, 'train')
-                        if trip['available_seats'] > 0:
-                            trips.append(trip)
+                        if schedule.train.route.covers_route(query_from, query_to):
+                            trip = build_trip(schedule, 'train')
+                            if trip['available_seats'] > 0:
+                                trips.append(trip)
 
                 if query_mode in ['', 'flight']:
                     flight_schedules = FlightSchedule.objects.filter(
-                        flight__route__from_location__iexact=query_from,
-                        flight__route__to_location__iexact=query_to,
                         travel_date=travel_date,
                         flight__is_cargo=False,
                     )
                     if time_filters is not None:
                         flight_schedules = flight_schedules.filter(time_filters)
                     for schedule in flight_schedules:
-                        trip = build_trip(schedule, 'flight')
-                        if trip['available_seats'] > 0:
-                            trips.append(trip)
+                        if schedule.flight.route.covers_route(query_from, query_to):
+                            trip = build_trip(schedule, 'flight')
+                            if trip['available_seats'] > 0:
+                                trips.append(trip)
 
         # Compute loyalty points for the passenger dashboard
         from apps.payments.models import Payment
@@ -339,16 +341,14 @@ def passenger_route_suggestions(request):
     from apps.flights.models import Route as FlightRoute
     from apps.trains.models import Route as TrainRoute
 
-    query = request.GET.get('q', '').strip()
-    direction = request.GET.get('direction', 'from').lower()
-    lookup_field = 'to_location' if direction == 'to' else 'from_location'
+    query = request.GET.get('q', '').strip().lower()
 
     route_values = set()
     for RouteModel in (BusRoute, TrainRoute, FlightRoute):
-        routes = RouteModel.objects.all()
-        if query:
-            routes = routes.filter(**{f'{lookup_field}__icontains': query})
-        route_values.update(routes.values_list(lookup_field, flat=True))
+        for route in RouteModel.objects.all():
+            for stop in route.route_stops:
+                if not query or query in stop.lower():
+                    route_values.add(stop)
 
     options = sorted(route_values)
     return JsonResponse({'options': options})
@@ -414,6 +414,10 @@ def passenger_my_bookings(request):
     flight_bookings = [enrich_booking(b, 'flight') for b in flight_bookings]
 
     all_bookings = bus_bookings + train_bookings + flight_bookings
+    for booking in all_bookings:
+        booking.can_modify = _can_modify_booking(booking)
+        booking.change_deadline = _booking_change_deadline(booking) if booking.can_modify else None
+
     total_bookings = len(all_bookings)
     upcoming = sum(1 for booking in all_bookings if getattr(booking, 'travel_date', None) and booking.travel_date >= date.today())
     completed = sum(1 for booking in all_bookings if getattr(booking, 'travel_date', None) and booking.travel_date < date.today())
@@ -426,8 +430,6 @@ def passenger_my_bookings(request):
     available_points = max(earned_points - redeemed_points, 0)
     wallet_balance = getattr(request.user, 'wallet_balance', Decimal('0')) or Decimal('0')
 
-    all_bookings = bus_bookings + train_bookings + flight_bookings
-
     return render(request, 'passenger/my_bookings.html', {
         'active': 'bookings',
         'total_bookings': total_bookings,
@@ -437,10 +439,116 @@ def passenger_my_bookings(request):
         'train_bookings': train_bookings,
         'flight_bookings': flight_bookings,
         'bookings': all_bookings,
+        'booking_change_window_hours': _get_booking_change_window_hours(),
         'loyalty_points': f"{available_points:,}",
         'wallet_balance': f"KES {wallet_balance:,.2f}",
         'wallet_balance_raw': float(wallet_balance),
     })
+
+
+def _get_booking_change_window_hours():
+    try:
+        setting = SystemSetting.objects.filter(key='booking_change_window_hours').first()
+        if setting and str(setting.value).strip().isdigit():
+            return int(str(setting.value).strip())
+    except Exception:
+        pass
+    return 48
+
+
+def _booking_change_deadline(booking):
+    travel_time = getattr(booking, 'travel_time', None)
+    if not travel_time:
+        travel_time = time(0, 0)
+    travel_datetime = datetime.combine(booking.travel_date, travel_time)
+    return travel_datetime - timedelta(hours=_get_booking_change_window_hours())
+
+
+def _can_modify_booking(booking):
+    if booking.status == 'cancelled':
+        return False
+    if not getattr(booking, 'travel_date', None):
+        return False
+    return datetime.now() <= _booking_change_deadline(booking)
+
+
+@login_required
+def passenger_cancel_booking(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('POST only')
+    if request.user.role != 'passenger':
+        raise PermissionDenied
+
+    booking_reference = request.POST.get('booking_reference', '').strip()
+    booking = _find_booking_by_reference(booking_reference)
+
+    user_name = request.user.get_full_name() or request.user.username
+    if user_name and user_name.lower() not in booking.passenger_name.lower():
+        raise PermissionDenied
+
+    if booking.status == 'cancelled':
+        messages.warning(request, 'This booking is already cancelled.')
+        return redirect('my_bookings')
+
+    if not _can_modify_booking(booking):
+        messages.error(request, 'Booking cannot be cancelled after the admin-set change deadline.')
+        return redirect('my_bookings')
+
+    booking.status = 'cancelled'
+    booking.save()
+    messages.success(request, 'Your booking has been cancelled successfully.')
+    return redirect('my_bookings')
+
+
+@login_required
+def passenger_reschedule_booking(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('POST only')
+    if request.user.role != 'passenger':
+        raise PermissionDenied
+
+    booking_reference = request.POST.get('booking_reference', '').strip()
+    new_date = request.POST.get('new_date', '').strip()
+    new_time = request.POST.get('new_time', '').strip()
+
+    booking = _find_booking_by_reference(booking_reference)
+    user_name = request.user.get_full_name() or request.user.username
+    if user_name and user_name.lower() not in booking.passenger_name.lower():
+        raise PermissionDenied
+
+    if booking.status == 'cancelled':
+        messages.error(request, 'Cancelled bookings cannot be rescheduled.')
+        return redirect('my_bookings')
+
+    if not _can_modify_booking(booking):
+        messages.error(request, 'Booking cannot be rescheduled after the admin-set change deadline.')
+        return redirect('my_bookings')
+
+    if not new_date:
+        messages.error(request, 'Please choose a new travel date to reschedule.')
+        return redirect('my_bookings')
+
+    try:
+        travel_date = datetime.strptime(new_date, '%Y-%m-%d').date()
+    except ValueError:
+        messages.error(request, 'Invalid date format provided.')
+        return redirect('my_bookings')
+
+    if travel_date <= date.today():
+        messages.error(request, 'New travel date must be in the future.')
+        return redirect('my_bookings')
+
+    booking.travel_date = travel_date
+    if new_time:
+        try:
+            booking.travel_time = datetime.strptime(new_time, '%H:%M').time()
+        except ValueError:
+            messages.error(request, 'Invalid time format provided.')
+            return redirect('my_bookings')
+
+    booking.save()
+    messages.success(request, 'Your booking has been rescheduled successfully.')
+    return redirect('my_bookings')
 
 
 @login_required
@@ -1037,18 +1145,22 @@ def book_trip(request, mode, schedule_id):
             try:
                 from apps.payments.models import Payment, MPesaService
                 
-                # Determine price based on seat class and route pricing
+                # Determine price using the selected seat's assigned price first, otherwise fall back to route class pricing.
                 price = schedule.price
-                if selected_seat_class == 'VIP' and hasattr(transport.route, 'vip_price') and transport.route.vip_price:
-                    price = transport.route.vip_price
-                elif selected_seat_class == 'Normal' and hasattr(transport.route, 'normal_price') and transport.route.normal_price:
-                    price = transport.route.normal_price
-                elif selected_seat_class == 'First Class' and hasattr(transport.route, 'first_class_price') and transport.route.first_class_price:
-                    price = transport.route.first_class_price
-                elif selected_seat_class == 'Business' and hasattr(transport.route, 'business_price') and transport.route.business_price:
-                    price = transport.route.business_price
-                elif selected_seat_class == 'Economy' and hasattr(transport.route, 'economy_price') and transport.route.economy_price:
-                    price = transport.route.economy_price
+                seat_price = _get_seat_price(mode, transport, selected_seat)
+                if seat_price is not None:
+                    price = seat_price
+                else:
+                    if selected_seat_class == 'VIP' and hasattr(transport.route, 'vip_price') and transport.route.vip_price:
+                        price = transport.route.vip_price
+                    elif selected_seat_class == 'Normal' and hasattr(transport.route, 'normal_price') and transport.route.normal_price:
+                        price = transport.route.normal_price
+                    elif selected_seat_class == 'First Class' and hasattr(transport.route, 'first_class_price') and transport.route.first_class_price:
+                        price = transport.route.first_class_price
+                    elif selected_seat_class == 'Business' and hasattr(transport.route, 'business_price') and transport.route.business_price:
+                        price = transport.route.business_price
+                    elif selected_seat_class == 'Economy' and hasattr(transport.route, 'economy_price') and transport.route.economy_price:
+                        price = transport.route.economy_price
 
                 wallet_balance = getattr(request.user, 'wallet_balance', Decimal('0')) or Decimal('0')
                 wallet_used = min(wallet_used, wallet_balance, Decimal(price))

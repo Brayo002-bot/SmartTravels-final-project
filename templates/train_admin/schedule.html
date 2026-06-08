@@ -52,6 +52,11 @@
                     View Date
                 </label>
                 <input type="date" name="date" value="{{ selected_date }}" class="border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition font-medium text-slate-700">
+                <select name="vehicle_type" class="border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition font-medium text-slate-700">
+                    <option value="all" {% if vehicle_type == 'all' %}selected{% endif %}>All Vehicles</option>
+                    <option value="passenger" {% if vehicle_type == 'passenger' %}selected{% endif %}>Passenger Vehicles</option>
+                    <option value="cargo" {% if vehicle_type == 'cargo' %}selected{% endif %}>Cargo Vehicles</option>
+                </select>
                 <button type="submit" class="bg-slate-950 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold transition shadow-sm">
                     Filter
                 </button>
@@ -152,12 +157,11 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-slate-600 font-medium">
-                                    <div class="flex items-center gap-2">
-                                        <span>{{ schedule.train.route.from_location }}</span>
-                                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                                        </svg>
-                                        <span>{{ schedule.train.route.to_location }}</span>
+                                    <div class="flex flex-col gap-1">
+                                        <span class="font-medium text-slate-700">{{ schedule.train.route.route_display }}</span>
+                                        {% if schedule.train.is_cargo %}
+                                            <span class="text-[10px] uppercase tracking-wide px-2 py-1 rounded-full bg-amber-50 text-amber-700">Cargo Only</span>
+                                        {% endif %}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">

@@ -88,6 +88,10 @@ def add_route(request):
                 vip_price = float(request.POST.get('vip_price', 0) or 0)
                 business_price = float(request.POST.get('business_price', 0) or 0)
                 economy_price = float(request.POST.get('economy_price', 0) or 0)
+                parcel_base_price = float(request.POST.get('parcel_base_price', 0) or 0)
+                other_destinations = [
+                    stop.strip() for stop in request.POST.get('other_destinations', '').split(',') if stop.strip()
+                ]
                 Route.objects.create(
                     from_location=from_location,
                     to_location=to_location,
@@ -95,6 +99,8 @@ def add_route(request):
                     first_class_price=vip_price,
                     business_price=business_price,
                     economy_price=economy_price,
+                    parcel_base_price=parcel_base_price,
+                    other_destinations=other_destinations,
                     company=company,
                 )
                 messages.success(request, f'Route from {from_location} to {to_location} added successfully.')
@@ -115,6 +121,10 @@ def edit_route(request, route_id):
         route.first_class_price = float(request.POST.get('vip_price', 0) or 0)
         route.business_price = float(request.POST.get('business_price', 0) or 0)
         route.economy_price = float(request.POST.get('economy_price', 0) or 0)
+        route.parcel_base_price = float(request.POST.get('parcel_base_price', 0) or 0)
+        route.other_destinations = [
+            stop.strip() for stop in request.POST.get('other_destinations', '').split(',') if stop.strip()
+        ]
         route.save()
         messages.success(request, 'Route updated successfully.')
         return redirect('train_add_route')
@@ -210,7 +220,17 @@ def schedule(request):
     except ValueError:
         selected_date = timezone.localdate()
 
-    schedules = Schedule.objects.filter(travel_date=selected_date, train__company=company).select_related('train', 'train__route').order_by('travel_time')
+    vehicle_type = request.GET.get('vehicle_type', 'all').lower()
+    schedule_filters = {
+        'travel_date': selected_date,
+        'train__company': company,
+    }
+    if vehicle_type == 'cargo':
+        schedule_filters['train__is_cargo'] = True
+    elif vehicle_type == 'passenger':
+        schedule_filters['train__is_cargo'] = False
+
+    schedules = Schedule.objects.filter(**schedule_filters).select_related('train', 'train__route').order_by('travel_time')
     trains = Train.objects.filter(company=company)
 
     if request.method == 'POST':

@@ -88,7 +88,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold text-slate-900 tracking-tight">
-                    Welcome back, {{ driver.name }}
+                    Welcome back, {{ credentials.display_name }}
                 </h1>
                 <p class="text-slate-500 text-xs font-medium flex items-center gap-1.5 mt-0.5">
                     <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -272,30 +272,22 @@
                     <div class="space-y-4">
                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Identity Assertions</h3>
                         <div class="grid grid-cols-1 gap-2.5 text-xs font-medium">
-                            {% if credentials.driver_name %}
                             <div class="flex justify-between items-center py-2 border-b border-slate-100">
                                 <span class="text-slate-500">Callsign Identifier</span>
-                                <span class="text-slate-900 font-semibold">{{ credentials.driver_name }}</span>
+                                <span class="text-slate-900 font-semibold">{{ credentials.driver_name|default:'Not set' }}</span>
                             </div>
-                            {% endif %}
-                            {% if credentials.driver_phone %}
                             <div class="flex justify-between items-center py-2 border-b border-slate-100">
                                 <span class="text-slate-500">Telemetry Gateway</span>
-                                <span class="text-slate-900 font-mono">{{ credentials.driver_phone }}</span>
+                                <span class="text-slate-900 font-mono">{{ credentials.display_phone }}</span>
                             </div>
-                            {% endif %}
-                            {% if credentials.user_email %}
                             <div class="flex justify-between items-center py-2 border-b border-slate-100">
                                 <span class="text-slate-500">Encrypted Email Address</span>
-                                <span class="text-slate-900 font-mono">{{ credentials.user_email }}</span>
+                                <span class="text-slate-900 font-mono">{{ credentials.user_email|default:'Not set' }}</span>
                             </div>
-                            {% endif %}
-                            {% if credentials.username %}
                             <div class="flex justify-between items-center py-2">
                                 <span class="text-slate-500">System Namespace Token</span>
-                                <span class="text-slate-600 bg-slate-100 font-mono text-[11px] px-2 py-0.5 rounded border border-slate-200/60">{{ credentials.username }}</span>
+                                <span class="text-slate-600 bg-slate-100 font-mono text-[11px] px-2 py-0.5 rounded border border-slate-200/60">{{ credentials.username|default:'Not set' }}</span>
                             </div>
-                            {% endif %}
                         </div>
                     </div>
 

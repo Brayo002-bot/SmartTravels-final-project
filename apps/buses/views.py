@@ -81,12 +81,18 @@ def add_route(request):
         except ValueError:
             normal_price = 0
         if from_location and to_location:
+            parcel_base_price = float(request.POST.get('parcel_base_price', 0) or 0)
+            other_destinations = [
+                stop.strip() for stop in request.POST.get('other_destinations', '').split(',') if stop.strip()
+            ]
             Route.objects.create(
                 from_location=from_location,
                 to_location=to_location,
                 price=price,
                 vip_price=vip_price,
                 normal_price=normal_price,
+                parcel_base_price=parcel_base_price,
+                other_destinations=other_destinations,
                 company=company,
             )
             return redirect('bus_add_route')
@@ -105,6 +111,10 @@ def edit_route(request, route_id):
         route.price = float(request.POST.get('price', 0) or 0)
         route.vip_price = float(request.POST.get('vip_price', 0) or 0)
         route.normal_price = float(request.POST.get('normal_price', 0) or 0)
+        route.parcel_base_price = float(request.POST.get('parcel_base_price', 0) or 0)
+        route.other_destinations = [
+            stop.strip() for stop in request.POST.get('other_destinations', '').split(',') if stop.strip()
+        ]
         route.save()
         messages.success(request, 'Route updated successfully.')
         return redirect('bus_add_route')
@@ -196,12 +206,22 @@ def get_available_seats(request):
 def schedule(request):
     company = request.user.company
     selected_date = request.GET.get('date')
+    vehicle_type = request.GET.get('vehicle_type', 'all').lower()
     try:
         selected_date = date.fromisoformat(selected_date) if selected_date else timezone.localdate()
     except ValueError:
         selected_date = timezone.localdate()
 
-    schedules = Schedule.objects.filter(travel_date=selected_date, bus__company=company).select_related('bus', 'bus__route').order_by('travel_time')
+    schedule_filters = {
+        'travel_date': selected_date,
+        'bus__company': company,
+    }
+    if vehicle_type == 'cargo':
+        schedule_filters['bus__is_cargo'] = True
+    elif vehicle_type == 'passenger':
+        schedule_filters['bus__is_cargo'] = False
+
+    schedules = Schedule.objects.filter(**schedule_filters).select_related('bus', 'bus__route').order_by('travel_time')
     buses = Bus.objects.filter(company=company)
 
     if request.method == 'POST':

@@ -219,6 +219,15 @@
                 </div>
             </div>
 
+            {% if messages %}
+            <div class="mb-6 space-y-3">
+                {% for message in messages %}
+                <div class="rounded-2xl p-4 text-sm font-semibold {% if message.tags == 'success' %}bg-emerald-500/10 text-emerald-200 border border-emerald-500/20{% elif message.tags == 'error' %}bg-rose-500/10 text-rose-200 border border-rose-500/20{% else %}bg-slate-900/70 text-slate-100 border border-slate-700/60{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+
             <!-- HERO SUMMARY -->
             <div class="hero glass p-8 lg:p-10 mb-8">
                 <div class="grid lg:grid-cols-2 gap-10 items-center">
@@ -380,7 +389,25 @@
                                 
                                 {% if booking.status == 'confirmed' %}
                                     <a href="{% url 'vehicle_location' booking.vehicle_type booking.vehicle_id %}" class="glass action-btn border border-cyan-400/20 hover:border-cyan-400/50 hover:bg-cyan-400/10 px-6 py-4 rounded-2xl text-center text-cyan-300">📍 Track Journey</a>
-                                    
+
+                                    {% if booking.can_modify %}
+                                        <form method="POST" action="{% url 'passenger_reschedule_booking' %}" class="grid gap-2">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="booking_reference" value="{{ booking.booking_reference }}">
+                                            <input type="date" name="new_date" class="glass px-4 py-3 rounded-2xl border border-white/10 bg-slate-950 text-white text-xs" required>
+                                            <button type="submit" class="gold-btn action-btn px-6 py-3 rounded-2xl text-center text-sm">🗓 Reschedule</button>
+                                        </form>
+                                        <form method="POST" action="{% url 'passenger_cancel_booking' %}" class="mt-2">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="booking_reference" value="{{ booking.booking_reference }}">
+                                            <button type="submit" class="glass action-btn border border-rose-400/20 hover:border-rose-400/50 hover:bg-rose-500/10 px-6 py-4 rounded-2xl text-center text-rose-300 text-sm">❌ Cancel</button>
+                                        </form>
+                                    {% else %}
+                                        <div class="tracking-alert text-xs text-slate-300">
+                                            Change deadline passed. Contact support for assistance.
+                                        </div>
+                                    {% endif %}
+
                                     {% if not booking.gps_tracking_started %}
                                         <div class="tracking-alert">
                                             ⏳ Driver hasn't started GPS tracking yet. Check back soon!

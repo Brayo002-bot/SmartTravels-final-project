@@ -90,6 +90,15 @@ def _get_company_routes(company):
     return []
 
 
+def _get_seat_price(content_type, vehicle_id, seat_number):
+    try:
+        from apps.systemadmin.models import Seat
+        seat = Seat.objects.get(content_type=content_type, vehicle_id=vehicle_id, seat_number=seat_number)
+        return seat.price
+    except Exception:
+        return None
+
+
 def _get_total_seats(transport):
     if hasattr(transport, 'vip_seats'):
         return transport.vip_seats + transport.normal_seats
@@ -225,12 +234,15 @@ def tech_booking_assist(request):
                     schedule = None
                     vehicle = None
                 else:
-                    # Determine price based on seat class
-                    price = schedule.price
-                    if selected_seat_class == 'VIP' and vehicle.route.vip_price:
-                        price = vehicle.route.vip_price
-                    elif selected_seat_class == 'Normal' and vehicle.route.normal_price:
-                        price = vehicle.route.normal_price
+                    # Determine price based on the selected seat price if available
+                    seat_price = _get_seat_price('bus', vehicle.id, selected_seat)
+                    if seat_price is not None:
+                        price = seat_price
+                    else:
+                        if selected_seat_class == 'VIP' and vehicle.route.vip_price:
+                            price = vehicle.route.vip_price
+                        elif selected_seat_class == 'Normal' and vehicle.route.normal_price:
+                            price = vehicle.route.normal_price
                     
                     booking = Booking.objects.create(
                         booking_reference=booking_reference,
@@ -265,14 +277,17 @@ def tech_booking_assist(request):
                     schedule = None
                     vehicle = None
                 else:
-                    # Determine price based on seat class
-                    price = schedule.price
-                    if selected_seat_class == 'First Class' and vehicle.route.first_class_price:
-                        price = vehicle.route.first_class_price
-                    elif selected_seat_class == 'Business' and vehicle.route.business_price:
-                        price = vehicle.route.business_price
-                    elif selected_seat_class == 'Economy' and vehicle.route.economy_price:
-                        price = vehicle.route.economy_price
+                    # Determine price based on the selected seat price if available
+                    seat_price = _get_seat_price('train', vehicle.id, selected_seat)
+                    if seat_price is not None:
+                        price = seat_price
+                    else:
+                        if selected_seat_class == 'First Class' and vehicle.route.first_class_price:
+                            price = vehicle.route.first_class_price
+                        elif selected_seat_class == 'Business' and vehicle.route.business_price:
+                            price = vehicle.route.business_price
+                        elif selected_seat_class == 'Economy' and vehicle.route.economy_price:
+                            price = vehicle.route.economy_price
                     
                     booking = Booking.objects.create(
                         booking_reference=booking_reference,
@@ -307,14 +322,17 @@ def tech_booking_assist(request):
                     schedule = None
                     vehicle = None
                 else:
-                    # Determine price based on seat class
-                    price = schedule.price
-                    if selected_seat_class == 'First Class' and vehicle.route.first_class_price:
-                        price = vehicle.route.first_class_price
-                    elif selected_seat_class == 'Business' and vehicle.route.business_price:
-                        price = vehicle.route.business_price
-                    elif selected_seat_class == 'Economy' and vehicle.route.economy_price:
-                        price = vehicle.route.economy_price
+                    # Determine price based on the selected seat price if available
+                    seat_price = _get_seat_price('flight', vehicle.id, selected_seat)
+                    if seat_price is not None:
+                        price = seat_price
+                    else:
+                        if selected_seat_class == 'First Class' and vehicle.route.first_class_price:
+                            price = vehicle.route.first_class_price
+                        elif selected_seat_class == 'Business' and vehicle.route.business_price:
+                            price = vehicle.route.business_price
+                        elif selected_seat_class == 'Economy' and vehicle.route.economy_price:
+                            price = vehicle.route.economy_price
                     
                     booking = Booking.objects.create(
                         booking_reference=booking_reference,

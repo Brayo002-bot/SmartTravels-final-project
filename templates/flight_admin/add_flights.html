@@ -444,6 +444,23 @@ function validateFlightTotals() {
     return true;
 }
 
+function fetchFlightPreview() {
+    const counts = getFlightCounts();
+    const params = new URLSearchParams();
+    params.append('first_class_seats', counts.first_class_seats);
+    params.append('business_seats', counts.business_seats);
+    params.append('economy_seats', counts.economy_seats);
+
+    fetch(`${FLIGHT_PREVIEW_URL}?${params.toString()}`)
+        .then(response => response.json())
+        .then(data => {
+            renderFlightSeats(data);
+        })
+        .catch(error => {
+            console.error('Unable to load flight preview:', error);
+        });
+}
+
 function updateFlightCapacityAndPreview() {
     const counts = getFlightCounts();
     document.getElementById('flight_total').value = counts.first_class_seats + counts.business_seats + counts.economy_seats;

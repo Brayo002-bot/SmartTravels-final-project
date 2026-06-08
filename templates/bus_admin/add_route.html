@@ -126,9 +126,20 @@
                         <input type="text" name="to_location" placeholder="e.g. Mombasa" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm placeholder:text-slate-400" required>
                     </div>
 
+                    <div class="md:col-span-3">
+                        <label class="block mb-2 text-xs font-bold uppercase tracking-wide text-slate-600">Intermediate Destinations</label>
+                        <textarea name="other_destinations" rows="2" placeholder="e.g. Embu, Meru, Isiolo" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm placeholder:text-slate-400"></textarea>
+                        <p class="mt-2 text-xs text-slate-400">Enter intermediate stops separated by commas. Leave blank if this is a direct route.</p>
+                    </div>
+
                     <div>
                         <label class="block mb-2 text-xs font-bold uppercase tracking-wide text-slate-600">Ticket Price (KES)</label>
                         <input type="number" name="price" step="0.01" min="0" placeholder="0.00" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm placeholder:text-slate-400" required>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-xs font-bold uppercase tracking-wide text-slate-600">Parcel Base Price (KES)</label>
+                        <input type="number" name="parcel_base_price" step="0.01" min="0" placeholder="0.00" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm placeholder:text-slate-400">
                     </div>
 
                     <div>

@@ -81,6 +81,14 @@
                            required>
                 </div>
 
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                        Intermediate Destinations
+                    </label>
+                    <textarea name="other_destinations" rows="2" placeholder="e.g. Embu, Meru, Isiolo" class="w-full bg-white/50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all">{{ route.other_destinations|join:", " }}</textarea>
+                    <p class="text-xs text-slate-400 mt-2">Use commas to separate additional stop locations for this route.</p>
+                </div>
+
                 <!-- FARE PRICE FIELD -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
@@ -99,6 +107,19 @@
                                class="w-full bg-white/50 border border-slate-200 rounded-xl pl-14 pr-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all"
                                required>
                     </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                        Parcel Base Price (KES)
+                    </label>
+                    <input type="number"
+                           name="parcel_base_price"
+                           value="{{ route.parcel_base_price|floatformat:2 }}"
+                           step="0.01"
+                           min="0"
+                           placeholder="0.00"
+                           class="w-full bg-white/50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all">
                 </div>
 
                 <div>
