@@ -371,36 +371,42 @@ def add_buses(request):
             normal_seats = 0
 
         if bus_number and route_id and driver_id:
-            route = get_object_or_404(Route, id=route_id, company=company)
-            driver = get_object_or_404(Driver, id=driver_id, company=company)
-            bus = Bus.objects.create(
-                bus_number=bus_number,
-                number_plate=number_plate or None,
-                description=description or None,
-                is_cargo=is_cargo,
-                route=route,
-                driver=driver,
-                company=company,
-                vip_seats=vip_seats,
-                normal_seats=normal_seats,
-            )
-            if not is_cargo:
-                layout = generate_seat_layout(
-                    'bus',
-                    {'vip_seats': vip_seats, 'normal_seats': normal_seats},
-                    vehicle_id=bus.id,
+            if Bus.objects.filter(bus_number__iexact=bus_number).exists():
+                messages.error(request, f'Bus number "{bus_number}" already exists. Please choose a different bus number.')
+            else:
+                route = get_object_or_404(Route, id=route_id, company=company)
+                driver = get_object_or_404(Driver, id=driver_id, company=company)
+                bus = Bus.objects.create(
+                    bus_number=bus_number,
+                    number_plate=number_plate or None,
+                    description=description or None,
+                    is_cargo=is_cargo,
+                    route=route,
+                    driver=driver,
+                    company=company,
+                    vip_seats=vip_seats,
+                    normal_seats=normal_seats,
                 )
-                SeatLayoutHistory.objects.create(
-                    vehicle_type='bus',
-                    vehicle_id=bus.id,
-                    config={
-                        'total_passengers': total_passengers,
-                        'vip_seats': vip_seats,
-                        'normal_seats': normal_seats,
-                    },
-                    layout=layout,
-                )
-            return redirect('add_buses')
+                if not is_cargo:
+                    layout = generate_seat_layout(
+                        'bus',
+                        {'vip_seats': vip_seats, 'normal_seats': normal_seats},
+                        vehicle_id=bus.id,
+                    )
+                    SeatLayoutHistory.objects.create(
+                        vehicle_type='bus',
+                        vehicle_id=bus.id,
+                        config={
+                            'total_passengers': total_passengers,
+                            'vip_seats': vip_seats,
+                            'normal_seats': normal_seats,
+                        },
+                        layout=layout,
+                    )
+                messages.success(request, 'Bus added successfully.')
+                return redirect('add_buses')
+        else:
+            messages.error(request, 'Bus number, route, and driver are required.')
 
     routes = Route.objects.filter(company=company)
     drivers = Driver.objects.filter(company=company)
